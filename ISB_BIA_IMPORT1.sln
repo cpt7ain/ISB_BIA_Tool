@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2000
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ISB_BIA_IMPORT1", "ISB_BIA_IMPORT1\ISB_BIA_IMPORT1.csproj", "{F1742B79-9D3A-453E-A752-F463538EA449}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest_ISB_BIA_IMPORT1", "UnitTest_ISB_BIA_IMPORT1\UnitTest_ISB_BIA_IMPORT1.csproj", "{D1F93BFB-2024-40C7-921A-64E80337F955}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F1742B79-9D3A-453E-A752-F463538EA449}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1742B79-9D3A-453E-A752-F463538EA449}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1742B79-9D3A-453E-A752-F463538EA449}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1742B79-9D3A-453E-A752-F463538EA449}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1F93BFB-2024-40C7-921A-64E80337F955}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1F93BFB-2024-40C7-921A-64E80337F955}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1F93BFB-2024-40C7-921A-64E80337F955}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1F93BFB-2024-40C7-921A-64E80337F955}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AD6927B1-9570-4E26-B23C-91E30D76CB8D}
+	EndGlobalSection
+EndGlobal

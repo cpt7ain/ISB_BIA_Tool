@@ -1,0 +1,158 @@
+﻿<UserControl x:Class="ISB_BIA_IMPORT1.View.InformationSegmentsView_View"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:m="clr-namespace:ISB_BIA_IMPORT1.Model"
+             xmlns:c="clr-namespace:ISB_BIA_IMPORT1.Converter"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" 
+             d:DesignWidth="1200"
+             Background="LightSteelBlue"
+             DataContext="{Binding Source={StaticResource Locator}, Path=InformationSegmentsView}">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <c:AlphToNumConverter x:Key="AlphToNum" />
+            <c:CellColorConverter x:Key="CellColor" />
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="400*"/>
+        </Grid.RowDefinitions>
+        <Border>
+            <Grid>
+                <Label Content="Informationssegmente-Übersicht" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <Button Content="Zurück" HorizontalAlignment="Right" Background="Wheat"  Margin="0,0,10,0" VerticalAlignment="Center" Command="{Binding NavBack}"/>
+            </Grid>
+        </Border>
+        <Border Grid.Row="1" Background="White" BorderThickness="1" BorderBrush="Black" Margin="10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="100*"/>
+                </Grid.RowDefinitions>
+                <Label Content="{Binding Instruction}" VerticalAlignment="Center" Grid.Row="0"/>
+                <FrameworkElement x:Name="dummyElement" Visibility="Collapsed"/>
+                <DataGrid 
+            IsReadOnly="true" 
+            VerticalAlignment="Top"
+            VerticalGridLinesBrush="LightGray"
+            HorizontalGridLinesBrush="LightGray"
+            SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}"
+            ItemsSource="{Binding Path=ISList, IsAsync=True}"
+            AutoGenerateColumns="False"
+            Grid.Row="1">
+                    <DataGrid.InputBindings>
+                        <MouseBinding Gesture="LeftDoubleClick" Command="{Binding NavToIS}"/>
+                    </DataGrid.InputBindings>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="50"/>
+                        <DataGridTextColumn Header="Segment" Binding="{Binding Segment}" Width="250"/>
+                        <DataGridTemplateColumn Width="80">
+                            <DataGridTemplateColumn.Header>
+                                <TextBlock Text="{Binding DataContext.AttributeColumnHeaderText[0], Source={x:Reference dummyElement}}" TextWrapping="WrapWithOverflow"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock TextAlignment="Center" Text="{Binding Attribut_1 , Converter={StaticResource AlphToNum}}" Background="{Binding Attribut_1, Converter={StaticResource CellColor}}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="80">
+                            <DataGridTemplateColumn.Header>
+                                <TextBlock Text="{Binding DataContext.AttributeColumnHeaderText[1], Source={x:Reference dummyElement}}" TextWrapping="WrapWithOverflow"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock TextAlignment="Center" Text="{Binding Attribut_2 , Converter={StaticResource AlphToNum}}" Background="{Binding Attribut_2, Converter={StaticResource CellColor}}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="80">
+                            <DataGridTemplateColumn.Header>
+                                <TextBlock Text="{Binding DataContext.AttributeColumnHeaderText[2], Source={x:Reference dummyElement}}" TextWrapping="WrapWithOverflow"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock TextAlignment="Center" Text="{Binding Attribut_3 , Converter={StaticResource AlphToNum}}" Background="{Binding Attribut_3, Converter={StaticResource CellColor}}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="80">
+                            <DataGridTemplateColumn.Header>
+                                <TextBlock Text="{Binding DataContext.AttributeColumnHeaderText[3], Source={x:Reference dummyElement}}" TextWrapping="WrapWithOverflow"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock TextAlignment="Center" Text="{Binding Attribut_4 , Converter={StaticResource AlphToNum}}" Background="{Binding Attribut_4, Converter={StaticResource CellColor}}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="80">
+                            <DataGridTemplateColumn.Header>
+                                <TextBlock Text="{Binding DataContext.AttributeColumnHeaderText[4], Source={x:Reference dummyElement}}" TextWrapping="WrapWithOverflow"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock TextAlignment="Center" Text="{Binding Attribut_5 , Converter={StaticResource AlphToNum}}" Background="{Binding Attribut_5, Converter={StaticResource CellColor}}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="80">
+                            <DataGridTemplateColumn.Header>
+                                <TextBlock Text="{Binding DataContext.AttributeColumnHeaderText[5], Source={x:Reference dummyElement}}" TextWrapping="WrapWithOverflow"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock TextAlignment="Center" Text="{Binding Attribut_6 , Converter={StaticResource AlphToNum}}" Background="{Binding Attribut_6, Converter={StaticResource CellColor}}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="80">
+                            <DataGridTemplateColumn.Header>
+                                <TextBlock Text="{Binding DataContext.AttributeColumnHeaderText[6], Source={x:Reference dummyElement}}" TextWrapping="WrapWithOverflow"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock TextAlignment="Center" Text="{Binding Attribut_7 , Converter={StaticResource AlphToNum}}" Background="{Binding Attribut_7, Converter={StaticResource CellColor}}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="80">
+                            <DataGridTemplateColumn.Header>
+                                <TextBlock Text="{Binding DataContext.AttributeColumnHeaderText[7], Source={x:Reference dummyElement}}" TextWrapping="WrapWithOverflow"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock TextAlignment="Center" Text="{Binding Attribut_8 , Converter={StaticResource AlphToNum}}" Background="{Binding Attribut_8, Converter={StaticResource CellColor}}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="80" Visibility="{Binding DataContext.Attribute_9_Vis, Source={x:Reference dummyElement}}">
+                            <DataGridTemplateColumn.Header>
+                                <TextBlock Text="{Binding DataContext.AttributeColumnHeaderText[8], Source={x:Reference dummyElement}}" TextWrapping="WrapWithOverflow"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock TextAlignment="Center" Text="{Binding Attribut_9 , Converter={StaticResource AlphToNum}}" Background="{Binding Attribut_9, Converter={StaticResource CellColor}}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="80" Visibility="{Binding DataContext.Attribute_10_Vis, Source={x:Reference dummyElement}}">
+                            <DataGridTemplateColumn.Header>
+                                <TextBlock Text="{Binding DataContext.AttributeColumnHeaderText[9], Source={x:Reference dummyElement}}" TextWrapping="WrapWithOverflow"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock TextAlignment="Center" Background="{Binding Attribut_10, Converter={StaticResource CellColor}}" Text="{Binding Attribut_10 , Converter={StaticResource AlphToNum}}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

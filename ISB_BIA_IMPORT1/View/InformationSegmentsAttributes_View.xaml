@@ -1,0 +1,66 @@
+﻿<UserControl x:Class="ISB_BIA_IMPORT1.View.InformationSegmentsAttributes_View"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:c="clr-namespace:ISB_BIA_IMPORT1.Converter"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" 
+             d:DesignWidth="1200"
+             DataContext="{Binding Source={StaticResource Locator}, Path=InformationSegmentsAttributes}">
+        <UserControl.Resources>
+            <ResourceDictionary>
+                <c:BoolToColorConverter x:Key="BoolToColorConverter" />
+                <c:NegateBooleanConverter x:Key="NegateBoolConverter" />
+                <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
+            </ResourceDictionary>
+        </UserControl.Resources>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="100*"/>
+            </Grid.RowDefinitions>
+            <Border>
+                <Grid>
+                    <Button Content="Zurück" HorizontalAlignment="Right" Background="Wheat"  Margin="0,0,10,0" VerticalAlignment="Center" Command="{Binding NavBack}"/>
+                    <Label Margin="10,0,0,0" Content="Informationssegment-Attribute" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
+        <FrameworkElement x:Name="dummyElement" Visibility="Collapsed"/>
+        <Border Background="White" Grid.Row="1" Margin="10" BorderBrush="Black" BorderThickness="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="100*"/>
+                    <RowDefinition Height="60"/>
+                </Grid.RowDefinitions>
+                <Label VerticalAlignment="Center" Content="Ändern Sie hier den Attributnamen sowie die zugehörigen Mindesteinstufungen der Schutzziele" Grid.ColumnSpan="2"/>
+                <DataGrid x:Name="dataGrid" 
+                  ItemsSource="{Binding CurrentAttList}"
+                  AutoGenerateColumns="False"
+                  Grid.Row="1" 
+                  VerticalGridLinesBrush="LightGray"
+                  HorizontalGridLinesBrush="LightGray"
+                  CanUserAddRows="False"
+                  RowHeaderWidth="0"
+                  IsReadOnly="{Binding EditMode, Converter={StaticResource NegateBoolConverter}}"
+                  Width="Auto">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Id" Binding="{Binding Attribut_Id}" Width="40" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="200"/>
+                        <DataGridTextColumn Header="Info" Binding="{Binding Info}" Width="200"/>
+                        <DataGridTextColumn Header="{Binding DataContext.Setting.SZ_1_Name, Source={x:Reference dummyElement}}" Binding="{Binding SZ_1}" Width="Auto"/>
+                        <DataGridTextColumn Header="{Binding DataContext.Setting.SZ_2_Name, Source={x:Reference dummyElement}}" Binding="{Binding SZ_2}" Width="Auto"/>
+                        <DataGridTextColumn Header="{Binding DataContext.Setting.SZ_3_Name, Source={x:Reference dummyElement}}" Binding="{Binding SZ_3}" Width="Auto"/>
+                        <DataGridTextColumn Header="{Binding DataContext.Setting.SZ_4_Name, Source={x:Reference dummyElement}}" Binding="{Binding SZ_4}" Width="Auto"/>
+                        <DataGridTextColumn Header="{Binding DataContext.Setting.SZ_5_Name, Source={x:Reference dummyElement}}" Binding="{Binding SZ_5}" Width="Auto" Visibility="{Binding DataContext.NewGoalsActivated, Source={x:Reference dummyElement}}"/>
+                        <DataGridTextColumn Header="{Binding DataContext.Setting.SZ_6_Name, Source={x:Reference dummyElement}}" Binding="{Binding SZ_6}" Width="Auto" Visibility="{Binding DataContext.NewGoalsActivated, Source={x:Reference dummyElement}}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <Border Grid.Row="3" Background="White">
+                    <Button Command="{Binding Save}" Visibility="{Binding EditMode, Converter={StaticResource BoolToVisConverter}}" Content="Änderungen übernehmen und schließen" Height="30" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

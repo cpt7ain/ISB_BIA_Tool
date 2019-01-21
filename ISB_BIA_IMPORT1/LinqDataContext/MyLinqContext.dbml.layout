@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 12, 18.125" name="MyLinqContext">
+  <DataContextMoniker Name="/MyLinqContextDataContext" />
+  <nestedChildShapes>
+    <classShape Id="6e2b3ee9-5daa-4cf3-bcb2-62a1efa0bfff" absoluteBounds="0.75, 1, 2, 4.2708154296875">
+      <DataClassMoniker Name="/MyLinqContextDataContext/ISB_BIA_Applikationen" />
+      <nestedChildShapes>
+        <elementListCompartment Id="6e4ab4ae-f25d-4c85-88a6-78f3a7e0144b" absoluteBounds="0.765, 1.46, 1.9700000000000002, 3.7108154296875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="7f5c5e80-c94e-4de7-8236-0bff9b7dc32c" absoluteBounds="6.75, 0.75, 2, 3.8862125651041666">
+      <DataClassMoniker Name="/MyLinqContextDataContext/ISB_BIA_Settings" />
+      <nestedChildShapes>
+        <elementListCompartment Id="aa2f181a-4dc0-491a-8407-86d3fb46239a" absoluteBounds="6.765, 1.21, 1.9700000000000002, 3.3262125651041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="d178bf6a-82f2-447f-b44a-0840096f23c3" absoluteBounds="3.5, 1.375, 2, 3.6939111328124996">
+      <DataClassMoniker Name="/MyLinqContextDataContext/ISB_BIA_Delta_Analyse" />
+      <nestedChildShapes>
+        <elementListCompartment Id="1f250758-312f-4f63-8ae5-363ad384f6b0" absoluteBounds="3.515, 1.835, 1.9700000000000002, 3.1339111328125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="f5c2d020-83ac-49aa-9863-a33c3659f43c" absoluteBounds="3.75, 6.75, 2, 4.2708154296874987">
+      <DataClassMoniker Name="/MyLinqContextDataContext/ISB_BIA_Informationssegmente" />
+      <nestedChildShapes>
+        <elementListCompartment Id="b782d019-8fa1-4ff1-8c7f-97ac9f1d0b8b" absoluteBounds="3.765, 7.21, 1.9700000000000002, 3.7108154296875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="43ddcf31-26c3-4d84-bf74-e60bd6f647a0" absoluteBounds="6.75, 5.75, 2, 3.1170068359375005">
+      <DataClassMoniker Name="/MyLinqContextDataContext/ISB_BIA_Informationssegmente_Attribute" />
+      <nestedChildShapes>
+        <elementListCompartment Id="475de0ad-646f-4cec-811a-ab191fe6602d" absoluteBounds="6.765, 6.21, 1.9700000000000002, 2.5570068359375" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="f237b45f-635c-41ac-9b32-398ccd1891f7" absoluteBounds="9.75, 0.75, 2, 1.9631982421875003">
+      <DataClassMoniker Name="/MyLinqContextDataContext/ISB_BIA_Lock" />
+      <nestedChildShapes>
+        <elementListCompartment Id="8294fe0d-d4cd-43c7-8986-750da85be3b3" absoluteBounds="9.765, 1.21, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="d1a1ec3a-74ae-4d1e-a233-96fdf0abf619" absoluteBounds="9.75, 3.75, 2, 2.347801106770834">
+      <DataClassMoniker Name="/MyLinqContextDataContext/ISB_BIA_Log" />
+      <nestedChildShapes>
+        <elementListCompartment Id="c085a096-1fdf-45cd-b109-f2f58e316262" absoluteBounds="9.765, 4.21, 1.9700000000000002, 1.7878011067708335" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="eaccde23-12bc-4b0e-8596-dadf68316054" absoluteBounds="6.75, 9.75, 2, 1.7708968098958344">
+      <DataClassMoniker Name="/MyLinqContextDataContext/ISB_BIA_OEs" />
+      <nestedChildShapes>
+        <elementListCompartment Id="136b4bf1-04f6-4bf8-97e6-d1cb991bd3fd" absoluteBounds="6.765, 10.21, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="859dcd1c-deb1-42fa-a895-3b91b429f339" absoluteBounds="0.75, 10.875, 2, 6.9630354817708309">
+      <DataClassMoniker Name="/MyLinqContextDataContext/ISB_BIA_Prozesse" />
+      <nestedChildShapes>
+        <elementListCompartment Id="14ca2211-a0ad-4329-9d3a-43796ef5f2ca" absoluteBounds="0.765, 11.335, 1.9700000000000002, 6.403035481770833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="3ac92f8f-a0be-45b3-bc3b-b7829a459318" absoluteBounds="9.75, 7.75, 2, 1.9631982421874996">
+      <DataClassMoniker Name="/MyLinqContextDataContext/ISB_BIA_Prozesse_Applikationen" />
+      <nestedChildShapes>
+        <elementListCompartment Id="65448e89-44bd-4523-8e7c-b73b5b966e71" absoluteBounds="9.765, 8.21, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(2.75 : 3.22195556640625); (3.5 : 3.22195556640625)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/MyLinqContextDataContext/ISB_BIA_Applikationen/ISB_BIA_Applikationen_ISB_BIA_Delta_Analyse" />
+      <nodes>
+        <classShapeMoniker Id="6e2b3ee9-5daa-4cf3-bcb2-62a1efa0bfff" />
+        <classShapeMoniker Id="d178bf6a-82f2-447f-b44a-0840096f23c3" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.75 : 14.4606754557292); (3.59375 : 14.4606754557292); (3.59375 : 5.0689111328125)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/MyLinqContextDataContext/ISB_BIA_Prozesse/ISB_BIA_Prozesse_ISB_BIA_Delta_Analyse" />
+      <nodes>
+        <classShapeMoniker Id="859dcd1c-deb1-42fa-a895-3b91b429f339" />
+        <classShapeMoniker Id="d178bf6a-82f2-447f-b44a-0840096f23c3" />
+      </nodes>
+    </associationConnector>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

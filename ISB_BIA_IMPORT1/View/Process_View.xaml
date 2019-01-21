@@ -1,0 +1,530 @@
+﻿<UserControl x:Class="ISB_BIA_IMPORT1.View.Process_View"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vm="clr-namespace:ISB_BIA_IMPORT1.ViewModel"
+             xmlns:c="clr-namespace:ISB_BIA_IMPORT1.Converter"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" 
+             d:DesignWidth="1200"
+             Background="LightSteelBlue"
+             DataContext="{Binding Source={StaticResource Locator}, Path=Process}">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <c:TextInputToVisibilityConverter x:Key="TextInputToVisibilityConverter" />
+            <c:ComparisonConverter x:Key="ComparisonConverter"/>
+            <c:NegateBooleanToVisibilityConverter x:Key="convHid"/>
+            <BooleanToVisibilityConverter x:Key="convVis"/>
+            <c:ISToBrushConverter x:Key="ISToBrushConverter"/>
+            <c:MaxValuesToEnabledConverter x:Key="MaxValuesToEnabledConverter"/>
+            <c:NumToAlphBinaryConverter x:Key="NumToAlphBinaryConverter"/>
+            <c:BinaryToBrushConverter x:Key="BinaryToBrushConverter"/>
+            <ControlTemplate x:Key="EllipseWithText" TargetType="{x:Type Button}">
+                <Grid x:Name="MainGrid">
+                    <Rectangle x:Name="MainRectangle" Fill="White" Stroke="Black" RadiusX="15" RadiusY="15"/>
+                    <ContentPresenter x:Name="Presenter"
+                                  HorizontalAlignment="Center"  VerticalAlignment="Center" 
+                                  TextBlock.Foreground="Black"/>
+                    <Path x:Name="Cross"
+                                  Stretch="Fill" Stroke="Black" 
+                                  StrokeThickness="2" Width="8" Height="8" />
+                </Grid>
+                <ControlTemplate.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter TargetName="MainRectangle" Property="Fill" Value="LightSalmon"/>
+                        <Setter TargetName="MainRectangle" Property="StrokeThickness" Value="2"/>
+                        <Setter TargetName="Cross" Property="Stroke" Value="White" />
+                        <Setter TargetName="Presenter" Property="TextBlock.Foreground" Value="White" />
+                    </Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="100*"/>
+        </Grid.RowDefinitions>
+        <FrameworkElement x:Name="dummyElement" Visibility="Collapsed"/>
+        <Border Grid.Column="0" Grid.ColumnSpan="2">
+            <Grid>
+                <Label Content="{Binding Header}" FontWeight="Bold" Grid.ColumnSpan="2" Margin="10,0,0,0"  VerticalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Setter Property="Visibility" Value="Hidden"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CurrentProcess.Kritischer_Prozess}" Value="Ja">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+                    <Label Content="Kritischer Prozess" HorizontalAlignment="Center" FontSize="18" FontWeight="Bold" Foreground="Red"/>
+                    <Button Content="?" Command="{Binding ShowMsg}" CommandParameter="{Binding Krit_Msg}" Foreground="red" Width="30" Height="30" FontWeight="Bold" Template="{StaticResource EllipseWithText}"/>
+                </StackPanel>
+                <Button Content="Zurück" HorizontalAlignment="Right" Background="Wheat" Margin="0,0,10,0" VerticalAlignment="Center" Command="{Binding NavBack}"/>
+            </Grid>
+        </Border>
+        <Border Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Margin="10" Background="White" BorderBrush="Black" BorderThickness="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="600*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50*"/>
+                    <RowDefinition Height="50*"/>
+                    <RowDefinition Height="400*"/>
+                    <RowDefinition Height="50*"/>
+                </Grid.RowDefinitions>
+                <Label Content="Prozess:" FontWeight="Bold" VerticalAlignment="Center" Grid.Row="0"  HorizontalAlignment="Right"/>
+                <Label Content="Sub-Prozess:"  FontWeight="Bold" VerticalAlignment="Center" Grid.Row="1" HorizontalAlignment="Right"/>
+                <Border Grid.Column="1" Grid.Row="0" Margin="20,0,100,0">
+                    <TextBlock Text="{Binding CurrentProcess.Prozess}" TextWrapping="WrapWithOverflow" VerticalAlignment="Center"/>
+                </Border>
+                <Button Command="{Binding ExportProcessHistory}" Margin="0,0,10,0" Content="Verlauf&#x0a;Export" Grid.Column="1" Width="60" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.RowSpan="2"/>
+                <Border Grid.Column="1" Margin="20,0,100,0" Grid.Row="1">
+                    <TextBlock Text="{Binding CurrentProcess.Sub_Prozess}" Margin="0,0,0,0" TextWrapping="WrapWithOverflow" VerticalAlignment="Center"/>
+                </Border>
+                <TabControl SelectedIndex="{Binding CurrentTab}" HorizontalAlignment="Stretch" Grid.Row="2" Grid.ColumnSpan="2">
+                    <TabItem Header="Prozessstammdaten" IsEnabled="False">
+                        <Grid Background="#FFE5E5E5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="10*"/>
+                                <ColumnDefinition Width="150*"/>
+                                <ColumnDefinition Width="200*"/>
+                                <ColumnDefinition Width="60*"/>
+                                <ColumnDefinition Width="10*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="10"/>
+                                <RowDefinition Height="75*"/>
+                                <RowDefinition Height="75*"/>
+                                <RowDefinition Height="75*"/>
+                                <RowDefinition Height="75*"/>
+                                <RowDefinition Height="75*"/>
+                                <RowDefinition Height="10"/>
+                            </Grid.RowDefinitions>
+                            <Label Content="Prozessname" ToolTip="Pflichtfeld" FontWeight="Bold" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"/>
+                            <TextBox Text="{Binding CurrentProcess.Prozess, UpdateSourceTrigger=PropertyChanged}" Grid.Column="2" Height="60" Grid.Row="1" Grid.ColumnSpan="2" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                            <Button Command="{Binding ShowMsg}" CommandParameter="{Binding PName_Msg}" Content="  ?  " Height="30" Width="30" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" Focusable="False" Template="{StaticResource EllipseWithText}"/>
+                            <Label Content="Sub-Prozessname" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2"/>
+                            <TextBox Text="{Binding CurrentProcess.Sub_Prozess, UpdateSourceTrigger=PropertyChanged}" Grid.Column="2" Height="60" Grid.Row="2" Grid.ColumnSpan="2" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                            <Button Command="{Binding ShowMsg}" CommandParameter="{Binding SName_Msg}" Content="  ?  " Height="30" Width="30"  Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" Focusable="False" Template="{StaticResource EllipseWithText}"/>
+                            <Label Content="Verantwortliche OE" ToolTip="Pflichtfeld" FontWeight="Bold" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0" Grid.Row="3"/>
+                            <ComboBox SelectedItem="{Binding CurrentProcess.OE_Filter}" ItemsSource="{Binding OEList}" Grid.Column="2" Grid.Row="3" Grid.ColumnSpan="2" VerticalAlignment="Center" SelectedIndex="0"/>
+                            <Button Command="{Binding ShowMsg}" CommandParameter="{Binding OE_Msg}" Content="  ?  " Height="30" Width="30" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" Focusable="False" Template="{StaticResource EllipseWithText}"/>
+                            <TextBlock Text="Prozesseigentümer" ToolTip="Pflichtfeld" FontWeight="Bold" TextAlignment="Center" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="4"/>
+                            <ComboBox SelectedItem="{Binding Prozessverantwortlicher}" ItemsSource="{Binding ProcessOwnerList}" Grid.Column="2" Grid.Row="4" VerticalAlignment="Center" Visibility="{Binding Prozessverantwortlicher_Check, Converter={StaticResource convHid}}"/>
+                            <CheckBox Content="Hinzufügen" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="4" IsChecked="{Binding Prozessverantwortlicher_Check, Mode=OneWayToSource}"/>
+                            <Button Command="{Binding ShowMsg}" CommandParameter="{Binding Responsible_Msg}" Content="  ?  " Height="30" Width="30" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" VerticalAlignment="Center" Focusable="False" Template="{StaticResource EllipseWithText}"/>
+                            <Border Grid.Column="2" Grid.Row="4" Background="White" VerticalAlignment="Center" Visibility="{Binding Prozessverantwortlicher_Check, Converter={StaticResource convVis}}">
+                                <Grid>
+                                    <TextBlock Grid.Column="2" Background="White" Grid.Row="1" VerticalAlignment="Center" Text="{Binding Ph_Responsible}" Foreground="Gray" >
+                                        <TextBlock.Visibility>
+                                            <MultiBinding Converter="{StaticResource TextInputToVisibilityConverter}">
+                                                <Binding ElementName="txtUserEntry1" Path="Text.IsEmpty" />
+                                                <Binding ElementName="txtUserEntry1" Path="IsFocused" />
+                                            </MultiBinding>
+                                        </TextBlock.Visibility>
+                                    </TextBlock>
+                                    <TextBox Name="txtUserEntry1" Background="Transparent" Text="{Binding Prozessverantwortlicher_Text}" Grid.Column="2" TextWrapping="Wrap" VerticalAlignment="Center">
+                                    </TextBox>
+                                </Grid>
+                            </Border>
+                            <TextBlock Text="Reifegrad des Prozesses" ToolTip="Pflichtfeld" FontWeight="Bold" TextAlignment="Center" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="5"/>
+                            <ComboBox ItemsSource="{Binding MaturityList}" Grid.Column="2" Grid.Row="5" Grid.ColumnSpan="2" VerticalAlignment="Center" SelectedIndex="0" SelectedItem="{Binding CurrentProcess.Reifegrad_des_Prozesses}"/>
+                            <Button Command="{Binding Info}" CommandParameter="Reifegrad" Content="  ?  " Height="30" Width="30" Grid.Column="1" Grid.Row="5" HorizontalAlignment="Left" VerticalAlignment="Center" Tag="Reifegrad" Focusable="False" Template="{StaticResource EllipseWithText}"/>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Schnittstellen" IsEnabled="False">
+                        <Grid x:Name="tab6Grid" Background="#FFE5E5E5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="10*"/>
+                                <ColumnDefinition Width="150*"/>
+                                <ColumnDefinition Width="140*"/>
+                                <ColumnDefinition Width="60*"/>
+                                <ColumnDefinition Width="10*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="5*"/>
+                                <RowDefinition Height="75*"/>
+                                <RowDefinition Height="75*"/>
+                                <RowDefinition Height="5*"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="Vorgelagerter Prozess" TextAlignment="Center" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"/>
+                            <ComboBox SelectedItem="{Binding Vorgelagerte_Prozesse}" ItemsSource="{Binding PreProcessList}" Grid.Column="2" Grid.Row="1" VerticalAlignment="Center" Visibility="{Binding Vorgelagerte_Prozesse_Check, Converter={StaticResource convHid}}"/>
+                            <TextBox Text="{Binding Vorgelagerte_Prozesse_Text}" Grid.Column="2" Grid.Row="1" VerticalAlignment="Center" TextWrapping="Wrap"  Visibility="{Binding Vorgelagerte_Prozesse_Check, Converter={StaticResource convVis}}"/>
+                            <CheckBox Content="Hinzufügen" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="1" IsChecked="{Binding Vorgelagerte_Prozesse_Check, Mode=OneWayToSource}"/>
+                            <Button Command="{Binding ShowMsg}" CommandParameter="{Binding PreProc_Msg}" Content="  ?  " Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" Focusable="False" Width="30" Height="30" FontWeight="Bold" Template="{StaticResource EllipseWithText}"/>
+                            <TextBlock Text="Nachgelagerter Prozess" TextAlignment="Center" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2"/>
+                            <ComboBox SelectedItem="{Binding Nachgelagerte_Prozesse}" ItemsSource="{Binding PostProcessList}" Grid.Column="2" Grid.Row="2" VerticalAlignment="Center" Visibility="{Binding Nachgelagerte_Prozesse_Check, Converter={StaticResource convHid}}"/>
+                            <TextBox Text="{Binding Nachgelagerte_Prozesse_Text}"  Grid.Column="2" Grid.Row="2" VerticalAlignment="Center" TextWrapping="Wrap" Visibility="{Binding Nachgelagerte_Prozesse_Check, Converter={StaticResource convVis}}"/>
+                            <CheckBox Content="Hinzufügen" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="2" IsChecked="{Binding Nachgelagerte_Prozesse_Check, Mode=OneWayToSource}"/>
+                            <Button Command="{Binding ShowMsg}" CommandParameter="{Binding PreProc_Msg}" Content="  ?  " Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" Focusable="False" Width="30" Height="30" FontWeight="Bold" Template="{StaticResource EllipseWithText}"/>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Informationssegmente" IsEnabled="False">
+                        <Grid x:Name="tab8Grid" Background="#FFE5E5E5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="10*"/>
+                                <ColumnDefinition Width="150*"/>
+                                <ColumnDefinition Width="170*"/>
+                                <ColumnDefinition Width="30*"/>
+                                <ColumnDefinition Width="10*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="5*"/>
+                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="5*"/>
+                            </Grid.RowDefinitions>
+                            <Button Command="{Binding ShowMsg}" CommandParameter="{Binding IS_Msg}" Content="  ?  " Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" Focusable="False" Width="30" Height="30" FontWeight="Bold" Template="{StaticResource EllipseWithText}"/>
+                            <Button Command="{Binding NavToISViewChild}" Content="Übsersicht" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Focusable="False"/>
+                            <Label Content="Segment 1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2"/>
+                            <Label Content="Segment 2" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="3"/>
+                            <Label Content="Segment 3" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="4"/>
+                            <Label Content="Segment 4" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="5"/>
+                            <Label Content="Segment 5" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="6"/>
+
+                            <ComboBox Name="c1" SelectedItem="{Binding Relevantes_IS_1}" ItemsSource="{Binding ISList}" SelectedValuePath="Key" DisplayMemberPath="Value" Grid.Column="2" VerticalAlignment="Center" Grid.Row="2"/>
+                            <Button Command="{Binding NavToIS}" CommandParameter="{Binding ElementName=c1, Path=SelectedItem.Key}" Content="Info" Grid.Column="3" Grid.Row="2" VerticalAlignment="Center" HorizontalContentAlignment="Center"/>
+                            <ComboBox Name="c2" SelectedItem="{Binding Relevantes_IS_2}" ItemsSource="{Binding ISList}" SelectedValuePath="Key" DisplayMemberPath="Value" Grid.Column="2" VerticalAlignment="Center" Grid.Row="3"/>
+                            <Button Command="{Binding NavToIS}" CommandParameter="{Binding ElementName=c2, Path=SelectedItem.Key}" Content="Info" Grid.Column="3" Grid.Row="3" VerticalAlignment="Center" HorizontalContentAlignment="Center"/>
+                            <ComboBox Name="c3" SelectedItem="{Binding Relevantes_IS_3}" ItemsSource="{Binding ISList}" SelectedValuePath="Key" DisplayMemberPath="Value" Grid.Column="2" VerticalAlignment="Center" Grid.Row="4"/>
+                            <Button Command="{Binding NavToIS}" CommandParameter="{Binding ElementName=c3, Path=SelectedItem.Key}" Content="Info" Grid.Column="3" Grid.Row="4" VerticalAlignment="Center" HorizontalContentAlignment="Center"/>
+                            <ComboBox Name="c4" SelectedItem="{Binding Relevantes_IS_4}" ItemsSource="{Binding ISList}" SelectedValuePath="Key" DisplayMemberPath="Value" Grid.Column="2" VerticalAlignment="Center" Grid.Row="5"/>
+                            <Button Command="{Binding NavToIS}" CommandParameter="{Binding ElementName=c4, Path=SelectedItem.Key}" Content="Info" Grid.Column="3" Grid.Row="5" VerticalAlignment="Center" HorizontalContentAlignment="Center"/>
+                            <ComboBox Name="c5" SelectedItem="{Binding Relevantes_IS_5}" ItemsSource="{Binding ISList}" SelectedValuePath="Key" DisplayMemberPath="Value" Grid.Column="2" VerticalAlignment="Center" Grid.Row="6"/>
+                            <Button Command="{Binding NavToIS}" CommandParameter="{Binding ElementName=c5, Path=SelectedItem.Key}" Content="Info" Grid.Column="3" Grid.Row="6" VerticalAlignment="Center" HorizontalContentAlignment="Center"/>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Schutzziele" IsEnabled="False">
+                        <Grid Background="#FFE5E5E5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="10*"/>
+                                <ColumnDefinition Width="100*"/>
+                                <ColumnDefinition Width="50*"/>
+                                <ColumnDefinition Width="50*"/>
+                                <ColumnDefinition Width="50*"/>
+                                <ColumnDefinition Width="50*"/>
+                                <ColumnDefinition Width="50*"/>
+                                <ColumnDefinition Width="10*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="5*"/>
+                                <RowDefinition Height="25*"/>
+                                <RowDefinition Height="25*"/>
+                                <RowDefinition Height="25*"/>
+                                <RowDefinition Height="25*"/>
+                                <RowDefinition Height="25*"/>
+                                <RowDefinition Height="25*"/>
+                                <RowDefinition Height="25*"/>
+                                <RowDefinition Height="25*"/>
+                                <RowDefinition Height="5*"/>
+                            </Grid.RowDefinitions>
+                            <Border Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="6">
+                                <Border.Background>
+                                    <MultiBinding Converter="{StaticResource ISToBrushConverter}">
+                                        <Binding Path="SZ_1_Max"/>
+                                        <Binding Path="CurrentProcess.SZ_1"/>
+                                    </MultiBinding>
+                                </Border.Background>
+                            </Border>
+                            <Border Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="6">
+                                <Border.Background>
+                                    <MultiBinding Converter="{StaticResource ISToBrushConverter}">
+                                        <Binding Path="SZ_2_Max"/>
+                                        <Binding Path="CurrentProcess.SZ_2"/>
+                                    </MultiBinding>
+                                </Border.Background>
+                            </Border>
+                            <Border Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="6">
+                                <Border.Background>
+                                    <MultiBinding Converter="{StaticResource ISToBrushConverter}">
+                                        <Binding Path="SZ_3_Max"/>
+                                        <Binding Path="CurrentProcess.SZ_3"/>
+                                    </MultiBinding>
+                                </Border.Background>
+                            </Border>
+                            <Border Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="6">
+                                <Border.Background>
+                                    <MultiBinding Converter="{StaticResource ISToBrushConverter}">
+                                        <Binding Path="SZ_4_Max"/>
+                                        <Binding Path="CurrentProcess.SZ_4"/>
+                                    </MultiBinding>
+                                </Border.Background>
+                            </Border>
+                            <Border Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="6">
+                                <Border.Background>
+                                    <MultiBinding Converter="{StaticResource ISToBrushConverter}">
+                                        <Binding Path="SZ_5_Max"/>
+                                        <Binding Path="CurrentProcess.SZ_5"/>
+                                    </MultiBinding>
+                                </Border.Background>
+                            </Border>
+                            <Border Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="6">
+                                <Border.Background>
+                                    <MultiBinding Converter="{StaticResource ISToBrushConverter}">
+                                        <Binding Path="SZ_6_Max"/>
+                                        <Binding Path="CurrentProcess.SZ_6"/>
+                                    </MultiBinding>
+                                </Border.Background>
+                            </Border>
+
+                            <Label Content="Schutzziel" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"/>
+                            <Label Content="nicht relevant" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"/>
+                            <Label Content="normal" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"/>
+                            <Label Content="mittel" Grid.Column="4" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"/>
+                            <Label Content="hoch" Grid.Column="5" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"/>
+                            <Label Content="sehr hoch" Grid.Column="6" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"/>
+
+                            <Label Content="{Binding Setting.SZ_1_Name}" FontWeight="Bold" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2"/>
+                            <Button Command="{Binding Info}" CommandParameter="SZ_1" Content="  ?  " Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" Tag="SZ_1" Focusable="False" Width="30" Height="30" FontWeight="Bold" Template="{StaticResource EllipseWithText}"/>
+                            <RadioButton GroupName="SZ_1" Grid.Column="2" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Center" IsChecked="{Binding CurrentProcess.SZ_1, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.none}}" IsEnabled="{Binding SZ_1_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=0}"/>
+                            <RadioButton GroupName="SZ_1" Grid.Column="3" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Center" IsChecked="{Binding CurrentProcess.SZ_1, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.low}}" IsEnabled="{Binding SZ_1_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=1}"/>
+                            <RadioButton GroupName="SZ_1" Grid.Column="4" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Center" IsChecked="{Binding CurrentProcess.SZ_1, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.medium}}" IsEnabled="{Binding SZ_1_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=2}"/>
+                            <RadioButton GroupName="SZ_1" Grid.Column="5" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Center" IsChecked="{Binding CurrentProcess.SZ_1, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.high}}" IsEnabled="{Binding SZ_1_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=3}"/>
+                            <RadioButton GroupName="SZ_1" Grid.Column="6" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Center" IsChecked="{Binding CurrentProcess.SZ_1, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.veryhigh}}" IsEnabled="{Binding SZ_1_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=4}"/>
+                            <Label Content="{Binding Setting.SZ_2_Name}" FontWeight="Bold" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="3" />
+                            <Button Command="{Binding Info}" CommandParameter="SZ_2" Content="  ?  " Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" Tag="SZ_2" Focusable="False" Width="30" Height="30" FontWeight="Bold" Template="{StaticResource EllipseWithText}"/>
+                            <RadioButton GroupName="SZ_2" Grid.Column="2" HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Center" IsChecked="{Binding CurrentProcess.SZ_2, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.none}}" IsEnabled="{Binding SZ_2_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=0}"/>
+                            <RadioButton GroupName="SZ_2" Grid.Column="3" HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Center" IsChecked="{Binding CurrentProcess.SZ_2, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.low}}" IsEnabled="{Binding SZ_2_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=1}"/>
+                            <RadioButton GroupName="SZ_2" Grid.Column="4" HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Center" IsChecked="{Binding CurrentProcess.SZ_2, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.medium}}" IsEnabled="{Binding SZ_2_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=2}"/>
+                            <RadioButton GroupName="SZ_2" Grid.Column="5" HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Center" IsChecked="{Binding CurrentProcess.SZ_2, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.high}}" IsEnabled="{Binding SZ_2_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=3}"/>
+                            <RadioButton GroupName="SZ_2" Grid.Column="6" HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Center" IsChecked="{Binding CurrentProcess.SZ_2, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.veryhigh}}" IsEnabled="{Binding SZ_2_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=4}"/>
+
+                            <Label Content="{Binding Setting.SZ_3_Name}" FontWeight="Bold" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="4"/>
+                            <Button Command="{Binding Info}" CommandParameter="SZ_3" Content="  ?  " Grid.Column="1" Grid.Row="4" VerticalAlignment="Center" HorizontalAlignment="Left" Tag="SZ_3" Focusable="False" Width="30" Height="30" FontWeight="Bold" Template="{StaticResource EllipseWithText}"/>
+                            <RadioButton GroupName="SZ_3" Grid.Column="2" HorizontalAlignment="Center" Grid.Row="4" VerticalAlignment="Center" IsChecked="{Binding CurrentProcess.SZ_3, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.none}}" IsEnabled="{Binding SZ_3_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=0}"/>
+                            <RadioButton GroupName="SZ_3" Grid.Column="3" HorizontalAlignment="Center" Grid.Row="4" VerticalAlignment="Center" IsChecked="{Binding CurrentProcess.SZ_3, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.low}}" IsEnabled="{Binding SZ_3_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=1}"/>
+                            <RadioButton GroupName="SZ_3" Grid.Column="4" HorizontalAlignment="Center" Grid.Row="4" VerticalAlignment="Center" IsChecked="{Binding CurrentProcess.SZ_3, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.medium}}" IsEnabled="{Binding SZ_3_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=2}"/>
+                            <RadioButton GroupName="SZ_3" Grid.Column="5" HorizontalAlignment="Center" Grid.Row="4" VerticalAlignment="Center" IsChecked="{Binding CurrentProcess.SZ_3, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.high}}" IsEnabled="{Binding SZ_3_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=3}"/>
+                            <RadioButton GroupName="SZ_3" Grid.Column="6" HorizontalAlignment="Center" Grid.Row="4" VerticalAlignment="Center" IsChecked="{Binding CurrentProcess.SZ_3, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.veryhigh}}" IsEnabled="{Binding SZ_3_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=4}"/>
+
+                            <Label Content="{Binding Setting.SZ_4_Name}" FontWeight="Bold" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="5"/>
+                            <Button Command="{Binding Info}" CommandParameter="SZ_4" Content="  ?  " Grid.Column="1" Grid.Row="5" VerticalAlignment="Center" HorizontalAlignment="Left" Tag="SZ_4" Focusable="False" Width="30" Height="30" FontWeight="Bold" Template="{StaticResource EllipseWithText}"/>
+                            <RadioButton GroupName="SZ_4" Grid.Column="2" HorizontalAlignment="Center" Grid.Row="5" VerticalAlignment="Center" IsChecked="{Binding CurrentProcess.SZ_4, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.none}}" IsEnabled="{Binding SZ_4_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=0}"/>
+                            <RadioButton GroupName="SZ_4" Grid.Column="3" HorizontalAlignment="Center" Grid.Row="5" VerticalAlignment="Center" IsChecked="{Binding CurrentProcess.SZ_4, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.low}}" IsEnabled="{Binding SZ_4_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=1}"/>
+                            <RadioButton GroupName="SZ_4" Grid.Column="4" HorizontalAlignment="Center" Grid.Row="5" VerticalAlignment="Center" IsChecked="{Binding CurrentProcess.SZ_4, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.medium}}" IsEnabled="{Binding SZ_4_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=2}"/>
+                            <RadioButton GroupName="SZ_4" Grid.Column="5" HorizontalAlignment="Center" Grid.Row="5" VerticalAlignment="Center" IsChecked="{Binding CurrentProcess.SZ_4, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.high}}" IsEnabled="{Binding SZ_4_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=3}"/>
+                            <RadioButton GroupName="SZ_4" Grid.Column="6" HorizontalAlignment="Center" Grid.Row="5" VerticalAlignment="Center" IsChecked="{Binding CurrentProcess.SZ_4, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.veryhigh}}" IsEnabled="{Binding SZ_4_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=4}"/>
+
+                            <Label Content="{Binding Setting.SZ_5_Name}" FontWeight="Bold" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="6" Visibility="{Binding Path=SchutzzielVisible, Converter={StaticResource convVis}}"/>
+                            <Button Command="{Binding Info}" CommandParameter="SZ_5" Content="  ?  " Grid.Column="1" Grid.Row="6" VerticalAlignment="Center" HorizontalAlignment="Left" Visibility="{Binding Path=SchutzzielVisible, Converter={StaticResource convVis}}" Width="30" Height="30" FontWeight="Bold" Template="{StaticResource EllipseWithText}"/>
+                            <RadioButton GroupName="SZ_5" Grid.Column="2" HorizontalAlignment="Center" Grid.Row="6" VerticalAlignment="Center" Visibility="{Binding Path=SchutzzielVisible, Converter={StaticResource convVis}}" IsChecked="{Binding CurrentProcess.SZ_5, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.none}}" IsEnabled="{Binding SZ_5_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=0}"/>
+                            <RadioButton GroupName="SZ_5" Grid.Column="3" HorizontalAlignment="Center" Grid.Row="6" VerticalAlignment="Center" Visibility="{Binding Path=SchutzzielVisible, Converter={StaticResource convVis}}" IsChecked="{Binding CurrentProcess.SZ_5, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.low}}" IsEnabled="{Binding SZ_5_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=1}"/>
+                            <RadioButton GroupName="SZ_5" Grid.Column="4" HorizontalAlignment="Center" Grid.Row="6" VerticalAlignment="Center" Visibility="{Binding Path=SchutzzielVisible, Converter={StaticResource convVis}}" IsChecked="{Binding CurrentProcess.SZ_5, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.medium}}" IsEnabled="{Binding SZ_5_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=2}"/>
+                            <RadioButton GroupName="SZ_5" Grid.Column="5" HorizontalAlignment="Center" Grid.Row="6" VerticalAlignment="Center" Visibility="{Binding Path=SchutzzielVisible, Converter={StaticResource convVis}}" IsChecked="{Binding CurrentProcess.SZ_5, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.high}}" IsEnabled="{Binding SZ_5_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=3}"/>
+                            <RadioButton GroupName="SZ_5" Grid.Column="6" HorizontalAlignment="Center" Grid.Row="6" VerticalAlignment="Center" Visibility="{Binding Path=SchutzzielVisible, Converter={StaticResource convVis}}" IsChecked="{Binding CurrentProcess.SZ_5, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.veryhigh}}" IsEnabled="{Binding SZ_5_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=4}"/>
+
+                            <Label Content="{Binding Setting.SZ_6_Name}" FontWeight="Bold" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="7" Visibility="{Binding Path=SchutzzielVisible, Converter={StaticResource convVis}}"/>
+                            <Button Command="{Binding Info}" CommandParameter="SZ_6" Content="  ?  " Grid.Column="1" Grid.Row="7" VerticalAlignment="Center" HorizontalAlignment="Left" Visibility="{Binding Path=SchutzzielVisible, Converter={StaticResource convVis}}" Width="30" Height="30" FontWeight="Bold" Template="{StaticResource EllipseWithText}"/>
+                            <RadioButton GroupName="SZ_6" Grid.Column="2" HorizontalAlignment="Center" Grid.Row="7" VerticalAlignment="Center" Visibility="{Binding Path=SchutzzielVisible, Converter={StaticResource convVis}}" IsChecked="{Binding CurrentProcess.SZ_6, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.none}}" IsEnabled="{Binding SZ_6_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=0}"/>
+                            <RadioButton GroupName="SZ_6" Grid.Column="3" HorizontalAlignment="Center" Grid.Row="7" VerticalAlignment="Center" Visibility="{Binding Path=SchutzzielVisible, Converter={StaticResource convVis}}" IsChecked="{Binding CurrentProcess.SZ_6, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.low}}" IsEnabled="{Binding SZ_6_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=1}"/>
+                            <RadioButton GroupName="SZ_6" Grid.Column="4" HorizontalAlignment="Center" Grid.Row="7" VerticalAlignment="Center" Visibility="{Binding Path=SchutzzielVisible, Converter={StaticResource convVis}}" IsChecked="{Binding CurrentProcess.SZ_6, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.medium}}" IsEnabled="{Binding SZ_6_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=2}"/>
+                            <RadioButton GroupName="SZ_6" Grid.Column="5" HorizontalAlignment="Center" Grid.Row="7" VerticalAlignment="Center" Visibility="{Binding Path=SchutzzielVisible, Converter={StaticResource convVis}}" IsChecked="{Binding CurrentProcess.SZ_6, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.high}}" IsEnabled="{Binding SZ_6_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=3}"/>
+                            <RadioButton GroupName="SZ_6" Grid.Column="6" HorizontalAlignment="Center" Grid.Row="7" VerticalAlignment="Center" Visibility="{Binding Path=SchutzzielVisible, Converter={StaticResource convVis}}" IsChecked="{Binding CurrentProcess.SZ_6, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vm:SZ_Values.veryhigh}}" IsEnabled="{Binding SZ_6_Max, Converter={StaticResource MaxValuesToEnabledConverter}, ConverterParameter=4}"/>
+
+                            <Rectangle Fill="LightSalmon" Width="50" HorizontalAlignment="Left" Height="30" Grid.Row="8" Grid.Column="1" Stroke="Black"/>
+                            <Label Content="Durch Informationssegment vorgegebene Mindesteinstufung nicht erreicht" Grid.Row="8" Grid.Column="1" Margin="50,0,0,0" Grid.ColumnSpan="6" VerticalAlignment="Center"/>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Wiederherstellungszeit" IsEnabled="False">
+                        <Grid Background="#FFE5E5E5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="10*"/>
+                                <ColumnDefinition Width="150*"/>
+                                <ColumnDefinition Width="200*"/>
+                                <ColumnDefinition Width="10*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="5*"/>
+                                <RowDefinition Height="37.5*"/>
+                                <RowDefinition Height="37.5*"/>
+                                <RowDefinition Height="37.5*"/>
+                                <RowDefinition Height="37.5*"/>
+                                <RowDefinition Height="5*"/>
+                            </Grid.RowDefinitions>
+                            <Border Grid.Column="2" Grid.Row="1" Background="White" VerticalAlignment="Center">
+                                <Grid>
+                                    <TextBlock Grid.Column="2" Background="White" Grid.Row="1" VerticalAlignment="Center" Text="Bsp.: Mo-Do: 08-12 / 14-16 Uhr, Fr: 08-14 Uhr" Foreground="Gray" >
+                                        <TextBlock.Visibility>
+                                            <MultiBinding Converter="{StaticResource TextInputToVisibilityConverter}">
+                                                <Binding ElementName="txtUserEntry2" Path="Text.IsEmpty" />
+                                                <Binding ElementName="txtUserEntry2" Path="IsFocused" />
+                                            </MultiBinding>
+                                        </TextBlock.Visibility>
+                                    </TextBlock>
+                                    <TextBox Name="txtUserEntry2" Background="Transparent" Text="{Binding CurrentProcess.Servicezeit_Helpdesk}" Grid.Column="2" VerticalAlignment="Center" Grid.Row="1">
+                                    </TextBox>
+                                </Grid>
+                            </Border>
+                            <Label Content="Servicezeiten" ToolTip="Pflichtfeld" FontWeight="Bold" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"/>
+
+                            <Button Command="{Binding ShowMsg}" CommandParameter="{Binding ServiceTimes_Msg}" Content="  ?  " Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" Focusable="False" Width="30" Height="30" FontWeight="Bold" Template="{StaticResource EllipseWithText}"/>
+                            <TextBlock Text="Recover Point Objective&#10;(Normalbetrieb) in Stunden" FontWeight="Bold" TextAlignment="Center" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2"/>
+                            <Label Content="24 Stunden (Standard)" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="2"/>
+                            <Button Command="{Binding ShowMsg}" CommandParameter="{Binding RPO_Msg}" Content="  ?  " Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" Focusable="False" Width="30" Height="30" FontWeight="Bold" Template="{StaticResource EllipseWithText}"/>
+                            <TextBlock Text="Recovery Time Objective&#10;(Normalbetrieb) in Tagen" ToolTip="Pflichtfeld" FontWeight="Bold" TextAlignment="Center" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="3"/>
+                            <ComboBox SelectedItem="{Binding CurrentProcess.RTO_Wiederanlaufzeit_Recovery_Time_Objective}" ItemsSource="{Binding RTOList}" Grid.Column="2" VerticalAlignment="Center" Grid.Row="3"/>
+                            <Button Command="{Binding ShowMsg}" CommandParameter="{Binding RTO_Msg}" Content="  ?  " Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" Focusable="False" Width="30" Height="30" FontWeight="Bold" Template="{StaticResource EllipseWithText}"/>
+                            <TextBlock Text="Recovery Time Objective&#10;(Notfall) in Tagen" ToolTip="Pflichtfeld" FontWeight="Bold" TextAlignment="Center" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="4"/>
+                            <ComboBox SelectedItem="{Binding CurrentProcess.RTO_Wiederanlaufzeit_Recovery_Time_Objective_Notfall}" ItemsSource="{Binding RTOList}" Grid.Column="2" VerticalAlignment="Center" Grid.Row="4" SelectedIndex="0"/>
+                            <Button Command="{Binding ShowMsg}" CommandParameter="{Binding RTON_Msg}" Content="  ?  " Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" VerticalAlignment="Center" Focusable="False" Width="30" Height="30" FontWeight="Bold" Template="{StaticResource EllipseWithText}"/>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Prozessrisiko" IsEnabled="False">
+                        <Grid Background="#FFE5E5E5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="10*"/>
+                                <ColumnDefinition Width="150*"/>
+                                <ColumnDefinition Width="200*"/>
+                                <ColumnDefinition Width="10*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="10"/>
+                                <RowDefinition Height="100*"/>
+                                <RowDefinition Height="100*"/>
+                                <RowDefinition Height="100*"/>
+                                <RowDefinition Height="100*"/>
+                                <RowDefinition Height="100*"/>
+                                <RowDefinition Height="10"/>
+                            </Grid.RowDefinitions>
+                            <Label Content="Regulatorisch" ToolTip=""  Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"/>
+                            <CheckBox IsChecked="{Binding CurrentProcess.Regulatorisch}" Content="Verletzung von Regularien" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="1"/>
+                            <Button Command="{Binding ShowMsg}" CommandParameter="{Binding Reg_Msg}" Content="  ?  " Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" Focusable="False" Width="30" Height="30" FontWeight="Bold" Template="{StaticResource EllipseWithText}"/>
+                            <Label Content="Reputatorisch" ToolTip=""  Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2"/>
+                            <CheckBox IsChecked="{Binding CurrentProcess.Reputatorisch}" Content="Auswirkung auf Reputation" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="2"/>
+                            <Button Command="{Binding ShowMsg}" CommandParameter="{Binding Rep_Msg}" Content="  ?  " Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" Focusable="False" Width="30" Height="30" FontWeight="Bold" Template="{StaticResource EllipseWithText}"/>
+                            <Label Content="Finanziell" ToolTip=""  Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="3"/>
+                            <CheckBox IsChecked="{Binding CurrentProcess.Finanziell}" Content="Finanzielle Auswirkung" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="3"/>
+                            <Button Command="{Binding ShowMsg}" CommandParameter="{Binding Fin_Msg}" Content="  ?  " Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" Focusable="False" Width="30" Height="30" FontWeight="Bold" Template="{StaticResource EllipseWithText}"/>
+                            <Label Content="Kritischer Prozess" FontWeight="Bold" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="5"/>
+                            <Label Content="Kritikalität des Prozesses" ToolTip="Pflichtfeld" FontWeight="Bold" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="4"/>
+                            <Button Command="{Binding Info}" CommandParameter="Kritikalität" Content="  ?  " Grid.Column="1" Grid.Row="4" VerticalAlignment="Center" HorizontalAlignment="Left" Tag="Kritikalität" Focusable="False" Width="30" Height="30" FontWeight="Bold" Template="{StaticResource EllipseWithText}"/>
+                            <ComboBox SelectedItem="{Binding CurrentProcess.Kritikalität_des_Prozesses}" ItemsSource="{Binding CritList}" Grid.Column="2" Grid.Row="4" VerticalAlignment="Center"/>
+                            <Label Content="{Binding CurrentProcess.Kritischer_Prozess}" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="5">
+                                <Label.Style>
+                                    <Style TargetType="Label">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CurrentProcess.Kritischer_Prozess}" Value="Ja">
+                                                <Setter Property="FontSize" Value="25"/>
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                <Setter Property="Foreground" Value="Red"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Label.Style>
+                            </Label>
+                            <Button Command="{Binding ShowMsg}" CommandParameter="{Binding Krit_Msg}" Content="  ?  " Grid.Column="1" Grid.Row="5" VerticalAlignment="Center" HorizontalAlignment="Left" Focusable="False" Width="30" Height="30" FontWeight="Bold" Template="{StaticResource EllipseWithText}"/>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Verknüpfte Anwendungen" IsEnabled="False">
+                        <Grid Background="#FFE5E5E5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="30"/>
+                                <RowDefinition Height="80"/>
+                                <RowDefinition Height="100*"/>
+                                <RowDefinition Height="100*"/>
+                                <RowDefinition Height="20"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="300*"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="300*"/>
+                                <ColumnDefinition Width="20"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Command="{Binding ShowMsg}" CommandParameter="{Binding AppToProc_Msg}" Content="?" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Width="30" Height="30" FontWeight="Bold" Template="{StaticResource EllipseWithText}"/>
+                            <Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" Background="LightSteelBlue">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="40"/>
+                                        <RowDefinition Height="40"/>
+                                        <RowDefinition Height="100*"/>
+                                    </Grid.RowDefinitions>
+                                    <Label Content="Übersicht aller Anwendungen" HorizontalAlignment="Center" VerticalAlignment="Top" FontWeight="Bold"/>
+                                    <Label Content="Kategorie-Filter:" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
+                                    <ComboBox SelectedItem="{Binding SelectedFilterItem}" ItemsSource="{Binding ApplicationCategories}" Margin="150,0,5,0" Grid.Row="1" VerticalAlignment="Bottom" Text="Anwendungskategorie auswählen"/>
+                                    <DataGrid
+                                        ItemsSource="{Binding AllApplications}"
+                                        Grid.Row="2"
+                                        CanUserAddRows="False"
+                                        IsReadOnly="True"
+                                        RowHeaderWidth="0"
+                                        VerticalGridLinesBrush="LightGray"
+                                        HorizontalGridLinesBrush="LightGray"
+                                        AutoGenerateColumns="False"
+                                        SelectedItem="{Binding SelectedSourceItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Margin="5,0,5,5">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Width="1500" Header="Anwendungsname" Binding="{Binding IT_Anwendung_System}"/>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </Grid>
+                            </Border>
+                            <Border Grid.Column="3" Grid.Row="1" Grid.RowSpan="3" Background="LightSteelBlue">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="40"/>
+                                        <RowDefinition Height="40"/>
+                                        <RowDefinition Height="100*"/>
+                                    </Grid.RowDefinitions>
+                                    <DataGrid
+                                        ItemsSource="{Binding CurrentProcess.ApplicationList}"
+                                        Grid.Row="2"
+                                        RowHeaderWidth="0"
+                                        CanUserAddRows="False"
+                                        IsReadOnly="True"
+                                        VerticalGridLinesBrush="LightGray"
+                                        HorizontalGridLinesBrush="LightGray"
+                                        AutoGenerateColumns="False"
+                                        SelectedItem="{Binding SelectedTargetItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Margin="5,0,5,5">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Width="250" Header="Anwendungsname" Binding="{Binding IT_Anwendung_System}"/>
+                                            <DataGridTextColumn Width="150" Header="Kategorie" Binding="{Binding IT_Betriebsart}"/>
+                                            <DataGridTextColumn Width="Auto" Header="Verfügbar" Binding="{Binding Aktiv, Converter={StaticResource NumToAlphBinaryConverter}}"/>
+                                        </DataGrid.Columns>
+                                        <DataGrid.RowStyle>
+                                            <Style TargetType="DataGridRow">
+                                                <Setter Property="Background" Value="{Binding Aktiv, Converter={StaticResource BinaryToBrushConverter}}"/>
+                                            </Style>
+                                        </DataGrid.RowStyle>
+                                    </DataGrid>
+                                    <Border Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"  Visibility="{Binding DeletedApplicationsNotification}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label Foreground="Red" FontWeight="Bold" Content="!-Diesem Prozess sind inaktive Anwendungen zugeordnet-!"/>
+                                            <Button Command="{Binding ShowMsg}" CommandParameter="{Binding InactiveApp_Msg}" Content="?" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Width="30" Height="30" FontWeight="Bold" Template="{StaticResource EllipseWithText}"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Label Content="Mit diesem Prozess verknüpfte Anwendungen" HorizontalAlignment="Center" VerticalAlignment="Top" FontWeight="Bold"/>
+                                </Grid>
+                            </Border>
+                            <Button Content="hinzufügen&gt;" Grid.Column="2" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding AddApplication}"/>
+                            <Button  Content="&lt;löschen" Grid.Column="2" Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding RemoveApplication}"/>
+                        </Grid>
+                    </TabItem>
+                </TabControl>
+                <Border Grid.Row="4" Grid.ColumnSpan="5" Background="LightSteelBlue">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="300*"/>
+                            <ColumnDefinition Width="300*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Command="{Binding NextTab}" Content="Bestätigen und weiter >>" Grid.Column="1" Background="White"/>
+                        <Button Command="{Binding SaveAndContinue}" Content="Speichern und schließen" Grid.Column="1" Background="LightGreen" Visibility="{Binding ButtonSaveVisibility}"/>
+                        <Button Command="{Binding PrevTab}" Content="&lt;&lt; Zurück" Background="White"/>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

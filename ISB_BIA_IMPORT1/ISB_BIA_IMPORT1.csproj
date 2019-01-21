@@ -1,0 +1,350 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F1742B79-9D3A-453E-A752-F463538EA449}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>ISB_BIA_IMPORT1</RootNamespace>
+    <AssemblyName>ISB_BIA_IMPORT1</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>ISB-BIA1.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CommonServiceLocator, Version=2.0.2.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.2.0.2\lib\net45\CommonServiceLocator.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight, Version=5.4.1.0, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Extras, Version=5.4.1.0, Culture=neutral, PublicKeyToken=669f0b5e8f868abf, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Extras.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.4.1.0, Culture=neutral, PublicKeyToken=5f873c45e98af8a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=1.1.0.145, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.1.1.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI, Version=2.4.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.4.1\lib\net45\NPOI.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OOXML, Version=2.4.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.4.1\lib\net45\NPOI.OOXML.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net, Version=2.4.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.4.1\lib\net45\NPOI.OpenXml4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats, Version=2.4.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.4.1\lib\net45\NPOI.OpenXmlFormats.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="ReachFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="Converter\AlphToNumConverter.cs" />
+    <Compile Include="Converter\BinaryToBrushConverter.cs" />
+    <Compile Include="Converter\BoolToColorConverter.cs" />
+    <Compile Include="Converter\CellColorConverter.cs" />
+    <Compile Include="Converter\ComparisonConverter.cs" />
+    <Compile Include="Converter\DateToBrushConverter.cs" />
+    <Compile Include="Converter\DeltaColorConverter.cs" />
+    <Compile Include="Converter\ISToBrushConverter.cs" />
+    <Compile Include="Converter\MaxValuesToEnabledConverter.cs" />
+    <Compile Include="Converter\NegateBooleanConverter.cs" />
+    <Compile Include="Converter\NegateBooleanToVisibilityConverter.cs" />
+    <Compile Include="Converter\NumToAlphBinaryConverter.cs" />
+    <Compile Include="Converter\TextInputToVisibilityConverter.cs" />
+    <Compile Include="LinqDataContext\MyLinqContext.cs">
+      <DependentUpon>MyLinqContext.dbml</DependentUpon>
+    </Compile>
+    <Compile Include="LinqDataContext\MyLinqContext.designer.cs">
+      <DependentUpon>MyLinqContext.dbml</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Model\Application_Model.cs" />
+    <Compile Include="Model\InformationSegmentAttribute_Model.cs" />
+    <Compile Include="Model\InformationSegment_Model.cs" />
+    <Compile Include="Model\Login_Model.cs" />
+    <Compile Include="Model\Process_Model.cs" />
+    <Compile Include="Model\Settings_Model.cs" />
+    <Compile Include="Services\IMyDataService.cs" />
+    <Compile Include="Services\IMyDialogService.cs" />
+    <Compile Include="Services\IMyExportService.cs" />
+    <Compile Include="Services\IMyMailNotificationService.cs" />
+    <Compile Include="Services\IMyNavigationService.cs" />
+    <Compile Include="Services\IMySharedResourceService.cs" />
+    <Compile Include="Services\MyDataService.cs" />
+    <Compile Include="Services\MyDesignTimeDataService.cs" />
+    <Compile Include="Services\MyDesignTimeDialogService.cs" />
+    <Compile Include="Services\MyDesignTimeExportService.cs" />
+    <Compile Include="Services\MyDesignTimeMailNotificationService.cs" />
+    <Compile Include="Services\MyDesignTimeNavigationService.cs" />
+    <Compile Include="Services\MyDesignTimeSharedResourceService.cs" />
+    <Compile Include="Services\MyDialogService.cs" />
+    <Compile Include="Services\MyExportService.cs" />
+    <Compile Include="Services\MyMailNotificationService.cs" />
+    <Compile Include="Services\MyNavigationService.cs" />
+    <Compile Include="Services\MySharedResourceService.cs" />
+    <Compile Include="ViewModel\ApplicationView_ViewModel.cs" />
+    <Compile Include="ViewModel\Application_ViewModel.cs" />
+    <Compile Include="ViewModel\DataModel_ViewModel.cs" />
+    <Compile Include="ViewModel\DeltaAnalysis_ViewModel.cs" />
+    <Compile Include="ViewModel\DocumentView_ViewModel.cs" />
+    <Compile Include="ViewModel\InformationSegmentsAttributes_ViewModel.cs" />
+    <Compile Include="ViewModel\InformationSegmentsView_ViewModel.cs" />
+    <Compile Include="ViewModel\InformationSegment_ViewModel.cs" />
+    <Compile Include="ViewModel\LogView_ViewModel.cs" />
+    <Compile Include="ViewModel\Main_ViewModel.cs" />
+    <Compile Include="ViewModel\Menu_ViewModel.cs" />
+    <Compile Include="ViewModel\MyRelayCommand.cs" />
+    <Compile Include="ViewModel\OE_AssignmentView_ViewModel.cs" />
+    <Compile Include="ViewModel\ProcessView_ViewModel.cs" />
+    <Compile Include="ViewModel\Process_ViewModel.cs" />
+    <Compile Include="ViewModel\SBA_View_ViewModel.cs" />
+    <Compile Include="ViewModel\Settings_ViewModel.cs" />
+    <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="View\ApplicationView_View.xaml.cs">
+      <DependentUpon>ApplicationView_View.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Application_View.xaml.cs">
+      <DependentUpon>Application_View.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\DataModel_View.xaml.cs">
+      <DependentUpon>DataModel_View.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\DeltaAnalysis_View.xaml.cs">
+      <DependentUpon>DeltaAnalysis_View.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\DocumentView_View.xaml.cs">
+      <DependentUpon>DocumentView_View.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\InformationSegmentsAttributes_View.xaml.cs">
+      <DependentUpon>InformationSegmentsAttributes_View.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\InformationSegmentsView_View.xaml.cs">
+      <DependentUpon>InformationSegmentsView_View.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\InformationSegment_View.xaml.cs">
+      <DependentUpon>InformationSegment_View.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\LogView_View.xaml.cs">
+      <DependentUpon>LogView_View.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Menu_View.xaml.cs">
+      <DependentUpon>Menu_View.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Menu_View2.xaml.cs">
+      <DependentUpon>Menu_View2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\OE_AssignmentView_View.xaml.cs">
+      <DependentUpon>OE_AssignmentView_View.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ProcessView_View.xaml.cs">
+      <DependentUpon>ProcessView_View.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Process_View.xaml.cs">
+      <DependentUpon>Process_View.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\SBA_View_View.xaml.cs">
+      <DependentUpon>SBA_View_View.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Settings_View.xaml.cs">
+      <DependentUpon>Settings_View.xaml</DependentUpon>
+    </Compile>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="View\ApplicationView_View.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Application_View.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\DataModel_View.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\DeltaAnalysis_View.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\DocumentView_View.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\InformationSegmentsAttributes_View.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\InformationSegmentsView_View.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\InformationSegment_View.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\LogView_View.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Menu_View.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Menu_View2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\OE_AssignmentView_View.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\ProcessView_View.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Process_View.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\SBA_View_View.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Settings_View.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="ClassDiagram1.cd" />
+    <None Include="LinqDataContext\MyLinqContext.dbml">
+      <Generator>MSLinqToSQLGenerator</Generator>
+      <LastGenOutput>MyLinqContext.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="LinqDataContext\MyLinqContext.dbml.layout">
+      <DependentUpon>MyLinqContext.dbml</DependentUpon>
+    </None>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="Microsoft.Office.Core">
+      <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>8</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="Microsoft.Office.Interop.Excel">
+      <Guid>{00020813-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>9</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="VBIDE">
+      <Guid>{0002E157-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>5</VersionMajor>
+      <VersionMinor>3</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ISB-BIA1.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
