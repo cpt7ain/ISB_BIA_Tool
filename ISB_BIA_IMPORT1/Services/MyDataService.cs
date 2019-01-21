@@ -1522,7 +1522,6 @@ namespace ISB_BIA_IMPORT1.Services
         #endregion
 
         #region Informationssegmente
-
         public InformationSegment_Model GetSegmentModelFromDB(int id)
         {
             try
