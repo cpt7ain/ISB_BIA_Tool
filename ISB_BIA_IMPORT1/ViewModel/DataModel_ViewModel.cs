@@ -344,7 +344,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     "    [Prozess] INT NOT NULL," +
                     "    [Applikation] INT NOT NULL," +
                     "    [Relation] INT NOT NULL," +
-                    "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2017-12-31 23:59:59',120))," +
+                    "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
                     "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
                     "    UNIQUE(Prozess,Applikation,Datum)," +
                     "); ";
@@ -370,7 +370,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     "    [" + dt_Applications.Columns[12] + "] INT NOT NULL," +
                     "    [" + dt_Applications.Columns[13] + "] INT NOT NULL," +
                     "    [Aktiv] INT NOT NULL DEFAULT(1)," +
-                    "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2017-12-31 23:59:59',120))," +
+                    "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
                     "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
                     "    Unique (" + dt_Applications.Columns[0] + ",Datum)" +
                     ");";
@@ -407,7 +407,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     "    [" + dt_Processes.Columns[26] + "] NVARCHAR(50) NOT NULL," +
                     "    [" + dt_Processes.Columns[27] + "] NVARCHAR(50) NOT NULL," +
                     "    [Aktiv] INT NOT NULL DEFAULT(1)," +
-                    "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2017-12-31 23:59:59' ,120))," +
+                    "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59' ,120))," +
                     "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
                     "    Unique (" + dt_Processes.Columns[0] + ",Datum)" +
                 ");";
@@ -430,7 +430,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     "    [" + dt_InformationSegments.Columns[12] + "] VARCHAR(1000) NOT NULL," +
                     "    [" + dt_InformationSegments.Columns[13] + "] VARCHAR(1000) NOT NULL," +
                     "    [" + dt_InformationSegments.Columns[14] + "] VARCHAR(1000) NOT NULL," +
-                    "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2017-12-31 23:59:59',120))," +
+                    "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
                     "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
                     "    Unique (" + dt_InformationSegments.Columns[0] + ", Id)" +
                     ");";
@@ -447,7 +447,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     "    [" + dt_InformationSegmentAttributes.Columns[6] + "] INT NOT NULL," +
                     "    [" + dt_InformationSegmentAttributes.Columns[7] + "] INT NOT NULL," +
                     "    [" + dt_InformationSegmentAttributes.Columns[8] + "] INT NOT NULL," +
-                    "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2017-12-31 23:59:59',120))," +
+                    "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
                     "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
                     "    Unique (" + dt_InformationSegmentAttributes.Columns[0] + ", Id)" +
                     ");";
@@ -468,7 +468,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     "    [SZ_4] INT NOT NULL," +
                     "    [SZ_5] INT NOT NULL," +
                     "    [SZ_6] INT NOT NULL," +
-                    "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2017-12-31 23:59:59',120))," +
+                    "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
                     "    Unique (Prozess_Id, Applikation_Id)," +
                     "    Foreign Key(Prozess_Id,Datum_Prozess) references [" + myShared.Tbl_Prozesse + "](Prozess_Id,Datum)," +
                     "    Foreign Key(Applikation_Id,Datum_Applikation) references [" + myShared.Tbl_Applikationen + "](Applikation_Id,Datum)" +
@@ -482,7 +482,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     "    [Details] VARCHAR(1000) NOT NULL," +
                     "    [Id_1] INT NOT NULL," +
                     "    [Id_2] INT NOT NULL," +
-                    "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2017-12-31 23:59:59',120))," +
+                    "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
                     "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
                     ");";
 
@@ -491,7 +491,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     "    [Id]                  INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
                     "    [OE_Name] VARCHAR(200) NOT NULL," +
                     "    [OE_Nummer] VARCHAR(200) NOT NULL," +
-                    "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2017-12-31 23:59:59',120))," +
+                    "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
                     "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
                     "    Unique (OE_Name, OE_Nummer)" +
                     ");";
@@ -512,7 +512,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     "    [Attribut9_aktiviert] VARCHAR(10) NOT NULL," +
                     "    [Attribut10_aktiviert] VARCHAR(10) NOT NULL," +
                     "    [Multi_Save] VARCHAR(10) NOT NULL," +
-                    "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2017-12-31 23:59:59',120))," +
+                    "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
                     "    [Benutzer] NVARCHAR(50) NOT NULL," +
                     ");";
 

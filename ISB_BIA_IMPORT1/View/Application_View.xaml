@@ -82,11 +82,11 @@
                 </Grid.RowDefinitions>
                 <Label Grid.Row="0" Content="Anwendung:" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                 <Label Content="Kategorie:"  FontWeight="Bold" VerticalAlignment="Center" Grid.Row="1" HorizontalAlignment="Right"/>
-                <Border Grid.Row="0" Grid.Column="1" Margin="20,0,100,0">
+                <Border Grid.Row="0" Grid.Column="1" Margin="20,0,120,0">
                     <TextBlock Text="{Binding CurrentApplication.IT_Anwendung_System}" TextWrapping="WrapWithOverflow" VerticalAlignment="Center"/>
                 </Border>
-                <Button Command="{Binding ExportApplicationHistory}" Margin="0,0,10,0" Content="Verlauf&#x0a;Export" Grid.Column="1" Width="60" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.RowSpan="2"/>
-                <Border Grid.Column="1" Margin="20,0,100,0" Grid.Row="1">
+                <Button Command="{Binding ExportApplicationHistory}" Margin="0,0,10,0" ToolTip="Klicken Sie hier, um eine Excel-Datei der Anwendungs-Bearbeitungs-Historie zu exportieren" Content="Historie&#x0a;Excel-Export" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.RowSpan="2"/>
+                <Border Grid.Column="1" Margin="20,0,120,0" Grid.Row="1">
                     <TextBlock Text="{Binding CurrentApplication.IT_Betriebsart}" TextWrapping="WrapWithOverflow" VerticalAlignment="Center"/>
                 </Border>
                 <TabControl SelectedIndex="{Binding CurrentTab}" HorizontalAlignment="Stretch" Grid.Row="2" Grid.ColumnSpan="2">

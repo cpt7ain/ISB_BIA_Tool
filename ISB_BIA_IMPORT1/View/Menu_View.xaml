@@ -90,8 +90,8 @@
                                 Grid.Row="4" VerticalAlignment="Center" 
                                 SelectedDateFormat="Short"
                                 SelectedDate="{Binding PickerDate, Mode=TwoWay}"/>
-                    <Button Command="{Binding NavToDeltaDate}" Content="Delta-Analyse für Datum" Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <Button Command="{Binding NavToLastDelta}" Content="Letzte Delta-Analyse anzeigen" Grid.Column="1" Grid.Row="3" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Button Command="{Binding NavToDeltaDate}" Content="Delta-Analyse für Datum" ToolTip="Klicken Sie hier, um eine Delta-Analyse für das gewählte Datum zu erstellen" Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Button Command="{Binding NavToLastDelta}" Content="Letzte Delta-Analyse anzeigen" ToolTip="Klicken Sie hier, um sich die letzte gespeicherte Delta-Analyse anzeigen zu lassen" Grid.Column="1" Grid.Row="3" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Grid>
             </Border>
             <Border Background="LightSteelBlue" Grid.Column="3" Grid.Row="9" Margin="20,0,20,0" Grid.RowSpan="5" Visibility="{Binding ProcessBorderVisible}">
@@ -112,7 +112,7 @@
                         <Label Content="/"/>
                         <Label Content="{Binding ProcessCount}"/>
                     </StackPanel>
-                    <Button Command="{Binding ExportProcessList}" Content="Excel Export Prozessliste" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Row="2"/>
+                    <Button Command="{Binding ExportProcessList}" ToolTip="Klicken Sie hier, um eine detaillierte Übersicht über alle Prozesse nach Excel zu exportieren" Content="Excel Export Prozessliste" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Row="2"/>
                 </Grid>
             </Border>
         </Grid>

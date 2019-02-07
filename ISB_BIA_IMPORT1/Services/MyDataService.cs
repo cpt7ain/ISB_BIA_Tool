@@ -26,17 +26,19 @@ namespace ISB_BIA_IMPORT1.Services
         #region Datenmodell erstellen
         public bool CheckDBConnection()
         {
+            string s="";
             try
             {
                 using (MyLinqContextDataContext db = new MyLinqContextDataContext(myShared.ConnectionString))
                 {
+                    s = db.Connection.ConnectionString;
                     db.Connection.Open();
                 }
                 return true;
             }
             catch (Exception ex)
             {
-                myDia.ShowError("Es konnte keine Verbindung zur Datenbank hergestellt werden.\nDie Anwendung wird geschlossen.", ex);
+                myDia.ShowError("Es konnte keine Verbindung zur Datenbank ["+s+"] hergestellt werden.\nDie Anwendung wird geschlossen.", ex);
                 return false;
             }
         }
@@ -75,7 +77,7 @@ namespace ISB_BIA_IMPORT1.Services
                 {
 
                     //Initialer Inhalt der Tabelle für OE-Gruppenbezeichnungen wird aus Prozesstabelle entnommen
-                    List<ISB_BIA_Prozesse> query = db.ISB_BIA_Prozesse.GroupBy(x => x.OE_Filter).Select(group => group.First()).ToList();
+                    List<ISB_BIA_Prozesse> query = db.ISB_BIA_Prozesse.GroupBy(x => x.OE_Filter).Select(group => group.FirstOrDefault()).ToList();
                     foreach (ISB_BIA_Prozesse p in query)
                     {
                         ISB_BIA_OEs oe = new ISB_BIA_OEs()
@@ -270,7 +272,7 @@ namespace ISB_BIA_IMPORT1.Services
                     if (listIdCurrentApplications.Count == 0)
                         linqApps = new ObservableCollection<ISB_BIA_Applikationen>();
                     else
-                        linqApps= new ObservableCollection<ISB_BIA_Applikationen>(db.ISB_BIA_Applikationen.Where(x => listIdCurrentApplications.Contains(x.Applikation_Id)).GroupBy(y => y.Applikation_Id).Select(z => z.OrderByDescending(q => q.Datum).First()).OrderBy(k => k.Applikation_Id).ToList());
+                        linqApps= new ObservableCollection<ISB_BIA_Applikationen>(db.ISB_BIA_Applikationen.Where(x => listIdCurrentApplications.Contains(x.Applikation_Id)).GroupBy(y => y.Applikation_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Applikation_Id).ToList());
                 }
                 //Falls existiert
                 if (linqProc != null && linqApps != null)
@@ -560,7 +562,7 @@ namespace ISB_BIA_IMPORT1.Services
                         {
                             Action = "Ändern/Erstellen eines Prozesses",
                             Tabelle = myShared.Tbl_Prozesse,
-                            Details = "ID= " + p.Prozess_Id + ", Name= " + p.Prozess + " ~ " + p.Sub_Prozess,
+                            Details = "Id = " + p.Prozess_Id + ", Name = '" + p.Prozess + "', Sub-Name = '" + p.Sub_Prozess+"'",
                             Id_1 = p.Prozess_Id,
                             Id_2 = 0,
                             Datum = DateTime.Now,
@@ -587,13 +589,13 @@ namespace ISB_BIA_IMPORT1.Services
                             //Schreiben in Datenbank
                             db.ISB_BIA_Prozesse_Applikationen.InsertOnSubmit(proc_app);
 
-                            int maxId = db.ISB_BIA_Prozesse_Applikationen.Max(x => x.Id);
+                            string s = (proc_app.Relation == 1) ? "Verknüpfung" : "Trennung";
 
                             ISB_BIA_Log logEntryRelation = new ISB_BIA_Log
                             {
-                                Action = "Ändern/Erstellen einer Prozesses-Applikations-Relation",
+                                Action = "Ändern einer Prozesses-Applikations-Relation: "+s,
                                 Tabelle = myShared.Tbl_Proz_App,
-                                Details = "Prozess Id: " + proc_app.Prozess + ", Anwendungs Id: " + proc_app.Applikation,
+                                Details = "Prozess Id = " + proc_app.Prozess +", App. Id = " + proc_app.Applikation+", App. Name = '"+a.IT_Anwendung_System+"'",
                                 Id_1 = proc_app.Prozess,
                                 Id_2 = proc_app.Applikation,
                                 Datum = p.Datum,
@@ -603,7 +605,6 @@ namespace ISB_BIA_IMPORT1.Services
                         }
                         #endregion
 
-                        db.SubmitChanges();
                         #region Notification-Mail senden
                         string subject;
                         if (mode == ProcAppMode.Change)
@@ -621,6 +622,7 @@ namespace ISB_BIA_IMPORT1.Services
                             "Datum: " + p.Datum;
                         myMail.Send_NotificationMail(subject, body, myShared.Current_Environment);
                         #endregion
+                        db.SubmitChanges();
                     }
                     myDia.ShowInfo("Prozess gespeichert");
                     return true;
@@ -715,7 +717,7 @@ namespace ISB_BIA_IMPORT1.Services
                     {
                         Action = "Löschen eines Prozesses (Setzen auf inaktiv)",
                         Tabelle = myShared.Tbl_Prozesse,
-                        Details = "ID= " + toDelete.Prozess_Id + ", Name= " + toDelete.Prozess + " ~ " + toDelete.Sub_Prozess,
+                        Details = "Id = " + toDelete.Prozess_Id + ", Name = '" + toDelete.Prozess + "', Sub-Name = '" + toDelete.Sub_Prozess+"'",
                         Id_1 = toDelete.Prozess_Id,
                         Id_2 = 0,
                         Datum = toDelete.Datum,
@@ -755,13 +757,13 @@ namespace ISB_BIA_IMPORT1.Services
                         };
                         db.ISB_BIA_Log.InsertOnSubmit(logEntry);
                         db.SubmitChanges();
-                        myDia.ShowError("Prozess konnte nicht gelöscht werden.(1)\n", ex1);
+                        myDia.ShowError("Prozess konnte nicht gelöscht werden.\n", ex1);
                         return null;
                     }
                 }
                 catch (Exception ex2)
                 {
-                    myDia.ShowError("Prozess konnte nicht gelöscht werden!\nEin Log Eintrag konnte ebenfalls nicht erzeugt werden.(2)\n", ex2);
+                    myDia.ShowError("Prozess konnte nicht gelöscht werden!\nEin Log Eintrag konnte ebenfalls nicht erzeugt werden.\n", ex2);
                     return null;
                 }
             }
@@ -840,7 +842,7 @@ namespace ISB_BIA_IMPORT1.Services
                                     Datum = process_refresh.Datum,
                                     Action = "Aktualisieren eines Prozesses ohne Änderungen",
                                     Tabelle = myShared.Tbl_Prozesse,
-                                    Details = "ID= " + process_refresh.Prozess_Id + ", Name= " + process_refresh.Prozess + " ~ " + process_refresh.Sub_Prozess,
+                                    Details = "Id = " + process_refresh.Prozess_Id + ", Name = '" + process_refresh.Prozess + "', Sub-Name = '" + process_refresh.Sub_Prozess+"'",
                                     Id_1 = process_refresh.Prozess_Id,
                                     Id_2 = 0,
                                     Benutzer = Environment.UserName
@@ -928,7 +930,7 @@ namespace ISB_BIA_IMPORT1.Services
                         linqProcs = new ObservableCollection<ISB_BIA_Prozesse>();
                     else
                         //
-                        linqProcs = new ObservableCollection<ISB_BIA_Prozesse>(db.ISB_BIA_Prozesse.Where(x => listIdCurrentProcesses.Contains(x.Prozess_Id)).GroupBy(y => y.Prozess_Id).Select(z => z.OrderByDescending(q => q.Datum).First()).OrderBy(k => k.Prozess_Id).ToList());
+                        linqProcs = new ObservableCollection<ISB_BIA_Prozesse>(db.ISB_BIA_Prozesse.Where(x => listIdCurrentProcesses.Contains(x.Prozess_Id)).GroupBy(y => y.Prozess_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Prozess_Id).ToList());
                 }
                 //Falls existiert
                 if (linqApp != null && linqProcs != null)
@@ -1126,7 +1128,7 @@ namespace ISB_BIA_IMPORT1.Services
                         {
                             Action = "Ändern/Erstellen einer Anwendung",
                             Tabelle = myShared.Tbl_Prozesse,
-                            Details = "ID= " + a.Applikation_Id + ", Name= " + a.IT_Anwendung_System,
+                            Details = "Id = " + a.Applikation_Id + ", Name = '" + a.IT_Anwendung_System+"'",
                             Id_1 = a.Applikation_Id,
                             Id_2 = 0,
                             Datum = DateTime.Now,
@@ -1212,7 +1214,7 @@ namespace ISB_BIA_IMPORT1.Services
                     {
                         Action = "Löschen einer Anwendung (Setzen auf inaktiv)",
                         Tabelle = myShared.Tbl_Applikationen,
-                        Details = "ID= " + toDelete.Applikation_Id + ", Name= " + toDelete.IT_Anwendung_System,
+                        Details = "Id = " + toDelete.Applikation_Id + ", Name = '" + toDelete.IT_Anwendung_System+"'",
                         Id_1 = toDelete.Applikation_Id,
                         Id_2 = 0,
                         Datum = toDelete.Datum,
@@ -1312,7 +1314,7 @@ namespace ISB_BIA_IMPORT1.Services
                                     Datum = application_refresh.Datum,
                                     Action = "Aktualisieren einer Anwendung ohne Änderungen",
                                     Tabelle = myShared.Tbl_Applikationen,
-                                    Details = "ID= " + application_refresh.Applikation_Id + ", Name= " + application_refresh.IT_Anwendung_System + " ~ " + application_refresh.IT_Betriebsart,
+                                    Details = "Id = " + application_refresh.Applikation_Id + ", Name = '" + application_refresh.IT_Anwendung_System + "', Sub-Name = '" + application_refresh.IT_Betriebsart+"'",
                                     Id_1 = application_refresh.Applikation_Id,
                                     Id_2 = 0,
                                     Benutzer = Environment.UserName
@@ -1797,7 +1799,7 @@ namespace ISB_BIA_IMPORT1.Services
                         {
                             Action = "Ändern eines Informationssegments",
                             Tabelle = myShared.Tbl_IS,
-                            Details = "ID= " + newIS.Informationssegment_Id + ", Name= " + newIS.Name,
+                            Details = "Id = " + newIS.Informationssegment_Id + ", Name = '" + newIS.Name+"'",
                             Id_1 = newIS.Informationssegment_Id,
                             Id_2 = 0,
                             Datum = newIS.Datum,
@@ -1883,7 +1885,7 @@ namespace ISB_BIA_IMPORT1.Services
                                 {
                                     Action = "Ändern der Informationssegment-Attribute",
                                     Tabelle = myShared.Tbl_IS_Attribute,
-                                    Details = "ID= " + isx.Attribut_Id + ", Name= " + isx.Name,
+                                    Details = "Id = " + isx.Attribut_Id + ", Name = '" + isx.Name+"'",
                                     Id_1 = isx.Attribut_Id,
                                     Id_2 = 0,
                                     Datum = DateTime.Now,
@@ -1892,9 +1894,13 @@ namespace ISB_BIA_IMPORT1.Services
                                 db.ISB_BIA_Log.InsertOnSubmit(logEntry);
                             }
                         }
-                        db.SubmitChanges();
+                        if (!change) myDia.ShowInfo("Keine Änderungen entdeckt");
+                        else
+                        {
+                            db.SubmitChanges();
+                            myDia.ShowInfo("Attribute gespeichert");
+                        }
                     }
-                    if (!change) myDia.ShowInfo("Keine Änderungen entdeckt");
                     return true;
                 }
                 catch (Exception ex1)
@@ -1955,7 +1961,7 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 using (MyLinqContextDataContext db = new MyLinqContextDataContext(myShared.ConnectionString))
                 {
-                    List<ISB_BIA_Applikationen> ocCategories = db.ISB_BIA_Applikationen.GroupBy(y => y.Applikation_Id).Select(z => z.OrderByDescending(p => p.Datum).FirstOrDefault()).Where(u => u.Aktiv == 1).GroupBy(x => x.IT_Betriebsart).Select(group => group.First()).ToList();
+                    List<ISB_BIA_Applikationen> ocCategories = db.ISB_BIA_Applikationen.GroupBy(y => y.Applikation_Id).Select(z => z.OrderByDescending(p => p.Datum).FirstOrDefault()).Where(u => u.Aktiv == 1).GroupBy(x => x.IT_Betriebsart).Select(group => group.FirstOrDefault()).ToList();
                     //Für späteres Filtern: Eintrag für alle Kategorien
                     ocCategories.Insert(0, new ISB_BIA_Applikationen() { Applikation_Id = 0, IT_Betriebsart = "<Alle>" });
                     return new ObservableCollection<string>(ocCategories.Select(x => x.IT_Betriebsart));
@@ -2101,7 +2107,8 @@ namespace ISB_BIA_IMPORT1.Services
                         db.Connection.Open();
                         var delete = db.ISB_BIA_Delta_Analyse.ToList();
                         db.ISB_BIA_Delta_Analyse.DeleteAllOnSubmit(delete);
-                        db.ExecuteCommand("DBCC CHECKIDENT('ISB_BIA_Delta_Analyse', RESEED, 0);");
+                        //braucht zu viele Rechte, nicht nötig
+                        //db.ExecuteCommand("DBCC CHECKIDENT('ISB_BIA_Delta_Analyse', RESEED, 0);");
                         db.SubmitChanges();
                     }
                     //Delta-Analyse für jede Prozess-Applikation Relation
@@ -2188,7 +2195,6 @@ namespace ISB_BIA_IMPORT1.Services
         #endregion
 
         #region OE
-
         public ObservableCollection<ISB_BIA_OEs> GetOENames()
         {
             try
@@ -2261,15 +2267,16 @@ namespace ISB_BIA_IMPORT1.Services
                         //Erstellen eines LogEntries und schreiben in Datenbank
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
-                            Action = "ADMIN: Erstellen einer OE",
+                            Action = "ADMIN/CISO: Erstellen einer OE",
                             Tabelle = myShared.Tbl_Prozesse + ", " + myShared.Tbl_OEs,
-                            Details = "Name= " + name,
+                            Details = "Name = '" + name+"'",
                             Id_1 = 0,
                             Id_2 = 0,
                             Datum = DateTime.Now,
                             Benutzer = Environment.UserName
                         };
                         db.ISB_BIA_Log.InsertOnSubmit(logEntry);
+
                         db.SubmitChanges();
                         myDia.ShowInfo("OE wurde erstellt.");
                         return new_Link;
@@ -2296,10 +2303,30 @@ namespace ISB_BIA_IMPORT1.Services
                 {
                     using (MyLinqContextDataContext db = new MyLinqContextDataContext(myShared.ConnectionString))
                     {
+                        //Liste aller Prozesse, der die OE-Gruppierung zugeordnet ist
+                        List<ISB_BIA_Prozesse> oldProcessList = db.ISB_BIA_Prozesse.Where(c => c.OE_Filter == oldName).GroupBy(x => x.Prozess_Id).Select(y => y.OrderByDescending(z => z.Datum).FirstOrDefault()).ToList();
+                        //Prüfen ob ein betroffener Prozess gesperrt ist
+                        List<ISB_BIA_Prozesse> lockedList = new List<ISB_BIA_Prozesse>();
+                        string pl = "";
+                        foreach (ISB_BIA_Prozesse p in oldProcessList)
+                        {
+                            string user = GetObjectLocked(Table_Lock_Flags.Process, p.Prozess_Id);
+                            if (user != "")
+                            {
+                                lockedList.Add(p);
+                                pl = pl + p.Prozess + " (geöffnet von: " + user + ")\n";
+                            }
+                        }
+                        if (lockedList.Count != 0)
+                        {
+                            string msg = "Die von Ihnen zur Änderung ausgewählte OE ist Prozessen zugeordnet, die momentan durch andere User zu Bearbeitung geöffnet sind.\nBitte warten Sie, bis die Bearbeitung beendet ist.\n\n";
+                            myDia.ShowWarning(msg + pl);
+                            return false;
+                        }
+
                         //Alle OE-Einträge ändern (hier keine Historisierung)
                         db.ISB_BIA_OEs.Where(n => n.OE_Name == oldName).ToList().ForEach(x => { x.OE_Name = name; });
-                        //Liste aller Prozesse, der die OE-Gruppierung zugeordnet ist
-                        List<ISB_BIA_Prozesse> oldProcessList = db.ISB_BIA_Prozesse.Where(c => c.OE_Filter == oldName).GroupBy(x => x.Prozess_Id).Select(y => y.OrderByDescending(z => z.Datum).First()).ToList();
+
                         //Die OE's all dieser Prozesse ändern
                         foreach (ISB_BIA_Prozesse process_old in oldProcessList)
                         {
@@ -2343,7 +2370,7 @@ namespace ISB_BIA_IMPORT1.Services
                         //Erstellen eines LogEntries und schreiben in Datenbank
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
-                            Action = "ADMIN: Ändern einer OE",
+                            Action = "ADMIN/CISO: Ändern einer OE",
                             Tabelle = myShared.Tbl_Prozesse + ", " + myShared.Tbl_OEs,
                             Details = "Von '" + oldName + "' zu '" + name+"'",
                             Id_1 = 0,
@@ -2394,7 +2421,7 @@ namespace ISB_BIA_IMPORT1.Services
                                 ISB_BIA_Log logEntry = new ISB_BIA_Log
                                 {
                                     Action = "Löschen einer OE",
-                                    Details = "Name= " + oeName,
+                                    Details = "Name = '" + oeName+"'",
                                     Tabelle = myShared.Tbl_OEs,
                                     Id_1 = 0,
                                     Id_2 = 0,
@@ -2438,7 +2465,7 @@ namespace ISB_BIA_IMPORT1.Services
                         {
                             Action = "Löschen einer OE-Zuordnung",
                             Tabelle = myShared.Tbl_OEs,
-                            Details = "Zuordnung= " + oeName + " <-> " + oeNumber,
+                            Details = "Zuordnung = '" + oeName + "' <-> " + oeNumber,
                             Id_1 = 0,
                             Id_2 = 0,
                             Datum = DateTime.Now,
@@ -2475,7 +2502,7 @@ namespace ISB_BIA_IMPORT1.Services
                         {
                             Action = "Löschen einer OE-Nummer",
                             Tabelle = myShared.Tbl_OEs,
-                            Details = "Nummer= " + oeNumber,
+                            Details = "Nummer = " + oeNumber,
                             Id_1 = 0,
                             Id_2 = 0,
                             Datum = DateTime.Now,
@@ -2519,9 +2546,9 @@ namespace ISB_BIA_IMPORT1.Services
                             //Erstellen eines LogEntries und schreiben in Datenbank
                             ISB_BIA_Log logEntry = new ISB_BIA_Log
                             {
-                                Action = "ADMIN: Erstellen einer OE-Zuordnung",
+                                Action = "ADMIN/CISO: Erstellen einer OE-Zuordnung",
                                 Tabelle = myShared.Tbl_Prozesse + ", " + myShared.Tbl_OEs,
-                                Details = "Zuordnung= " + name.OE_Name + " <-> " + number.OE_Nummer,
+                                Details = "Zuordnung = '" + name.OE_Name + "' <-> " + number.OE_Nummer,
                                 Id_1 = 0,
                                 Id_2 = 0,
                                 Datum = DateTime.Now,
@@ -2574,9 +2601,9 @@ namespace ISB_BIA_IMPORT1.Services
                             //Erstellen eines LogEntries und schreiben in Datenbank
                             ISB_BIA_Log logEntry = new ISB_BIA_Log
                             {
-                                Action = "ADMIN: Erstellen einer OE-Nummer",
+                                Action = "ADMIN/CISO: Erstellen einer OE-Nummer",
                                 Tabelle = myShared.Tbl_Prozesse + ", " + myShared.Tbl_OEs,
-                                Details = "Nummer= " + new_Number.OE_Nummer,
+                                Details = "Nummer = " + new_Number.OE_Nummer,
                                 Id_1 = 0,
                                 Id_2 = 0,
                                 Datum = DateTime.Now,
@@ -2640,7 +2667,7 @@ namespace ISB_BIA_IMPORT1.Services
                         //Erstellen eines LogEntries und schreiben in Datenbank
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
-                            Action = "ADMIN: Ändern einer OE-Nummer",
+                            Action = "ADMIN/CISO: Ändern einer OE-Nummer",
                             Tabelle = myShared.Tbl_Prozesse + ", " + myShared.Tbl_OEs,
                             Details = "Von '" + number+"' zu '"+oldNumber+"'",
                             Id_1 = 0,

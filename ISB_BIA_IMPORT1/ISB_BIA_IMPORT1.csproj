@@ -182,9 +182,6 @@
     <Compile Include="View\Menu_View.xaml.cs">
       <DependentUpon>Menu_View.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\Menu_View2.xaml.cs">
-      <DependentUpon>Menu_View2.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\OE_AssignmentView_View.xaml.cs">
       <DependentUpon>OE_AssignmentView_View.xaml</DependentUpon>
     </Compile>
@@ -251,10 +248,6 @@
     <Page Include="View\Menu_View.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="View\Menu_View2.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\OE_AssignmentView_View.xaml">
       <Generator>MSBuild:Compile</Generator>

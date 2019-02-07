@@ -34,7 +34,7 @@
                     <RowDefinition Height="100*"/>
                     <RowDefinition Height="60"/>
                 </Grid.RowDefinitions>
-                <Label VerticalAlignment="Center" Content="Ändern Sie hier den Attributnamen sowie die zugehörigen Mindesteinstufungen der Schutzziele" Grid.ColumnSpan="2"/>
+                <Label VerticalAlignment="Center" Content="{Binding Instruction}" Grid.ColumnSpan="2"/>
                 <DataGrid x:Name="dataGrid" 
                   ItemsSource="{Binding CurrentAttList}"
                   AutoGenerateColumns="False"

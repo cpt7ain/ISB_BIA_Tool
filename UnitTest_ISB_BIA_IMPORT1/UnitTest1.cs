@@ -32,26 +32,26 @@ namespace UnitTest_ISB_BIA_IMPORT1
         {
             MyDesignTimeDataService dsDataService = new MyDesignTimeDataService();
             ObservableCollection<ISB_BIA_Prozesse> resultProcesses = dsDataService.GetProcesses();
-            ISB_BIA_Prozesse resultProcess = resultProcesses.First();
+            ISB_BIA_Prozesse resultProcess = resultProcesses.FirstOrDefault();
             Process_Model resultPM = dsDataService.GetProcessModelFromDB(1);
 
             ObservableCollection<ISB_BIA_Applikationen> resultApplications = dsDataService.GetApplications();
-            ISB_BIA_Applikationen resultApplication = resultApplications.First();
+            ISB_BIA_Applikationen resultApplication = resultApplications.FirstOrDefault();
             Application_Model resultAM = dsDataService.GetApplicationModelFromDB(1);
 
             ObservableCollection<ISB_BIA_Informationssegmente> resultSegments = dsDataService.GetAllSegments();
-            ISB_BIA_Informationssegmente resultSegment = resultSegments.First();
+            ISB_BIA_Informationssegmente resultSegment = resultSegments.FirstOrDefault();
             InformationSegment_Model resultSM =  dsDataService.GetSegmentModelFromDB(1);
 
             ObservableCollection<ISB_BIA_Informationssegmente_Attribute> resultAttributes= dsDataService.GetAttributes();
-            ISB_BIA_Informationssegmente_Attribute resultAttribute = resultAttributes.First();
+            ISB_BIA_Informationssegmente_Attribute resultAttribute = resultAttributes.FirstOrDefault();
             InformationSegmentAttribute_Model resultAttM = dsDataService.GetAttributeModelFromDB(1);
 
             ISB_BIA_Settings resultSetting = dsDataService.GetSettings();
             Settings_Model resultSetM = dsDataService.GetSettingsModelFromDB();
 
             ObservableCollection<ISB_BIA_OEs> resultOEs = dsDataService.GetDummyOEs();
-            ISB_BIA_OEs resultOE = resultOEs.First();
+            ISB_BIA_OEs resultOE = resultOEs.FirstOrDefault();
 
 
             dataServiceMock.Setup(x => x.GetActiveApplications()).Returns(dsDataService.GetActiveApplications());
@@ -115,7 +115,7 @@ namespace UnitTest_ISB_BIA_IMPORT1
             dataServiceMock.Setup(x => x.InsertIS(It.IsAny<InformationSegment_Model>(), It.IsAny<InformationSegment_Model>())).Returns(true);
             dataServiceMock.Setup(x => x.InsertISAtt(It.IsAny<ObservableCollection<InformationSegmentAttribute_Model>>())).Returns(true);
             dataServiceMock.Setup(x => x.InsertOELink(It.IsAny<ISB_BIA_OEs>(), It.IsAny<ISB_BIA_OEs>())).Returns(resultOE);
-            dataServiceMock.Setup(x => x.InsertOEName(It.IsAny<string>())).Returns(dsDataService.GetDummyOEs().First());
+            dataServiceMock.Setup(x => x.InsertOEName(It.IsAny<string>())).Returns(dsDataService.GetDummyOEs().FirstOrDefault());
             dataServiceMock.Setup(x => x.InsertOENumber(It.IsAny<string>(), It.IsAny<ISB_BIA_OEs>())).Returns(resultOE);
             dataServiceMock.Setup(x => x.InsertSettings(It.IsAny<ISB_BIA_Settings>(), It.IsAny<ISB_BIA_Settings>())).Returns(true);
             dataServiceMock.Setup(x => x.CreateDataModel(It.IsAny<List<string>>(), It.IsAny<DataTable>(), It.IsAny<DataTable>(), It.IsAny<DataTable>(), It.IsAny<DataTable>(), It.IsAny<DataTable>())).Returns(true);
@@ -194,7 +194,7 @@ namespace UnitTest_ISB_BIA_IMPORT1
             //Assert that CurrentViewModel was changed
             Assert.IsTrue(mvm.CurrentViewModel is TargetViewModel);
             //Assert that CurrentViewModel was added to Navigation History
-            Assert.IsTrue(naviServiceMock.Object.VMHistory.First() is TargetViewModel);
+            Assert.IsTrue(naviServiceMock.Object.VMHistory.FirstOrDefault() is TargetViewModel);
         }
 
         [TestMethod]
@@ -245,23 +245,23 @@ namespace UnitTest_ISB_BIA_IMPORT1
             Assert.IsFalse(received);
             Assert.IsTrue(naviServiceMock.Object.VMHistory.Count == 2);
 
-            mvprocessview.SelectedItem = mvprocessview.ProcessList.First();
+            mvprocessview.SelectedItem = mvprocessview.ProcessList.FirstOrDefault();
             mvprocessview.NavToProcess.Execute(null);
             Assert.IsTrue(received);
             Assert.IsTrue(naviServiceMock.Object.VMHistory.Count == 3);
-            Assert.IsTrue(naviServiceMock.Object.VMHistory.First() is TargetViewModel);
+            Assert.IsTrue(naviServiceMock.Object.VMHistory.FirstOrDefault() is TargetViewModel);
 
             received = false;
             mvprocessview.NavBack.Execute(null);
             Assert.IsTrue(received);
             Assert.IsTrue(naviServiceMock.Object.VMHistory.Count == 2);
-            Assert.IsTrue(naviServiceMock.Object.VMHistory.First() is ProcessView_ViewModel);
+            Assert.IsTrue(naviServiceMock.Object.VMHistory.FirstOrDefault() is ProcessView_ViewModel);
 
             received = false;
             mvprocessview.NavBack.Execute(null);
             Assert.IsTrue(received);
             Assert.IsTrue(naviServiceMock.Object.VMHistory.Count == 1);
-            Assert.IsTrue(naviServiceMock.Object.VMHistory.First() is SourceViewModel);
+            Assert.IsTrue(naviServiceMock.Object.VMHistory.FirstOrDefault() is SourceViewModel);
 
             Assert.IsTrue(mvprocessview.ButtonVis == Visibility.Visible);
             Assert.AreEqual(mvprocessview.Instruction, "Doppelklick auf einen Prozess, den Sie ändern möchten, oder Prozesse anhaken, welche ohne Änderungen gespeichert werden sollen.");
@@ -286,7 +286,7 @@ namespace UnitTest_ISB_BIA_IMPORT1
             Assert.IsTrue(mvprocessview.SelectedItem == null);
             mvprocessview.DeleteProc.Execute(null);
             //Set SelectedItem for Deletion
-            mvprocessview.SelectedItem = mvprocessview.ProcessList.First();
+            mvprocessview.SelectedItem = mvprocessview.ProcessList.FirstOrDefault();
             //Delete Process
             mvprocessview.DeleteProc.Execute(null);
             //Assert that following Methods were called once

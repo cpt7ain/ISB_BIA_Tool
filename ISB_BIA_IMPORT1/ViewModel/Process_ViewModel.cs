@@ -1074,7 +1074,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 CurrentProcess = new Process_Model();
             });
             //Messenger Registrierung für Benachrichtigung eines Kritischen Prozesses (kommt von Process_Model)
-            Messenger.Default.Register<string>(this, MessageToken.ChangedToCriticalNotification,p=> { myDia.ShowInfo(p+Krit_Ntf); });
+            Messenger.Default.Register<string>(this, MessageToken.ChangedToCriticalNotification,p=> { myDia.ShowInfo(Krit_Ntf); });
 
             #region Listen un Daten für Prozess-Anwendungszuordnung
             NewApplications = new ObservableCollection<ISB_BIA_Applikationen>();

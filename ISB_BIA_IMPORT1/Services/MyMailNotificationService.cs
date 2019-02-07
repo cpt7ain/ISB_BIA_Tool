@@ -7,22 +7,23 @@ namespace ISB_BIA_IMPORT1.Services
     class MyMailNotificationService : IMyMailNotificationService
     {
         IMyDialogService myDia;
+        IMySharedResourceService myShared;
         private static readonly string from = "BIA-Tool@isb.rlp.de";
 
-        public MyMailNotificationService(IMyDialogService myDialogService)
+        public MyMailNotificationService(IMyDialogService myDialogService, IMySharedResourceService mySharedResourceService)
         {
-            this.myDia = myDialogService;
+            myDia = myDialogService;
+            myShared = mySharedResourceService;
         }
 
         public void Send_NotificationMail(string subject, string body, Current_Environment ce)
         {
-            string to = "inethelpdesk@isb.rlp.de";
-            to = "Tim.Wolf@isb.rlp.de";
+            string to = myShared.TargetMail;
             try
             {
                 if (ce == Current_Environment.Local_Test)
                 {
-                    myDia.ShowMessage("Mail gesendet");
+                    myDia.ShowMessage("Test: 'Mail gesendet an "+ to + "'");
                 }
                 else
                 {
@@ -30,7 +31,7 @@ namespace ISB_BIA_IMPORT1.Services
                     {
                         mail.IsBodyHtml = false;
                         mail.From = new MailAddress(from, "BIA Tool");
-                        mail.Subject = subject;
+                        mail.Subject = (ce == Current_Environment.Prod)? subject: subject+ " [Testumgebung]";
                         mail.Body = body;
 
                         mail.To.Add(new MailAddress(to));

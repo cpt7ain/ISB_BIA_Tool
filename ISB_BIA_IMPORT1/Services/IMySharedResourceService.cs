@@ -42,6 +42,10 @@ namespace ISB_BIA_IMPORT1.Services
         /// Dateipfad, welcher Standardmäßig beim Öffnen des OpenFileDialogs in den Einstellungen für das Datenmodell angezeigt wird
         /// </summary>
         string Source { get; set; }
+        /// <summary>
+        /// Mail-Adresse, an die Benachrichtigungen gesendet werden sollen
+        /// </summary>
+        string TargetMail { get; set; }
 
         #region Tabellennamen in Datenbank
         /// <summary>

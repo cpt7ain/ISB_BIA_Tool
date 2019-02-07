@@ -70,10 +70,11 @@
                     </DataGrid.RowHeaderTemplate>
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Prozessname" Width="350" Binding="{Binding Prozess}"/>
-                        <DataGridTextColumn Header="Sub-Prozessname" Width="400" Binding="{Binding Sub_Prozess}"/>
-                        <DataGridTextColumn Header="Zuständige OE" Width="200" Binding="{Binding OE_Filter}"/>
+                        <DataGridTextColumn Header="Sub-Prozessname" Width="350" Binding="{Binding Sub_Prozess}"/>
+                        <DataGridTextColumn Header="Zuständige OE" Width="150" Binding="{Binding OE_Filter}"/>
                         <DataGridTextColumn Header="Aktiv" Width="50" Binding="{Binding Aktiv ,Converter={StaticResource NumToAlphBinaryConverter}}"/>
                         <DataGridTextColumn Header="Bearbeitungsdatum" Width="170" Binding="{Binding Datum, StringFormat=\{0:dd.MM.yy HH:mm:ss\}}"/>
+                        <DataGridTextColumn Header="Bearbeiter" Width="170" Binding="{Binding Benutzer}"/>
                     </DataGrid.Columns>
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">

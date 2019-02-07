@@ -143,7 +143,7 @@ namespace ISB_BIA_IMPORT1.Services
                         cell = row.CreateCell(14);
                         cell.SetCellValue(apps[i].Benutzer);
                         cell = row.CreateCell(15);
-                        cell.SetCellValue(apps[i].Aktiv);
+                        cell.SetCellValue((apps[i].Aktiv == 1)?"Ja":"Nein");
                     }
 
                     // MemoryStream variable um in das Sheet zu schreiben
@@ -334,7 +334,7 @@ namespace ISB_BIA_IMPORT1.Services
                         cell = row.CreateCell(28);
                         cell.SetCellValue(procs[i].Benutzer);
                         cell = row.CreateCell(29);
-                        cell.SetCellValue(procs[i].Aktiv);
+                        cell.SetCellValue((procs[i].Aktiv == 1) ? "Ja" : "Nein");
                     }
                     #endregion
 
@@ -518,7 +518,7 @@ namespace ISB_BIA_IMPORT1.Services
                     var headerRow = sheet.CreateRow(0);
 
                     //Spaltenheader
-                    List<string> HeaderList = Log.First().GetType().GetProperties().Select(p => p.Name).ToList();
+                    List<string> HeaderList = Log.FirstOrDefault().GetType().GetProperties().Select(p => p.Name).ToList();
 
                     for (int i = 0; i < HeaderList.Count; i++)
                     {
@@ -582,7 +582,7 @@ namespace ISB_BIA_IMPORT1.Services
                 OverwritePrompt = true,
                 FileName = "BIA_Settings_History_Export_"+DateTime.Now.ToShortDateString()+".xls",
                 Filter = "Excel-Datei xls|*.xls",
-                Title = "Speichern des Anwendungs-EInstellungshistorie",
+                Title = "Speichern des Anwendungs-Einstellungshistorie",
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
             };
             bool? result = myDia.Save(saveFileDialog1);
@@ -596,7 +596,7 @@ namespace ISB_BIA_IMPORT1.Services
                     var headerRow = sheet.CreateRow(0);
 
                     //Spaltenheader
-                    List<string> HeaderList = Log.First().GetType().GetProperties().Select(p => p.Name).ToList();
+                    List<string> HeaderList = Log.FirstOrDefault().GetType().GetProperties().Select(p => p.Name).ToList();
 
                     for (int i = 0; i < HeaderList.Count; i++)
                     {

@@ -10,6 +10,8 @@ namespace ISB_BIA_IMPORT1.Services
         private bool _constructionMode;
         private Current_Environment _current_Environment;
         private bool _admin;
+        private Login_Model _user;
+        private string _targetMail;
 
         private string _connectionString;
         private string _initialDirectory;
@@ -60,20 +62,21 @@ namespace ISB_BIA_IMPORT1.Services
             }
 
             Admin = (ConfigurationManager.AppSettings["MODE_Admin"] == "true") ? true : false;
+            TargetMail = ConfigurationManager.AppSettings["Target_Mail"];
 
-            _initialDirectory = Directory.GetDirectories(Directory.GetCurrentDirectory(), "Data")[0];
-            _source = _initialDirectory + @"\ISB_BIA-SBA.xlsx";
+            InitialDirectory = Directory.GetDirectories(Directory.GetCurrentDirectory(), "Data")[0];
+            Source = _initialDirectory + @"\ISB_BIA-SBA.xlsx";
 
-            _tbl_Prozesse = "ISB_BIA_Prozesse";
-            _tbl_Proz_App = "ISB_BIA_Prozesse_Applikationen";
-            _tbl_Delta = "ISB_BIA_Delta_Analyse";
-            _tbl_IS = "ISB_BIA_Informationssegmente";
-            _tbl_IS_Attribute = "ISB_BIA_Informationssegmente_Attribute";
-            _tbl_Applikationen = "ISB_BIA_Applikationen";
-            _tbl_Log = "ISB_BIA_Log";
-            _tbl_OEs = "ISB_BIA_OEs";
-            _tbl_Settings = "ISB_BIA_Settings";
-            _tbl_Lock = "ISB_BIA_Lock";
+            Tbl_Prozesse = "ISB_BIA_Prozesse";
+            Tbl_Proz_App = "ISB_BIA_Prozesse_Applikationen";
+            Tbl_Delta = "ISB_BIA_Delta_Analyse";
+            Tbl_IS = "ISB_BIA_Informationssegmente";
+            Tbl_IS_Attribute = "ISB_BIA_Informationssegmente_Attribute";
+            Tbl_Applikationen = "ISB_BIA_Applikationen";
+            Tbl_Log = "ISB_BIA_Log";
+            Tbl_OEs = "ISB_BIA_OEs";
+            Tbl_Settings = "ISB_BIA_Settings";
+            Tbl_Lock = "ISB_BIA_Lock";
         }
 
         public bool ConstructionMode
@@ -94,14 +97,17 @@ namespace ISB_BIA_IMPORT1.Services
             set => Set(() => Admin, ref _admin, value);
         }
 
-        private Login_Model _user;
         public Login_Model User
         {
             get => _user;
             set => Set(() => User, ref _user, value);
         }
 
-
+        public string TargetMail
+        {
+            get => _targetMail;
+            set => Set(() => TargetMail, ref _targetMail, value);
+        }
 
         #region Standard Dateipfad für einzulesende Quelldatei
         public string ConnectionString

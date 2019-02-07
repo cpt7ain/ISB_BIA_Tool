@@ -39,6 +39,19 @@
                     </Trigger>
                 </ControlTemplate.Triggers>
             </ControlTemplate>
+            <Storyboard x:Key="InactiveApplicationsSB">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)" Storyboard.TargetName="border">
+                    <EasingDoubleKeyFrame KeyTime="0" Value="40"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="40"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.8" Value="0"/>
+                </DoubleAnimationUsingKeyFrames>
+                <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="label">
+                    <EasingColorKeyFrame KeyTime="0" Value="Red"/>
+                    <EasingColorKeyFrame KeyTime="0:0:0.3" Value="Red"/>
+                    <EasingColorKeyFrame KeyTime="0:0:0.8" Value="White"/>
+                    <EasingColorKeyFrame KeyTime="0:0:1.3" Value="Red"/>
+                </ColorAnimationUsingKeyFrames>
+            </Storyboard>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -50,18 +63,71 @@
         <Border Grid.Column="0" Grid.ColumnSpan="2">
             <Grid>
                 <Label Content="{Binding Header}" FontWeight="Bold" Grid.ColumnSpan="2" Margin="10,0,0,0"  VerticalAlignment="Center"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Visibility="Hidden">
+                    <StackPanel.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </StackPanel.RenderTransform>
                     <StackPanel.Style>
-                        <Style TargetType="StackPanel">
-                            <Setter Property="Visibility" Value="Hidden"/>
+                        <Style>
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding CurrentProcess.Kritischer_Prozess}" Value="Ja">
-                                    <Setter Property="Visibility" Value="Visible"/>
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+                                                    <EasingDoubleKeyFrame KeyTime="0" Value="-40"/>
+                                                    <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="-40"/>
+                                                    <EasingDoubleKeyFrame KeyTime="0:0:0.8" Value="0"/>
+                                                </DoubleAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)">
+                                                    <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}"/>
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.EnterActions>
+                                    <DataTrigger.ExitActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+                                                    <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                                                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="-40"/>
+                                                </DoubleAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)">
+                                                    <DiscreteObjectKeyFrame KeyTime="0:0:0.5" Value="{x:Static Visibility.Collapsed}"/>
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.ExitActions>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </StackPanel.Style>
-                    <Label Content="Kritischer Prozess" HorizontalAlignment="Center" FontSize="18" FontWeight="Bold" Foreground="Red"/>
+                    <Label Content="Kritischer Prozess" HorizontalAlignment="Center" FontSize="18" FontWeight="Bold" Foreground="Red">
+                        <Label.Style>
+                            <Style>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CurrentProcess.Kritischer_Prozess}" Value="Ja">
+                                        <DataTrigger.EnterActions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)">
+                                                        <EasingColorKeyFrame KeyTime="0:0:0.8" Value="Red"/>
+                                                        <EasingColorKeyFrame KeyTime="0:0:1.0" Value="White"/>
+                                                        <EasingColorKeyFrame KeyTime="0:0:1.3" Value="Red"/>
+                                                    </ColorAnimationUsingKeyFrames>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </DataTrigger.EnterActions>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Label.Style>
+                    </Label>
                     <Button Content="?" Command="{Binding ShowMsg}" CommandParameter="{Binding Krit_Msg}" Foreground="red" Width="30" Height="30" FontWeight="Bold" Template="{StaticResource EllipseWithText}"/>
                 </StackPanel>
                 <Button Content="Zurück" HorizontalAlignment="Right" Background="Wheat" Margin="0,0,10,0" VerticalAlignment="Center" Command="{Binding NavBack}"/>
@@ -81,12 +147,12 @@
                 </Grid.RowDefinitions>
                 <Label Content="Prozess:" FontWeight="Bold" VerticalAlignment="Center" Grid.Row="0"  HorizontalAlignment="Right"/>
                 <Label Content="Sub-Prozess:"  FontWeight="Bold" VerticalAlignment="Center" Grid.Row="1" HorizontalAlignment="Right"/>
-                <Border Grid.Column="1" Grid.Row="0" Margin="20,0,100,0">
+                <Border Grid.Column="1" Grid.Row="0" Margin="20,0,120,0">
                     <TextBlock Text="{Binding CurrentProcess.Prozess}" TextWrapping="WrapWithOverflow" VerticalAlignment="Center"/>
                 </Border>
-                <Button Command="{Binding ExportProcessHistory}" Margin="0,0,10,0" Content="Verlauf&#x0a;Export" Grid.Column="1" Width="60" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.RowSpan="2"/>
-                <Border Grid.Column="1" Margin="20,0,100,0" Grid.Row="1">
-                    <TextBlock Text="{Binding CurrentProcess.Sub_Prozess}" Margin="0,0,0,0" TextWrapping="WrapWithOverflow" VerticalAlignment="Center"/>
+                <Button Command="{Binding ExportProcessHistory}" ToolTip="Klicken Sie hier, um eine Excel-Datei der Prozess-Bearbeitungs-Historie zu exportieren" Margin="0,0,10,0" Content="Historie&#x0a;Excel-Export" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.RowSpan="2"/>
+                <Border Grid.Column="1" Margin="20,0,120,0" Grid.Row="1">
+                    <TextBlock Text="{Binding CurrentProcess.Sub_Prozess}" TextWrapping="WrapWithOverflow" VerticalAlignment="Center"/>
                 </Border>
                 <TabControl SelectedIndex="{Binding CurrentTab}" HorizontalAlignment="Stretch" Grid.Row="2" Grid.ColumnSpan="2">
                     <TabItem Header="Prozessstammdaten" IsEnabled="False">
@@ -410,18 +476,45 @@
                             <Label Content="Kritikalität des Prozesses" ToolTip="Pflichtfeld" FontWeight="Bold" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="4"/>
                             <Button Command="{Binding Info}" CommandParameter="Kritikalität" Content="  ?  " Grid.Column="1" Grid.Row="4" VerticalAlignment="Center" HorizontalAlignment="Left" Tag="Kritikalität" Focusable="False" Width="30" Height="30" FontWeight="Bold" Template="{StaticResource EllipseWithText}"/>
                             <ComboBox SelectedItem="{Binding CurrentProcess.Kritikalität_des_Prozesses}" ItemsSource="{Binding CritList}" Grid.Column="2" Grid.Row="4" VerticalAlignment="Center"/>
-                            <Label Content="{Binding CurrentProcess.Kritischer_Prozess}" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="5">
+                            <Label Content="{Binding CurrentProcess.Kritischer_Prozess}" Grid.Column="2" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="5">
                                 <Label.Style>
-                                    <Style TargetType="Label">
+                                    <Style>
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding CurrentProcess.Kritischer_Prozess}" Value="Ja">
-                                                <Setter Property="FontSize" Value="25"/>
-                                                <Setter Property="FontWeight" Value="Bold"/>
-                                                <Setter Property="Foreground" Value="Red"/>
+                                                <DataTrigger.EnterActions>
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)">
+                                                                <EasingColorKeyFrame KeyTime="0:0:0.0" Value="Black"/>
+                                                                <EasingColorKeyFrame KeyTime="0:0:0.8" Value="Red"/>
+                                                                <EasingColorKeyFrame KeyTime="0:0:1.0" Value="White"/>
+                                                                <EasingColorKeyFrame KeyTime="0:0:1.3" Value="Red"/>
+                                                            </ColorAnimationUsingKeyFrames>
+                                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.FontSize)">
+                                                                <EasingDoubleKeyFrame KeyTime="0:0:1.3" Value="26"/>
+                                                            </DoubleAnimationUsingKeyFrames>
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </DataTrigger.EnterActions>
+                                                <DataTrigger.ExitActions>
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)">
+                                                                <EasingColorKeyFrame KeyTime="0:0:0.0" Value="Red"/>
+                                                                <EasingColorKeyFrame KeyTime="0:0:0.2" Value="White"/>
+                                                                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="Black"/>
+                                                            </ColorAnimationUsingKeyFrames>
+                                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.FontSize)">
+                                                                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="14"/>
+                                                            </DoubleAnimationUsingKeyFrames>
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </DataTrigger.ExitActions>
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
                                 </Label.Style>
+
                             </Label>
                             <Button Command="{Binding ShowMsg}" CommandParameter="{Binding Krit_Msg}" Content="  ?  " Grid.Column="1" Grid.Row="5" VerticalAlignment="Center" HorizontalAlignment="Left" Focusable="False" Width="30" Height="30" FontWeight="Bold" Template="{StaticResource EllipseWithText}"/>
                         </Grid>
@@ -477,6 +570,21 @@
                                         <RowDefinition Height="40"/>
                                         <RowDefinition Height="100*"/>
                                     </Grid.RowDefinitions>
+                                    <Label Content="Mit diesem Prozess verknüpfte Anwendungen" HorizontalAlignment="Center" VerticalAlignment="Top" FontWeight="Bold"/>
+                                    <Border x:Name="border" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"  Visibility="{Binding DeletedApplicationsNotification}" RenderTransformOrigin="0.5,0.5">
+                                        <Border.RenderTransform>
+                                            <TransformGroup>
+                                                <ScaleTransform/>
+                                                <SkewTransform/>
+                                                <RotateTransform/>
+                                                <TranslateTransform/>
+                                            </TransformGroup>
+                                        </Border.RenderTransform>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label x:Name="label" Foreground="Red" FontWeight="Bold" Content=" Inaktive Anwendungen zugeordnet "/>
+                                            <Button Command="{Binding ShowMsg}" CommandParameter="{Binding InactiveApp_Msg}" Content="?" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Width="30" Height="30" FontWeight="Bold" Template="{StaticResource EllipseWithText}"/>
+                                        </StackPanel>
+                                    </Border>
                                     <DataGrid
                                         ItemsSource="{Binding CurrentProcess.ApplicationList}"
                                         Grid.Row="2"
@@ -499,13 +607,6 @@
                                             </Style>
                                         </DataGrid.RowStyle>
                                     </DataGrid>
-                                    <Border Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"  Visibility="{Binding DeletedApplicationsNotification}">
-                                        <StackPanel Orientation="Horizontal">
-                                            <Label Foreground="Red" FontWeight="Bold" Content="!-Diesem Prozess sind inaktive Anwendungen zugeordnet-!"/>
-                                            <Button Command="{Binding ShowMsg}" CommandParameter="{Binding InactiveApp_Msg}" Content="?" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Width="30" Height="30" FontWeight="Bold" Template="{StaticResource EllipseWithText}"/>
-                                        </StackPanel>
-                                    </Border>
-                                    <Label Content="Mit diesem Prozess verknüpfte Anwendungen" HorizontalAlignment="Center" VerticalAlignment="Top" FontWeight="Bold"/>
                                 </Grid>
                             </Border>
                             <Button Content="hinzufügen&gt;" Grid.Column="2" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding AddApplication}"/>
@@ -519,7 +620,13 @@
                             <ColumnDefinition Width="300*"/>
                             <ColumnDefinition Width="300*"/>
                         </Grid.ColumnDefinitions>
-                        <Button Command="{Binding NextTab}" Content="Bestätigen und weiter >>" Grid.Column="1" Background="White"/>
+                        <Button Command="{Binding NextTab}" Content="Bestätigen und weiter >>" Grid.Column="1" Background="White">
+                            <Button.Triggers>
+                                <EventTrigger RoutedEvent="Button.Click">
+                                    <BeginStoryboard Storyboard="{StaticResource InactiveApplicationsSB}"/>
+                                </EventTrigger>
+                            </Button.Triggers>
+                        </Button>
                         <Button Command="{Binding SaveAndContinue}" Content="Speichern und schließen" Grid.Column="1" Background="LightGreen" Visibility="{Binding ButtonSaveVisibility}"/>
                         <Button Command="{Binding PrevTab}" Content="&lt;&lt; Zurück" Background="White"/>
                     </Grid>

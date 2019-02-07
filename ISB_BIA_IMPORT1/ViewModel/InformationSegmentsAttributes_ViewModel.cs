@@ -44,10 +44,12 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 if (value == ISISAttributeMode.Edit)
                 {
                     EditMode = true;
+                    Instruction = "Ändern Sie hier den Attributnamen sowie die zugehörigen Mindesteinstufungen der Schutzziele";
                 }
                 else
                 {
                     EditMode = false;
+                    Instruction = "Hier sehen Sie eine Übersicht der Informationssegment-Attribute und mit welchen Einstufungen diese für das jeweilige Schutzziel versehen sind.";
                 }
             }
         }
@@ -55,6 +57,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// Property für Einstellungen bezüglich Bearbeitung durch CISO oder betrachten durch andere User
         /// </summary>
         public bool EditMode { get; set; }
+        /// <summary>
+        /// Anweisung-String
+        /// </summary>
+        public string Instruction { get; set; }
         #endregion
 
         /// <summary>

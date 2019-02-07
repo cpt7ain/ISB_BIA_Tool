@@ -10,6 +10,8 @@ using System.DirectoryServices;
 using System.Linq;
 using System.Security.Principal;
 using System.Data.Sql;
+using System.Data.SqlClient;
+using System.Data;
 
 namespace ISB_BIA_IMPORT1.ViewModel
 {
@@ -213,12 +215,14 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     //Prüfen der Active-Directory -> EXIT wenn Fehler (Wenn erfolgreich: Usergroup ist gesetzt; entweder nach Standard oder nach Einstellung)
                     if (myShared.Current_Environment != Current_Environment.Local_Test)
                     {
-                        GetUserFromAD();
-                        GetGroups(myShared.User.Username);
+                        bool userExists = GetUserFromAD();
+                        if (!userExists && !myShared.Admin) Environment.Exit(0);
+                        bool groupMatchesUser = GetGroups(myShared.User.Username);
+                        if (!groupMatchesUser && !myShared.Admin) Environment.Exit(0);
                     }
-                    //Prüfen, ob alle Tabellen in Datenbank vorhanden
-                    CheckDataModel();
-                    //Test für alle Usergruppen
+
+                    //Alle möglicherweise gesperrten Objekten aus unsauber beendeten früheren Sessions entfernen 
+                    myData.UnlockAllObjectsForUser();
 
                     //Direkt weiterleiten wenn nicht im Admin Modus
                     if (!myShared.Admin)
@@ -233,12 +237,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 }
         }
 
-
-
         /// <summary>
         /// Userdaten aus AD abrufen
         /// </summary>
-        private void GetUserFromAD()
+        /// <returns> true wenn User gefunden und Verbindung zu AD erfolgreich </returns>
+        private bool GetUserFromAD()
         {
             try
             {
@@ -246,23 +249,31 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 {
                     searcher.Filter = "(&(objectClass=user)(objectCategory=Person)(sAMAccountName=" + myShared.User.Username + "))";
                     SearchResult result = searcher.FindOne();
-                    if (result.Properties.Contains("department"))
+                    if(result != null)
                     {
-                        var department = result.Properties["department"];
-                        if (department.Count > 0)
+                        if (result.Properties.Contains("department"))
                         {
-                            myShared.User.OE = department[0].ToString();
+                            var department = result.Properties["department"];
+                            if (department.Count > 0)
+                            {
+                                myShared.User.OE = department[0].ToString();
+                            }
                         }
+                        if (result.Properties.Contains("givenname"))
+                        {
+                            var firstName = result.Properties["givenname"];
+                            myShared.User.Givenname = (firstName.Count > 0) ? firstName[0].ToString() : "n/a";
+                        }
+                        if (result.Properties.Contains("sn"))
+                        {
+                            var surname = result.Properties["sn"];
+                            myShared.User.Surname = (surname.Count > 0) ? surname[0].ToString() : "n/a";
+                        }
+                        return true;
                     }
-                    if (result.Properties.Contains("givenname"))
+                    else
                     {
-                        var firstName = result.Properties["givenname"];
-                        myShared.User.Givenname = (firstName.Count > 0) ? firstName[0].ToString() : "n/a";
-                    }
-                    if (result.Properties.Contains("sn"))
-                    {
-                        var surname = result.Properties["sn"];
-                        myShared.User.Surname = (surname.Count > 0) ? surname[0].ToString() : "n/a";
+                        return false;
                     }
                 }
             }
@@ -270,7 +281,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             {
                 //Wenn kein test und Verbindung zu AD nicht möglich dann Schließen
                 myDia.ShowError("Es konnte keine Verbindung zur Active Directory hergestellt werden.\nDie Anwendung wird geschlossen.", ex);
-                if (!myShared.Admin) Environment.Exit(0);
+                return false;
             }
         }
 
@@ -278,13 +289,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// Gruppenzugehörigkeiten eines Users auswerten (zuteilen einer Rolle in der Anwendung)
         /// </summary>
         /// <param name="userName"></param>
-        private void GetGroups(string userName)
+        /// <returns> User gefunden </returns>
+        private bool GetGroups(string userName)
         {
             try
             {
                 List<string> result = new List<string>();
                 WindowsIdentity wi = new WindowsIdentity(userName);
-
                 foreach (IdentityReference group in wi.Groups)
                 {
                     // Übsersetzen der SID in den Gruppennnamen
@@ -305,9 +316,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     else if (result.Contains(@System.Configuration.ConfigurationManager.AppSettings["AD_Group_Normal_PROD"])) myShared.User.UserGroup = UserGroups.Normal_User;
                     else
                     {
-                        myDia.ShowWarning("Sie haben keine Berechtigungen für dieses Programm.\nUser:  " + userName);
-                        if (!myShared.Admin) Environment.Exit(0);
+                        myDia.ShowWarning("Sie haben keine Berechtigungen für dieses Programm[Prod].\nUser:  " + userName);
+                        return false;
                     }
+                    return true;
                 }
                 //Gruppenabfrage für Testumgebung
                 else if (myShared.Current_Environment == Current_Environment.Test)
@@ -318,73 +330,21 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     else if (result.Contains(@System.Configuration.ConfigurationManager.AppSettings["AD_Group_Normal_TEST"])) myShared.User.UserGroup = UserGroups.Normal_User;
                     else
                     {
-                        myDia.ShowWarning("Sie haben keine Berechtigungen für dieses Programm.\nUser:  " + userName);
-                        if (!myShared.Admin) Environment.Exit(0);
+                        myDia.ShowWarning("Sie haben keine Berechtigungen für dieses Programm[Test].\nUser:  " + userName);
+                        return false;
                     }
+                    return true;
                 }
                 else
                 {
-                    myDia.ShowWarning("Sie haben keine Berechtigungen für dieses Programm.\nUser:  " + userName);
-                    if (!myShared.Admin) Environment.Exit(0);
+                    myDia.ShowWarning("Sie haben keine Berechtigungen für dieses Programm.\nUser:  " + userName+"\n[CurrentEnvironmentError]");
+                    return false;
                 }
             }
             catch (Exception ex)
             {
-                myDia.ShowError("AD-Gruppe konnte nicht aufgelöst werden für User\n"+userName, ex);
-                if (!myShared.Admin) Environment.Exit(0);
-            }
-        }
-
-        /// <summary>
-        /// Prüfen ob das Datenmodell Fehler aufweist
-        /// </summary>
-        private void CheckDataModel()
-        {
-            //Prüfen, ob alle Tabellen in Datenbank vorhanden
-            try
-            {
-                string sql1 = "SELECT count(*) as IsExists FROM dbo.sysobjects where id = object_id('[dbo].[" + myShared.Tbl_Applikationen + "]')";
-                string sql2 = "SELECT count(*) as IsExists FROM dbo.sysobjects where id = object_id('[dbo].[" + myShared.Tbl_Delta + "]')";
-                string sql3 = "SELECT count(*) as IsExists FROM dbo.sysobjects where id = object_id('[dbo].[" + myShared.Tbl_IS + "]')";
-                string sql4 = "SELECT count(*) as IsExists FROM dbo.sysobjects where id = object_id('[dbo].[" + myShared.Tbl_IS_Attribute + "]')";
-                string sql5 = "SELECT count(*) as IsExists FROM dbo.sysobjects where id = object_id('[dbo].[" + myShared.Tbl_Log + "]')";
-                string sql6 = "SELECT count(*) as IsExists FROM dbo.sysobjects where id = object_id('[dbo].[" + myShared.Tbl_OEs + "]')";
-                string sql7 = "SELECT count(*) as IsExists FROM dbo.sysobjects where id = object_id('[dbo].[" + myShared.Tbl_Prozesse + "]')";
-                string sql8 = "SELECT count(*) as IsExists FROM dbo.sysobjects where id = object_id('[dbo].[" + myShared.Tbl_Proz_App + "]')";
-                string sql9 = "SELECT count(*) as IsExists FROM dbo.sysobjects where id = object_id('[dbo].[" + myShared.Tbl_Settings + "]')";
-                string sql10 = "SELECT count(*) as IsExists FROM dbo.sysobjects where id = object_id('[dbo].[" + myShared.Tbl_Lock + "]')";
-
-                //Abfrage auf Existenz jeder einzelnen Tabelle
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(myShared.ConnectionString))
-                {
-                    int res1 = db.ExecuteQuery<int>(sql1).Single();
-                    int res2 = db.ExecuteQuery<int>(sql2).Single();
-                    int res3 = db.ExecuteQuery<int>(sql3).Single();
-                    int res4 = db.ExecuteQuery<int>(sql4).Single();
-                    int res5 = db.ExecuteQuery<int>(sql5).Single();
-                    int res6 = db.ExecuteQuery<int>(sql6).Single();
-                    int res7 = db.ExecuteQuery<int>(sql7).Single();
-                    int res8 = db.ExecuteQuery<int>(sql8).Single();
-                    int res9 = db.ExecuteQuery<int>(sql9).Single();
-                    int res10 = db.ExecuteQuery<int>(sql10).Single();
-
-                    //Prüfen ob alle Tabellen vorhanden
-                    if (res1 == 1 && res2 == 1 && res3 == 1 && res4 == 1 && res5 == 1 && res6 == 1 && res7 == 1 && res8 == 1 && res9 == 1 && res10 == 1)
-                    {
-                        //Wenn Tabelle existiert werden bei Start der Anwendung werden alle möglichen Locks, die durch diesen User in vergangenen Sessions verursacht wurden und Fehlerhafterweise nicht entfernt wurden, gelöscht
-                        myData.UnlockAllObjectsForUser();
-                    }
-                    else
-                    {
-                        myDia.ShowError("Fehler im Datenmodell.\nBitte kontaktieren Sie ggf. die IT.\nDie Anwendung wird nun geschlossen.\n");
-                        if (!myShared.Admin) Environment.Exit(0);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                myDia.ShowError("Fehler im Datenmodell.\nBitte kontaktieren Sie ggf. die IT.\nDie Anwendung wird nun geschlossen.\n", ex);
-                if (!myShared.Admin) Environment.Exit(0);
+                myDia.ShowError("AD-Gruppe konnte nicht gefunden werden für User\n"+userName, ex);
+                return false;
             }
         }
 

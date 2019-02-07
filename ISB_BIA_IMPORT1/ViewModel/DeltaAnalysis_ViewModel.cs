@@ -4,6 +4,7 @@ using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.LinqDataContext;
 using ISB_BIA_IMPORT1.Services;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -184,7 +185,16 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 NewSecurityGoals = (Setting.Neue_Schutzziele_aktiviert == "Ja") ? Visibility.Visible : Visibility.Collapsed;
                 #endregion
             }
+            int[] numbers = { 15, 1, 8, 6, 4, 12 };
+            //Query syntax:
+            IEnumerable<int> query1 =
+                from number in numbers
+                where number > 4
+                orderby number
+                select number;
 
+            //Method syntax:
+            IEnumerable<int> query2 = numbers.Where(number => number > 4).OrderBy(n => n);
         }
 
         /// <summary>

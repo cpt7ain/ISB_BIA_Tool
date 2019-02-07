@@ -139,7 +139,7 @@ namespace ISB_BIA_IMPORT1.Services
 
         public Process_Model GetProcessModelFromDB(int id)
         {
-            ISB_BIA_Prozesse linqProc = ProcessDummyList.First();
+            ISB_BIA_Prozesse linqProc = ProcessDummyList.FirstOrDefault();
             ObservableCollection<ISB_BIA_Applikationen> linqApps = new ObservableCollection<ISB_BIA_Applikationen>(GetDummyApplications().Take(15));
             return new Process_Model()
             {
@@ -239,7 +239,7 @@ namespace ISB_BIA_IMPORT1.Services
 
         public ISB_BIA_Prozesse TryInsert(ISB_BIA_Prozesse toDelete)
         {
-            return GetProcesses().First();
+            return GetProcesses().FirstOrDefault();
         }
 
         public bool SaveAllProcesses(ObservableCollection<ISB_BIA_Prozesse> pList)
@@ -279,7 +279,7 @@ namespace ISB_BIA_IMPORT1.Services
         }
         public Application_Model GetApplicationModelFromDB(int id)
         {
-            ISB_BIA_Applikationen linqApp = GetDummyApplications().First();
+            ISB_BIA_Applikationen linqApp = GetDummyApplications().FirstOrDefault();
             ObservableCollection<ISB_BIA_Prozesse> linqProcs = new ObservableCollection<ISB_BIA_Prozesse>(ProcessDummyList.Take(15));
             return new Application_Model
             {
@@ -344,11 +344,11 @@ namespace ISB_BIA_IMPORT1.Services
         }
         public ISB_BIA_Applikationen DeleteApplication(ISB_BIA_Applikationen a)
         {
-            return GetApplications().First();
+            return GetApplications().FirstOrDefault();
         }
         public ISB_BIA_Applikationen TryInsert(ISB_BIA_Applikationen toDelete)
         {
-            return GetApplications().First();
+            return GetApplications().FirstOrDefault();
         }
         public bool SaveAllApplications(ObservableCollection<ISB_BIA_Applikationen> aList)
         {
@@ -470,7 +470,7 @@ namespace ISB_BIA_IMPORT1.Services
         }
         public InformationSegment_Model GetSegmentModelFromDB(int id)
         {
-            ISB_BIA_Informationssegmente linqIS = GetDummySegments().First();
+            ISB_BIA_Informationssegmente linqIS = GetDummySegments().FirstOrDefault();
 
             InformationSegment_Model result = new InformationSegment_Model()
             {
@@ -586,7 +586,7 @@ namespace ISB_BIA_IMPORT1.Services
         }
         public ObservableCollection<string> GetApplicationCategories()
         {
-                    List<ISB_BIA_Applikationen> ocCategories = GetDummyApplications().GroupBy(y => y.Applikation_Id).Select(z => z.OrderByDescending(p => p.Datum).FirstOrDefault()).Where(u => u.Aktiv == 1).GroupBy(x => x.IT_Betriebsart).Select(group => group.First()).ToList();
+                    List<ISB_BIA_Applikationen> ocCategories = GetDummyApplications().GroupBy(y => y.Applikation_Id).Select(z => z.OrderByDescending(p => p.Datum).FirstOrDefault()).Where(u => u.Aktiv == 1).GroupBy(x => x.IT_Betriebsart).Select(group => group.FirstOrDefault()).ToList();
                     //Für späteres Filtern: Eintrag für alle Kategorien
                     ocCategories.Insert(0, new ISB_BIA_Applikationen() { Applikation_Id = 0, IT_Betriebsart = "<Alle>" });
                     return new ObservableCollection<string>(ocCategories.Select(x => x.IT_Betriebsart));
@@ -679,7 +679,7 @@ namespace ISB_BIA_IMPORT1.Services
 
         public ISB_BIA_OEs InsertOEName(string name)
         {
-            return GetDummyOEs().First();
+            return GetDummyOEs().FirstOrDefault();
         }
 
         public bool EditOEName(string name, string oldName)
@@ -704,12 +704,12 @@ namespace ISB_BIA_IMPORT1.Services
 
         public ISB_BIA_OEs InsertOELink(ISB_BIA_OEs name, ISB_BIA_OEs number)
         {
-            return GetDummyOEs().First();
+            return GetDummyOEs().FirstOrDefault();
         }
 
         public ISB_BIA_OEs InsertOENumber(string number, ISB_BIA_OEs name)
         {
-            return GetDummyOEs().First();
+            return GetDummyOEs().FirstOrDefault();
         }
 
         public bool EditOENumber(string number, string oldNumber)
