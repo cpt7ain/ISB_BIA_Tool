@@ -3,10 +3,7 @@ using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.LinqDataContext;
 using ISB_BIA_IMPORT1.Services;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
 
 namespace ISB_BIA_IMPORT1.ViewModel
@@ -211,7 +208,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       }
                       else
                       {
-                          myDia.ShowWarning("Bitte zu ändernden Eintrag auswählen");
+                          _myDia.ShowWarning("Bitte zu ändernden Eintrag auswählen");
                       }
                   }, () => IsFree));
         }
@@ -231,7 +228,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       }
                       else
                       {
-                          myDia.ShowWarning("Es stehen keine OE-Kennungen ür die Zuweisung zur Verfügung.");
+                          _myDia.ShowWarning("Es stehen keine OE-Kennungen ür die Zuweisung zur Verfügung.");
                       }
                   }, () => IsFree));
         }
@@ -266,7 +263,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       }
                       else
                       {
-                          myDia.ShowInfo("Bitte zu ändernden Eintrag auswählen");
+                          _myDia.ShowInfo("Bitte zu ändernden Eintrag auswählen");
                       }
                   }, () => IsFree));
         }
@@ -281,13 +278,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _saveNameNew
                   ?? (_saveNameNew = new MyRelayCommand(() =>
                   {
-                      ISB_BIA_OEs result = myData.InsertOEName(NewName);
+                      ISB_BIA_OEs result = _myData.InsertOEName(NewName);
                       if (result != null)
                       {
                           CancelEditFunc();
-                          OENames = myData.GetOENames();
-                          OENumbers = myData.GetOENumbers();
-                          OELinks = myData.GetOELinks();
+                          OENames = _myData.GetOENames();
+                          OENumbers = _myData.GetOENumbers();
+                          OELinks = _myData.GetOELinks();
                       }
                   }));
         }
@@ -299,13 +296,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _saveNameEdit
                   ?? (_saveNameEdit = new MyRelayCommand(() =>
                   {
-                      bool result = myData.EditOEName(EditNewName, SelectedName.OE_Name);
+                      bool result = _myData.EditOEName(EditNewName, SelectedName.OE_Name);
                       if (result)
                       {
                           CancelEditFunc();
-                          OENames = myData.GetOENames();
-                          OENumbers = myData.GetOENumbers();
-                          OELinks = myData.GetOELinks();
+                          OENames = _myData.GetOENames();
+                          OENumbers = _myData.GetOENumbers();
+                          OELinks = _myData.GetOELinks();
                       }
                   }));
         }
@@ -317,13 +314,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _saveLinkNew
                   ?? (_saveLinkNew = new MyRelayCommand(() =>
                   {
-                      ISB_BIA_OEs result = myData.InsertOELink(SelectedNewLinkName, SelectedNewLinkNumber);
+                      ISB_BIA_OEs result = _myData.InsertOELink(SelectedNewLinkName, SelectedNewLinkNumber);
                       if (result != null)
                       {
                           CancelEditFunc();
-                          OENames = myData.GetOENames();
-                          OENumbers = myData.GetOENumbers();
-                          OELinks = myData.GetOELinks();
+                          OENames = _myData.GetOENames();
+                          OENumbers = _myData.GetOENumbers();
+                          OELinks = _myData.GetOELinks();
                       }
                   }));
         }
@@ -335,13 +332,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _saveNumberNew
                   ?? (_saveNumberNew = new MyRelayCommand(() =>
                   {
-                      ISB_BIA_OEs result = myData.InsertOENumber(NewNumber, SelectedNewNumberName);
+                      ISB_BIA_OEs result = _myData.InsertOENumber(NewNumber, SelectedNewNumberName);
                       if (result != null)
                       {
                           CancelEditFunc();
-                          OENames = myData.GetOENames();
-                          OENumbers = myData.GetOENumbers();
-                          OELinks = myData.GetOELinks();
+                          OENames = _myData.GetOENames();
+                          OENumbers = _myData.GetOENumbers();
+                          OELinks = _myData.GetOELinks();
                       }
                   }));
         }
@@ -353,13 +350,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _saveNumberEdit
                   ?? (_saveNumberEdit = new MyRelayCommand(() =>
                   {
-                      bool result = myData.EditOENumber(EditNewNumber, SelectedNumber.OE_Nummer);
+                      bool result = _myData.EditOENumber(EditNewNumber, SelectedNumber.OE_Nummer);
                       if (result)
                       {
                           CancelEditFunc();
-                          OENames = myData.GetOENames();
-                          OENumbers = myData.GetOENumbers();
-                          OELinks = myData.GetOELinks();
+                          OENames = _myData.GetOENames();
+                          OENumbers = _myData.GetOENumbers();
+                          OELinks = _myData.GetOELinks();
                       }
                   }));
         }
@@ -373,16 +370,16 @@ namespace ISB_BIA_IMPORT1.ViewModel
                   {
                       if (SelectedName != null)
                       {
-                          if (myData.DeleteOEName(SelectedName.OE_Name))
+                          if (_myData.DeleteOEName(SelectedName.OE_Name))
                           {
-                              OENames = myData.GetOENames();
-                              OENumbers = myData.GetOENumbers();
-                              OELinks = myData.GetOELinks();
+                              OENames = _myData.GetOENames();
+                              OENumbers = _myData.GetOENumbers();
+                              OELinks = _myData.GetOELinks();
                           }
                       }
                       else
                       {
-                          myDia.ShowInfo("Bitte zu löschenden Eintrag auswählen.");
+                          _myDia.ShowInfo("Bitte zu löschenden Eintrag auswählen.");
                       }
                   }, () => IsFree ));
         }
@@ -396,16 +393,16 @@ namespace ISB_BIA_IMPORT1.ViewModel
                   {
                       if (SelectedLink != null)
                       {
-                          if (myData.DeleteOELink(SelectedLink.OE_Name, SelectedLink.OE_Nummer))
+                          if (_myData.DeleteOELink(SelectedLink.OE_Name, SelectedLink.OE_Nummer))
                           {
-                              OENames = myData.GetOENames();
-                              OENumbers = myData.GetOENumbers();
-                              OELinks = myData.GetOELinks();
+                              OENames = _myData.GetOENames();
+                              OENumbers = _myData.GetOENumbers();
+                              OELinks = _myData.GetOELinks();
                           }
                       }
                       else
                       {
-                          myDia.ShowInfo("Bitte zu löschenden Eintrag auswählen.");
+                          _myDia.ShowInfo("Bitte zu löschenden Eintrag auswählen.");
                       }
                   }, () => IsFree));
         }
@@ -419,16 +416,16 @@ namespace ISB_BIA_IMPORT1.ViewModel
                   {
                       if (SelectedNumber != null)
                       {
-                          if (myData.DeleteOENumber(SelectedNumber.OE_Nummer))
+                          if (_myData.DeleteOENumber(SelectedNumber.OE_Nummer))
                           {
-                              OENames = myData.GetOENames();
-                              OENumbers = myData.GetOENumbers();
-                              OELinks = myData.GetOELinks();
+                              OENames = _myData.GetOENames();
+                              OENumbers = _myData.GetOENumbers();
+                              OELinks = _myData.GetOELinks();
                           }
                       }
                       else
                       {
-                          myDia.ShowInfo("Bitte zu löschenden Eintrag auswählen.");
+                          _myDia.ShowInfo("Bitte zu löschenden Eintrag auswählen.");
                       }
                   }, () => IsFree));
         }
@@ -517,16 +514,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => new MyRelayCommand(() =>
                 {
                     Cleanup();
-                    myNavi.NavigateBack();
-                    myData.UnlockObject(Table_Lock_Flags.OEs, 0);
+                    _myNavi.NavigateBack();
+                    _myData.UnlockObject(Table_Lock_Flags.OEs, 0);
                 });
         }
 
         #region Services
-        IMyNavigationService myNavi;
-        IMyDialogService myDia;
-        IMyDataService myData;
-        IMySharedResourceService myShared;
+        IMyNavigationService _myNavi;
+        IMyDialogService _myDia;
+        IMyDataService _myData;
         #endregion
 
         /// <summary>
@@ -537,17 +533,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <param name="myDialogService"></param>
         /// <param name="myNavigationService"></param>
         /// <param name="myDataService"></param>
-        /// <param name="mySharedResourceService"></param>
-        public OE_AssignmentView_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyDataService myDataService, IMySharedResourceService mySharedResourceService)
+        public OE_AssignmentView_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyDataService myDataService)
         {
-            myDia = myDialogService;
-            myNavi = myNavigationService;
-            myData = myDataService;
-            myShared = mySharedResourceService;
+            _myDia = myDialogService;
+            _myNavi = myNavigationService;
+            _myData = myDataService;
 
-            OENames = myData.GetOENames();
-            OENumbers = myData.GetOENumbers();
-            OELinks = myData.GetOELinks();
+            OENames = _myData.GetOENames();
+            OENumbers = _myData.GetOENumbers();
+            OELinks = _myData.GetOELinks();
             NameVis = Visibility.Visible;
             NameNewBorderVis = Visibility.Collapsed;
             NameEditBorderVis = Visibility.Collapsed;

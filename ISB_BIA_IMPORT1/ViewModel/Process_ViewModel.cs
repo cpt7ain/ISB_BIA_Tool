@@ -621,7 +621,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                           {
                               if (SelectedSourceItem.Applikation_Id == c.Applikation_Id)
                               {
-                                  myDia.ShowInfo("Anwendung bereits zugewiesen");
+                                  _myDia.ShowInfo("Anwendung bereits zugewiesen");
                                   contained = true;
                               }
                           }
@@ -634,7 +634,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                           }
                       }
                       else
-                          myDia.ShowInfo("Bitte hinzuzufügende Anwendung auswählen");
+                          _myDia.ShowInfo("Bitte hinzuzufügende Anwendung auswählen");
                   }));
         }
         /// <summary>
@@ -654,7 +654,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                           RaisePropertyChanged(()=> DeletedApplicationsNotification);
                       }
                       else
-                          myDia.ShowInfo("Bitte zu löschende Anwendung auswählen");
+                          _myDia.ShowInfo("Bitte zu löschende Anwendung auswählen");
                   }));
         }
         /// <summary>
@@ -664,11 +664,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             get => new MyRelayCommand(() =>
                 {
-                    if (myDia.CancelDecision())
+                    if (_myDia.CancelDecision())
                     {
                         Cleanup();
-                        myNavi.NavigateBack(true);
-                        myData.UnlockObject(Table_Lock_Flags.Process, CurrentProcess.Prozess_Id);
+                        _myNavi.NavigateBack(true);
+                        _myData.UnlockObject(Table_Lock_Flags.Process, CurrentProcess.Prozess_Id);
                     }
                 });
         }
@@ -680,7 +680,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _navToISViewChild
                   ?? (_navToISViewChild = new MyRelayCommand(() =>
                   {
-                      myNavi.NavigateTo<InformationSegmentsView_ViewModel>(ISISAttributeMode.View);
+                      _myNavi.NavigateTo<InformationSegmentsView_ViewModel>(ISISAttributeMode.View);
                   }));
         }
         /// <summary>
@@ -691,14 +691,14 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _navToIS
                   ?? (_navToIS = new MyRelayCommand<string>((msg) =>
                   {
-                      ISB_BIA_Informationssegmente seg = myData.GetISByISName(msg);
+                      ISB_BIA_Informationssegmente seg = _myData.GetISByISName(msg);
                       if (seg != null)
                       {
-                          myNavi.NavigateTo<InformationSegment_ViewModel>(seg.Informationssegment_Id, ISISAttributeMode.View);
+                          _myNavi.NavigateTo<InformationSegment_ViewModel>(seg.Informationssegment_Id, ISISAttributeMode.View);
                       }
                       else
                       {
-                          myDia.ShowInfo("Bitte gültiges Segment auswählen.");
+                          _myDia.ShowInfo("Bitte gültiges Segment auswählen.");
                       }
                   }));
         }
@@ -710,12 +710,12 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => new MyRelayCommand(() =>
                 {
                     //Prozess + Relationen einfügen
-                    if (myData.InsertProcessAndRelations(CurrentProcess, Mode, NewApplications, RemoveApplications))
+                    if (_myData.InsertProcessAndRelations(CurrentProcess, Mode, NewApplications, RemoveApplications))
                     {
                         bool refreshMsg = (Mode == ProcAppMode.Change) ? true : false;
                         Cleanup();
-                        myNavi.NavigateBack(refreshMsg);
-                        myData.UnlockObject(Table_Lock_Flags.Process, CurrentProcess.Prozess_Id);
+                        _myNavi.NavigateBack(refreshMsg);
+                        _myData.UnlockObject(Table_Lock_Flags.Process, CurrentProcess.Prozess_Id);
                     }
                 });
         }
@@ -727,10 +727,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _exportProcessHistory
                     ?? (_exportProcessHistory = new MyRelayCommand(() =>
                     {
-                        bool success = myExport.ExportProcesses(myData.GetProcessHistory(CurrentProcess.Prozess_Id), CurrentProcess.Prozess_Id);
+                        bool success = _myExport.ExportProcesses(_myData.GetProcessHistory(CurrentProcess.Prozess_Id), CurrentProcess.Prozess_Id);
                         if (success)
                         {
-                            myDia.ShowInfo("Export erfolgreich");
+                            _myDia.ShowInfo("Export erfolgreich");
                         }
                     },()=>Mode == ProcAppMode.Change));
         }
@@ -744,22 +744,22 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     {
                         try
                         {
-                            string file = myShared.InitialDirectory + @"\" + name + "_Info.xps";
+                            string file = _myShared.InitialDirectory + @"\" + name + "_Info.xps";
                             if (File.Exists(file))
                             {
                                 XpsDocument xpsDocument = new XpsDocument(file, FileAccess.Read);
                                 FixedDocumentSequence fds = xpsDocument.GetFixedDocumentSequence();
-                                myNavi.NavigateTo<DocumentView_ViewModel>();
-                                Messenger.Default.Send<FixedDocumentSequence>(fds);
+                                _myNavi.NavigateTo<DocumentView_ViewModel>();
+                                Messenger.Default.Send(fds);
                             }
                             else
                             {
-                                myDia.ShowInfo("Keine Beschreibung verfügbar.");
+                                _myDia.ShowInfo("Keine Beschreibung verfügbar.");
                             }
                         }
                         catch (Exception ex)
                         {
-                            myDia.ShowError("Keine Beschreibung verfügbar.", ex);
+                            _myDia.ShowError("Keine Beschreibung verfügbar.", ex);
                         }
                     }));
         }
@@ -771,7 +771,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _showMsg
                   ?? (_showMsg = new MyRelayCommand<string>((msg) =>
                   {
-                      myDia.ShowMessage(msg);
+                      _myDia.ShowMessage(msg);
                   }));
         }
         #endregion
@@ -958,7 +958,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         public string InactiveApp_Msg
         {
-            get => "Prüfen Sie bitte die Liste ihrer Anwendungen und wenden Sie sich ggf. an den IT-Betrieb.";
+            get => "Diesem Prozess sind inaktive Anwendungen zugeordnet. " +
+                "\nDas bedeutet, dass die in der Liste rot markierten Anwendungen vom IT-Betrieb als inaktiv markiert wurden, da sie nicht mehr genutzt werden oder nicht mehr zur Verfügung stehen. " +
+                "\nPrüfen Sie daher bitte die gekennzeichneten Anwendungen und entfernen Sie diese aus der Liste, falls Sie die Anwendung tatsächlich nicht mehr nutzen. " +
+                "\nBei Fragen wenden Sie sich ggf. an den IT-Betrieb.";
         }
         #endregion
 
@@ -1011,37 +1014,34 @@ namespace ISB_BIA_IMPORT1.ViewModel
         public ISB_BIA_Settings Setting { get; set; }
 
         #region Services
-        IMyNavigationService myNavi;
-        IMyDialogService myDia;
-        IMyDataService myData;
-        IMyExportService myExport;
-        IMySharedResourceService myShared;
-        IMyMailNotificationService myMail;
+        IMyNavigationService _myNavi;
+        IMyDialogService _myDia;
+        IMyDataService _myData;
+        IMyExportService _myExport;
+        IMySharedResourceService _myShared;
         #endregion
 
         /// <summary>
-        /// Konsruktor
+        /// Konstruktor
         /// </summary>
         /// <param name="myDialogService"></param>
         /// <param name="myNavigationService"></param>
         /// <param name="myDataService"></param>
         /// <param name="myExportService"></param>
         /// <param name="mySharedResourceService"></param>
-        /// <param name="myMailNotificationService"></param>
-        public Process_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyDataService myDataService, IMyExportService myExportService, IMySharedResourceService mySharedResourceService, IMyMailNotificationService myMailNotificationService)
+        public Process_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyDataService myDataService, IMyExportService myExportService, IMySharedResourceService mySharedResourceService)
         {
             #region Services
-            myDia = myDialogService;
-            myNavi = myNavigationService;
-            myData = myDataService;
-            myExport = myExportService;
-            myShared = mySharedResourceService;
-            myMail = myMailNotificationService;
+            _myDia = myDialogService;
+            _myNavi = myNavigationService;
+            _myData = myDataService;
+            _myExport = myExportService;
+            _myShared = mySharedResourceService;
             #endregion
 
             if (IsInDesignMode)
             {
-                CurrentProcess = myData.GetProcessModelFromDB(1);
+                CurrentProcess = _myData.GetProcessModelFromDB(1);
                 Prozessverantwortlicher = CurrentProcess.Prozessverantwortlicher;
                 Vorgelagerte_Prozesse = CurrentProcess.Vorgelagerte_Prozesse;
                 Nachgelagerte_Prozesse = CurrentProcess.Nachgelagerte_Prozesse;
@@ -1050,13 +1050,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
             //Messenger Registrierung für Prozessbearbeitungsmodus
             MessengerInstance.Register<int>(this, ProcAppMode.Change, p => {
                 Mode = ProcAppMode.Change;
-                CurrentProcess = myData.GetProcessModelFromDB(p);
+                CurrentProcess = _myData.GetProcessModelFromDB(p);
                 //Wenn Daten Fehlerhaft dann zurückkehren
                 if (CurrentProcess == null)
                 {
-                    myDia.ShowError("Fehler beim Laden der Daten.");
+                    _myDia.ShowError("Fehler beim Laden der Daten.");
                     Cleanup();
-                    myNavi.NavigateBack();
+                    _myNavi.NavigateBack();
                 }
                 else
                 {
@@ -1074,13 +1074,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 CurrentProcess = new Process_Model();
             });
             //Messenger Registrierung für Benachrichtigung eines Kritischen Prozesses (kommt von Process_Model)
-            Messenger.Default.Register<string>(this, MessageToken.ChangedToCriticalNotification,p=> { myDia.ShowInfo(Krit_Ntf); });
+            Messenger.Default.Register<string>(this, MessageToken.ChangedToCriticalNotification,p=> { _myDia.ShowInfo(Krit_Ntf); });
 
             #region Listen un Daten für Prozess-Anwendungszuordnung
             NewApplications = new ObservableCollection<ISB_BIA_Applikationen>();
             RemoveApplications = new ObservableCollection<ISB_BIA_Applikationen>();
-            AllApplications = myData.GetActiveApplications();
-            ApplicationCategories = myData.GetApplicationCategories();
+            AllApplications = _myData.GetActiveApplications();
+            ApplicationCategories = _myData.GetApplicationCategories();
             #endregion
 
             #region Filter für Anwendungsliste definieren
@@ -1090,24 +1090,24 @@ namespace ISB_BIA_IMPORT1.ViewModel
             #endregion
 
             #region Füllen der Dropdownlisten
-            ProcessOwnerList = myData.GetProcessOwner();
-            OEList = (myShared.User.UserGroup == UserGroups.Admin || myShared.User.UserGroup == UserGroups.CISO)?myData.GetOEs():myData.GetOEsForUser(myShared.User.OE);
+            ProcessOwnerList = _myData.GetProcessOwner();
+            OEList = (_myShared.User.UserGroup == UserGroups.Admin || _myShared.User.UserGroup == UserGroups.CISO)?_myData.GetOEs():_myData.GetOEsForUser(_myShared.User.OE);
             MaturityList = new ObservableCollection<string>(new List<string>() { "1 - Initial", "2 - Wiederholbar", "3 - Definiert", "4 - Gemanagt", "5 - Optimiert" });
             CritList = new ObservableCollection<string>(new List<string>() { "Normal", "Mittel", "Hoch", "Sehr hoch" });
             RTOList = new ObservableCollection<int>(new List<int>() { 1, 5, 10, 20 });
-            PreProcessList = myData.GetPreProcesses();
-            PostProcessList = myData.GetPostProcesses();
-            ISList = myData.GetISList();
+            PreProcessList = _myData.GetPreProcesses();
+            PostProcessList = _myData.GetPostProcesses();
+            ISList = _myData.GetISList();
             #endregion
 
             #region Einstellungen abrufen
-            Setting = myData.GetSettings();
+            Setting = _myData.GetSettings();
             SchutzzielVisible = (Setting.Neue_Schutzziele_aktiviert == "Ja") ? true : false;
             #endregion
 
             #region Informationssegmente und Attribute abrufen
-            EnabledISSegments = myData.GetEnabledSegments();
-            AllAttributesList = myData.GetAttributes();
+            EnabledISSegments = _myData.GetEnabledSegments();
+            AllAttributesList = _myData.GetAttributes();
             #endregion
         }
 
@@ -1120,7 +1120,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             try
             {
 
-                List<ISB_BIA_Informationssegmente> queryIS = myData.Get5SegmentsForCalculation(process);
+                List<ISB_BIA_Informationssegmente> queryIS = _myData.Get5SegmentsForCalculation(process);
                 //Liste zur speicherung der zutreffenden Attribute
                 List<int> list = new List<int>();
 
@@ -1168,7 +1168,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             }
             catch(Exception ex)
             {
-                myDia.ShowError("Fehler: Konnte Daten über Informationssegmente nicht abrufen!",ex);
+                _myDia.ShowError("Fehler: Konnte Daten über Informationssegmente nicht abrufen!",ex);
             }
         }
 

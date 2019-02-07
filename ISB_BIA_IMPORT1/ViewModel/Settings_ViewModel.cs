@@ -2,9 +2,7 @@
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.Model;
-using ISB_BIA_IMPORT1.LinqDataContext;
 using ISB_BIA_IMPORT1.Services;
-using System;
 
 namespace ISB_BIA_IMPORT1.ViewModel
 {
@@ -43,11 +41,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             get => new MyRelayCommand(() =>
             {
-                if (myDia.CancelDecision())
+                if (_myDia.CancelDecision())
                 {
                     Cleanup();
-                    myNavi.NavigateBack();
-                    myData.UnlockObject(Table_Lock_Flags.Settings, 0);
+                    _myNavi.NavigateBack();
+                    _myData.UnlockObject(Table_Lock_Flags.Settings, 0);
                 }
             });
         }
@@ -59,11 +57,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             get => new MyRelayCommand(() =>
             {
-                if (myData.InsertSettings(myData.MapSettingsModelToDB(NewSettings), myData.MapSettingsModelToDB(OldSettings)))
+                if (_myData.InsertSettings(_myData.MapSettingsModelToDB(NewSettings), _myData.MapSettingsModelToDB(OldSettings)))
                 {
                     Cleanup();
-                    myNavi.NavigateBack();
-                    myData.UnlockObject(Table_Lock_Flags.Settings, 0);
+                    _myNavi.NavigateBack();
+                    _myData.UnlockObject(Table_Lock_Flags.Settings, 0);
                 }
             });
         }
@@ -75,15 +73,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             get => new MyRelayCommand(() =>
             {
-                myExport.ExportSettings(myData.GetSettingsHistory());
+                _myExport.ExportSettings(_myData.GetSettingsHistory());
             });
         }
 
         #region Services
-        IMyNavigationService myNavi;
-        IMyDialogService myDia;
-        IMyDataService myData;
-        IMyExportService myExport;
+        IMyNavigationService _myNavi;
+        IMyDialogService _myDia;
+        IMyDataService _myData;
+        IMyExportService _myExport;
         #endregion
 
         /// <summary>
@@ -92,14 +90,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <param name="myDialogService"></param>
         /// <param name="myNavigationService"></param>
         /// <param name="myDataService"></param>
+        /// <param name="myExportService"></param>
         public Settings_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyDataService myDataService, IMyExportService myExportService)
         {
-            myDia = myDialogService;
-            myNavi = myNavigationService;
-            myData = myDataService;
-            myExport = myExportService;
-            OldSettings = myData.GetSettingsModelFromDB();
-            NewSettings = myData.GetSettingsModelFromDB();
+            _myDia = myDialogService;
+            _myNavi = myNavigationService;
+            _myData = myDataService;
+            _myExport = myExportService;
+            OldSettings = _myData.GetSettingsModelFromDB();
+            NewSettings = _myData.GetSettingsModelFromDB();
         }
 
         /// <summary>

@@ -5,7 +5,6 @@ using ISB_BIA_IMPORT1.Model;
 using ISB_BIA_IMPORT1.LinqDataContext;
 using ISB_BIA_IMPORT1.Services;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -58,7 +57,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _newProcess
                   ?? (_newProcess = new MyRelayCommand(() =>
                   {
-                      myNavi.NavigateTo<Process_ViewModel>(0, ProcAppMode.New);
+                      _myNavi.NavigateTo<Process_ViewModel>(0, ProcAppMode.New);
                   }));
         }
 
@@ -70,7 +69,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _setProcessView
                   ?? (_setProcessView = new MyRelayCommand<ProcAppListMode>((m) =>
                   {
-                      myNavi.NavigateTo<ProcessView_ViewModel>(m);
+                      _myNavi.NavigateTo<ProcessView_ViewModel>(m);
                   }));
         }
 
@@ -82,7 +81,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _newApplication
                   ?? (_newApplication = new MyRelayCommand(() =>
                   {
-                      myNavi.NavigateTo<Application_ViewModel>(0, ProcAppMode.New);
+                      _myNavi.NavigateTo<Application_ViewModel>(0, ProcAppMode.New);
                   }));
         }
 
@@ -94,7 +93,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _setApplicationView
                   ?? (_setApplicationView = new MyRelayCommand<ProcAppListMode>((mode) =>
                   {
-                      myNavi.NavigateTo<ApplicationView_ViewModel>(mode);
+                      _myNavi.NavigateTo<ApplicationView_ViewModel>(mode);
                   }));
         }
 
@@ -106,7 +105,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _setSBAView
                   ?? (_setSBAView = new MyRelayCommand(() =>
                   {
-                      myNavi.NavigateTo<SBA_View_ViewModel>();
+                      _myNavi.NavigateTo<SBA_View_ViewModel>();
                   }));
         }
 
@@ -123,7 +122,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                           m = ISISAttributeMode.Edit;
                       else
                           m = ISISAttributeMode.View;
-                      myNavi.NavigateTo<InformationSegmentsView_ViewModel>(m);
+                      _myNavi.NavigateTo<InformationSegmentsView_ViewModel>(m);
                   }));
         }
 
@@ -140,21 +139,21 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       if (User.UserGroup == UserGroups.CISO)
                       {
                           mode = ISISAttributeMode.Edit;
-                          string user = myData.GetObjectLocked(Table_Lock_Flags.Attributes, 0);
+                          string user = _myData.GetObjectLocked(Table_Lock_Flags.Attributes, 0);
                           if (user == "")
                           {
-                              if (myData.LockObject(Table_Lock_Flags.Attributes, 0))
-                                  myNavi.NavigateTo<InformationSegmentsAttributes_ViewModel>(mode);
+                              if (_myData.LockObject(Table_Lock_Flags.Attributes, 0))
+                                  _myNavi.NavigateTo<InformationSegmentsAttributes_ViewModel>(mode);
                           }
                           else
                           {
-                              myDia.ShowWarning("Die Attribute werden momentan durch einen anderen CISO bearbeitet und können daher nicht geöffnet werden.\n\nBelegender Benutzer: " + user + "\n\nSollte kein CISO die Attribut-Liste geöffnet haben, wenden Sie sich bitte IT.");
+                              _myDia.ShowWarning("Die Attribute werden momentan durch einen anderen CISO bearbeitet und können daher nicht geöffnet werden.\n\nBelegender Benutzer: " + user + "\n\nSollte kein CISO die Attribut-Liste geöffnet haben, wenden Sie sich bitte IT.");
                           }
                       }
                       else
                       {
                           mode = ISISAttributeMode.View;
-                          myNavi.NavigateTo<InformationSegmentsAttributes_ViewModel>(mode);
+                          _myNavi.NavigateTo<InformationSegmentsAttributes_ViewModel>(mode);
                       }
                   }));
         }
@@ -167,15 +166,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _setOESettings
                   ?? (_setOESettings = new MyRelayCommand(() =>
                   {
-                      string user = myData.GetObjectLocked(Table_Lock_Flags.OEs, 0);
+                      string user = _myData.GetObjectLocked(Table_Lock_Flags.OEs, 0);
                       if (user == "")
                       {
-                          if (myData.LockObject(Table_Lock_Flags.OEs, 0))
-                              myNavi.NavigateTo<OE_AssignmentView_ViewModel>();
+                          if (_myData.LockObject(Table_Lock_Flags.OEs, 0))
+                              _myNavi.NavigateTo<OE_AssignmentView_ViewModel>();
                       }
                       else
                       {
-                          myDia.ShowWarning("Die OE-Einstellungen werden momentan durch einen anderen User bearbeitet und können daher nicht geöffnet werden.\n\nBelegender Benutzer: " + user);
+                          _myDia.ShowWarning("Die OE-Einstellungen werden momentan durch einen anderen User bearbeitet und können daher nicht geöffnet werden.\n\nBelegender Benutzer: " + user);
                       }
                   }));
         }
@@ -188,15 +187,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _setSettings
                   ?? (_setSettings = new MyRelayCommand(() =>
                   {
-                      string user = myData.GetObjectLocked(Table_Lock_Flags.Settings, 0);
+                      string user = _myData.GetObjectLocked(Table_Lock_Flags.Settings, 0);
                       if (user == "")
                       {
-                          if (myData.LockObject(Table_Lock_Flags.Settings, 0))
-                              myNavi.NavigateTo<Settings_ViewModel>();
+                          if (_myData.LockObject(Table_Lock_Flags.Settings, 0))
+                              _myNavi.NavigateTo<Settings_ViewModel>();
                       }
                       else
                       {
-                          myDia.ShowWarning("Die Einstellungen werden momentan durch einen anderen User bearbeitet und können daher nicht geöffnet werden.\n\nBelegender Benutzer: " + user);
+                          _myDia.ShowWarning("Die Einstellungen werden momentan durch einen anderen User bearbeitet und können daher nicht geöffnet werden.\n\nBelegender Benutzer: " + user);
                       }
                   }));
         }
@@ -209,7 +208,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _setDataModel
                   ?? (_setDataModel = new MyRelayCommand(() =>
                   {
-                      myNavi.NavigateTo<DataModel_ViewModel>();
+                      _myNavi.NavigateTo<DataModel_ViewModel>();
                   }));
         }
 
@@ -221,7 +220,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _setLog
                   ?? (_setLog = new MyRelayCommand(() =>
                   {
-                      myNavi.NavigateTo<LogView_ViewModel>();
+                      _myNavi.NavigateTo<LogView_ViewModel>();
                   }));
         }
 
@@ -233,9 +232,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _removeLocks
                   ?? (_removeLocks = new MyRelayCommand(() =>
                   {
-                      if (myDia.ShowQuestion("Möchten Sie wirklich alle Datensatz-Locks entfernen?\nBitte stellen Sie sicher, dass kein User Datensätze geöfnnet hat, da es sonst zu einer gleichzeitigen Bearbeitung der Datensätze kommen kann.", "Locks entfernen"))
+                      if (_myDia.ShowQuestion("Möchten Sie wirklich alle Datensatz-Locks entfernen?\nBitte stellen Sie sicher, dass kein User Datensätze geöfnnet hat, da es sonst zu einer gleichzeitigen Bearbeitung der Datensätze kommen kann.", "Locks entfernen"))
                       {
-                          myData.UnlockAllObjects();
+                          _myData.UnlockAllObjects();
                       }
                   }));
         }
@@ -252,27 +251,27 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       {
                           if(name == "Hilfe")
                           {
-                              if (myShared.User.UserGroup == UserGroups.Normal_User) name = "ISB-BIA-Tool_Hilfe";
+                              if (_myShared.User.UserGroup == UserGroups.Normal_User) name = "ISB-BIA-Tool_Hilfe";
                               //else if (myShared.User.UserGroup == UserGroup.SBA) name = "ISB-BIA-Tool_Hilfe - SBA";
                               //else if (myShared.User.UserGroup == UserGroup.Admin) name = "ISB-BIA-Tool_Hilfe - Admin";
                               else name = "ISB-BIA-Tool_Hilfe - CISO";
                           }
-                          string file = myShared.InitialDirectory + @"\" + name + ".xps";
+                          string file = _myShared.InitialDirectory + @"\" + name + ".xps";
                           if (File.Exists(file))
                           {
                               XpsDocument xpsDocument = new XpsDocument(file, FileAccess.Read);
                               FixedDocumentSequence fds = xpsDocument.GetFixedDocumentSequence();
-                              myNavi.NavigateTo<DocumentView_ViewModel>();
-                              Messenger.Default.Send<FixedDocumentSequence>(fds);
+                              _myNavi.NavigateTo<DocumentView_ViewModel>();
+                              Messenger.Default.Send(fds);
                           }
                           else
                           {
-                              myDia.ShowInfo("Keine Beschreibung verfügbar.");
+                              _myDia.ShowInfo("Keine Beschreibung verfügbar.");
                           }
                       }
                       catch (Exception ex)
                       {
-                          myDia.ShowError("Keine Beschreibung verfügbar.", ex);
+                          _myDia.ShowError("Keine Beschreibung verfügbar.", ex);
                       }
                   }));
         }
@@ -340,11 +339,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _navToDeltaDate
                   ?? (_navToDeltaDate = new MyRelayCommand(() =>
                   {
-                      ObservableCollection<ISB_BIA_Delta_Analyse> list = myData.InitiateDeltaAnalysis(PickerDate);
+                      ObservableCollection<ISB_BIA_Delta_Analyse> list = _myData.InitiateDeltaAnalysis(PickerDate);
                       if (list != null)
                       {
-                          myNavi.NavigateTo<DeltaAnalysis_ViewModel>();
-                          MessengerInstance.Send<ObservableCollection<ISB_BIA_Delta_Analyse>>(list);
+                          _myNavi.NavigateTo<DeltaAnalysis_ViewModel>();
+                          MessengerInstance.Send(list);
                       }
                   }));
         }
@@ -357,15 +356,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _navToLastDelta
                   ?? (_navToLastDelta = new MyRelayCommand(() =>
                   {
-                      ObservableCollection<ISB_BIA_Delta_Analyse> list = myData.GetDeltaAnalysis();
+                      ObservableCollection<ISB_BIA_Delta_Analyse> list = _myData.GetDeltaAnalysis();
                       if (list != null && list.Count > 0)
                       {
-                          myNavi.NavigateTo<DeltaAnalysis_ViewModel>();
-                          MessengerInstance.Send<ObservableCollection<ISB_BIA_Delta_Analyse>>(list);
+                          _myNavi.NavigateTo<DeltaAnalysis_ViewModel>();
+                          MessengerInstance.Send(list);
                       }
                       else
                       {
-                          myDia.ShowInfo("Keine Daten vorhanden.");
+                          _myDia.ShowInfo("Keine Daten vorhanden.");
                       }
                   }));
         }
@@ -378,10 +377,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _exportProcessList
                     ?? (_exportProcessList = new MyRelayCommand(() =>
                     {
-                        bool success = myExport.AllActiveProcessesExport();
+                        bool success = _myExport.AllActiveProcessesExport();
                         if (success)
                         {
-                            myDia.ShowInfo("Export erfolgreich");
+                            _myDia.ShowInfo("Export erfolgreich");
                         }
                     }));           
         }
@@ -395,7 +394,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     ?? (_changeTextSize = new MyRelayCommand(() =>
                     {
                         MyFontSize = (MyFontSize == 14) ? 18 : 14;
-                        Messenger.Default.Send<int>(MyFontSize, MessageToken.ChangeTextSize);
+                        Messenger.Default.Send(MyFontSize, MessageToken.ChangeTextSize);
                     }));
         }
 
@@ -436,15 +435,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         public Login_Model User
         {
-            get => myShared.User;
+            get => _myShared.User;
         }
 
         #region Services
-        IMyNavigationService myNavi;
-        IMyDialogService myDia;
-        IMyExportService myExport;
-        IMyDataService myData;
-        IMySharedResourceService myShared;
+        IMyNavigationService _myNavi;
+        IMyDialogService _myDia;
+        IMyExportService _myExport;
+        IMyDataService _myData;
+        IMySharedResourceService _myShared;
         #endregion
 
         /// <summary>
@@ -458,27 +457,27 @@ namespace ISB_BIA_IMPORT1.ViewModel
         public Menu_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyExportService myExportService, IMyDataService myDataService, IMySharedResourceService mySharedResourceService)
         {
             #region Services
-            myDia = myDialogService;
-            myNavi = myNavigationService;
-            myExport = myExportService;
-            myData = myDataService;
-            myShared = mySharedResourceService;
+            _myDia = myDialogService;
+            _myNavi = myNavigationService;
+            _myExport = myExportService;
+            _myData = myDataService;
+            _myShared = mySharedResourceService;
             #endregion
 
             PickerDate = DateTime.Now;
 
             #region Prozessanzahl berechnen (komplett, bearbeitet)
             //Datenbankabfragen nicht ausführen wenn ConstructionMode (da Datenmodell evtl nicht auf neustem Stand)
-            if (!myShared.ConstructionMode)
+            if (!_myShared.ConstructionMode)
             {
-                ObservableCollection<ISB_BIA_Prozesse> processes = myData.GetActiveProcesses();
+                ObservableCollection<ISB_BIA_Prozesse> processes = _myData.GetActiveProcesses();
                 ProcessCount = processes.Count;
                 EditProcessCount = processes.Where(x => x.Datum.Year == DateTime.Now.Year).ToList().Count;
             }
             #endregion
 
             //Sichtbarkeiten und Anweisungen für den jeweiligen Usermodus definieren
-            switch (myShared.User.UserGroup)
+            switch (_myShared.User.UserGroup)
             {
                 case UserGroups.CISO:
                 case UserGroups.Admin:

@@ -41,7 +41,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 return new MyRelayCommand(() =>
                 {
                     Cleanup();
-                    myNavi.NavigateBack();
+                    _myNavi.NavigateBack();
                 });
             }
         }
@@ -56,16 +56,16 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     ?? (_navToApp = new MyRelayCommand(() =>
                     {
                         if (SelectedItem == null) return;
-                        ISB_BIA_Applikationen ApplicationToChange = (ISB_BIA_Applikationen)SelectedItem;
-                        string user = myData.GetObjectLocked(Table_Lock_Flags.Application, ApplicationToChange.Applikation_Id);
+                        ISB_BIA_Applikationen applicationToChange = (ISB_BIA_Applikationen)SelectedItem;
+                        string user = _myData.GetObjectLocked(Table_Lock_Flags.Application, applicationToChange.Applikation_Id);
                         if (user == "")
                         {
-                            if (myData.LockObject(Table_Lock_Flags.Application, ApplicationToChange.Applikation_Id))
-                                myNavi.NavigateTo<Application_ViewModel>(ApplicationToChange.Applikation_Id, ProcAppMode.Change);
+                            if (_myData.LockObject(Table_Lock_Flags.Application, applicationToChange.Applikation_Id))
+                                _myNavi.NavigateTo<Application_ViewModel>(applicationToChange.Applikation_Id, ProcAppMode.Change);
                         }
                         else
                         {
-                            myDia.ShowWarning("Diese Anwendung wird momentan durch einen anderen User bearbeitet und kann daher nicht geöffnet werden.\n\nBelegender Benutzer: " + user + "\n\nSollte der User die Anwendung nicht geöffnet haben, wenden Sie sich bitte an die IT.");
+                            _myDia.ShowWarning("Diese Anwendung wird momentan durch einen anderen User bearbeitet und kann daher nicht geöffnet werden.\n\nBelegender Benutzer: " + user + "\n\nSollte der User die Anwendung nicht geöffnet haben, wenden Sie sich bitte an die IT.");
                         }
                     }));
             }
@@ -73,7 +73,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         #endregion
 
         /// <summary>
-        /// Liste der ausgewählten Anwendungen für das Gruppenspeichern <see cref="SaveAllApplications(ObservableCollection{ISB_BIA_Applikationen})"/>
+        /// Liste der ausgewählten Anwendungen für das Gruppenspeichern/>
         /// </summary>
         public ObservableCollection<ISB_BIA_Applikationen> SelectedApplications
         {
@@ -81,7 +81,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             set => Set(() => SelectedApplications, ref _selectedApplications, value);
         }
         /// <summary>
-        /// Command für die Gruppenspeicherung. <see cref="SaveAllApplications(ObservableCollection{ISB_BIA_Applikationen})"/>
+        /// Command für die Gruppenspeicherung/>
         /// </summary>
         public MyRelayCommand<object> SaveSelectedApplications
         {
@@ -97,7 +97,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                                 string al = "";
                                 foreach (ISB_BIA_Applikationen a in SelectedApplications)
                                 {
-                                    string user = myData.GetObjectLocked(Table_Lock_Flags.Application, a.Applikation_Id);
+                                    string user = _myData.GetObjectLocked(Table_Lock_Flags.Application, a.Applikation_Id);
                                     if (user != "")
                                     {
                                         lockedList.Add(a);
@@ -106,7 +106,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                                 }
                                 if (lockedList.Count == 0)
                                 {
-                                    if (myData.SaveAllApplications(SelectedApplications))
+                                    if (_myData.SaveAllApplications(SelectedApplications))
                                     {
                                         Refresh();
                                     }
@@ -114,12 +114,12 @@ namespace ISB_BIA_IMPORT1.ViewModel
                                 else
                                 {
                                     string msg = "In der Auswahl befinden sich Anwendungen, die momentan durch andere User geöffnet sind und deshalb nicht gespeichert werden können.\nBitte warten Sie, bis die Bearbeitung beendet ist oder deselektieren Sie betroffene Prozesse.\n\n";
-                                    myDia.ShowWarning(msg + al);
+                                    _myDia.ShowWarning(msg + al);
                                 }
                             }
                             else
                             {
-                                myDia.ShowMessage("Bitte wählen Sie Anwendungen aus der Übersicht aus, die Sie ohne Änderungen aktualisieren möchten.");
+                                _myDia.ShowMessage("Bitte wählen Sie Anwendungen aus der Übersicht aus, die Sie ohne Änderungen aktualisieren möchten.");
                             }
                         }, (list) => Setting.Multi_Save == "Ja"));
         }
@@ -133,10 +133,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 return _exportProcessList
                     ?? (_exportProcessList = new MyRelayCommand(() =>
                     {
-                        bool success = myExport.AllActiveProcessesExport();
+                        bool success = _myExport.AllActiveProcessesExport();
                         if (success)
                         {
-                            myDia.ShowInfo("Export erfolgreich");
+                            _myDia.ShowInfo("Export erfolgreich");
                         }
                     }));
             }
@@ -151,9 +151,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 return _exportApplicationList
                     ?? (_exportApplicationList = new MyRelayCommand(() =>
                     {
-                        if (myExport.AllActiveApplicationsExport())
+                        if (_myExport.AllActiveApplicationsExport())
                         {
-                            myDia.ShowInfo("Export erfolgreich");
+                            _myDia.ShowInfo("Export erfolgreich");
                         }
                     }));
             }
@@ -238,11 +238,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         public ISB_BIA_Settings Setting { get; set; }
 
         #region Services
-        IMyNavigationService myNavi;
-        IMyDialogService myDia;
-        IMyExportService myExport;
-        IMyDataService myData;
-        IMySharedResourceService myShared;
+        IMyNavigationService _myNavi;
+        IMyDialogService _myDia;
+        IMyExportService _myExport;
+        IMyDataService _myData;
         #endregion
 
         /// <summary>
@@ -252,16 +251,14 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <param name="myNavigationService"></param>
         /// <param name="myExportService"></param>
         /// <param name="myDataService"></param>
-        /// <param name="mySharedResourceService"></param>
-        public SBA_View_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyExportService myExportService, IMyDataService myDataService, IMySharedResourceService mySharedResourceService)
+        public SBA_View_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyExportService myExportService, IMyDataService myDataService)
         {
-            myNavi = myNavigationService;
-            myDia = myDialogService;
-            myExport = myExportService;
-            myData = myDataService;
-            myShared = mySharedResourceService;
+            _myNavi = myNavigationService;
+            _myDia = myDialogService;
+            _myExport = myExportService;
+            _myData = myDataService;
             Messenger.Default.Register<string>(this, MessageToken.RefreshData, s => { Refresh(); });
-            Setting = myData.GetSettings();
+            Setting = _myData.GetSettings();
             Refresh();
         }
 
@@ -270,16 +267,16 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         public void Refresh()
         {
-            ApplicationList = myData.GetActiveApplications();
+            ApplicationList = _myData.GetActiveApplications();
             if (ApplicationList == null)
             {
                 Cleanup();
-                myNavi.NavigateBack();
-                myDia.ShowError("Es konnten keine Applikationen abgerufen werden.");
+                _myNavi.NavigateBack();
+                _myDia.ShowError("Es konnten keine Applikationen abgerufen werden.");
             }
             EditCount = ApplicationList.Where(x => x.Datum.Year == DateTime.Now.Year).ToList().Count;
             NonEditCount = ApplicationList.Where(x => x.Datum.Year != DateTime.Now.Year).ToList().Count;
-            ObservableCollection<ISB_BIA_Prozesse> processes = myData.GetActiveProcesses();
+            ObservableCollection<ISB_BIA_Prozesse> processes = _myData.GetActiveProcesses();
             ProcessCount = processes.Count;
             EditProcessCount = processes.Where(x => x.Datum.Year == DateTime.Now.Year).ToList().Count;
             SelectedApplications = new ObservableCollection<ISB_BIA_Applikationen>();

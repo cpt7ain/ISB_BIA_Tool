@@ -4,7 +4,6 @@ using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.LinqDataContext;
 using ISB_BIA_IMPORT1.Services;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -58,7 +57,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => new MyRelayCommand(() =>
                 {
                     Cleanup();
-                    myNavi.NavigateBack();
+                    _myNavi.NavigateBack();
                 });         
         }
 
@@ -108,7 +107,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _exportDeltaList
                   ?? (_exportDeltaList = new MyRelayCommand(() =>
                   {
-                      myExport.ExportDeltaAnalysis(DeltaList);
+                      _myExport.ExportDeltaAnalysis(DeltaList);
                   }));          
         }
 
@@ -135,9 +134,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
         }
 
         #region Services
-        IMyNavigationService myNavi;
-        IMyExportService myExport;
-        IMyDataService myData;
+        IMyNavigationService _myNavi;
+        IMyExportService _myExport;
+        IMyDataService _myData;
         #endregion
 
         /// <summary>
@@ -149,16 +148,16 @@ namespace ISB_BIA_IMPORT1.ViewModel
         public DeltaAnalysis_ViewModel(IMyNavigationService myNavigationService, IMyExportService myExportService, IMyDataService myDataService)
         {
             #region Services
-            myNavi = myNavigationService;
-            myExport = myExportService;
-            myData = myDataService;
+            _myNavi = myNavigationService;
+            _myExport = myExportService;
+            _myData = myDataService;
             #endregion
 
             if (IsInDesignMode)
             {
-                Setting = myData.GetSettings();
-                List = myData.GetDeltaAnalysis();
-                DeltaList = myData.GetDeltaAnalysis();
+                Setting = _myData.GetSettings();
+                List = _myData.GetDeltaAnalysis();
+                DeltaList = _myData.GetDeltaAnalysis();
                 View = (CollectionView)CollectionViewSource.GetDefaultView(List);
                 View.Filter = DeltaFilter;
                 NewSecurityGoalsWidth = (Setting.Neue_Schutzziele_aktiviert == "Ja") ? 110 : 0;
@@ -180,21 +179,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 });
                 #endregion
                 #region Einstellungen abrufen
-                Setting = myData.GetSettings();
+                Setting = _myData.GetSettings();
                 NewSecurityGoalsWidth = (Setting.Neue_Schutzziele_aktiviert == "Ja") ? 110 : 0;
                 NewSecurityGoals = (Setting.Neue_Schutzziele_aktiviert == "Ja") ? Visibility.Visible : Visibility.Collapsed;
                 #endregion
             }
-            int[] numbers = { 15, 1, 8, 6, 4, 12 };
-            //Query syntax:
-            IEnumerable<int> query1 =
-                from number in numbers
-                where number > 4
-                orderby number
-                select number;
-
-            //Method syntax:
-            IEnumerable<int> query2 = numbers.Where(number => number > 4).OrderBy(n => n);
         }
 
         /// <summary>

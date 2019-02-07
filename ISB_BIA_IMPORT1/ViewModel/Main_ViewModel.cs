@@ -1,17 +1,11 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.Model;
-using ISB_BIA_IMPORT1.LinqDataContext;
 using ISB_BIA_IMPORT1.Services;
-using ISB_BIA_IMPORT1.View;
 using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
-using System.Linq;
 using System.Security.Principal;
-using System.Data.Sql;
-using System.Data.SqlClient;
-using System.Data;
 
 namespace ISB_BIA_IMPORT1.ViewModel
 {
@@ -65,23 +59,23 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Schutzziel nicht relevant
         /// </summary>
-        none,
+        None,
         /// <summary>
         /// niedrige Schutzzieleinstufung
         /// </summary>
-        low,
+        Low,
         /// <summary>
         /// mittlere Schutzzieleinstufung
         /// </summary>
-        medium,
+        Medium,
         /// <summary>
         /// hohe Schutzzieleinstufung
         /// </summary>
-        high,
+        High,
         /// <summary>
         /// sehr hohe Schutzzieleinstufung
         /// </summary>
-        veryhigh
+        Veryhigh
     }
     public enum MessageToken
     {
@@ -117,8 +111,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             get => new MyRelayCommand<int>((k) =>
                     {
-                        myShared.User.UserGroup = (UserGroups)k;
-                        myNavi.NavigateTo<Menu_ViewModel>();
+                        _myShared.User.UserGroup = (UserGroups)k;
+                        _myNavi.NavigateTo<Menu_ViewModel>();
                     });
         }
 
@@ -138,10 +132,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         }
 
         #region Services
-        IMyDialogService myDia;
-        IMyNavigationService myNavi;
-        IMySharedResourceService myShared;
-        IMyDataService myData;
+        IMyDialogService _myDia;
+        IMyNavigationService _myNavi;
+        IMySharedResourceService _myShared;
+        IMyDataService _myData;
         #endregion 
 
         /// <summary>
@@ -154,10 +148,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         public Main_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMySharedResourceService mySharedResourceService, IMyDataService myDataService)
         {
             #region Services
-            myDia = myDialogService;
-            myNavi = myNavigationService;
-            myShared = mySharedResourceService;
-            myData = myDataService;
+            _myDia = myDialogService;
+            _myNavi = myNavigationService;
+            _myShared = mySharedResourceService;
+            _myData = myDataService;
             #endregion
 
             //Messenger Registrierung für den Empfang Viewmodel-bestimmender Nachrichten
@@ -170,11 +164,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
             // Standard-Schriftgröße
             MyFontSize = 14;
             //Fenstertitel
-            WindowTitle = (myShared.Current_Environment == Current_Environment.Test) ? "ISB BIA Tool - Testumgebung" : "ISB BIA Tool";
+            WindowTitle = (_myShared.Current_Environment == Current_Environment.Test) ? "ISB BIA Tool - Testumgebung" : "ISB BIA Tool";
 
-            if (myShared.ConstructionMode)
+            if (_myShared.ConstructionMode)
             {
-                myShared.User = new Login_Model()
+                _myShared.User = new Login_Model()
                 {
                     Username = Environment.UserName +" in Construction Mode",
                     UserGroup = UserGroups.CISO,
@@ -182,14 +176,14 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     Givenname = "Tim",
                     Surname = "Wolf"
                 };
-                myNavi.NavigateTo<Menu_ViewModel>();
+                _myNavi.NavigateTo<Menu_ViewModel>();
             }
             else
                 try
                 {
                     // test-user
-                    if (myShared.Current_Environment == Current_Environment.Local_Test)
-                        myShared.User = new Login_Model()
+                    if (_myShared.Current_Environment == Current_Environment.Local_Test)
+                        _myShared.User = new Login_Model()
                         {
                             Username = Environment.UserName,
                             UserGroup = UserGroups.CISO,
@@ -198,7 +192,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                             Surname = "Wolf"
                         };
                     else
-                        myShared.User = new Login_Model()
+                        _myShared.User = new Login_Model()
                         {
                             Username = Environment.UserName,
                             UserGroup = UserGroups.Normal_User,
@@ -208,32 +202,32 @@ namespace ISB_BIA_IMPORT1.ViewModel
                         };
 
                     //Prüfen der Datenbankverbindung
-                    if (!myData.CheckDBConnection())
+                    if (!_myData.CheckDBConnection())
                     {
-                        if (!myShared.Admin) Environment.Exit(0);
+                        if (!_myShared.Admin) Environment.Exit(0);
                     }
                     //Prüfen der Active-Directory -> EXIT wenn Fehler (Wenn erfolgreich: Usergroup ist gesetzt; entweder nach Standard oder nach Einstellung)
-                    if (myShared.Current_Environment != Current_Environment.Local_Test)
+                    if (_myShared.Current_Environment != Current_Environment.Local_Test)
                     {
                         bool userExists = GetUserFromAD();
-                        if (!userExists && !myShared.Admin) Environment.Exit(0);
-                        bool groupMatchesUser = GetGroups(myShared.User.Username);
-                        if (!groupMatchesUser && !myShared.Admin) Environment.Exit(0);
+                        if (!userExists && !_myShared.Admin) Environment.Exit(0);
+                        bool groupMatchesUser = GetGroups(_myShared.User.Username);
+                        if (!groupMatchesUser && !_myShared.Admin) Environment.Exit(0);
                     }
 
                     //Alle möglicherweise gesperrten Objekten aus unsauber beendeten früheren Sessions entfernen 
-                    myData.UnlockAllObjectsForUser();
+                    _myData.UnlockAllObjectsForUser();
 
                     //Direkt weiterleiten wenn nicht im Admin Modus
-                    if (!myShared.Admin)
+                    if (!_myShared.Admin)
                     {
-                        myNavi.NavigateTo<Menu_ViewModel>();
+                        _myNavi.NavigateTo<Menu_ViewModel>();
                     }
                 }
                 catch (Exception ex)
                 {
-                    myDia.ShowError("Es ist ein Fehler aufgetreten.\nDas Programm wird geschlossen.", ex);
-                    if (!myShared.Admin) Environment.Exit(0);
+                    _myDia.ShowError("Es ist ein Fehler aufgetreten.\nDas Programm wird geschlossen.", ex);
+                    if (!_myShared.Admin) Environment.Exit(0);
                 }
         }
 
@@ -247,7 +241,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             {
                 using (DirectorySearcher searcher = new DirectorySearcher(new DirectoryEntry(string.Empty)))
                 {
-                    searcher.Filter = "(&(objectClass=user)(objectCategory=Person)(sAMAccountName=" + myShared.User.Username + "))";
+                    searcher.Filter = "(&(objectClass=user)(objectCategory=Person)(sAMAccountName=" + _myShared.User.Username + "))";
                     SearchResult result = searcher.FindOne();
                     if(result != null)
                     {
@@ -256,18 +250,18 @@ namespace ISB_BIA_IMPORT1.ViewModel
                             var department = result.Properties["department"];
                             if (department.Count > 0)
                             {
-                                myShared.User.OE = department[0].ToString();
+                                _myShared.User.OE = department[0].ToString();
                             }
                         }
                         if (result.Properties.Contains("givenname"))
                         {
                             var firstName = result.Properties["givenname"];
-                            myShared.User.Givenname = (firstName.Count > 0) ? firstName[0].ToString() : "n/a";
+                            _myShared.User.Givenname = (firstName.Count > 0) ? firstName[0].ToString() : "n/a";
                         }
                         if (result.Properties.Contains("sn"))
                         {
                             var surname = result.Properties["sn"];
-                            myShared.User.Surname = (surname.Count > 0) ? surname[0].ToString() : "n/a";
+                            _myShared.User.Surname = (surname.Count > 0) ? surname[0].ToString() : "n/a";
                         }
                         return true;
                     }
@@ -280,7 +274,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             catch (Exception ex)
             {
                 //Wenn kein test und Verbindung zu AD nicht möglich dann Schließen
-                myDia.ShowError("Es konnte keine Verbindung zur Active Directory hergestellt werden.\nDie Anwendung wird geschlossen.", ex);
+                _myDia.ShowError("Es konnte keine Verbindung zur Active Directory hergestellt werden.\nDie Anwendung wird geschlossen.", ex);
                 return false;
             }
         }
@@ -296,54 +290,58 @@ namespace ISB_BIA_IMPORT1.ViewModel
             {
                 List<string> result = new List<string>();
                 WindowsIdentity wi = new WindowsIdentity(userName);
-                foreach (IdentityReference group in wi.Groups)
-                {
-                    // Übsersetzen der SID in den Gruppennnamen
-                    //Fehler abfangen falls SID nicht mehr verfügbar
-                    try
+                if (wi.Groups != null)
+                    foreach (IdentityReference group in wi.Groups)
                     {
-                        result.Add(group.Translate(typeof(NTAccount)).ToString());
+                        // Übsersetzen der SID in den Gruppennnamen
+                        //Fehler abfangen falls SID nicht mehr verfügbar
+                        try
+                        {
+                            result.Add(@group.Translate(typeof(NTAccount)).ToString());
+                        }
+                        catch
+                        {
+                        }
                     }
-                    catch { }
-                }
+
                 //Gruppenabfrage für Produktivumgebung
-                if(myShared.Current_Environment == Current_Environment.Prod)
+                if(_myShared.Current_Environment == Current_Environment.Prod)
                 {
                     //Gruppenabfrage von Gruppen mit vielen Rechten nach Gruppen mit wenigen (CISO->..->Normaler user) damit immer die Rolle mit den meisten Rechten angenommen wird falls mehrere zutreffen
-                    if (result.Contains(@System.Configuration.ConfigurationManager.AppSettings["AD_Group_CISO_PROD"])) myShared.User.UserGroup = UserGroups.CISO;
-                    else if (result.Contains(@System.Configuration.ConfigurationManager.AppSettings["AD_Group_Admin_PROD"])) myShared.User.UserGroup = UserGroups.Admin;
-                    else if (result.Contains(@System.Configuration.ConfigurationManager.AppSettings["AD_Group_SBA_PROD"])) myShared.User.UserGroup = UserGroups.SBA_User;
-                    else if (result.Contains(@System.Configuration.ConfigurationManager.AppSettings["AD_Group_Normal_PROD"])) myShared.User.UserGroup = UserGroups.Normal_User;
+                    if (result.Contains(@System.Configuration.ConfigurationManager.AppSettings["AD_Group_CISO_PROD"])) _myShared.User.UserGroup = UserGroups.CISO;
+                    else if (result.Contains(@System.Configuration.ConfigurationManager.AppSettings["AD_Group_Admin_PROD"])) _myShared.User.UserGroup = UserGroups.Admin;
+                    else if (result.Contains(@System.Configuration.ConfigurationManager.AppSettings["AD_Group_SBA_PROD"])) _myShared.User.UserGroup = UserGroups.SBA_User;
+                    else if (result.Contains(@System.Configuration.ConfigurationManager.AppSettings["AD_Group_Normal_PROD"])) _myShared.User.UserGroup = UserGroups.Normal_User;
                     else
                     {
-                        myDia.ShowWarning("Sie haben keine Berechtigungen für dieses Programm[Prod].\nUser:  " + userName);
+                        _myDia.ShowWarning("Sie haben keine Berechtigungen für dieses Programm[Prod].\nUser:  " + userName);
                         return false;
                     }
                     return true;
                 }
                 //Gruppenabfrage für Testumgebung
-                else if (myShared.Current_Environment == Current_Environment.Test)
+                else if (_myShared.Current_Environment == Current_Environment.Test)
                 {
-                    if (result.Contains(@System.Configuration.ConfigurationManager.AppSettings["AD_Group_CISO_TEST"])) myShared.User.UserGroup = UserGroups.CISO;
-                    else if (result.Contains(@System.Configuration.ConfigurationManager.AppSettings["AD_Group_Admin_TEST"])) myShared.User.UserGroup = UserGroups.Admin;
-                    else if (result.Contains(@System.Configuration.ConfigurationManager.AppSettings["AD_Group_SBA_TEST"])) myShared.User.UserGroup = UserGroups.SBA_User;
-                    else if (result.Contains(@System.Configuration.ConfigurationManager.AppSettings["AD_Group_Normal_TEST"])) myShared.User.UserGroup = UserGroups.Normal_User;
+                    if (result.Contains(@System.Configuration.ConfigurationManager.AppSettings["AD_Group_CISO_TEST"])) _myShared.User.UserGroup = UserGroups.CISO;
+                    else if (result.Contains(@System.Configuration.ConfigurationManager.AppSettings["AD_Group_Admin_TEST"])) _myShared.User.UserGroup = UserGroups.Admin;
+                    else if (result.Contains(@System.Configuration.ConfigurationManager.AppSettings["AD_Group_SBA_TEST"])) _myShared.User.UserGroup = UserGroups.SBA_User;
+                    else if (result.Contains(@System.Configuration.ConfigurationManager.AppSettings["AD_Group_Normal_TEST"])) _myShared.User.UserGroup = UserGroups.Normal_User;
                     else
                     {
-                        myDia.ShowWarning("Sie haben keine Berechtigungen für dieses Programm[Test].\nUser:  " + userName);
+                        _myDia.ShowWarning("Sie haben keine Berechtigungen für dieses Programm[Test].\nUser:  " + userName);
                         return false;
                     }
                     return true;
                 }
                 else
                 {
-                    myDia.ShowWarning("Sie haben keine Berechtigungen für dieses Programm.\nUser:  " + userName+"\n[CurrentEnvironmentError]");
+                    _myDia.ShowWarning("Sie haben keine Berechtigungen für dieses Programm.\nUser:  " + userName+"\n[CurrentEnvironmentError]");
                     return false;
                 }
             }
             catch (Exception ex)
             {
-                myDia.ShowError("AD-Gruppe konnte nicht gefunden werden für User\n"+userName, ex);
+                _myDia.ShowError("AD-Gruppe konnte nicht gefunden werden für User\n"+userName, ex);
                 return false;
             }
         }
@@ -354,7 +352,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         private void ShutDown()
         {
-            myData.UnlockAllObjectsForUser();
+            _myData.UnlockAllObjectsForUser();
             Environment.Exit(0);
         }
        

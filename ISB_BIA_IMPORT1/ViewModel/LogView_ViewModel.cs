@@ -60,7 +60,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => new MyRelayCommand(() =>
             {
                 Cleanup();
-                myNavi.NavigateBack();
+                _myNavi.NavigateBack();
             });
         }
 
@@ -72,14 +72,14 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _exportLog
                   ?? (_exportLog = new MyRelayCommand(() =>
                   {
-                      myExport.ExportLog(LogList);
+                      _myExport.ExportLog(LogList);
                   }));
         }
 
         #region Services
-        IMyNavigationService myNavi;
-        IMyExportService myExport;
-        IMyDataService myData;
+        IMyNavigationService _myNavi;
+        IMyExportService _myExport;
+        IMyDataService _myData;
         #endregion
 
         /// <summary>
@@ -91,12 +91,12 @@ namespace ISB_BIA_IMPORT1.ViewModel
         public LogView_ViewModel(IMyNavigationService myNavigationService, IMyExportService myExportService, IMyDataService myDataService)
         {
             #region Services
-            myNavi = myNavigationService;
-            myExport = myExportService;
-            myData = myDataService;
+            _myNavi = myNavigationService;
+            _myExport = myExportService;
+            _myData = myDataService;
             #endregion
             //Log abrufen
-            LogList = myData.GetLog();
+            LogList = _myData.GetLog();
             //Definieren der Quelle für den CollectionView (=> Log Liste)
             View = (CollectionView)CollectionViewSource.GetDefaultView(LogList);
             //Filter der CollectionView festlegen

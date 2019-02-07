@@ -29,7 +29,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => new MyRelayCommand(() =>
             {
                 Cleanup();
-                myNavi.NavigateBack();
+                _myNavi.NavigateBack();
             });
         }
 
@@ -43,23 +43,23 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     ?? (_navToIS = new MyRelayCommand(() =>
                     {
                         if (SelectedItem == null) return;
-                        ISB_BIA_Informationssegmente ISToChange = (ISB_BIA_Informationssegmente)SelectedItem;
+                        ISB_BIA_Informationssegmente iSToChange = (ISB_BIA_Informationssegmente)SelectedItem;
                         if (ISMode == ISISAttributeMode.Edit)
                         {
-                            string user = myData.GetObjectLocked(Table_Lock_Flags.Segment, ISToChange.Informationssegment_Id);
+                            string user = _myData.GetObjectLocked(Table_Lock_Flags.Segment, iSToChange.Informationssegment_Id);
                             if (user == "")
                             {
-                                if (myData.LockObject(Table_Lock_Flags.Segment, ISToChange.Informationssegment_Id))
-                                    myNavi.NavigateTo<InformationSegment_ViewModel>(ISToChange.Informationssegment_Id, ISMode);
+                                if (_myData.LockObject(Table_Lock_Flags.Segment, iSToChange.Informationssegment_Id))
+                                    _myNavi.NavigateTo<InformationSegment_ViewModel>(iSToChange.Informationssegment_Id, ISMode);
                             }
                             else
                             {
-                                myDia.ShowWarning("Die Attribute werden momentan durch einen anderen CISO bearbeitet und können daher nicht geöffnet werden.\n\nBelegender Benutzer: " + user + "\n\nSollte kein CISO die Attribut-Liste geöffnet haben, wenden Sie sich bitte IT.");
+                                _myDia.ShowWarning("Die Attribute werden momentan durch einen anderen CISO bearbeitet und können daher nicht geöffnet werden.\n\nBelegender Benutzer: " + user + "\n\nSollte kein CISO die Attribut-Liste geöffnet haben, wenden Sie sich bitte IT.");
                             }
                         }
                         else
                         {
-                            myNavi.NavigateTo<InformationSegment_ViewModel>(ISToChange.Informationssegment_Id, ISMode);
+                            _myNavi.NavigateTo<InformationSegment_ViewModel>(iSToChange.Informationssegment_Id, ISMode);
                         }
                     }));
         }
@@ -124,12 +124,12 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 if (value == ISISAttributeMode.Edit)
                 {
                     Instruction = "Doppelklick auf ein Segment, das Sie ändern oder betrachten möchten.";
-                    ISList = myData.GetAllSegments();
+                    ISList = _myData.GetAllSegments();
                 }
                 else if (value == ISISAttributeMode.View)
                 {
                     Instruction = "Doppelklick auf ein Segment, das Sie betrachten möchten.";
-                    ISList = myData.GetEnabledSegments();
+                    ISList = _myData.GetEnabledSegments();
                 }
             }
         }
@@ -140,9 +140,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
         public string Instruction { get; set; }
 
         #region Services
-        IMyNavigationService myNavi;
-        IMyDialogService myDia;
-        IMyDataService myData;
+        IMyNavigationService _myNavi;
+        IMyDialogService _myDia;
+        IMyDataService _myData;
         #endregion
 
         /// <summary>
@@ -154,16 +154,16 @@ namespace ISB_BIA_IMPORT1.ViewModel
         public InformationSegmentsView_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyDataService myDataService)
         {
             #region Services
-            myDia = myDialogService;
-            myNavi = myNavigationService;
-            myData = myDataService;
+            _myDia = myDialogService;
+            _myNavi = myNavigationService;
+            _myData = myDataService;
             #endregion
 
             if (IsInDesignMode)
             {
-                AttributeColumnHeaderText = myData.GetAttributeNamesForHeader();
-                ISList = myData.GetAllSegments();
-                Settings = myData.GetSettings();
+                AttributeColumnHeaderText = _myData.GetAttributeNamesForHeader();
+                ISList = _myData.GetAllSegments();
+                Settings = _myData.GetSettings();
             }
             else
             {
@@ -172,9 +172,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 //Messenger Registierung für Nachrichten die eine Aktualisierung der ISListe auslösen
                 Messenger.Default.Register<string>(this, MessageToken.RefreshData, p => { Refresh(); });
                 //Abrufen der Headernamen
-                AttributeColumnHeaderText = myData.GetAttributeNamesForHeader();
+                AttributeColumnHeaderText = _myData.GetAttributeNamesForHeader();
                 //Einstellungen abrufen
-                Settings = myData.GetSettings();
+                Settings = _myData.GetSettings();
             }
         }
 
@@ -185,11 +185,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             if (ISMode == ISISAttributeMode.Edit)
             {
-                ISList = myData.GetAllSegments();
+                ISList = _myData.GetAllSegments();
             }
             else if (ISMode == ISISAttributeMode.View)
             {
-                ISList = myData.GetEnabledSegments();
+                ISList = _myData.GetEnabledSegments();
             }
         }
 

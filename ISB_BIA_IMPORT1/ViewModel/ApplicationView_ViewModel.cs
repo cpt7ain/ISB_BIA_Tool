@@ -3,7 +3,6 @@ using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.LinqDataContext;
 using ISB_BIA_IMPORT1.Services;
-using System;
 using System.Collections.ObjectModel;
 
 namespace ISB_BIA_IMPORT1.ViewModel
@@ -36,26 +35,26 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     ?? (_deleteApp = new MyRelayCommand(() =>
                     {
                         if (SelectedItem == null) return;
-                        ISB_BIA_Applikationen ApplicationToDelete = (ISB_BIA_Applikationen)SelectedItem;
-                        string isLockedBy = myData.GetObjectLocked(Table_Lock_Flags.Process, ApplicationToDelete.Applikation_Id);
+                        ISB_BIA_Applikationen applicationToDelete = (ISB_BIA_Applikationen)SelectedItem;
+                        string isLockedBy = _myData.GetObjectLocked(Table_Lock_Flags.Process, applicationToDelete.Applikation_Id);
                         if (isLockedBy == "")
                         {
-                            if (ApplicationToDelete.Aktiv != 0)
+                            if (applicationToDelete.Aktiv != 0)
                             {
-                                ISB_BIA_Applikationen NewApplicationToDelete = myData.DeleteApplication(ApplicationToDelete);
-                                if (NewApplicationToDelete != null)
+                                ISB_BIA_Applikationen newApplicationToDelete = _myData.DeleteApplication(applicationToDelete);
+                                if (newApplicationToDelete != null)
                                 {
                                     Refresh();
                                 }
                             }
                             else
                             {
-                                myDia.ShowWarning("Diese Anwendung wurde bereits gelöscht.");
+                                _myDia.ShowWarning("Diese Anwendung wurde bereits gelöscht.");
                             }
                         }
                         else
                         {
-                            myDia.ShowWarning("Diese Anwendung wird momentan durch einen anderen User bearbeitet und kann daher nicht gelöscht werden.\n\nBelegender Benutzer: " + isLockedBy + "\n\nSollte der User die Anwendung nicht geöffnet haben, wenden Sie sich bitte an die IT.");
+                            _myDia.ShowWarning("Diese Anwendung wird momentan durch einen anderen User bearbeitet und kann daher nicht gelöscht werden.\n\nBelegender Benutzer: " + isLockedBy + "\n\nSollte der User die Anwendung nicht geöffnet haben, wenden Sie sich bitte an die IT.");
                         }
 
                     }));
@@ -69,16 +68,16 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     ?? (_navToApp = new MyRelayCommand(() =>
                     {
                         if (SelectedItem == null) return;
-                        ISB_BIA_Applikationen ApplicationToChange = (ISB_BIA_Applikationen)SelectedItem;
-                        string user = myData.GetObjectLocked(Table_Lock_Flags.Application, ApplicationToChange.Applikation_Id);
+                        ISB_BIA_Applikationen applicationToChange = (ISB_BIA_Applikationen)SelectedItem;
+                        string user = _myData.GetObjectLocked(Table_Lock_Flags.Application, applicationToChange.Applikation_Id);
                         if (user == "")
                         {
-                            if (myData.LockObject(Table_Lock_Flags.Application, ApplicationToChange.Applikation_Id))
-                                myNavi.NavigateTo<Application_ViewModel>(ApplicationToChange.Applikation_Id, ProcAppMode.Change);
+                            if (_myData.LockObject(Table_Lock_Flags.Application, applicationToChange.Applikation_Id))
+                                _myNavi.NavigateTo<Application_ViewModel>(applicationToChange.Applikation_Id, ProcAppMode.Change);
                         }
                         else
                         {
-                            myDia.ShowWarning("Diese Anwendung wird momentan durch einen anderen User bearbeitet und kann daher nicht geöffnet werden.\n\nBelegender Benutzer: " + user + "\n\nSollte der User die Anwendung nicht geöffnet haben, wenden Sie sich bitte an die IT.");
+                            _myDia.ShowWarning("Diese Anwendung wird momentan durch einen anderen User bearbeitet und kann daher nicht geöffnet werden.\n\nBelegender Benutzer: " + user + "\n\nSollte der User die Anwendung nicht geöffnet haben, wenden Sie sich bitte an die IT.");
                         }
                     }));
         }
@@ -90,7 +89,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => new MyRelayCommand(() =>
             {
                 Cleanup();
-                myNavi.NavigateBack();
+                _myNavi.NavigateBack();
             });
         }
         /// <summary>
@@ -101,9 +100,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _exportApplicationList
                     ?? (_exportApplicationList = new MyRelayCommand(() =>
                     {
-                        if (myExport.AllApplicationsExport())
+                        if (_myExport.AllApplicationsExport())
                         {
-                            myDia.ShowMessage("Export erfolgreich");
+                            _myDia.ShowMessage("Export erfolgreich");
                         }
                     }));
         }
@@ -161,11 +160,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         public string Instruction { get; set; }
 
         #region Services
-        IMyNavigationService myNavi;
-        IMyDialogService myDia;
-        IMyExportService myExport;
-        IMyDataService myData;
-        IMySharedResourceService myShared;
+        IMyNavigationService _myNavi;
+        IMyDialogService _myDia;
+        IMyExportService _myExport;
+        IMyDataService _myData;
         #endregion
         /// <summary>
         /// Konstruktor
@@ -174,20 +172,18 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <param name="myNavigationService"></param>
         /// <param name="myExportService"></param>
         /// <param name="myDataService"></param>
-        /// <param name="mySharedResourceService"></param>
-        public ApplicationView_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyExportService myExportService, IMyDataService myDataService, IMySharedResourceService mySharedResourceService)
+        public ApplicationView_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyExportService myExportService, IMyDataService myDataService)
         {
             #region Services
-            myDia = myDialogService;
-            myNavi = myNavigationService;
-            myExport = myExportService;
-            myData = myDataService;
-            myShared = mySharedResourceService;
+            _myDia = myDialogService;
+            _myNavi = myNavigationService;
+            _myExport = myExportService;
+            _myData = myDataService;
             #endregion
 
             if (IsInDesignMode)
             {
-                ApplicationList = myData.GetApplications();
+                ApplicationList = _myData.GetApplications();
                 Header = "TestHeader";
                 Instruction = "TestInstruction";
             }
@@ -207,11 +203,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         public void Refresh()
         {
-            ApplicationList = myData.GetApplications();
+            ApplicationList = _myData.GetApplications();
             if (ApplicationList == null)
             {
                 Cleanup();
-                myNavi.NavigateBack();
+                _myNavi.NavigateBack();
             }
         }
 

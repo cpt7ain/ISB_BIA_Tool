@@ -4,9 +4,7 @@ using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.Model;
 using ISB_BIA_IMPORT1.LinqDataContext;
 using ISB_BIA_IMPORT1.Services;
-using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
 
 namespace ISB_BIA_IMPORT1.ViewModel
@@ -100,11 +98,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             get => new MyRelayCommand(() =>
             {
-                if (myData.InsertIS(CurrentSegment, OldSegment))
+                if (_myData.InsertIS(CurrentSegment, OldSegment))
                 {
                     Cleanup();
-                    myNavi.NavigateBack(true);
-                    myData.UnlockObject(Table_Lock_Flags.Segment, CurrentSegment.Informationssegment_Id);
+                    _myNavi.NavigateBack(true);
+                    _myData.UnlockObject(Table_Lock_Flags.Segment, CurrentSegment.Informationssegment_Id);
                 }
             });
         }
@@ -119,22 +117,21 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 if (EditMode == false)
                 {
                     Cleanup();
-                    myNavi.NavigateBack();
+                    _myNavi.NavigateBack();
                 }
-                else if (myDia.CancelDecision())
+                else if (_myDia.CancelDecision())
                 {
                     Cleanup();
-                    myNavi.NavigateBack();
-                    myData.UnlockObject(Table_Lock_Flags.Segment, CurrentSegment.Informationssegment_Id);
+                    _myNavi.NavigateBack();
+                    _myData.UnlockObject(Table_Lock_Flags.Segment, CurrentSegment.Informationssegment_Id);
                 }
             });
         }
 
         #region Services
-        IMyNavigationService myNavi;
-        IMyDialogService myDia;
-        IMyDataService myData;
-        IMySharedResourceService myShared;
+        IMyNavigationService _myNavi;
+        IMyDialogService _myDia;
+        IMyDataService _myData;
         #endregion
 
         /// <summary>
@@ -143,37 +140,35 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <param name="myDialogService"></param>
         /// <param name="myNavigationService"></param>
         /// <param name="myDataService"></param>
-        /// <param name="mySharedResourceService"></param>
-        public InformationSegment_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyDataService myDataService, IMySharedResourceService mySharedResourceService)
+        public InformationSegment_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyDataService myDataService)
         {
             #region Services
-            myDia = myDialogService;
-            myNavi = myNavigationService;
-            myData = myDataService;
-            myShared = mySharedResourceService;
+            _myDia = myDialogService;
+            _myNavi = myNavigationService;
+            _myData = myDataService;
             #endregion
             if (IsInDesignMode)
             {
-                CurrentSegment = myData.GetSegmentModelFromDB(1);
-                AttributeNameList = myData.GetAttributeNamesAndInfoForIS();
+                CurrentSegment = _myData.GetSegmentModelFromDB(1);
+                AttributeNameList = _myData.GetAttributeNamesAndInfoForIS();
             }
             else
             {
                 //Abrufen der Attributnamen
-                AttributeNameList = myData.GetAttributeNamesAndInfoForIS();
+                AttributeNameList = _myData.GetAttributeNamesAndInfoForIS();
                 //Message Registrierung für Bearbeitungsmodus
                 Messenger.Default.Register<int>(this, ISISAttributeMode.Edit, id => {
                     Mode = ISISAttributeMode.Edit;
-                    CurrentSegment = myData.GetSegmentModelFromDB(id);
-                    OldSegment = myData.GetSegmentModelFromDB(id);
+                    CurrentSegment = _myData.GetSegmentModelFromDB(id);
+                    OldSegment = _myData.GetSegmentModelFromDB(id);
                 });
                 //Message Registrierung für Ansichtssmodus
                 Messenger.Default.Register<int>(this, ISISAttributeMode.View, id => {
                     Mode = ISISAttributeMode.View;
-                    CurrentSegment = myData.GetSegmentModelFromDB(id);
+                    CurrentSegment = _myData.GetSegmentModelFromDB(id);
                 });
                 //Abrfen der Einstellungen
-                Settings = myData.GetSettings();
+                Settings = _myData.GetSettings();
             }     
         }
 

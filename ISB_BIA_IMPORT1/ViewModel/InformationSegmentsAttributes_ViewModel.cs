@@ -4,9 +4,7 @@ using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.Model;
 using ISB_BIA_IMPORT1.LinqDataContext;
 using ISB_BIA_IMPORT1.Services;
-using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
 
 namespace ISB_BIA_IMPORT1.ViewModel
@@ -73,13 +71,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
             if (ISAttMode == ISISAttributeMode.View)
             {
                 Cleanup();
-                myNavi.NavigateBack();
+                _myNavi.NavigateBack();
             }
-            else if (myDia.CancelDecision())
+            else if (_myDia.CancelDecision())
             {
                 Cleanup();
-                myNavi.NavigateBack();
-                myData.UnlockObject(Table_Lock_Flags.Attributes, 0);
+                _myNavi.NavigateBack();
+                _myData.UnlockObject(Table_Lock_Flags.Attributes, 0);
             }
         });
         }
@@ -105,20 +103,19 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             get => new MyRelayCommand(() =>
             {
-                if (myData.InsertISAtt(CurrentAttList))
+                if (_myData.InsertISAtt(CurrentAttList))
                 {
                     Cleanup();
-                    myNavi.NavigateBack();
-                    myData.UnlockObject(Table_Lock_Flags.Attributes, 0);
+                    _myNavi.NavigateBack();
+                    _myData.UnlockObject(Table_Lock_Flags.Attributes, 0);
                 }
             });
         }
 
         #region Services
-        IMyNavigationService myNavi;
-        IMyDialogService myDia;
-        IMyDataService myData;
-        IMySharedResourceService myShared;
+        IMyNavigationService _myNavi;
+        IMyDialogService _myDia;
+        IMyDataService _myData;
         #endregion
 
         /// <summary>
@@ -127,24 +124,22 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <param name="myDialogService"></param>
         /// <param name="myNavigationService"></param>
         /// <param name="myDataService"></param>
-        /// <param name="mySharedResourceService"></param>
-        public InformationSegmentsAttributes_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyDataService myDataService, IMySharedResourceService mySharedResourceService)
+        public InformationSegmentsAttributes_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyDataService myDataService)
         {
             #region Services
-            myDia = myDialogService;
-            myNavi = myNavigationService;
-            myData = myDataService;
-            myShared = mySharedResourceService;
+            _myDia = myDialogService;
+            _myNavi = myNavigationService;
+            _myData = myDataService;
             #endregion
             //Messenger Registrierung für Bestimmung des Ansichtsmodus
             Messenger.Default.Register<ISISAttributeMode>(this, a => {
                 ISAttMode = a;
             });
             //Messenger Registrierung für Benachrichtigungen bei Fehlerhafter Eingabe
-            Messenger.Default.Register<string>(this, MessageToken.ISAttributValidationError, s=> { myDia.ShowWarning("Bitte gültigen Wert eingeben"); });
+            Messenger.Default.Register<string>(this, MessageToken.ISAttributValidationError, s=> { _myDia.ShowWarning("Bitte gültigen Wert eingeben"); });
 
             #region Aktuelle Einstellungen abrufen
-            Setting = myData.GetSettings();
+            Setting = _myData.GetSettings();
             NewGoalsActivated = (Setting.Neue_Schutzziele_aktiviert == "Ja") ? Visibility.Visible : Visibility.Collapsed;
             #endregion
             //Abrufen der Aktuellen Attributliste
@@ -161,36 +156,36 @@ namespace ISB_BIA_IMPORT1.ViewModel
             //Die ersten 8 Attribute abrufen
             for (int i=1; i <= 8; i++)
             {
-                InformationSegmentAttribute_Model item = myData.GetAttributeModelFromDB(i);
+                InformationSegmentAttribute_Model item = _myData.GetAttributeModelFromDB(i);
                 if (item == null)
                 {
-                    myDia.ShowError("Fehler beim Laden der Daten.");
+                    _myDia.ShowError("Fehler beim Laden der Daten.");
                     Cleanup();
-                    myNavi.NavigateBack();
+                    _myNavi.NavigateBack();
                 }
                 result.Add(item);
             }
             //Attribut 9
             if (Setting.Attribut9_aktiviert=="Ja")
             {
-                InformationSegmentAttribute_Model item = myData.GetAttributeModelFromDB(9);
+                InformationSegmentAttribute_Model item = _myData.GetAttributeModelFromDB(9);
                 if (item == null)
                 {
-                    myDia.ShowError("Fehler beim Laden der Daten.");
+                    _myDia.ShowError("Fehler beim Laden der Daten.");
                     Cleanup();
-                    myNavi.NavigateBack();
+                    _myNavi.NavigateBack();
                 }
                 result.Add(item);
             }
             //Attribut 10
             if (Setting.Attribut10_aktiviert == "Ja")
             {
-                InformationSegmentAttribute_Model item = myData.GetAttributeModelFromDB(10);
+                InformationSegmentAttribute_Model item = _myData.GetAttributeModelFromDB(10);
                 if (item == null)
                 {
-                    myDia.ShowError("Fehler beim Laden der Daten.");
+                    _myDia.ShowError("Fehler beim Laden der Daten.");
                     Cleanup();
-                    myNavi.NavigateBack();
+                    _myNavi.NavigateBack();
                 }
                 result.Add(item);
             }

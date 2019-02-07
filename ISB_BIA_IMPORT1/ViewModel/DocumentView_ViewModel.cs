@@ -30,19 +30,19 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => new MyRelayCommand(() =>
                   {
                       Cleanup();
-                      myNavi.NavigateBack();
+                      _myNavi.NavigateBack();
                   });
         }
 
 
-        IMyNavigationService myNavi;
+        IMyNavigationService _myNavi;
         /// <summary>
         /// Konstruktor
         /// </summary>
         /// <param name="myNavigationService"></param>
         public DocumentView_ViewModel(IMyNavigationService myNavigationService)
         {
-            myNavi = myNavigationService;
+            _myNavi = myNavigationService;
             // Message Registrierungen mit Überlieferung des zu betrachtenden Dokuments
             Messenger.Default.Register<FixedDocumentSequence>(this, a => { DocumentSource = a; });
         }

@@ -7,7 +7,6 @@ using ISB_BIA_IMPORT1.Services;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Xps.Packaging;
@@ -426,11 +425,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             get => new MyRelayCommand(() =>
             {
-                if (myDia.CancelDecision())
+                if (_myDia.CancelDecision())
                 {
                     Cleanup();
-                    myNavi.NavigateBack(true);
-                    myData.UnlockObject(Table_Lock_Flags.Application, CurrentApplication.Applikation_Id);
+                    _myNavi.NavigateBack(true);
+                    _myData.UnlockObject(Table_Lock_Flags.Application, CurrentApplication.Applikation_Id);
                 }
             });
         }
@@ -443,12 +442,12 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             get => new MyRelayCommand(() =>
             {
-                if (myData.InsertApplication(CurrentApplication, Mode))
+                if (_myData.InsertApplication(CurrentApplication, Mode))
                 {
                     bool refreshMsg = (Mode == ProcAppMode.Change) ? true : false;
                     Cleanup();
-                    myNavi.NavigateBack(refreshMsg);
-                    myData.UnlockObject(Table_Lock_Flags.Application, CurrentApplication.Applikation_Id);
+                    _myNavi.NavigateBack(refreshMsg);
+                    _myData.UnlockObject(Table_Lock_Flags.Application, CurrentApplication.Applikation_Id);
                 }
             }, () => { return CurrentTab == 3; });
         }
@@ -464,22 +463,22 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     {
                         try
                         {
-                            string file = myShared.InitialDirectory + @"\" + name + "_Info.xps";
+                            string file = _myShared.InitialDirectory + @"\" + name + "_Info.xps";
                             if (File.Exists(file))
                             {
                                 XpsDocument xpsDocument = new XpsDocument(file, FileAccess.Read);
                                 FixedDocumentSequence fds = xpsDocument.GetFixedDocumentSequence();
-                                myNavi.NavigateTo<DocumentView_ViewModel>();
-                                Messenger.Default.Send<FixedDocumentSequence>(fds);
+                                _myNavi.NavigateTo<DocumentView_ViewModel>();
+                                Messenger.Default.Send(fds);
                             }
                             else
                             {
-                                myDia.ShowInfo("Keine Beschreibung verfügbar.");
+                                _myDia.ShowInfo("Keine Beschreibung verfügbar.");
                             }
                         }
                         catch (Exception ex)
                         {
-                            myDia.ShowError("Keine Beschreibung verfügbar.", ex);
+                            _myDia.ShowError("Keine Beschreibung verfügbar.", ex);
                         }
                     }));
         }
@@ -491,10 +490,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _exportApplicationHistory
                     ?? (_exportApplicationHistory = new MyRelayCommand(() =>
                     {
-                        bool success = myExport.ExportApplications(myData.GetApplicationHistory(CurrentApplication.Applikation_Id), "", CurrentApplication.Applikation_Id.ToString());
+                        bool success = _myExport.ExportApplications(_myData.GetApplicationHistory(CurrentApplication.Applikation_Id), "", CurrentApplication.Applikation_Id.ToString());
                         if (success)
                         {
-                            myDia.ShowInfo("Export erfolgreich");
+                            _myDia.ShowInfo("Export erfolgreich");
                         }
                     }, () => Mode == ProcAppMode.Change));
         }
@@ -504,11 +503,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
         public ISB_BIA_Settings Setting { get; set; }
 
         #region Services
-        IMyNavigationService myNavi;
-        IMyDialogService myDia;
-        IMyDataService myData;
-        IMyExportService myExport;
-        IMySharedResourceService myShared;
+        IMyNavigationService _myNavi;
+        IMyDialogService _myDia;
+        IMyDataService _myData;
+        IMyExportService _myExport;
+        IMySharedResourceService _myShared;
         #endregion
 
         /// <summary>
@@ -522,36 +521,36 @@ namespace ISB_BIA_IMPORT1.ViewModel
         public Application_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyDataService myDataService, IMyExportService myExportService, IMySharedResourceService mySharedResourceService)
         {
             #region Services
-            myNavi = myNavigationService;
-            myDia = myDialogService;
-            myData = myDataService;
-            myExport = myExportService;
-            myShared = mySharedResourceService;
+            _myNavi = myNavigationService;
+            _myDia = myDialogService;
+            _myData = myDataService;
+            _myExport = myExportService;
+            _myShared = mySharedResourceService;
             #endregion
 
             if (IsInDesignMode)
             {
-                CurrentApplication = myData.GetApplicationModelFromDB(1);
+                CurrentApplication = _myData.GetApplicationModelFromDB(1);
                 Header = "TestHeader";
-                RechenzentrumList = myData.GetRechenzentrum();
-                ServerList = myData.GetServer();
-                Virtuelle_MaschineList = myData.GetVirtuelle_Maschine();
-                TypeList = myData.GetTypes();
-                IT_BetriebsartList = myData.GetBetriebsart();
-                Setting = myData.GetSettings();
+                RechenzentrumList = _myData.GetRechenzentrum();
+                ServerList = _myData.GetServer();
+                Virtuelle_MaschineList = _myData.GetVirtuelle_Maschine();
+                TypeList = _myData.GetTypes();
+                IT_BetriebsartList = _myData.GetBetriebsart();
+                Setting = _myData.GetSettings();
             }
             else
             {
                 #region Messenger Registrierungen für 2 Modi (Anwendung bearbeiten, neue Anwendung anlegen)
                 MessengerInstance.Register<int>(this, ProcAppMode.Change, p => {
                     Mode = ProcAppMode.Change;
-                    CurrentApplication = myData.GetApplicationModelFromDB(p);
+                    CurrentApplication = _myData.GetApplicationModelFromDB(p);
                     //Wenn Daten Fehlerhaft dann zurückkehren
                     if (CurrentApplication == null)
                     {
-                        myDia.ShowError("Fehler beim Laden der Daten.");
+                        _myDia.ShowError("Fehler beim Laden der Daten.");
                         Cleanup();
-                        myNavi.NavigateBack();
+                        _myNavi.NavigateBack();
                     }
                     else
                     {
@@ -569,14 +568,14 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 });
                 #endregion
                 #region Abrufen der Listendaten für die Dropdown-Felder
-                RechenzentrumList = myData.GetRechenzentrum();
-                ServerList = myData.GetServer();
-                Virtuelle_MaschineList = myData.GetVirtuelle_Maschine();
-                TypeList = myData.GetTypes();
-                IT_BetriebsartList = myData.GetBetriebsart();
+                RechenzentrumList = _myData.GetRechenzentrum();
+                ServerList = _myData.GetServer();
+                Virtuelle_MaschineList = _myData.GetVirtuelle_Maschine();
+                TypeList = _myData.GetTypes();
+                IT_BetriebsartList = _myData.GetBetriebsart();
                 #endregion
                 #region Aus Settings-Tabelle Abfragen ob neue Schutzziele (5+6) aktiviert sind (angezeigt werden)
-                Setting = myData.GetSettings();
+                Setting = _myData.GetSettings();
                 SchutzzielVisible = (Setting.Neue_Schutzziele_aktiviert == "Ja") ? true : false;
                 #endregion
             }

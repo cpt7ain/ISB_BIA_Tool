@@ -1,7 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
-using ISB_BIA_IMPORT1.LinqDataContext;
 using ISB_BIA_IMPORT1.Services;
 using Microsoft.Win32;
 using NPOI.SS.UserModel;
@@ -9,13 +8,9 @@ using NPOI.SS.Util;
 using NPOI.XSSF.UserModel;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
-using System.Data.SqlClient;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
-using Excel = Microsoft.Office.Interop.Excel;
 
 namespace ISB_BIA_IMPORT1.ViewModel
 {
@@ -135,19 +130,19 @@ namespace ISB_BIA_IMPORT1.ViewModel
 
         #region Strings der Dateien und SQL-Drop Befehle (abhängig von den Daten in myShared im Konstruktor erzeugt)
         //Original & Arbeitsdatei der Quelldaten
-        private string originalFile;
-        private string workFile;
+        private string _originalFile;
+        private string _workFile;
         //SQL
-        private readonly string sqlDropProc_App;
-        private readonly string sqlDropProcesses;
-        private readonly string sqlDropIS;
-        private readonly string sqlDropISAttribut;
-        private readonly string sqlDropSBA;
-        private readonly string sqlDropDelta;
-        private readonly string sqlDropLog;
-        private readonly string sqlDropOEs;
-        private readonly string sqlDropSettings;
-        private readonly string sqlDropLock;
+        private readonly string _sqlDropProc_App;
+        private readonly string _sqlDropProcesses;
+        private readonly string _sqlDropIS;
+        private readonly string _sqlDropISAttribut;
+        private readonly string _sqlDropSBA;
+        private readonly string _sqlDropDelta;
+        private readonly string _sqlDropLog;
+        private readonly string _sqlDropOEs;
+        private readonly string _sqlDropSettings;
+        private readonly string _sqlDropLock;
         #endregion
 
         /// <summary>
@@ -166,16 +161,16 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       OpenFileDialog openFileDialog = new OpenFileDialog
                       {
                           DefaultExt = ".xlsx",
-                          InitialDirectory = myShared.InitialDirectory,
-                          FileName = myShared.InitialDirectory + @"\ISB_BIA-SBA.xlsx",
+                          InitialDirectory = _myShared.InitialDirectory,
+                          FileName = _myShared.InitialDirectory + @"\ISB_BIA-SBA.xlsx",
                           Filter = "Excel Files (*.xlsm;*.xlsx)|*.xlsm;*xlsx"
                       };
-                      bool? result = myDia.Open(openFileDialog);
+                      bool? result = _myDia.Open(openFileDialog);
 
                       if (result == true)
                       {
-                          originalFile = openFileDialog.FileName;
-                          workFile = openFileDialog.InitialDirectory + @"\ISB_BIA-SBA_tmp.xlsx";
+                          _originalFile = openFileDialog.FileName;
+                          _workFile = openFileDialog.InitialDirectory + @"\ISB_BIA-SBA_tmp.xlsx";
                       }
                   }));
         }
@@ -191,7 +186,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       if (CheckForCreation())
                       {
                           Cleanup();
-                          myNavi.NavigateBack();
+                          _myNavi.NavigateBack();
                       }
                   }));
         }
@@ -205,50 +200,51 @@ namespace ISB_BIA_IMPORT1.ViewModel
             {
                 return new MyRelayCommand(() =>
                 {
-                    if (myDia.CancelDecision())
+                    if (_myDia.CancelDecision())
                     {
                         Cleanup();
-                        myNavi.NavigateBack();
+                        _myNavi.NavigateBack();
                     }
                 });
             }
         }
 
         #region Services
-        IMyDataService myData;
-        IMyNavigationService myNavi;
-        IMyDialogService myDia;
-        IMySharedResourceService myShared;
+        IMyDataService _myData;
+        IMyNavigationService _myNavi;
+        IMyDialogService _myDia;
+        IMySharedResourceService _myShared;
         #endregion
 
         /// <summary>
         /// Konstruktor
         /// </summary>
+        /// <param name="myDataService"></param>
         /// <param name="myDialogService"></param>
         /// <param name="myNavigationService"></param>
         /// <param name="mySharedResourceService"></param>
         public DataModel_ViewModel(IMyDataService myDataService,IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMySharedResourceService mySharedResourceService)
         {
             #region Services
-            myData = myDataService;
-            myNavi = myNavigationService;
-            myDia = myDialogService;
-            myShared = mySharedResourceService;
-            Source = myShared.Source;
+            _myData = myDataService;
+            _myNavi = myNavigationService;
+            _myDia = myDialogService;
+            _myShared = mySharedResourceService;
+            Source = _myShared.Source;
             #endregion
-            originalFile = myShared.InitialDirectory + @"\ISB_BIA-SBA.xlsx";
-            workFile = myShared.InitialDirectory + @"\ISB_BIA-SBA_tmp.xlsx";
+            _originalFile = _myShared.InitialDirectory + @"\ISB_BIA-SBA.xlsx";
+            _workFile = _myShared.InitialDirectory + @"\ISB_BIA-SBA_tmp.xlsx";
             #region Tabellen Löschungs SQL Anweisungen
-            sqlDropProc_App = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" + myShared.Tbl_Proz_App + "') DROP Table " +myShared.Tbl_Proz_App;
-            sqlDropProcesses = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" +myShared.Tbl_Prozesse + "') DROP Table " +myShared.Tbl_Prozesse;
-            sqlDropIS = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" +myShared.Tbl_IS + "') DROP Table " +myShared.Tbl_IS;
-            sqlDropISAttribut = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" +myShared.Tbl_IS_Attribute + "') DROP Table " +myShared.Tbl_IS_Attribute;
-            sqlDropSBA = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" +myShared.Tbl_Applikationen + "') DROP Table " +myShared.Tbl_Applikationen;
-            sqlDropDelta = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" +myShared.Tbl_Delta + "') DROP Table " +myShared.Tbl_Delta;
-            sqlDropLog = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" +myShared.Tbl_Log + "') DROP Table " +myShared.Tbl_Log;
-            sqlDropOEs = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" +myShared.Tbl_OEs + "') DROP Table " +myShared.Tbl_OEs;
-            sqlDropSettings = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" +myShared.Tbl_Settings + "') DROP Table " +myShared.Tbl_Settings;
-            sqlDropLock = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" +myShared.Tbl_Lock + "') DROP Table " +myShared.Tbl_Lock;
+            _sqlDropProc_App = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" + _myShared.Tbl_Proz_App + "') DROP Table " +_myShared.Tbl_Proz_App;
+            _sqlDropProcesses = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" +_myShared.Tbl_Prozesse + "') DROP Table " +_myShared.Tbl_Prozesse;
+            _sqlDropIS = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" +_myShared.Tbl_IS + "') DROP Table " +_myShared.Tbl_IS;
+            _sqlDropISAttribut = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" +_myShared.Tbl_IS_Attribute + "') DROP Table " +_myShared.Tbl_IS_Attribute;
+            _sqlDropSBA = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" +_myShared.Tbl_Applikationen + "') DROP Table " +_myShared.Tbl_Applikationen;
+            _sqlDropDelta = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" +_myShared.Tbl_Delta + "') DROP Table " +_myShared.Tbl_Delta;
+            _sqlDropLog = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" +_myShared.Tbl_Log + "') DROP Table " +_myShared.Tbl_Log;
+            _sqlDropOEs = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" +_myShared.Tbl_OEs + "') DROP Table " +_myShared.Tbl_OEs;
+            _sqlDropSettings = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" +_myShared.Tbl_Settings + "') DROP Table " +_myShared.Tbl_Settings;
+            _sqlDropLock = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" +_myShared.Tbl_Lock + "') DROP Table " +_myShared.Tbl_Lock;
             #endregion
         }
 
@@ -262,11 +258,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             IWorkbook workbook;
             string rangePattern = "[A-Z]+[1-9]+:[A-Z]+[1-9]+";
-            if (File.Exists(originalFile))
+            if (File.Exists(_originalFile))
             {
-                if (File.Exists(workFile)) File.Delete(workFile);
-                File.Copy(originalFile, workFile);
-                using (FileStream stream = new FileStream(workFile, FileMode.Open, FileAccess.Read))
+                if (File.Exists(_workFile)) File.Delete(_workFile);
+                File.Copy(_originalFile, _workFile);
+                using (FileStream stream = new FileStream(_workFile, FileMode.Open, FileAccess.Read))
                 {
                     workbook = new XSSFWorkbook(stream);
                 }
@@ -283,9 +279,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 {
                     try
                     {
-                        if (GetDataForDatamodel(workFile, workbook))
+                        if (GetDataForDatamodel(workbook))
                         {
-                            if (File.Exists(workFile)) File.Delete(workFile);
+                            if (File.Exists(_workFile)) File.Delete(_workFile);
                             return true;
                         }
                         else
@@ -295,20 +291,20 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     }
                     catch (Exception ex)
                     {
-                        myDia.ShowError("Fehler beim erneuern des Datenmodells.", ex);
+                        _myDia.ShowError("Fehler beim erneuern des Datenmodells.", ex);
                         return false;
                     }
                 }
                 else
                 {
-                    if (File.Exists(workFile)) File.Delete(workFile);
-                    myDia.ShowInfo("Bitte überprüfen Sie Ihre Eingaben!");
+                    if (File.Exists(_workFile)) File.Delete(_workFile);
+                    _myDia.ShowInfo("Bitte überprüfen Sie Ihre Eingaben!");
                     return false;
                 }
             }
             else
             {
-                myDia.ShowError("Datei nicht gefunden!");
+                _myDia.ShowError("Datei nicht gefunden!");
                 return false;
             }
         }
@@ -317,29 +313,28 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// Aktionen welche zur Erstellung des Datenmodells aus der bisherigen Excel Datei dienen
         /// erstellen der Tabellen, füllen der Tabellen mit den Prozess/Anwendungsdaten (etc.) des Excel Sheets        
         /// /// </summary>
-        /// <param name="workFile"> File, der als Datenquelle dienen soll </param>
         /// <param name="workbook"> Workbook Objekt, auf dem Operationen durchgeführt werden können </param>
         /// <returns> Erfolg </returns>
-        private bool GetDataForDatamodel(string workFile, IWorkbook workbook)
+        private bool GetDataForDatamodel(IWorkbook workbook)
         {
             //Funktionen ausführen, um daten aus der Excel-Datei zu erhalten
-            DataTable dt_Applications = GetApplicationDataFromXLSX(workFile, workbook);
-            DataTable dt_Processes = GetProcessDataFromXLSX(workFile, workbook);
-            DataTable dt_InformationSegments = GetInformationSegmentDataFromXLSX(workFile, workbook);
-            DataTable dt_InformationSegmentAttributes = GetInformationSegmentAttributDataFromXLSX(workFile, workbook);
-            DataTable dt_Relation = FillSQLRelationFromXLSX(workFile, workbook);
+            DataTable dt_Applications = GetApplicationDataFromXLSX(workbook);
+            DataTable dt_Processes = GetProcessDataFromXLSX(workbook);
+            DataTable dt_InformationSegments = GetInformationSegmentDataFromXLSX(workbook);
+            DataTable dt_InformationSegmentAttributes = GetInformationSegmentAttributDataFromXLSX(workbook);
+            DataTable dt_Relation = FillSQLRelationFromXLSX(workbook);
 
             if (dt_Applications == null || dt_Processes == null || dt_InformationSegments == null || dt_InformationSegmentAttributes == null || dt_Relation == null)
             {
-                myDia.ShowWarning("Datenodell konnte nicht erzeugt werden!\nÜberprüfen Sie die Datenquelle.");
+                _myDia.ShowWarning("Datenodell konnte nicht erzeugt werden!\nÜberprüfen Sie die Datenquelle.");
                 return false;
             }
             else
             {
                 #region SQL Strings für Erstellen der Tabellen mit Headern analog zu Excel (!Trotzdem nicht ändern, da im Code per Linq2SQL Klassenmember aufegrufen werden)
 
-                string sqlCreaProc_App =
-                    "    CREATE TABLE [dbo].[" + myShared.Tbl_Proz_App + "] (" +
+                string sqlCreaProcApp =
+                    "    CREATE TABLE [dbo].[" + _myShared.Tbl_Proz_App + "] (" +
                     "    [Id]          INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
                     "    [Prozess] INT NOT NULL," +
                     "    [Applikation] INT NOT NULL," +
@@ -353,7 +348,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 //Wenn Spaltennamen in Excel geändert werden und das Datenmodell erneuert werden soll, müssen Anpassungen
                 //im Code vorgenommen werden (Linq-to-SQL Modell erneuern, Variablenaufrufe im Code ändern)
                 string sqlCreaSBA =
-                    "CREATE TABLE[dbo].[" + myShared.Tbl_Applikationen + "](" +
+                    "CREATE TABLE[dbo].[" + _myShared.Tbl_Applikationen + "](" +
                     "    [Id]                  INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
                     "    [" + dt_Applications.Columns[0] + "] INT NOT NULL," +
                     "    [" + dt_Applications.Columns[1] + "] NVARCHAR(350) NOT NULL," +
@@ -376,7 +371,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     ");";
 
                 string sqlCreaProcesses =
-                    "CREATE TABLE[dbo].[" + myShared.Tbl_Prozesse + "](" +
+                    "CREATE TABLE[dbo].[" + _myShared.Tbl_Prozesse + "](" +
                     "    [Id]                              INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
                     "    [" + dt_Processes.Columns[0] + "] INT NOT NULL," +
                     "    [" + dt_Processes.Columns[1] + "] NVARCHAR(350) NOT NULL," +
@@ -413,7 +408,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 ");";
 
                 string sqlCreaIS =
-                    "CREATE TABLE[dbo].[" + myShared.Tbl_IS + "](" +
+                    "CREATE TABLE[dbo].[" + _myShared.Tbl_IS + "](" +
                     "    [Id]                  INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
                     "    [" + dt_InformationSegments.Columns[0] + "] INT NOT NULL," +
                     "    [" + dt_InformationSegments.Columns[1] + "] VARCHAR(50) NOT NULL," +
@@ -436,7 +431,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     ");";
 
                 string sqlCreaISAttribut =
-                    "CREATE TABLE[dbo].[" + myShared.Tbl_IS_Attribute + "](" +
+                    "CREATE TABLE[dbo].[" + _myShared.Tbl_IS_Attribute + "](" +
                     "    [Id]                  INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
                     "    [" + dt_InformationSegmentAttributes.Columns[0] + "] INT NOT NULL," +
                     "    [" + dt_InformationSegmentAttributes.Columns[1] + "] VARCHAR(200) NOT NULL," +
@@ -453,7 +448,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     ");";
 
                 string sqlCreaDelta =
-                    "CREATE TABLE[dbo].[" + myShared.Tbl_Delta + "](" +
+                    "CREATE TABLE[dbo].[" + _myShared.Tbl_Delta + "](" +
                     "    [Id]                  INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
                     "    [Prozess_Id] INT NOT NULL," +
                     "    [Prozess] VARCHAR(350) NOT NULL," +
@@ -470,12 +465,12 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     "    [SZ_6] INT NOT NULL," +
                     "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
                     "    Unique (Prozess_Id, Applikation_Id)," +
-                    "    Foreign Key(Prozess_Id,Datum_Prozess) references [" + myShared.Tbl_Prozesse + "](Prozess_Id,Datum)," +
-                    "    Foreign Key(Applikation_Id,Datum_Applikation) references [" + myShared.Tbl_Applikationen + "](Applikation_Id,Datum)" +
+                    "    Foreign Key(Prozess_Id,Datum_Prozess) references [" + _myShared.Tbl_Prozesse + "](Prozess_Id,Datum)," +
+                    "    Foreign Key(Applikation_Id,Datum_Applikation) references [" + _myShared.Tbl_Applikationen + "](Applikation_Id,Datum)" +
                     ");";
 
                 string sqlCreaLog =
-                    "CREATE TABLE[dbo].[" + myShared.Tbl_Log + "] (" +
+                    "CREATE TABLE[dbo].[" + _myShared.Tbl_Log + "] (" +
                     "    [Id]                  INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
                     "    [Action] VARCHAR(200) NOT NULL," +
                     "    [Tabelle] VARCHAR(200) NOT NULL," +
@@ -487,7 +482,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     ");";
 
                 string sqlCreaOEs =
-                    "CREATE TABLE[dbo].[" + myShared.Tbl_OEs + "] (" +
+                    "CREATE TABLE[dbo].[" + _myShared.Tbl_OEs + "] (" +
                     "    [Id]                  INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
                     "    [OE_Name] VARCHAR(200) NOT NULL," +
                     "    [OE_Nummer] VARCHAR(200) NOT NULL," +
@@ -497,7 +492,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     ");";
 
                 string sqlCreaSettings =
-                    "CREATE TABLE[dbo].[" + myShared.Tbl_Settings + "] (" +
+                    "CREATE TABLE[dbo].[" + _myShared.Tbl_Settings + "] (" +
                     "    [Id]                  INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
                     "    [SZ_1_Name] VARCHAR(100) NOT NULL," +
                     "    [SZ_2_Name] VARCHAR(100) NOT NULL," +
@@ -517,7 +512,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     ");";
 
                 string sqlCreaLock =
-                    "CREATE TABLE[dbo].[" + myShared.Tbl_Lock + "] (" +
+                    "CREATE TABLE[dbo].[" + _myShared.Tbl_Lock + "] (" +
                     "    [Id]                  INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
                     "    [Table_Flag] INT NOT NULL," +
                     "    [Object_Id] INT NOT NULL," +
@@ -527,60 +522,46 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     ");";
                 #endregion
                 List<string> sqlCommandList = new List<string>();
-                sqlCommandList.Add(sqlDropLog);
+                sqlCommandList.Add(_sqlDropLog);
                 sqlCommandList.Add(sqlCreaLog);
-                sqlCommandList.Add(sqlDropDelta);
-                sqlCommandList.Add(sqlDropProc_App);
-                sqlCommandList.Add(sqlDropSBA);
+                sqlCommandList.Add(_sqlDropDelta);
+                sqlCommandList.Add(_sqlDropProc_App);
+                sqlCommandList.Add(_sqlDropSBA);
                 sqlCommandList.Add(sqlCreaSBA);
-                sqlCommandList.Add(sqlDropProcesses);
+                sqlCommandList.Add(_sqlDropProcesses);
                 sqlCommandList.Add(sqlCreaProcesses);
-                sqlCommandList.Add(sqlCreaProc_App);
+                sqlCommandList.Add(sqlCreaProcApp);
                 sqlCommandList.Add(sqlCreaDelta);
-                sqlCommandList.Add(sqlDropIS);
+                sqlCommandList.Add(_sqlDropIS);
                 sqlCommandList.Add(sqlCreaIS);
-                sqlCommandList.Add(sqlDropISAttribut);
+                sqlCommandList.Add(_sqlDropISAttribut);
                 sqlCommandList.Add(sqlCreaISAttribut);
-                sqlCommandList.Add(sqlDropOEs);
+                sqlCommandList.Add(_sqlDropOEs);
                 sqlCommandList.Add(sqlCreaOEs);
-                sqlCommandList.Add(sqlDropSettings);
+                sqlCommandList.Add(_sqlDropSettings);
                 sqlCommandList.Add(sqlCreaSettings);
-                sqlCommandList.Add(sqlDropLock);
+                sqlCommandList.Add(_sqlDropLock);
                 sqlCommandList.Add(sqlCreaLock);
 
                 //Datenbank Operation durch Service übernommen
-                return myData.CreateDataModel(sqlCommandList, dt_Processes, dt_Applications, dt_Relation, dt_InformationSegments, dt_InformationSegmentAttributes);               
+                return _myData.CreateDataModel(sqlCommandList, dt_Processes, dt_Applications, dt_Relation, dt_InformationSegments, dt_InformationSegmentAttributes);               
             }
         }
         #endregion
 
         #region Excel Import
-        private Excel.Workbook Open(Excel.Application excelInstance,
-        string fileName, bool readOnly = false,
-        bool editable = true, bool updateLinks = true)
-        {
-            Excel.Workbook book = excelInstance.Workbooks.Open(
-                fileName, updateLinks, readOnly,
-                Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing,
-                Type.Missing, editable, Type.Missing, Type.Missing, Type.Missing,
-                Type.Missing, Type.Missing);
-            return book;
-        }
-
         /// <summary>
         /// Funktion um Prozessdaten aus Excel zu lesen und in DataTable zu speichern
         /// </summary>
-        /// <param name="xlsxPath"> File, der als Datenquelle dienen soll </param>
         /// <param name="workbook"> Workbook Objekt, auf dem Operationen durchgeführt werden können </param>
         /// <returns> Datatable, der die gelesenen Daten enthält </returns>
-        private DataTable GetProcessDataFromXLSX(string xlsxPath, IWorkbook workbook)
+        private DataTable GetProcessDataFromXLSX(IWorkbook workbook)
         {
             ISheet sheet = workbook.GetSheet(P_Sheet);
             if (sheet != null)
             {
                 DataTable dt = new DataTable(sheet.SheetName);
                 CellRangeAddress cellRange = CellRangeAddress.ValueOf(P_Range);
-                int index = 0;
                 for (var i = cellRange.FirstRow; i <= cellRange.LastRow; i++)
                 {
                     var row = sheet.GetRow(i);
@@ -595,7 +576,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     else
                     {
                         DataRow dataRow = dt.NewRow();
-                        index = 0;
+                        var index = 0;
                         for (var j = cellRange.FirstColumn; j <= cellRange.LastColumn; j++)
                         {
                             dataRow[index] = row.GetCell(j).ToString();
@@ -607,7 +588,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                         }
                         catch (Exception ex)
                         {
-                            myDia.ShowError("Fehler beim Import", ex);
+                            _myDia.ShowError("Fehler beim Import", ex);
                             return null;
                         }
                     }
@@ -616,7 +597,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             }
             else
             {
-                myDia.ShowWarning("Excel-Quelldatei hat nicht das passende Format!\n(Prozesse)\nVoraussetzungen:\nSheet-Name: '" + P_Sheet + "'\nRange: '" + P_Range + "'");
+                _myDia.ShowWarning("Excel-Quelldatei hat nicht das passende Format!\n(Prozesse)\nVoraussetzungen:\nSheet-Name: '" + P_Sheet + "'\nRange: '" + P_Range + "'");
                 return null;
             }
         }
@@ -624,17 +605,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Funktion um Anwendungsdaten aus Excel zu lesen und in DataTable zu speichern
         /// </summary>
-        /// <param name="xlsxPath"> File, der als Datenquelle dienen soll </param>
         /// <param name="workbook"> Workbook Objekt, auf dem Operationen durchgeführt werden können </param>
         /// <returns> Datatable, der die gelesenen Daten enthält </returns>
-        private DataTable GetApplicationDataFromXLSX(string xlsxPath, IWorkbook workbook)
+        private DataTable GetApplicationDataFromXLSX(IWorkbook workbook)
         {
             ISheet sheet = workbook.GetSheet(A_Sheet);
             if (sheet != null)
             {
                 DataTable dt = new DataTable(sheet.SheetName);
                 CellRangeAddress cellRange = CellRangeAddress.ValueOf(A_Range);
-                int index = 0;
                 for (var i = cellRange.FirstRow; i <= cellRange.LastRow; i++)
                 {
                     var row = sheet.GetRow(i);
@@ -649,7 +628,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     else
                     {
                         DataRow dataRow = dt.NewRow();
-                        index = 0;
+                        var index = 0;
                         for (var j = cellRange.FirstColumn; j <= cellRange.LastColumn; j++)
                         {
                             dataRow[index] = row.GetCell(j).ToString();
@@ -661,7 +640,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                         }
                         catch (Exception ex)
                         {
-                            myDia.ShowError("Fehler beim Import", ex);
+                            _myDia.ShowError("Fehler beim Import", ex);
                             return null;
                         }
                     }
@@ -670,7 +649,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             }
             else
             {
-                myDia.ShowWarning("Excel-Quelldatei hat nicht das passende Format!\n(Applikationen)\nVoraussetzungen:\nSheet-Name: '" + A_Sheet + "'\nRange: '" + A_Range + "'");
+                _myDia.ShowWarning("Excel-Quelldatei hat nicht das passende Format!\n(Applikationen)\nVoraussetzungen:\nSheet-Name: '" + A_Sheet + "'\nRange: '" + A_Range + "'");
                 return null;
             }
         }
@@ -678,18 +657,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Funktion um DataTable zu erzeugen, welcher die Relationen zwischen Prozessen und Anwendungen anzeigt
         /// </summary>
-        /// <param name="xlsxPath"> File, der als Datenquelle dienen soll </param>
         /// <param name="workbook"> Workbook Objekt, auf dem Operationen durchgeführt werden können </param>
         /// <returns> Datatable, der die gelesenen Daten enthält </returns>
-        private DataTable FillSQLRelationFromXLSX(string xlsxPath, IWorkbook workbook)
+        private DataTable FillSQLRelationFromXLSX(IWorkbook workbook)
         {
             DataTable dt = new DataTable();
             ISheet sheet = workbook.GetSheet(P_A_Matrix_Sheet);
             if (sheet != null)
             {
                 CellRangeAddress cellRange = CellRangeAddress.ValueOf(P_A_Matrix_Range);
-                int rows = cellRange.LastRow - cellRange.FirstRow + 1;
-                int cols = cellRange.LastColumn - cellRange.FirstColumn + 1;
                 dt.Columns.Add("Prozess");
                 dt.Columns.Add("Applikation");
                 dt.Columns.Add("Relation");
@@ -710,7 +686,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                             }
                             catch (Exception ex)
                             {
-                                myDia.ShowError("Fehler beim Import", ex);
+                                _myDia.ShowError("Fehler beim Import", ex);
                                 return null;
                             }
                         }
@@ -720,7 +696,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             }
             else
             {
-                myDia.ShowWarning("Excel-Quelldatei hat nicht das passende Format!\n(Matrix)\nVoraussetzungen:\nSheet-Name: '" + P_Sheet + "'\nRange: '" + P_A_Matrix_Range + "'");
+                _myDia.ShowWarning("Excel-Quelldatei hat nicht das passende Format!\n(Matrix)\nVoraussetzungen:\nSheet-Name: '" + P_Sheet + "'\nRange: '" + P_A_Matrix_Range + "'");
                 return null;
             }
         }
@@ -728,17 +704,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Funktion um Informationssegmentdaten aus Excel zu lesen und in DataTable zu speichern
         /// </summary>
-        /// <param name="xlsxPath"> File, der als Datenquelle dienen soll </param>
         /// <param name="workbook"> Workbook Objekt, auf dem Operationen durchgeführt werden können </param>
         /// <returns> Datatable, der die gelesenen Daten enthält </returns>
-        private DataTable GetInformationSegmentDataFromXLSX(string xlsxPath, IWorkbook workbook)
+        private DataTable GetInformationSegmentDataFromXLSX(IWorkbook workbook)
         {
             ISheet sheet = workbook.GetSheet(I_Sheet);
             if (sheet != null)
             {
                 DataTable dt = new DataTable(sheet.SheetName);
                 CellRangeAddress cellRange = CellRangeAddress.ValueOf(I_Range);
-                int index = 0;
                 for (var i = cellRange.FirstRow; i <= cellRange.LastRow; i++)
                 {
                     var row = sheet.GetRow(i);
@@ -747,13 +721,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
                         for (var j = cellRange.FirstColumn; j <= cellRange.LastColumn; j++)
                         {
                             var headerCell = row.GetCell(j).ToString();
-                            dt.Columns.Add(headerCell.ToString());
+                            dt.Columns.Add(headerCell);
                         }
                     }
                     else
                     {
                         DataRow dataRow = dt.NewRow();
-                        index = 0;
+                        int index = 0;
                         for (var j = cellRange.FirstColumn; j <= cellRange.LastColumn; j++)
                         {
                             dataRow[index] = row.GetCell(j).ToString();
@@ -765,7 +739,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                         }
                         catch (Exception ex)
                         {
-                            myDia.ShowError("Fehler beim Import", ex);
+                            _myDia.ShowError("Fehler beim Import", ex);
                             return null;
                         }
                     }
@@ -774,7 +748,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             }
             else
             {
-                myDia.ShowWarning("Excel-Quelldatei hat nicht das passende Format!\n(Informationssegmente)\nVoraussetzungen:\nSheet-Name: '" + I_Sheet + "'\nRange: '" + I_Range + "'");
+                _myDia.ShowWarning("Excel-Quelldatei hat nicht das passende Format!\n(Informationssegmente)\nVoraussetzungen:\nSheet-Name: '" + I_Sheet + "'\nRange: '" + I_Range + "'");
                 return null;
             }
         }
@@ -782,18 +756,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Funktion um Informationssegmentattributdaten aus Excel zu lesen und in DataTable zu speichern
         /// </summary>
-        /// <param name="xlsxPath"> File, der als Datenquelle dienen soll </param>
         /// <param name="workbook"> Workbook Objekt, auf dem Operationen durchgeführt werden können </param>
         /// <returns> Datatable, der die gelesenen Daten enthält </returns>
-        private DataTable GetInformationSegmentAttributDataFromXLSX(string xlsxPath, IWorkbook workbook)
+        private DataTable GetInformationSegmentAttributDataFromXLSX(IWorkbook workbook)
         {
             ISheet sheet = workbook.GetSheet(I_A_Sheet);
             if (sheet != null)
             {
                 DataTable dt = new DataTable(sheet.SheetName);
                 CellRangeAddress cellRange = CellRangeAddress.ValueOf(I_A_Range);
-                int index = 0;
-
                 for (var i = cellRange.FirstRow; i <= cellRange.LastRow; i++)
                 {
                     var row = sheet.GetRow(i);
@@ -802,13 +773,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
                         for (var j = cellRange.FirstColumn; j <= cellRange.LastColumn; j++)
                         {
                             var headerCell = row.GetCell(j).ToString();
-                            dt.Columns.Add(headerCell.ToString());
+                            dt.Columns.Add(headerCell);
                         }
                     }
                     else
                     {
                         DataRow dataRow = dt.NewRow();
-                        index = 0;
+                        int index = 0;
                         for (var j = cellRange.FirstColumn; j <= cellRange.LastColumn; j++)
                         {
                             dataRow[index] = row.GetCell(j).ToString();
@@ -820,7 +791,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                         }
                         catch (Exception ex)
                         {
-                            myDia.ShowError("Fehler", ex);
+                            _myDia.ShowError("Fehler", ex);
                             return null;
                         }
                     }
@@ -829,7 +800,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             }
             else
             {
-                myDia.ShowWarning("Excel-Quelldatei hat nicht das passende Format!\n(Informationssegment-Attribute)\nVoraussetzungen:\nSheet-Name: '" + I_A_Sheet + "'\nRange: '" + I_A_Range + "'");
+                _myDia.ShowWarning("Excel-Quelldatei hat nicht das passende Format!\n(Informationssegment-Attribute)\nVoraussetzungen:\nSheet-Name: '" + I_A_Sheet + "'\nRange: '" + I_A_Range + "'");
                 return null;
             }
         }
