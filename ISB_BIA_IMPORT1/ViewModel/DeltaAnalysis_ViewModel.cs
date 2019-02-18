@@ -157,7 +157,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
             {
                 Setting = _myData.GetSettings();
                 List = _myData.GetDeltaAnalysis();
-                DeltaList = _myData.GetDeltaAnalysis();
+                DeltaList = new ObservableCollection<ISB_BIA_Delta_Analyse>(List);
+                //DeltaList = _myData.GetDeltaAnalysis();
                 View = (CollectionView)CollectionViewSource.GetDefaultView(List);
                 View.Filter = DeltaFilter;
                 NewSecurityGoalsWidth = (Setting.Neue_Schutzziele_aktiviert == "Ja") ? 110 : 0;

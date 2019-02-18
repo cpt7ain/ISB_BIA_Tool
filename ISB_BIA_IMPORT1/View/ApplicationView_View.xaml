@@ -37,11 +37,17 @@
                     <RowDefinition Height="40"/>
                 </Grid.RowDefinitions>
 
-                <Label Content="{Binding Instruction}" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0"/>
-                <Button Content="Excel-Export" Grid.Column="3" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Command="{Binding ExportApplicationList}"/>
-
-                <DataGrid IsReadOnly="true" 
+                <Label Content="{Binding Instruction}" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Width="700"/>
+                <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBox Name="SearchBox" Text="" HorizontalAlignment="Right" VerticalAlignment="Center" Width="300" KeyUp="SearchBox_KeyUp"/>
+                    <Button Content="Suche" VerticalAlignment="Center" Click="SearchButton_Click" Margin ="0,0,10,0"/>
+                    <Button Content="Excel-Export" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Command="{Binding ExportApplicationList}"/>
+                </StackPanel>
+                <DataGrid 
+                    Name="ApplicationDataGrid"
+                  IsReadOnly="true" 
                   VerticalAlignment="Top" 
+                  SelectionMode="Single"
                   Grid.Row="1"
                   RowHeaderWidth="0"
                   VerticalGridLinesBrush="LightGray"
@@ -55,10 +61,11 @@
                         <MouseBinding Gesture="LeftDoubleClick" Command="{Binding RowDoubleClick}"/>
                     </DataGrid.InputBindings>
                     <DataGrid.Columns>
-                        <DataGridTextColumn Width="650" Header="Anwendung" Binding="{Binding IT_Anwendung_System}"/>
-                        <DataGridTextColumn Width="300" Header="Kategorie" Binding="{Binding IT_Betriebsart}"/>
+                        <DataGridTextColumn Width="570" Header="Anwendung" Binding="{Binding IT_Anwendung_System}"/>
+                        <DataGridTextColumn Width="250" Header="Kategorie" Binding="{Binding IT_Betriebsart}"/>
                         <DataGridTextColumn Width="50" Header="Aktiv" Binding="{Binding Aktiv ,Converter={StaticResource NumToAlphBinaryConverter}}"/>
-                        <DataGridTextColumn Width="150" Header="Datum" Binding="{Binding Datum , StringFormat=\{0:dd.MM.yy HH:mm\}}"/>
+                        <DataGridTextColumn Width="170" Header="Bearbeitungsdatum" Binding="{Binding Datum , StringFormat=\{0:dd.MM.yy HH:mm\}}"/>
+                        <DataGridTextColumn Width="100" Header="Bearbeiter" Binding="{Binding Benutzer}"/>
                     </DataGrid.Columns>
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">

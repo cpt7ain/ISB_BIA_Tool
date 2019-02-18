@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 
 namespace ISB_BIA_IMPORT1.Converter
 {
-    class ISToBrushConverter : IMultiValueConverter
+    class InfoVisConverter : IMultiValueConverter
     {
         /// <summary>
-        /// Converter, der zwei integer Werte vergleicht, und je nach Differenz zu dem Parameter eine Farbe zurückgibt.
+        /// Converter, der 6 Farben abruft und Sichtbarkeit zurückgibt falls mindestens eine "LightSalmon"
+        /// (Für Sichtbarkeit des Legenden-Labels wenn Unterdeckung der Schutzziele zutrifft)
         /// </summary>
         /// <param name="value"> Integer Wert 1 </param>
         /// <param name="targetType"></param>
@@ -17,28 +19,33 @@ namespace ISB_BIA_IMPORT1.Converter
         /// <returns> Rot, wenn value[0] > value[1], Transparent wenn nicht  </returns>
         public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
         {
-            if(value[0] != null && value[1] != null)
+            if (value[0] != null && value[1] != null && value[2] != null && value[3] != null && value[4] != null && value[5] != null)
             {
                 try
                 {
-                    int minValue = (int)(value[0]);
-                    int paramValue = (int)(value[1]);
+                    Brush b1 = (Brush)(value[0]);
+                    Brush b2 = (Brush)(value[1]);
+                    Brush b3 = (Brush)(value[2]);
+                    Brush b4 = (Brush)(value[3]);
+                    Brush b5 = (Brush)(value[4]);
+                    Brush b6 = (Brush)(value[5]);
 
-                    if (minValue > paramValue)
+                    if (b1 == Brushes.LightSalmon ||
+                        b2 == Brushes.LightSalmon ||
+                        b3 == Brushes.LightSalmon ||
+                        b4 == Brushes.LightSalmon ||
+                        b5 == Brushes.LightSalmon ||
+                        b6 == Brushes.LightSalmon)
                     {
-                        return Brushes.LightSalmon;
-                    }
-                    else
-                    {
-                        return Brushes.Transparent;
+                        return Visibility.Visible;
                     }
                 }
                 catch
                 {
-
+                    return Visibility.Collapsed;
                 }
             }
-            return Brushes.Transparent;
+            return Visibility.Collapsed;
         }
 
         /// <summary>

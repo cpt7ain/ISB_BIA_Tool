@@ -398,14 +398,15 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }     
-        public ObservableCollection<ISB_BIA_Prozesse> GetProcesses()
+        public ObservableCollection<ISB_BIA_Prozesse> GetProcesses(DateTime? date = null)
         {
             try
             {
+                if(!date.HasValue)date= DateTime.Now;
                 using (MyLinqContextDataContext db = new MyLinqContextDataContext(myShared.ConnectionString))
                 {
                     return new ObservableCollection<ISB_BIA_Prozesse>(
-                        db.ISB_BIA_Prozesse.GroupBy(p => p.Prozess_Id)
+                        db.ISB_BIA_Prozesse.Where(d=>d.Datum <= date).GroupBy(p => p.Prozess_Id)
                         .Select(g => g.OrderByDescending(p => p.Datum).FirstOrDefault()).
                         OrderBy(x => x.Prozess_Id).ToList());
                 }
@@ -485,7 +486,7 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 using (MyLinqContextDataContext db = new MyLinqContextDataContext(myShared.ConnectionString))
                 {
-                    return new ObservableCollection<string>(db.ISB_BIA_Prozesse.Select(p => p.Vorgelagerte_Prozesse).Distinct());
+                    return new ObservableCollection<string>(db.ISB_BIA_Prozesse.Select(p => p.Vorgelagerte_Prozesse).ToList().Distinct(StringComparer.Ordinal).OrderBy(a=>a));
                 }
             }
             catch (Exception ex)
@@ -500,7 +501,7 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 using (MyLinqContextDataContext db = new MyLinqContextDataContext(myShared.ConnectionString))
                 {
-                    return new ObservableCollection<string>(db.ISB_BIA_Prozesse.Select(p => p.Nachgelagerte_Prozesse).Distinct());
+                    return new ObservableCollection<string>(db.ISB_BIA_Prozesse.Select(p => p.Nachgelagerte_Prozesse).ToList().Distinct(StringComparer.Ordinal).OrderBy(a => a));
                 }
             }
             catch (Exception ex)
@@ -528,17 +529,7 @@ namespace ISB_BIA_IMPORT1.Services
         }
         public bool InsertProcessAndRelations(Process_Model p, ProcAppMode mode, ObservableCollection<ISB_BIA_Applikationen> add, ObservableCollection<ISB_BIA_Applikationen> remove)
         {
-            //Pfichtfelder prüfen
-            if (p.OE_Filter != ""
-                && p.Prozess != ""
-                && p.OE_Filter != ""
-                && p.Prozessverantwortlicher != ""
-                && p.Kritikalität_des_Prozesses != ""
-                && p.Reifegrad_des_Prozesses != ""
-                && p.Servicezeit_Helpdesk != ""
-                && !p.Servicezeit_Helpdesk.StartsWith("Bsp.:")
-                && p.RTO_Wiederanlaufzeit_Recovery_Time_Objective > 0
-                && p.RTO_Wiederanlaufzeit_Recovery_Time_Objective_Notfall > 0)
+            if(p.IsValid)
             {
                 //Bei Bearbeitung eines inaktiven Prozesses (durch Admin oder CISO) beim Speichern fragen, ob er auf aktiv gesetzt werden soll
                 if (p.Aktiv == 0)
@@ -660,7 +651,7 @@ namespace ISB_BIA_IMPORT1.Services
             }
             else
             {
-                myDia.ShowWarning("Bitte füllen Sie alle Pflichtfelder aus.\nPflichtfelder sind fett markiert.");
+                myDia.ShowWarning("Bitte füllen Sie alle Pflichtfelder aus.\nPflichtfelder sind fett markiert und werden für Sie nun rot gekennzeichnet.");
                 return false;
             }
         }
@@ -1065,14 +1056,15 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<ISB_BIA_Applikationen> GetApplications()
+        public ObservableCollection<ISB_BIA_Applikationen> GetApplications(DateTime? date = null)
         {
             try
             {
+                if(!date.HasValue)date=DateTime.Now;
                 using (MyLinqContextDataContext db = new MyLinqContextDataContext(myShared.ConnectionString))
                 {
                     return new ObservableCollection<ISB_BIA_Applikationen>(
-                        db.ISB_BIA_Applikationen.GroupBy(a => a.Applikation_Id)
+                        db.ISB_BIA_Applikationen.Where(d => d.Datum <= date).GroupBy(a => a.Applikation_Id)
                         .Select(g => g.OrderByDescending(p => p.Datum).FirstOrDefault()).
                         OrderBy(x => x.Applikation_Id).ToList());
                 }
@@ -1982,10 +1974,15 @@ namespace ISB_BIA_IMPORT1.Services
                 {
                     ObservableCollection<ISB_BIA_Delta_Analyse> result = new ObservableCollection<ISB_BIA_Delta_Analyse>();
                     List<ISB_BIA_Prozesse_Applikationen> procAppList = db.ISB_BIA_Prozesse_Applikationen.Where(x => x.Prozess == id).OrderByDescending(c => c.Datum).ToList();
-                    foreach(ISB_BIA_Prozesse_Applikationen k in procAppList)
+                    List<ISB_BIA_Prozesse_Applikationen> procAppListCurrent = procAppList.GroupBy(x => x.Applikation)
+                        .Select(c=>c.OrderByDescending(v=>v.Datum).FirstOrDefault()).ToList();
+                    List<ISB_BIA_Prozesse> processes = db.ISB_BIA_Prozesse.ToList();
+                    List<ISB_BIA_Applikationen> applications = db.ISB_BIA_Applikationen.ToList();
+                    foreach (ISB_BIA_Prozesse_Applikationen k in procAppList)
                     {
-                        ISB_BIA_Prozesse p = db.ISB_BIA_Prozesse.Where(x => x.Prozess_Id == k.Prozess).GroupBy(l => l.Prozess_Id).Select(g => g.OrderByDescending(d => d.Datum).FirstOrDefault()).FirstOrDefault();
-                        ISB_BIA_Applikationen a = db.ISB_BIA_Applikationen.Where(x => x.Applikation_Id == k.Applikation).GroupBy(l => l.Applikation_Id).Select(g => g.OrderByDescending(d => d.Datum).FirstOrDefault()).FirstOrDefault();
+                        ISB_BIA_Prozesse p = processes.Where(x => x.Prozess_Id == k.Prozess).GroupBy(l => l.Prozess_Id).Select(g => g.OrderByDescending(d => d.Datum).FirstOrDefault()).FirstOrDefault();
+                        ISB_BIA_Applikationen a = applications.Where(x => x.Applikation_Id == k.Applikation).GroupBy(l => l.Applikation_Id).Select(g => g.OrderByDescending(d => d.Datum).FirstOrDefault()).FirstOrDefault();
+
                         ISB_BIA_Delta_Analyse n = new ISB_BIA_Delta_Analyse()
                         {
                             Prozess_Id = p.Prozess_Id,
@@ -1994,6 +1991,7 @@ namespace ISB_BIA_IMPORT1.Services
                             Applikation_Id = a.Applikation_Id,
                             Applikation = a.IT_Anwendung_System,
                             SZ_1 = k.Relation,
+                            SZ_2 = (procAppListCurrent.Select(x=>x.Id).ToList().Contains(k.Id))?1:0,
                             Datum = k.Datum
                         };
                         result.Add(n);
@@ -2014,11 +2012,17 @@ namespace ISB_BIA_IMPORT1.Services
                 using (MyLinqContextDataContext db = new MyLinqContextDataContext(myShared.ConnectionString))
                 {
                     ObservableCollection<ISB_BIA_Delta_Analyse> result = new ObservableCollection<ISB_BIA_Delta_Analyse>();
+                    //Alle Einträge für Prozess
                     List<ISB_BIA_Prozesse_Applikationen> procAppList = db.ISB_BIA_Prozesse_Applikationen.Where(x => x.Applikation == id).OrderByDescending(c => c.Datum).ToList();
+                    //Alle aktuellen Einträge für Prozess (später gekennzeichnet)
+                    List<ISB_BIA_Prozesse_Applikationen> procAppListCurrent = procAppList.GroupBy(x => x.Prozess)
+                        .Select(c => c.OrderByDescending(v => v.Datum).FirstOrDefault()).ToList();
+                    List<ISB_BIA_Prozesse> processes = db.ISB_BIA_Prozesse.ToList();
+                    List<ISB_BIA_Applikationen> applications = db.ISB_BIA_Applikationen.ToList();
                     foreach (ISB_BIA_Prozesse_Applikationen k in procAppList)
                     {
-                        ISB_BIA_Prozesse p = db.ISB_BIA_Prozesse.Where(x => x.Prozess_Id == k.Prozess).GroupBy(l => l.Prozess_Id).Select(g => g.OrderByDescending(d => d.Datum).FirstOrDefault()).FirstOrDefault();
-                        ISB_BIA_Applikationen a = db.ISB_BIA_Applikationen.Where(x => x.Applikation_Id == k.Applikation).GroupBy(l => l.Applikation_Id).Select(g => g.OrderByDescending(d => d.Datum).FirstOrDefault()).FirstOrDefault();
+                        ISB_BIA_Prozesse p = processes.Where(x => x.Prozess_Id == k.Prozess).GroupBy(l => l.Prozess_Id).Select(g => g.OrderByDescending(d => d.Datum).FirstOrDefault()).FirstOrDefault();
+                        ISB_BIA_Applikationen a = applications.Where(x => x.Applikation_Id == k.Applikation).GroupBy(l => l.Applikation_Id).Select(g => g.OrderByDescending(d => d.Datum).FirstOrDefault()).FirstOrDefault();
                         ISB_BIA_Delta_Analyse n = new ISB_BIA_Delta_Analyse()
                         {
                             Prozess_Id = p.Prozess_Id,
@@ -2026,6 +2030,8 @@ namespace ISB_BIA_IMPORT1.Services
                             Sub_Prozess = p.Sub_Prozess,
                             Applikation_Id = a.Applikation_Id,
                             Applikation = a.IT_Anwendung_System,
+                            SZ_1 = k.Relation,
+                            SZ_2 = (procAppListCurrent.Select(x => x.Id).ToList().Contains(k.Id)) ? 1 : 0,
                             Datum = k.Datum
                         };
                         result.Add(n);
@@ -2067,8 +2073,10 @@ namespace ISB_BIA_IMPORT1.Services
                 {
                     //einen Tag aufaddieren da immer zeit 00:00 benutzt wird & sonst Fehler für spätere Einträge des Tages auftreten
                     d = d.AddDays(1);
-                    //Nur aktive Relationen
-                    proc_App = db.ISB_BIA_Prozesse_Applikationen.Where(q => q.Datum <= d && q.Relation == 1).ToList();
+                    //Nur aktuelle 1er Relationen bis zu dem bestimmten Datum aus Relationentabelle abfragen
+                    proc_App = db.ISB_BIA_Prozesse_Applikationen.Where(q => q.Datum <= d && q.Relation == 1)
+                        .GroupBy(x => new { x.Prozess, x.Applikation })
+                        .Select(z => z.OrderBy(q => q.Prozess).FirstOrDefault()).ToList();
                 }
                 if (proc_App.Count != 0)
                 {
@@ -2100,15 +2108,12 @@ namespace ISB_BIA_IMPORT1.Services
                 using (MyLinqContextDataContext db = new MyLinqContextDataContext(myShared.ConnectionString))
                 {
                     //Erstelle Liste der Prozesse und Anwendungen mit dem zu dem gewählten Zeitpunkt aktuellsten Stand
-                    ObservableCollection<ISB_BIA_Prozesse> processes = GetProcesses();
-                    ObservableCollection<ISB_BIA_Applikationen> applications = GetApplications();
+                    ObservableCollection<ISB_BIA_Prozesse> processes = GetProcesses(date);
+                    ObservableCollection<ISB_BIA_Applikationen> applications = GetApplications(date);
                     if (toDB)
                     {
-                        db.Connection.Open();
                         var delete = db.ISB_BIA_Delta_Analyse.ToList();
                         db.ISB_BIA_Delta_Analyse.DeleteAllOnSubmit(delete);
-                        //braucht zu viele Rechte, nicht nötig
-                        //db.ExecuteCommand("DBCC CHECKIDENT('ISB_BIA_Delta_Analyse', RESEED, 0);");
                         db.SubmitChanges();
                     }
                     //Delta-Analyse für jede Prozess-Applikation Relation
@@ -2137,7 +2142,7 @@ namespace ISB_BIA_IMPORT1.Services
                             SZ_4 = a.SZ_4 - p.SZ_4,
                             SZ_5 = a.SZ_5 - p.SZ_5,
                             SZ_6 = a.SZ_6 - p.SZ_6,
-                            Datum = DateTime.Now
+                            Datum = date.Subtract(TimeSpan.FromDays(1))
                         };
                         DeltaList.Add(d);
                         if (toDB) db.ISB_BIA_Delta_Analyse.InsertOnSubmit(d);
@@ -2181,7 +2186,7 @@ namespace ISB_BIA_IMPORT1.Services
                         };
                         db.ISB_BIA_Log.InsertOnSubmit(logEntry);
                         db.SubmitChanges();
-                        myDia.ShowError("Fehler beim Speichern der Delta-Analyse!\nEin Log Eintrag wurde erzeugt.", ex);
+                        myDia.ShowError("Fehler beim Speichern der Delta-Analyse!\nEin Log Eintrag wurde erzeugt."+ex.ToString(), ex);
                         return null;
                     }
                 }

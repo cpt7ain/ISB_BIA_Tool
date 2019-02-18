@@ -8,6 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="700" 
              d:DesignWidth="1200"
+             Background="LightSteelBlue"
              DataContext="{Binding Source={StaticResource Locator}, Path=SBA_View}">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -28,8 +29,8 @@
         <Border Grid.ColumnSpan="3" Background="White" Grid.Row="1" Margin="10" BorderBrush="Black" BorderThickness="1">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="400*"/>
-                    <ColumnDefinition Width="300*"/>
+                    <ColumnDefinition Width="450*"/>
+                    <ColumnDefinition Width="250*"/>
                     <ColumnDefinition Width="500*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
@@ -43,7 +44,11 @@
                     <RowDefinition Height="10"/>
                 </Grid.RowDefinitions>
                 <TextBlock VerticalAlignment="Center" Margin="10,0,0,0" Text="{Binding Instruction}" Grid.Row="0" Grid.ColumnSpan="2" TextWrapping="WrapWithOverflow"/>
-                <Button Content="Excel-Export" Grid.Column="3" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Command="{Binding ExportApplicationList}"/>
+                <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBox Name="SearchBox" Text="" HorizontalAlignment="Right" VerticalAlignment="Center" Width="300" KeyUp="SearchBox_KeyUp"/>
+                    <Button Content="Suche" VerticalAlignment="Center" Click="SearchButton_Click" Margin ="0,0,10,0"/>
+                    <Button Content="Excel-Export" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Command="{Binding ExportApplicationList}"/>
+                </StackPanel>
                 <DataGrid 
                     Name="ApplicationDataGrid"
                     IsReadOnly="true" 
@@ -69,9 +74,10 @@
                         </DataTemplate>
                     </DataGrid.RowHeaderTemplate>
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Anwendung" Width="700" MaxWidth="1000" Binding="{Binding IT_Anwendung_System}"/>
+                        <DataGridTextColumn Header="Anwendung" Width="600" MaxWidth="1000" Binding="{Binding IT_Anwendung_System}"/>
                         <DataGridTextColumn Header="Kategorie" Width="250" Binding="{Binding IT_Betriebsart}"/>
                         <DataGridTextColumn Header="Bearbeitungsdatum" Width="170" Binding="{Binding Datum, StringFormat=\{0:dd.MM.yy HH:mm:ss\}}"/>
+                        <DataGridTextColumn Header="Bearbeiter" Width="100" Binding="{Binding Benutzer}"/>
                     </DataGrid.Columns>
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">

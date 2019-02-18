@@ -5,8 +5,10 @@ using ISB_BIA_IMPORT1.Model;
 using ISB_BIA_IMPORT1.LinqDataContext;
 using ISB_BIA_IMPORT1.Services;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -19,7 +21,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
     /// <summary>
     /// VM zur Darstellunf der Prozessansicht
     /// </summary>
-    public class Process_ViewModel : ViewModelBase
+    public class Process_ViewModel : ViewModelBase, INotifyDataErrorInfo
     {
         #region Backing-Fields
         private int _sZ_1_Max = 0;
@@ -29,6 +31,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private int _sZ_5_Max = 0;
         private int _sZ_6_Max = 0;
         private Process_Model _currentProcess;
+        private Process_Model _oldCurrentProcess;
+
         private string _prozessverantwortlicher = "";
         private string _prozessverantwortlicher_Text = "";
         private bool _prozessverantwortlicher_Check;
@@ -46,6 +50,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private ObservableCollection<string> _postProcessList;
         private ObservableCollection<int> _rTOList;
         private Dictionary<string, string> _iSList;
+        private KeyValuePair<string, string> _relevantes_IS_1;
+        private KeyValuePair<string, string> _relevantes_IS_2;
+        private KeyValuePair<string, string> _relevantes_IS_3;
+        private KeyValuePair<string, string> _relevantes_IS_4;
+        private KeyValuePair<string, string> _relevantes_IS_5;
         private ObservableCollection<ISB_BIA_Applikationen> _removeApplications;
         private ObservableCollection<ISB_BIA_Applikationen> _newApplications;
         private ISB_BIA_Applikationen _selectedSourceItem;
@@ -58,14 +67,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private Visibility _buttonSaveVisibility;
         private MyRelayCommand _nextTab;
         private MyRelayCommand _prevTab;
-        private MyRelayCommand _addApplication;
-        private MyRelayCommand _removeApplication;
+        private MyRelayCommand<object> _addApplication;
+        private MyRelayCommand<object> _removeApplication;
         private MyRelayCommand _navToISViewChild;
         private MyRelayCommand<string> _navToIS;
         private MyRelayCommand _exportProcessHistory;
         private MyRelayCommand<string> _info;
         private ProcAppMode _mode;
         private MyRelayCommand<string> _showMsg;
+        private MyRelayCommand _resetValues;
         #endregion
 
         #region Mindesteinstufungswerte der Schutzziele
@@ -151,6 +161,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     CurrentProcess.Prozessverantwortlicher = Prozessverantwortlicher_Text;
                 else
                     CurrentProcess.Prozessverantwortlicher = Prozessverantwortlicher;
+                if (!string.IsNullOrWhiteSpace(_prozessverantwortlicher))
+                    RemoveError(nameof(Prozessverantwortlicher));
             }
         }
         /// <summary>
@@ -166,6 +178,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     CurrentProcess.Prozessverantwortlicher = Prozessverantwortlicher_Text;
                 else
                     CurrentProcess.Prozessverantwortlicher = Prozessverantwortlicher;
+                if (!string.IsNullOrWhiteSpace(_prozessverantwortlicher_Text))
+                    RemoveError(nameof(Prozessverantwortlicher_Text));
             }
         }
         /// <summary>
@@ -281,10 +295,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         public KeyValuePair<string, string> Relevantes_IS_1
         {
-            get => ISList.Where(x => x.Key == CurrentProcess.Relevantes_IS_1).FirstOrDefault();
+            get
+            {
+                _relevantes_IS_1 = ISList.Where(x => x.Key == CurrentProcess.Relevantes_IS_1).FirstOrDefault();
+                return _relevantes_IS_1;
+            } 
             set
             {
                 CurrentProcess.Relevantes_IS_1 = ISList.Where(x => x.Key == value.Key).Select(y => y.Key).FirstOrDefault();
+                Set(() => Relevantes_IS_1, ref _relevantes_IS_1, value);
                 CheckMinValues(CurrentProcess);
                 if (Mode == ProcAppMode.New)
                 {
@@ -302,10 +321,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         public KeyValuePair<string, string> Relevantes_IS_2
         {
-            get => ISList.Where(x => x.Key == _currentProcess.Relevantes_IS_2).FirstOrDefault();
+            get
+            {
+                _relevantes_IS_2 = ISList.Where(x => x.Key == _currentProcess.Relevantes_IS_2).FirstOrDefault();
+                return _relevantes_IS_2;
+            } 
             set
             {
                 CurrentProcess.Relevantes_IS_2 = ISList.Where(x => x.Key == value.Key).Select(y => y.Key).FirstOrDefault();
+                Set(() => Relevantes_IS_2, ref _relevantes_IS_2, value);
                 CheckMinValues(CurrentProcess);
                 if (Mode == ProcAppMode.New)
                 {
@@ -323,10 +347,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         public KeyValuePair<string, string> Relevantes_IS_3
         {
-            get => ISList.Where(x => x.Key == _currentProcess.Relevantes_IS_3).FirstOrDefault();
+            get
+            {
+                _relevantes_IS_3 = ISList.Where(x => x.Key == _currentProcess.Relevantes_IS_3).FirstOrDefault();
+                return _relevantes_IS_3;
+            }
             set
             {
                 CurrentProcess.Relevantes_IS_3 = ISList.Where(x => x.Key == value.Key).Select(y => y.Key).FirstOrDefault();
+                Set(() => Relevantes_IS_3, ref _relevantes_IS_3, value);
                 CheckMinValues(CurrentProcess);
                 if (Mode == ProcAppMode.New)
                 {
@@ -344,10 +373,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         public KeyValuePair<string, string> Relevantes_IS_4
         {
-            get => ISList.Where(x => x.Key == _currentProcess.Relevantes_IS_4).FirstOrDefault();
+            get
+            {
+                _relevantes_IS_4 = ISList.Where(x => x.Key == _currentProcess.Relevantes_IS_4).FirstOrDefault();
+                return _relevantes_IS_4;
+            }
             set
             {
                 CurrentProcess.Relevantes_IS_4 = ISList.Where(x => x.Key == value.Key).Select(y => y.Key).FirstOrDefault();
+                Set(() => Relevantes_IS_4, ref _relevantes_IS_4, value);
                 CheckMinValues(CurrentProcess);
                 if (Mode == ProcAppMode.New)
                 {
@@ -365,10 +399,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         public KeyValuePair<string, string> Relevantes_IS_5
         {
-            get => ISList.Where(x => x.Key == _currentProcess.Relevantes_IS_5).FirstOrDefault();
+            get
+            {
+                _relevantes_IS_5 = ISList.Where(x => x.Key == _currentProcess.Relevantes_IS_5).FirstOrDefault();
+                return _relevantes_IS_5;
+            }
             set
             {
                 CurrentProcess.Relevantes_IS_5 = ISList.Where(x => x.Key == value.Key).Select(y => y.Key).FirstOrDefault();
+                Set(() => Relevantes_IS_5, ref _relevantes_IS_5, value);
                 CheckMinValues(CurrentProcess);
                 if (Mode == ProcAppMode.New)
                 {
@@ -559,7 +598,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     return Visibility.Hidden;
             }
         }
-
         #endregion
 
         #region Commands
@@ -609,28 +647,87 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Anwendung zur Liste verknüpfter Anwendungen hinzufügen
         /// </summary>
-        public MyRelayCommand AddApplication
+        public MyRelayCommand<object> AddApplication
         {
             get => _addApplication
-                  ?? (_addApplication = new MyRelayCommand(() =>
+                  ?? (_addApplication = new MyRelayCommand<object>((list) =>
                   {
-                      if (SelectedSourceItem != null)
+                      IList items = (IList)list;
+                      if (items.Count > 0)
                       {
-                          bool contained = false;
-                          foreach (ISB_BIA_Applikationen c in CurrentProcess.ApplicationList)
+                          var collection = items.Cast<ISB_BIA_Applikationen>();
+                          //Wenn einzelne Applikation hinzugefügt wird
+                          if (collection.Count() == 1)
                           {
-                              if (SelectedSourceItem.Applikation_Id == c.Applikation_Id)
+                              //Prüfen ob Anwendung bereits in Zielliste
+                              bool contained = CurrentProcess.ApplicationList.Count(x => x.Applikation_Id == SelectedSourceItem.Applikation_Id)==1;
+                              if (contained)
                               {
                                   _myDia.ShowInfo("Anwendung bereits zugewiesen");
-                                  contained = true;
+                                  SelectedTargetItem = SelectedSourceItem;
+                              }
+                              //Wenn aktuell nicht zugeordnet
+                              else
+                              {
+                                  //Einfügen
+                                  CurrentProcess.ApplicationList.Insert(0, SelectedSourceItem);                                 
+                                  _myDia.ShowMessage(SelectedSourceItem.IT_Anwendung_System + " wurde hinzugefügt.");
+                                  SelectedTargetItem = SelectedSourceItem;
                               }
                           }
-                          if (!contained)
+                          //Wenn mehr als eine Applikation hinzugefügt wird
+                          else
                           {
-                              ISB_BIA_Applikationen item = SelectedSourceItem;
-                              CurrentProcess.ApplicationList.Insert(0, item);
-                              NewApplications.Add(item);
-                              RemoveApplications= new ObservableCollection<ISB_BIA_Applikationen>( RemoveApplications.Except(RemoveApplications.Where(x => x.IT_Anwendung_System == item.IT_Anwendung_System)));
+                              //Liste ausgewählter Anwendungen in Quellliste
+                              List<ISB_BIA_Applikationen> selectedList = new List<ISB_BIA_Applikationen>(collection);
+                              //Liste der Anwendungen die bereits zugewiesen
+                              List<ISB_BIA_Applikationen> listRedundant = new List<ISB_BIA_Applikationen>(selectedList.Where(x =>
+                                  CurrentProcess.ApplicationList.Select(v => v.Applikation_Id).ToList().Contains(x.Applikation_Id)).ToList());
+                              //Liste der Anwendung die noch nicht zugewiesen
+                              List<ISB_BIA_Applikationen> listAdd = new List<ISB_BIA_Applikationen>(selectedList.Where(x=>
+                                  !CurrentProcess.ApplicationList.Select(v => v.Applikation_Id).ToList().Contains(x.Applikation_Id)).ToList());
+                              //Alle gültigen Anwendungen in Zielliste einfügen
+                              if (listAdd.Count > 0)
+                              {
+                                  foreach (var item in listAdd)
+                                  {
+                                      //Einfügen
+                                      CurrentProcess.ApplicationList.Insert(0, item);
+                                      SelectedTargetItem = listAdd.FirstOrDefault();
+                                  }
+                                  #region Benachrichtigung über hinzugefügte Anwendungen
+                                  string a = "Folgende Anwendungen wurden hinzugefügt:";
+                                  string b = "\nFolgende Anwendungen waren bereits in der Liste:";
+                                  int i = 0;
+                                  foreach (var f in listAdd)
+                                  {                          
+                                      i++;
+                                      if (i < 11) a = a + "\n-" + f.IT_Anwendung_System; 
+                                  }
+
+                                  if (i > 10) a = a + "\nund " + (i - 10) + " weitere Anwendungen";
+
+                                  if (listRedundant.Count > 0)
+                                  {
+                                      i = 0;
+                                      foreach (var f in listRedundant)
+                                      {                                          
+                                          i++;
+                                          if (i < 11) b = b + "\n" + f.IT_Anwendung_System;
+                                      }
+                                      if (i > 10) b = b + "\nund " + (i - 10) + " weitere Anwendungen";
+                                      _myDia.ShowMessage(a+"\n"+b);
+                                  }
+                                  else
+                                  {
+                                      _myDia.ShowMessage(a);
+                                  }
+                                  #endregion
+                              }
+                              else
+                              {
+                                  _myDia.ShowInfo("Alle ausgewählten Applikationen sind dem Prozess bereits zugeordnet");
+                              }
                           }
                       }
                       else
@@ -640,18 +737,38 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Anwendung von Liste verknüpfter Anwendungen entfernen
         /// </summary>
-        public MyRelayCommand RemoveApplication
+        public MyRelayCommand<object> RemoveApplication
         {
             get => _removeApplication
-                  ?? (_removeApplication = new MyRelayCommand(() =>
+                  ?? (_removeApplication = new MyRelayCommand<object>((list) =>
                   {
-                      if (SelectedTargetItem != null)
+                      IList items = (IList)list;
+                      if (items.Count > 0)
                       {
-                          ISB_BIA_Applikationen item = SelectedTargetItem;
-                          CurrentProcess.ApplicationList.Remove(item);
-                          NewApplications.Remove(item);
-                          RemoveApplications.Add(item);
-                          RaisePropertyChanged(()=> DeletedApplicationsNotification);
+                          var collection = items.Cast<ISB_BIA_Applikationen>();
+                          //Wenn einzelne Applikation entfernt wird
+                          if (collection.Count() == 1)
+                          {
+                              //Entfernen
+                              ISB_BIA_Applikationen tmp = SelectedTargetItem;
+                              CurrentProcess.ApplicationList.Remove(SelectedTargetItem);
+                              _myDia.ShowMessage(tmp.IT_Anwendung_System + " wurde entfernt.");
+                          }
+                          //Wenn mehrere Applikationen entfernt werden
+                          else
+                          {
+                              List<ISB_BIA_Applikationen> selectedList = new List<ISB_BIA_Applikationen>(collection);
+                              string a = "Folgende Anwendungen wurden entfernt:\n";
+
+                              foreach (ISB_BIA_Applikationen item in selectedList)
+                              {
+                                  //Entfernen
+                                  CurrentProcess.ApplicationList.Remove(item);
+                                  a = a + "\n" + item.IT_Anwendung_System;
+                              }
+                              _myDia.ShowMessage(a);
+                          }
+                          RaisePropertyChanged(() => DeletedApplicationsNotification);
                       }
                       else
                           _myDia.ShowInfo("Bitte zu löschende Anwendung auswählen");
@@ -708,16 +825,27 @@ namespace ISB_BIA_IMPORT1.ViewModel
         public MyRelayCommand SaveAndContinue
         {
             get => new MyRelayCommand(() =>
+            {
+                //Liste der aktuellen Zuordnung durchgehen und zur Addliste hinzufügen, welche in alter Liste noch nicht vorhanden waren
+                NewApplications = new ObservableCollection<ISB_BIA_Applikationen>(
+                    CurrentProcess.ApplicationList.Where(x => 
+                        !_oldCurrentProcess.ApplicationList.Select(c => c.Applikation_Id).ToList().Contains(x.Applikation_Id)).ToList());
+                //Liste der Ausgangszuordnung durchgehen und zur Removeliste hinzufügen, welche in aktueller Liste nicht mehr vorhanden
+                RemoveApplications = new ObservableCollection<ISB_BIA_Applikationen>(
+                    _oldCurrentProcess.ApplicationList.Where(x =>
+                        !CurrentProcess.ApplicationList.Select(c => c.Applikation_Id).ToList().Contains(x.Applikation_Id)).ToList());
+                //Prozessdaten auf Fehler prüfen
+                CurrentProcess.EvaluateErrors();
+                EvaluateErrors();
+                //Prozess + Relationen einfügen
+                if (_myData.InsertProcessAndRelations(CurrentProcess, Mode, NewApplications, RemoveApplications))
                 {
-                    //Prozess + Relationen einfügen
-                    if (_myData.InsertProcessAndRelations(CurrentProcess, Mode, NewApplications, RemoveApplications))
-                    {
-                        bool refreshMsg = (Mode == ProcAppMode.Change) ? true : false;
-                        Cleanup();
-                        _myNavi.NavigateBack(refreshMsg);
-                        _myData.UnlockObject(Table_Lock_Flags.Process, CurrentProcess.Prozess_Id);
-                    }
-                });
+                    bool refreshMsg = (Mode == ProcAppMode.Change) ? true : false;
+                    Cleanup();
+                    _myNavi.NavigateBack(refreshMsg);
+                    _myData.UnlockObject(Table_Lock_Flags.Process, CurrentProcess.Prozess_Id);
+                }
+            });
         }
         /// <summary>
         /// Prozesshistorie nach Excel exportieren
@@ -727,11 +855,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _exportProcessHistory
                     ?? (_exportProcessHistory = new MyRelayCommand(() =>
                     {
-                        bool success = _myExport.ExportProcesses(_myData.GetProcessHistory(CurrentProcess.Prozess_Id), CurrentProcess.Prozess_Id);
-                        if (success)
-                        {
-                            _myDia.ShowInfo("Export erfolgreich");
-                        }
+                        _myExport.ExportProcesses(_myData.GetProcessHistory(CurrentProcess.Prozess_Id), CurrentProcess.Prozess_Id);
                     },()=>Mode == ProcAppMode.Change));
         }
         /// <summary>
@@ -774,6 +898,67 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       _myDia.ShowMessage(msg);
                   }));
         }
+        /// <summary>
+        /// Zurücksetzen der Daten der aktuellen Maske (Nur bei Prozessbearbeitung, nicht Neuanlage)
+        /// </summary>
+        public MyRelayCommand ResetValues
+        {
+            get => _resetValues
+                   ?? (_resetValues = new MyRelayCommand(() =>
+                   {
+                       switch (CurrentTab)
+                       {
+                           case 0:
+                               CurrentProcess.Prozess = _oldCurrentProcess.Prozess;
+                               CurrentProcess.Sub_Prozess = _oldCurrentProcess.Sub_Prozess;
+                               CurrentProcess.OE_Filter = _oldCurrentProcess.OE_Filter;
+                               Prozessverantwortlicher = _oldCurrentProcess.Prozessverantwortlicher;
+                               Prozessverantwortlicher_Text = "";
+                               CurrentProcess.Reifegrad_des_Prozesses = _oldCurrentProcess.Reifegrad_des_Prozesses;
+                               break;
+                           case 1:
+                               _myDia.ShowMessage((_oldCurrentProcess.Vorgelagerte_Prozesse == string.Empty)?"ist ''":"passt nicht, ist'"+_oldCurrentProcess.Vorgelagerte_Prozesse+"'" );
+                               Vorgelagerte_Prozesse = _oldCurrentProcess.Vorgelagerte_Prozesse;
+                               Vorgelagerte_Prozesse_Text = "";
+                               Nachgelagerte_Prozesse = _oldCurrentProcess.Nachgelagerte_Prozesse;
+                               Nachgelagerte_Prozesse_Text = "";
+                               break;
+                           case 2:
+                               Relevantes_IS_1 = ISList.Where(x => x.Key == _oldCurrentProcess.Relevantes_IS_1).FirstOrDefault();
+                               Relevantes_IS_2 = ISList.Where(x => x.Key == _oldCurrentProcess.Relevantes_IS_2).FirstOrDefault();
+                               Relevantes_IS_3 = ISList.Where(x => x.Key == _oldCurrentProcess.Relevantes_IS_3).FirstOrDefault();
+                               Relevantes_IS_4 = ISList.Where(x => x.Key == _oldCurrentProcess.Relevantes_IS_4).FirstOrDefault();
+                               Relevantes_IS_5 = ISList.Where(x => x.Key == _oldCurrentProcess.Relevantes_IS_5).FirstOrDefault();
+                               break;
+                           case 3:
+                               CurrentProcess.SZ_1 = _oldCurrentProcess.SZ_1;
+                               CurrentProcess.SZ_2 = _oldCurrentProcess.SZ_2;
+                               CurrentProcess.SZ_3 = _oldCurrentProcess.SZ_3;
+                               CurrentProcess.SZ_4 = _oldCurrentProcess.SZ_4;
+                               CurrentProcess.SZ_5 = _oldCurrentProcess.SZ_5;
+                               CurrentProcess.SZ_6 = _oldCurrentProcess.SZ_6;
+                               break;
+                           case 4:
+                               CurrentProcess.Servicezeit_Helpdesk = _oldCurrentProcess.Servicezeit_Helpdesk;
+                               CurrentProcess.RPO_Datenverlustzeit_Recovery_Point_Objective = _oldCurrentProcess.RPO_Datenverlustzeit_Recovery_Point_Objective;
+                               CurrentProcess.RTO_Wiederanlaufzeit_Recovery_Time_Objective = _oldCurrentProcess.RTO_Wiederanlaufzeit_Recovery_Time_Objective;
+                               CurrentProcess.RTO_Wiederanlaufzeit_Recovery_Time_Objective_Notfall = _oldCurrentProcess.RTO_Wiederanlaufzeit_Recovery_Time_Objective_Notfall;
+                               break;
+                           case 5:
+                               CurrentProcess.Kritikalität_des_Prozesses = _oldCurrentProcess.Kritikalität_des_Prozesses;
+                               CurrentProcess.Regulatorisch = _oldCurrentProcess.Regulatorisch;
+                               CurrentProcess.Reputatorisch = _oldCurrentProcess.Reputatorisch;
+                               CurrentProcess.Finanziell = _oldCurrentProcess.Finanziell;
+                               break;
+                           case 6:
+                               CurrentProcess.ApplicationList = new ObservableCollection<ISB_BIA_Applikationen>(_oldCurrentProcess.ApplicationList);
+                               NewApplications = new ObservableCollection<ISB_BIA_Applikationen>();
+                               RemoveApplications = new ObservableCollection<ISB_BIA_Applikationen>();
+                               RaisePropertyChanged(()=>DeletedApplicationsNotification);
+                               break;
+                       }
+                   }));
+        }
         #endregion
 
         #region Platzhalter und Nachrichtenstringfelder
@@ -791,26 +976,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             get => "Bsp.: Mo-Do: 08-12 / 14-16 Uhr, Fr: 08-14 Uhr";
         }
-        /// <summary>
-        /// Benachrichtigung bei Kritischer Einstufung des Prozesses
-        /// </summary>
-        public string Krit_Ntf
-        {
-            get => "Dieser Prozess wird als kritisch eingestuft!\n"
-                 + "\nEin Prozess wird als 'Kritischer Prozess' eingestuft wenn mindestens eine der folgenden Bedingungen zutrifft:"
-                 + "\n- mindestens 3 der Schutzziele werden als mindestens 'Hoch' eingestuft oder mindestens 2 als 'Sehr Hoch'"
-                 + "\n- Das Recover Time Objective (RTO) wurde auf 1 Tag festgelegt"
-                 + "\n- Die Kritikalität des Prozesses wurde auf 'Sehr Hoch' festgelegt\n"
-                 + "\nKritische Prozesse müssen identifiziert und dokumentiert werden!"
-                 + "\nErläuterung zur Dokumentation: "
-                 + "\nDie Dokumentation muss folgende Anforderungen erfüllen:"
-                 + "\n- kurze Beschreibung des Prozesses(Prozessbezeichnung, was bewirkt der Prozess)"
-                 + "\n- Begründung, warum der Prozess ein zentraler/kritischer Prozess bzw.ein Prozess mit hohem Schadenspotential ist"
-                 + "\n- Benennung des Prozessverantwortlichen"
-                 + "\n- Maximal tolerierbare Ausfallzeit des Prozesses"
-                 + "\n- Auswirkung auf Folgeprozesse"
-                 + "\n- ggf.Workaround bei Prozessstörung";            
-        }
+
         /// <summary>
         /// Nachricht bei Kritischer Einstufung des Prozesses
         /// </summary>
@@ -821,14 +987,14 @@ namespace ISB_BIA_IMPORT1.ViewModel
                  + "\n- Das Recovery Time Objective (RTO) wurde auf 1 Tag festgelegt"
                  + "\n- Die Kritikalität des Prozesses wurde auf 'Sehr Hoch' festgelegt\n"
                  + "\nKritische Prozesse müssen identifiziert und dokumentiert werden!"
-                 + "\nErläuterung zur Dokumentation: "
                  + "\nDie Dokumentation muss folgende Anforderungen erfüllen:"
                  + "\n- kurze Beschreibung des Prozesses (Prozessbezeichnung, was bewirkt der Prozess)"
-                 + "\n- Begründung, warum der Prozess ein zentraler/kritischer Prozess bzw.ein Prozess mit hohem Schadenspotential ist"
+                 + "\n- Begründung, warum der Prozess ein zentraler/kritischer Prozess "
+                 + "\nbzw. ein Prozess mit hohem Schadenspotential ist"
                  + "\n- Benennung des Prozessverantwortlichen"
                  + "\n- Maximal tolerierbare Ausfallzeit des Prozesses"
                  + "\n- Auswirkung auf Folgeprozesse"
-                 + "\n- ggf.Workaround bei Prozessstörung";
+                 + "\n- ggf. Workaround bei Prozessstörung";
         }
         /// <summary>
         /// Regulatorisch Info
@@ -868,28 +1034,28 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         public string IS_Msg
         {
-            get => "Bitte wählen Sie bis zu fünf Informationssegmente aus, die Ihren Prozess betreffen.\nEin Informationssegment beschreibt dabei eine Kategorie von Informationen die für unterschiedliche Geschäftsprozesse relevanz haben, wie z.B. Kundenstammdaten oder Rechtsdaten.\nWeitere Informationen zu dem ausgewählten Informationssegment erhalten Sie über den jeweiligen Infobutton rechts daneben.";
+            get => "Bitte wählen Sie bis zu fünf Informationssegmente aus, die Ihren Prozess betreffen.\nEin Informationssegment beschreibt dabei eine Kategorie von Informationen die für unterschiedliche Geschäftsprozesse Relevanz haben, wie z.B. Kundenstammdaten oder Rechtsdaten.\nWeitere Informationen zu dem ausgewählten Informationssegment erhalten Sie über den jeweiligen Infobutton rechts daneben.";
         }
         /// <summary>
         /// Recovery Point Objective Info
         /// </summary>
         public string RPO_Msg
         {
-            get => "Datenverlustzeit – Recovery Point Objective (RPO)\nDefinierter Zeitraum der zwischen zwei Backups liegen darf, um den Normalbetrieb im Notfall oder bei einer Störung sicherzustellen.\nDer RPO berechnet sich rückwärts vom Zeitpunkt des Absturzes(aufgrund der Backup - Zyklen max. 24 Stunden).";
+            get => "Datenverlustzeit – Recovery Point Objective (RPO)\nDefinierter Zeitraum der zwischen zwei Backups liegen darf, um den Normalbetrieb im Notfall oder bei einer Störung sicherzustellen.\nDer RPO berechnet sich rückwärts vom Zeitpunkt des Absturzes (aufgrund der Backup-Zyklen max. 24 Stunden).";
         }
         /// <summary>
         /// Recovery Time Objective Info
         /// </summary>
         public string RTO_Msg
         {
-            get => "Wiederanlaufzeit Regelbetrieb – Recovery Time Objective (RTO)\nDauer für die Wiederaufnahme eines Bankprozesses nach einer Störung oder eines Notfalls im Regelbetrieb(in 1, 5, 10, 20 Tagen).";
+            get => "Wiederanlaufzeit Regelbetrieb – Recovery Time Objective (RTO)\nDauer für die Wiederaufnahme eines Bankprozesses nach einer Störung oder eines Notfalls im Regelbetrieb (in 1, 5, 10, 20 Tagen).";
         }
         /// <summary>
         /// Recovery Time Objective Notfall Info
         /// </summary>
         public string RTON_Msg
         {
-            get => "Wiederanlaufzeit (Notfall, Störung) – Recovery Time Objective (RTO)\nDauer für die Wiederaufnahme eines Bankprozesses nach einer Störung oder eines Notfalls im Notfall/ Störfall(in 1, 5, 10, 20 Tagen).";
+            get => "Wiederanlaufzeit (Notfall, Störung) – Recovery Time Objective (RTO)\nDauer für die Wiederaufnahme eines Bankprozesses nach einer Störung oder eines Notfalls im Notfall/Störfall (in 1, 5, 10, 20 Tagen).";
         }
         /// <summary>
         /// Prozessverantwortlicher Info
@@ -897,26 +1063,26 @@ namespace ISB_BIA_IMPORT1.ViewModel
         public string Responsible_Msg
         {
             get => "Die Neuerhebung oder Neuweinwertung erfolgt in der Regel durch den Prozesseigentümer oder einen Vertreter. Der Prozesseigentümer hat entsprechende Verpflichtungen wahrzunehmen. Diese sind u.a.:"+
-                        "\n -Aufnahme des Bankprozesses in die Business Impact Analyse"+
-                        "\n -Bewertung der Kritikalität der Bankprozesse innerhalb der Business Impact Analyse(BIA) in Bezug auf die vier Schutzziele(Verfügbarkeit, Integrität, Vertraulichkeit, und Authentizität) u.a.als Basis für das zentrale Auslagerungsmanagement, das Informationsrisikomanagement / Business Continuity Management und dem Informationssicherheitsmanagement"+
-                        "\n -Kurzbeschreibung des Prozesses" +
-                        "\n -Begründung, warum der Prozess ein zentraler/ kritischer Prozess bzw. ein Prozess mit hohem Schadenspotential ist" +
-                        "\n -Maximal tolerierbare Ausfallzeit des Prozesses" +
-                        "\n -Auswirkung auf Folgeprozesse.";
+                        "\n- Aufnahme des Bankprozesses in die Business Impact Analyse"+
+                        "\n- Bewertung der Kritikalität der Bankprozesse innerhalb der Business Impact Analyse(BIA) in Bezug auf die vier Schutzziele(Verfügbarkeit, Integrität, Vertraulichkeit, und Authentizität) u.a.als Basis für das zentrale Auslagerungsmanagement, das Informationsrisikomanagement / Business Continuity Management und dem Informationssicherheitsmanagement"+
+                        "\n- Kurzbeschreibung des Prozesses" +
+                        "\n- Begründung, warum der Prozess ein zentraler/kritischer Prozess bzw. ein Prozess mit hohem Schadenspotential ist" +
+                        "\n- Maximal tolerierbare Ausfallzeit des Prozesses" +
+                        "\n- Auswirkung auf Folgeprozesse.";
         }
         /// <summary>
         /// Vorgelagerte Prozesse Info
         /// </summary>
         public string PreProc_Msg
         {
-            get => "Die Prozesse, die Ihrem Prozess Startdaten liefern oder ersatzweise die OE's / Externe Stellen, die die Vorarbeit zu diesem Prozess leisten.";
+            get => "Die Prozesse, die Ihrem Prozess Startdaten liefern oder ersatzweise die OE's / externe Stellen, die die Vorarbeit zu diesem Prozess leisten.";
         }
         /// <summary>
         /// Nachgelagerte Prozesse Info
         /// </summary>
         public string PostProc_Msg
         {
-            get => "Die Prozesse, die aus Prozess Ergebnisse erhalten oder ersatzweise die OE's / Externe Stellen, die die Ergebnisse Ihres Prozesses weiterverarbeiten.";
+            get => "Die Prozesse, die aus Prozess Ergebnisse erhalten oder ersatzweise die OE's / externe Stellen, die die Ergebnisse Ihres Prozesses weiterverarbeiten.";
         }
         /// <summary>
         /// Prozessname Info
@@ -951,7 +1117,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         public string AppToProc_Msg
         {
-            get => "Wählen Sie eine Anwendung aus der Übersicht aller Anwendungen aus und klicken Sie den Button \"hinzufügen\", um die jeweilige Anwendung mit dem Prozess zu verknüpfen.\nAnalog wählen Sie eine Anwendung aus der Liste der bereits verknüpften Anwendungen und klicken Sie \"löschen\", um die jeweilige Verknüpfung zu entfernen.";
+            get => "Wählen Sie ein oder mehrere Anwendungen aus der Übersicht aller Anwendungen (links) aus und klicken Sie den Button \"hinzufügen\", um die jeweilige Anwendung mit dem Prozess zu verknüpfen.\nAnalog wählen Sie eine Anwendung aus der Liste der bereits verknüpften Anwendungen (rechts) und klicken Sie \"entfernen\", um die jeweilige Verknüpfung zu entfernen.";
         }
         /// <summary>
         /// Zuordnung inativer Applikationenen Benachrichtigung
@@ -1051,6 +1217,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             MessengerInstance.Register<int>(this, ProcAppMode.Change, p => {
                 Mode = ProcAppMode.Change;
                 CurrentProcess = _myData.GetProcessModelFromDB(p);
+                _oldCurrentProcess = _myData.GetProcessModelFromDB(p);
                 //Wenn Daten Fehlerhaft dann zurückkehren
                 if (CurrentProcess == null)
                 {
@@ -1072,14 +1239,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
             MessengerInstance.Register<int>(this, ProcAppMode.New, p => {
                 Mode = ProcAppMode.New;
                 CurrentProcess = new Process_Model();
+                _oldCurrentProcess = new Process_Model();
             });
             //Messenger Registrierung für Benachrichtigung eines Kritischen Prozesses (kommt von Process_Model)
-            Messenger.Default.Register<string>(this, MessageToken.ChangedToCriticalNotification,p=> { _myDia.ShowInfo(Krit_Ntf); });
-
-            #region Listen un Daten für Prozess-Anwendungszuordnung
-            NewApplications = new ObservableCollection<ISB_BIA_Applikationen>();
-            RemoveApplications = new ObservableCollection<ISB_BIA_Applikationen>();
-            AllApplications = _myData.GetActiveApplications();
+            //Messenger.Default.Register<string>(this, MessageToken.ChangedToCriticalNotification,p=> { _myDia.ShowInfo(Krit_Ntf); });
+            
+            #region Listen und Daten für Prozess-Anwendungszuordnung
+            AllApplications = new ObservableCollection<ISB_BIA_Applikationen>(_myData.GetActiveApplications().OrderBy(c=>c.IT_Anwendung_System));
             ApplicationCategories = _myData.GetApplicationCategories();
             #endregion
 
@@ -1181,5 +1347,78 @@ namespace ISB_BIA_IMPORT1.ViewModel
             SimpleIoc.Default.Unregister(this);
             base.Cleanup();
         }
+
+        #region INotifyDataerrorInfo für Wrapping Properties (Prozessverantwortlicher)
+        /// <summary>
+        /// Dictionary mit Liste der Fehler pro Eigenschaft
+        /// </summary>
+        private Dictionary<string, List<string>> _errors = new Dictionary<string, List<string>>();
+
+        /// <summary>
+        /// Auf Fehler prüfen
+        /// </summary>
+        private void EvaluateErrors()
+        {
+            if (string.IsNullOrEmpty(_prozessverantwortlicher))
+                AddError(nameof(Prozessverantwortlicher), "Pflichtfeld");
+            if (string.IsNullOrEmpty(_prozessverantwortlicher_Text))
+                AddError(nameof(Prozessverantwortlicher_Text), "Pflichtfeld");
+        }
+
+        /// <summary>
+        /// Methode um Fehler hinzuzufügen
+        /// </summary>
+        /// <param name="propertyName"> Name der Fehlerhaften Eigenschaft </param>
+        /// <param name="error"> Fehlerbeschreibung </param>
+        public void AddError(string propertyName, string error)
+        {
+            // Add error to list
+            _errors[propertyName] = new List<string>() { error };
+            NotifyErrorsChanged(propertyName);
+        }
+
+        /// <summary>
+        /// Methode um Fehler zu entfernen
+        /// </summary>
+        /// <param name="propertyName"> Name der ehem. Fehlerhaften Eigenschaft </param>
+        public void RemoveError(string propertyName)
+        {
+            if (_errors.ContainsKey(propertyName))
+                _errors.Remove(propertyName);
+            NotifyErrorsChanged(propertyName);
+        }
+
+        /// <summary>
+        /// Event auslösen
+        /// </summary>
+        /// <param name="propertyName"></param>
+        public void NotifyErrorsChanged(string propertyName)
+        {
+            if (ErrorsChanged != null)
+                ErrorsChanged(this, new DataErrorsChangedEventArgs(propertyName));
+        }
+
+        /// <summary>
+        /// Methode um Fehler für Eigenschaft abzufragen
+        /// </summary>
+        /// <param name="propertyName"> Name der zu prüfenden Eigenschaft </param>
+        /// <returns> Liste der Fehler für eine Eigenschaft </returns>
+        public IEnumerable GetErrors(string propertyName)
+        {
+            if (_errors.ContainsKey(propertyName))
+                return _errors[propertyName];
+            return null;
+        }
+
+        /// <summary>
+        /// Indikator ob Fehler vorhanden
+        /// </summary>
+        public bool HasErrors => CurrentProcess._errors.Count > 0;
+
+        /// <summary>
+        /// Event für Änderungsbenachrichtigung bzgl. Fehler
+        /// </summary>
+        public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
+        #endregion
     }
 }

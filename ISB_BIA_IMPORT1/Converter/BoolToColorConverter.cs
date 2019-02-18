@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 
@@ -30,7 +31,7 @@ namespace ISB_BIA_IMPORT1.Converter
         }
 
         /// <summary>
-        /// 
+        /// Nicht benötigt da nur für OneWay-Gebrauch
         /// </summary>
         /// <param name="value"></param>
         /// <param name="targetType"></param>
@@ -39,7 +40,7 @@ namespace ISB_BIA_IMPORT1.Converter
         /// <returns></returns>
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            return value;
+            return DependencyProperty.UnsetValue;
         }
     }
 }

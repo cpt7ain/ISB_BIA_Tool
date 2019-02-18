@@ -35,8 +35,10 @@
                     <RowDefinition Height="60"/>
                 </Grid.RowDefinitions>
                 <Label VerticalAlignment="Center" Content="{Binding Instruction}" Grid.ColumnSpan="2"/>
-                <DataGrid x:Name="dataGrid" 
+                <DataGrid 
                   ItemsSource="{Binding CurrentAttList}"
+                  SelectionMode="Single"
+                  IsSynchronizedWithCurrentItem="True"
                   AutoGenerateColumns="False"
                   Grid.Row="1" 
                   VerticalGridLinesBrush="LightGray"

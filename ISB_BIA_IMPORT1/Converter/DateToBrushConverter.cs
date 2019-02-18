@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 
@@ -21,22 +22,16 @@ namespace ISB_BIA_IMPORT1.Converter
         /// <returns> Farbe </returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (DateTime.TryParse(value.ToString(), out DateTime date))
+            if (value is DateTime d)
             {
-                if (date.Year == DateTime.Now.Year)
-                {
-                    return Brushes.LightGreen;
-                }
-                else
-                {
-                    return Brushes.White;
-                }
+                if (d.Year == DateTime.Now.Year)return Brushes.LightGreen;
+                return Brushes.White;
             }
-            return null;
+            return DependencyProperty.UnsetValue;
         }
 
         /// <summary>
-        /// 
+        /// Nicht benötigt da nur für OneWay-Gebrauch
         /// </summary>
         /// <param name="value"></param>
         /// <param name="targetType"></param>
@@ -45,7 +40,7 @@ namespace ISB_BIA_IMPORT1.Converter
         /// <returns></returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return Binding.DoNothing;
+            return DependencyProperty.UnsetValue;
         }
     }
 }

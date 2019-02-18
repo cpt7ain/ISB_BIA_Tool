@@ -10,35 +10,35 @@
         Background="White"
         DataContext="{Binding Source={StaticResource Locator}, Path=Menu}">
     <StackPanel>
-        <Menu x:Name="Menu" FontSize="{Binding MyFontSize}">
-            <MenuItem x:Name="_Menu_Process" Header="_Prozesse">
-                <MenuItem Header="_Neuen Prozess anlegen" Icon="*" Command="{Binding NewProcess}"/>
-                <MenuItem Header="_Prozesse anzeigen/ändern" Command="{Binding SetProcessView}" CommandParameter="{x:Static local:ProcAppListMode.Change}"/>
-                <MenuItem Header="_Prozess löschen" Command="{Binding SetProcessView}" CommandParameter="{x:Static local:ProcAppListMode.Delete}"/>
+        <Menu FontSize="{Binding MyFontSize}">
+            <MenuItem Header="Prozesse">
+                <MenuItem Header="Neuen Prozess anlegen" Icon="*" Command="{Binding NewProcess}"/>
+                <MenuItem Header="Prozesse anzeigen/ändern" Command="{Binding SetProcessView}" CommandParameter="{x:Static local:ProcAppListMode.Change}"/>
+                <MenuItem Header="Prozess löschen" Command="{Binding SetProcessView}" CommandParameter="{x:Static local:ProcAppListMode.Delete}"/>
             </MenuItem>
-            <MenuItem x:Name="_Menu_SBA" Header="_Schutzbedarfsanalyse" Visibility="{Binding SBAMenuVisible}">
-                <MenuItem Header="_Anwendungen anzeigen/ändern" Command="{Binding SetSBAView}"/>
+            <MenuItem Header="Schutzbedarfsanalyse" Visibility="{Binding SBAMenuVisible}">
+                <MenuItem Header="Anwendungen anzeigen/ändern" Command="{Binding SetSBAView}"/>
             </MenuItem>
-            <MenuItem x:Name="_Menu_Application" Header="_Anwendungen" Visibility="{Binding AppMenuVisible}">
-                <MenuItem Header="_Neue Anwendung anlegen" Icon="*" Command="{Binding NewApplication}"/>
-                <MenuItem Header="_Anwendungen anzeigen/ändern" Command="{Binding SetApplicationView}" CommandParameter="{x:Static local:ProcAppListMode.Change}"/>
-                <MenuItem Header="_Anwendung löschen" Command="{Binding SetApplicationView}" CommandParameter="{x:Static local:ProcAppListMode.Delete}"/>
+            <MenuItem Header="Anwendungen" Visibility="{Binding AppMenuVisible}">
+                <MenuItem Header="Neue Anwendung anlegen" Icon="*" Command="{Binding NewApplication}"/>
+                <MenuItem Header="Anwendungen anzeigen/ändern" Command="{Binding SetApplicationView}" CommandParameter="{x:Static local:ProcAppListMode.Change}"/>
+                <MenuItem Header="Anwendung löschen" Command="{Binding SetApplicationView}" CommandParameter="{x:Static local:ProcAppListMode.Delete}"/>
             </MenuItem>
-            <MenuItem x:Name="_Menu_Informationsegments" Header="_Informationssegmente">
-                <MenuItem x:Name="IS_anzeigen_ändern" Header="_Informationssegmente anzeigen" Command="{Binding SetInformationsSegmentView}"/>
-                <MenuItem x:Name="IS_Attr_anzeigen_ändern" Header="_Informationssegment-Attribute anzeigen und ändern" Command="{Binding SetInformationsSegmentsAttributes}"/>
+            <MenuItem Header="_Informationssegmente">
+                <MenuItem Header="{Binding Instructions[1]}" Command="{Binding SetInformationsSegmentView}"/>
+                <MenuItem Header="{Binding Instructions[2]}" Command="{Binding SetInformationsSegmentsAttributes}"/>
             </MenuItem>
-            <MenuItem x:Name="_Menu_Settings" Header="_Einstellungen" Visibility="{Binding SettingsMenuVisible}">
-                <MenuItem Header="_Datenmodel aus Excel erstellen" Command="{Binding SetDataModel}"/>
-                <MenuItem Header="_Log anzeigen" Command="{Binding SetLog}"/>
-                <MenuItem Header="_OE ändern" Command="{Binding SetOESettings}"/>
-                <MenuItem Header="_Weitere Einstellungen" Command="{Binding SetSettings}"/>
-                <MenuItem Header="_Alle Datensatz-Locks entfernen" Command="{Binding RemoveLocks}"/>
+            <MenuItem Header="Einstellungen" Visibility="{Binding SettingsMenuVisible}">
+                <MenuItem Header="Datenmodel aus Excel erstellen" Command="{Binding SetDataModel}"/>
+                <MenuItem Header="Log anzeigen" Command="{Binding SetLog}"/>
+                <MenuItem Header="OE ändern" Command="{Binding SetOESettings}"/>
+                <MenuItem Header="Weitere Einstellungen" Command="{Binding SetSettings}"/>
+                <MenuItem Header="Alle Datensatz-Locks entfernen" Command="{Binding RemoveLocks}"/>
             </MenuItem>
-            <MenuItem x:Name="_Menu_Help" Header="_Hilfe" Command="{Binding Info}" CommandParameter="Hilfe"/>
-            <MenuItem x:Name="_Menu_Bigger_Text" Header="_Vergrößerte Schrift (an/aus)" Command="{Binding ChangeTextSize}" CommandParameter="{Binding IsChecked, RelativeSource={RelativeSource Self}}"/>
+            <MenuItem Header="Hilfe" Command="{Binding Info}" CommandParameter="Hilfe"/>
+            <MenuItem Header="Vergrößerte Schrift (an/aus)" Command="{Binding ChangeTextSize}" CommandParameter="{Binding IsChecked, RelativeSource={RelativeSource Self}}"/>
         </Menu>
-        <Grid x:Name="mainGrid" HorizontalAlignment="Center" MinWidth="1000">
+        <Grid HorizontalAlignment="Center" MinWidth="1000">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="20"/>
                 <ColumnDefinition Width="100*"/>
@@ -59,7 +59,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Border Margin="0,10,0,10" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Background="LightSteelBlue" BorderThickness="2" BorderBrush="Red">
-                <TextBlock Text="{Binding Instruction}" Width="800" FontWeight="Bold" TextAlignment="Center" TextWrapping="WrapWithOverflow" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding Instructions[0]}" Width="800" FontWeight="Bold" TextAlignment="Center" TextWrapping="WrapWithOverflow" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Border>
             <Label Content="Sie sind angemeldet als:" FontWeight="DemiBold"  HorizontalAlignment="Right" Grid.Column="1" Grid.Row="3"/>
 
@@ -90,7 +90,7 @@
                                 Grid.Row="4" VerticalAlignment="Center" 
                                 SelectedDateFormat="Short"
                                 SelectedDate="{Binding PickerDate, Mode=TwoWay}"/>
-                    <Button Command="{Binding NavToDeltaDate}" Content="Delta-Analyse für Datum" ToolTip="Klicken Sie hier, um eine Delta-Analyse für das gewählte Datum zu erstellen" Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Button Name="b1" Command="{Binding NavToDeltaDate}" Content="Delta-Analyse für Datum" ToolTip="Klicken Sie hier, um eine Delta-Analyse für das gewählte Datum zu erstellen" Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     <Button Command="{Binding NavToLastDelta}" Content="Letzte Delta-Analyse anzeigen" ToolTip="Klicken Sie hier, um sich die letzte gespeicherte Delta-Analyse anzeigen zu lassen" Grid.Column="1" Grid.Row="3" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Grid>
             </Border>

@@ -28,7 +28,7 @@ namespace ISB_BIA_IMPORT1.Services
         /// <param name="title"> Indikator am Anfang des Dateinamen ob SBA oder Anwendungsliste </param>
         /// <param name="id"> AnwendungsID der Anwendung ("" wenn Anwendungsliste verschiedener Anwendungen, ID beim Export einer Anwednungs-Historie) </param>
         /// <returns> Erfolgreicher Export oder nicht </returns>
-        bool ExportApplications(ObservableCollection<ISB_BIA_Applikationen> appList, string title, string id);
+        bool ExportApplications(ObservableCollection<ISB_BIA_Applikationen> appList, string title, int id=0);
         /// <summary>
         /// Anwendungsliste aller aktiven Prozesse aus DB abrufen
         /// Ruft nach Abfrage <see cref="ExportProcesses"/> auf

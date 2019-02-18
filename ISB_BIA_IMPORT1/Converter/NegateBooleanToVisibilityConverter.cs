@@ -20,15 +20,15 @@ namespace ISB_BIA_IMPORT1.Converter
         /// <returns> Sichtbarkeit </returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is bool)
+            if (value is bool b)
             {
-                return ((bool)value)? Visibility.Hidden:Visibility.Visible;
+                return b? Visibility.Hidden:Visibility.Visible;
             }
             return null;
         }
 
         /// <summary>
-        /// 
+        /// Nicht benötigt da nur für OneWay-Gebrauch
         /// </summary>
         /// <param name="value"></param>
         /// <param name="targetType"></param>
@@ -37,11 +37,7 @@ namespace ISB_BIA_IMPORT1.Converter
         /// <returns></returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if(value is Visibility)
-            {
-                return ((Visibility)value == Visibility.Visible) ? true:false;
-            }
-            return null;
+            return DependencyProperty.UnsetValue;
         }
     }
 }

@@ -34,16 +34,17 @@
                     <RowDefinition Height="100*"/>
                 </Grid.RowDefinitions>
                 <Label Content="{Binding Instruction}" VerticalAlignment="Center" Grid.Row="0"/>
-                <FrameworkElement x:Name="dummyElement" Visibility="Collapsed"/>
+                <FrameworkElement x:Name="dummyElement" Visibility="Collapsed" Grid.Row="0"/>
                 <DataGrid 
-            IsReadOnly="true" 
-            VerticalAlignment="Top"
-            VerticalGridLinesBrush="LightGray"
-            HorizontalGridLinesBrush="LightGray"
-            SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}"
-            ItemsSource="{Binding Path=ISList, IsAsync=True}"
-            AutoGenerateColumns="False"
-            Grid.Row="1">
+                    IsReadOnly="true" 
+                    SelectionMode="Single"
+                    VerticalAlignment="Top"
+                    VerticalGridLinesBrush="LightGray"
+                    HorizontalGridLinesBrush="LightGray"
+                    SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}"
+                    ItemsSource="{Binding Path=ISList, IsAsync=True}"
+                    AutoGenerateColumns="False"
+                    Grid.Row="1">
                     <DataGrid.InputBindings>
                         <MouseBinding Gesture="LeftDoubleClick" Command="{Binding NavToIS}"/>
                     </DataGrid.InputBindings>

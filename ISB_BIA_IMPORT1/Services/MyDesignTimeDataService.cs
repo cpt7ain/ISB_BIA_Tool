@@ -58,7 +58,6 @@ namespace ISB_BIA_IMPORT1.Services
 
         #region Process
         public ObservableCollection<ISB_BIA_Prozesse> ProcessDummyList;
-
         public ObservableCollection<ISB_BIA_Prozesse> GetDummyProcesses()
         {
             Random r = new Random();
@@ -77,12 +76,12 @@ namespace ISB_BIA_IMPORT1.Services
                              Regulatorisch = (r.Next(0, 2) == 0) ? "x" : "",
                              Reputatorisch = (r.Next(0, 2) == 0) ? "x" : "",
                              Finanziell = (r.Next(0, 2) == 0) ? "x" : "",
-                             SZ_1 = 3,
-                             SZ_2 = 3,
+                             SZ_1 = 1,
+                             SZ_2 = 2,
                              SZ_3 = 3,
-                             SZ_4 = 3,
-                             SZ_5 = 3,
-                             SZ_6 = 3,
+                             SZ_4 = 4,
+                             SZ_5 = 0,
+                             SZ_6 = 0,
                              Vorgelagerte_Prozesse = (r.Next(0, 2) == 0) ? "v1" : "v2",
                              Nachgelagerte_Prozesse = (r.Next(0, 2) == 0) ? "n1" : "n2",
                              Servicezeit_Helpdesk = (r.Next(0, 2) == 0) ? "Mo 6-8" : "Di 7-8",
@@ -136,7 +135,6 @@ namespace ISB_BIA_IMPORT1.Services
             ObservableCollection<ISB_BIA_Prozesse> res = new ObservableCollection<ISB_BIA_Prozesse>(p1.ToList().Concat<ISB_BIA_Prozesse>(p2));
             return res;
         }
-
         public Process_Model GetProcessModelFromDB(int id)
         {
             ISB_BIA_Prozesse linqProc = ProcessDummyList.FirstOrDefault();
@@ -178,12 +176,10 @@ namespace ISB_BIA_IMPORT1.Services
                 ApplicationList = linqApps,
             };
         }
-
         public ISB_BIA_Prozesse MapProcessModelToDB(Process_Model p)
         {
             return null;
         }
-
         public Dictionary<string, string> GetISList()
         {
             List<ISB_BIA_Informationssegmente> listIS = GetDummySegments().ToList();
@@ -194,7 +190,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             return ProcessDummyList;
         }
-        public ObservableCollection<ISB_BIA_Prozesse> GetProcesses()
+        public ObservableCollection<ISB_BIA_Prozesse> GetProcesses(DateTime? d = null)
         {
             return ProcessDummyList;
         }
@@ -208,7 +204,7 @@ namespace ISB_BIA_IMPORT1.Services
         }
         public ObservableCollection<string> GetOEsForUser(string userOE)
         {
-            return new ObservableCollection<string>(GetDummyOEs().Where(x => x.OE_Nummer.StartsWith(userOE)).Select(p => p.OE_Name).Distinct());
+            return new ObservableCollection<string>(){"4.4"};
         }
         public ObservableCollection<string> GetOEs()
         {
@@ -226,22 +222,18 @@ namespace ISB_BIA_IMPORT1.Services
         {
             return null;
         }
-
         public bool InsertProcessAndRelations(Process_Model p, ProcAppMode mode, ObservableCollection<ISB_BIA_Applikationen> add, ObservableCollection<ISB_BIA_Applikationen> remove)
         {
             return true;
         }
-
         public ISB_BIA_Prozesse DeleteProcess(ISB_BIA_Prozesse p)
         {
             return p;
         }
-
         public ISB_BIA_Prozesse TryInsert(ISB_BIA_Prozesse toDelete)
         {
             return GetProcesses().FirstOrDefault();
         }
-
         public bool SaveAllProcesses(ObservableCollection<ISB_BIA_Prozesse> pList)
         {
             return true;
@@ -325,7 +317,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             return new ObservableCollection<string>(GetDummyApplications().Select(p => p.IT_Betriebsart).Distinct());
         }
-        public ObservableCollection<ISB_BIA_Applikationen> GetApplications()
+        public ObservableCollection<ISB_BIA_Applikationen> GetApplications(DateTime? date = null)
         {
             return new ObservableCollection<ISB_BIA_Applikationen>(
                 GetDummyApplications().GroupBy(a => a.Applikation_Id)

@@ -20,6 +20,7 @@ namespace ISB_BIA_IMPORT1.Model
         private string _sZ_4;
         private string _sZ_5;
         private string _sZ_6;
+        private bool _isValid;
         #endregion
 
         #region Propteries der Attribute (für DataBinding)
@@ -42,7 +43,7 @@ namespace ISB_BIA_IMPORT1.Model
                 if (value != "")
                     Set(() => Name, ref _name, value);
                 else
-                    NotifyOnValidationError();
+                    NotifyOnValidationError("Bitte Namen eingeben");
             }
         }
         /// <summary>
@@ -64,7 +65,7 @@ namespace ISB_BIA_IMPORT1.Model
                 if (numeric.Contains(value))
                     Set(() => SZ_1, ref _sZ_1, value);
                 else
-                    NotifyOnValidationError();
+                    NotifyOnValidationError("Es sind nur Werte zwischen 0 und 5 erlaubt");
             }
         }
         /// <summary>
@@ -78,7 +79,7 @@ namespace ISB_BIA_IMPORT1.Model
                 if (numeric.Contains(value))
                     Set(() => SZ_2, ref _sZ_2, value);
                 else
-                    NotifyOnValidationError();
+                    NotifyOnValidationError("Es sind nur Werte zwischen 0 und 5 erlaubt");
             }
         }
         /// <summary>
@@ -92,7 +93,7 @@ namespace ISB_BIA_IMPORT1.Model
                 if (numeric.Contains(value))
                     Set(() => SZ_3, ref _sZ_3, value);
                 else
-                    NotifyOnValidationError();
+                    NotifyOnValidationError("Es sind nur Werte zwischen 0 und 5 erlaubt");
             }
         }
         /// <summary>
@@ -106,7 +107,7 @@ namespace ISB_BIA_IMPORT1.Model
                 if (numeric.Contains(value))
                     Set(() => SZ_4, ref _sZ_4, value);
                 else
-                    NotifyOnValidationError();
+                    NotifyOnValidationError("Es sind nur Werte zwischen 0 und 5 erlaubt");
             }
         }
         /// <summary>
@@ -120,7 +121,7 @@ namespace ISB_BIA_IMPORT1.Model
                 if (numeric.Contains(value))
                     Set(() => SZ_5, ref _sZ_5, value);
                 else
-                    NotifyOnValidationError();
+                    NotifyOnValidationError("Es sind nur Werte zwischen 0 und 5 erlaubt");
             }
         }
         /// <summary>
@@ -134,7 +135,7 @@ namespace ISB_BIA_IMPORT1.Model
                 if (numeric.Contains(value))
                     Set(() => SZ_6, ref _sZ_6, value);
                 else
-                    NotifyOnValidationError();
+                    NotifyOnValidationError("Es sind nur Werte zwischen 0 und 5 erlaubt");
             }
         }
         #endregion
@@ -147,9 +148,9 @@ namespace ISB_BIA_IMPORT1.Model
         /// <summary>
         /// Sendet Nachricht, dass ein korrekter Wert eingegeben werden muss (Empfangen von <see cref="InformationSegmentAttribute_Model"/>)
         /// </summary>
-        private void NotifyOnValidationError()
+        private void NotifyOnValidationError(string msg)
         {
-            Messenger.Default.Send("ISAttributeError", MessageToken.ISAttributValidationError);
+            Messenger.Default.Send(msg, MessageToken.ISAttributValidationError);
         }
     }
 }

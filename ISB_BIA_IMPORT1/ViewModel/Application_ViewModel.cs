@@ -490,11 +490,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _exportApplicationHistory
                     ?? (_exportApplicationHistory = new MyRelayCommand(() =>
                     {
-                        bool success = _myExport.ExportApplications(_myData.GetApplicationHistory(CurrentApplication.Applikation_Id), "", CurrentApplication.Applikation_Id.ToString());
-                        if (success)
-                        {
-                            _myDia.ShowInfo("Export erfolgreich");
-                        }
+                        _myExport.ExportApplications(_myData.GetApplicationHistory(CurrentApplication.Applikation_Id), "", CurrentApplication.Applikation_Id);
                     }, () => Mode == ProcAppMode.Change));
         }
         /// <summary>

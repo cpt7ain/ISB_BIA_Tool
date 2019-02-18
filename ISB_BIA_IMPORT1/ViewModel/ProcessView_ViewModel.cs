@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace ISB_BIA_IMPORT1.ViewModel
 {
@@ -179,7 +180,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                         }
                     }, () => ProcessViewMode == ProcAppListMode.Change));
         }
-
         /// <summary>
         /// Die Angezeigte Prozessliste
         /// </summary>
@@ -225,6 +225,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             {
                 if (value == ProcAppListMode.Change)
                 {
+                    SelectionMode = (Setting.Multi_Save == "Ja")? DataGridSelectionMode.Extended:DataGridSelectionMode.Single;
                     ButtonVis = Visibility.Visible;
                     Instruction = "Doppelklick auf einen Prozess, den Sie ändern möchten, oder Prozesse anhaken, welche ohne Änderungen gespeichert werden sollen.";
                     Header = "Prozesse bearbeiten";
@@ -232,6 +233,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 }
                 else if (value == ProcAppListMode.Delete)
                 {
+                    SelectionMode = DataGridSelectionMode.Single;
                     ButtonVis = Visibility.Collapsed;
                     Instruction = "Doppelklick auf einen Prozess, den Sie löschen möchten";
                     Header = "Prozesse löschen";
@@ -241,6 +243,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 Set(() => ProcessViewMode, ref _processViewMode, value);
             }
         }
+        /// <summary>
+        /// Auswahlmodus für Items des Datagrids je nach Bearbeitungsmodus (Einzeln/Mehrere)
+        /// </summary>
+        public DataGridSelectionMode SelectionMode { get; set; }
         /// <summary>
         /// Sichtbarkeit des Multi-Save und Export Buttons je nach Bearbeitungsmodus
         /// </summary>
@@ -280,7 +286,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <param name="myExportService"></param>
         /// <param name="myDataService"></param>
         /// <param name="mySharedResourceService"></param>
-        public ProcessView_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyExportService myExportService, IMyDataService myDataService, IMySharedResourceService mySharedResourceService)
+        /// <param name="myMailNotificationService"></param>
+        public ProcessView_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService,
+            IMyExportService myExportService, IMyDataService myDataService,
+            IMySharedResourceService mySharedResourceService, IMyMailNotificationService myMailNotificationService)
         {
             #region Services
             _myDia = myDialogService;

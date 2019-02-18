@@ -21,15 +21,16 @@ namespace ISB_BIA_IMPORT1.Converter
         /// <returns> Sichtbarkeit </returns>
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (values[0] is bool && values[1] is bool)
+            if (values[0] is bool b && values[1] is bool o)
             {
-                bool isFilled = !(bool)values[0];
-                bool isFocused = (bool)values[1];
+                bool isFilled = !b;
+                bool isFocused = o;
                 //Wenn Textbox fokussiert oder Textbox text enthält
                 if (isFocused || isFilled)
                     return Visibility.Collapsed;
+                return Visibility.Visible;
             }
-            return Visibility.Visible;
+            return DependencyProperty.UnsetValue;
         }
 
         /// <summary>
@@ -42,7 +43,7 @@ namespace ISB_BIA_IMPORT1.Converter
         /// <returns></returns>
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {
-            throw new NotImplementedException();
+            return null;
         }
     }
 }

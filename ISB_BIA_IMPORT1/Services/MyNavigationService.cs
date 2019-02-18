@@ -23,13 +23,7 @@ namespace ISB_BIA_IMPORT1.Services
             set => Set(()=>VMHistory, ref _vMHistory, value);
         }
 
-        public void NavigateBack()
-        {
-            VMHistory.RemoveAt(0);
-            Messenger.Default.Send<ViewModelBase>(VMHistory.FirstOrDefault(), MessageToken.ChangeCurrentVM);
-        }
-
-        public void NavigateBack(bool refresh)
+        public void NavigateBack(bool refresh = false)
         {
             VMHistory.RemoveAt(0);
             if (refresh)

@@ -93,8 +93,10 @@
     <Compile Include="Converter\BoolToColorConverter.cs" />
     <Compile Include="Converter\CellColorConverter.cs" />
     <Compile Include="Converter\ComparisonConverter.cs" />
+    <Compile Include="Converter\ComparisonToVisConverter.cs" />
     <Compile Include="Converter\DateToBrushConverter.cs" />
     <Compile Include="Converter\DeltaColorConverter.cs" />
+    <Compile Include="Converter\InfoVisConverter.cs" />
     <Compile Include="Converter\ISToBrushConverter.cs" />
     <Compile Include="Converter\MaxValuesToEnabledConverter.cs" />
     <Compile Include="Converter\NegateBooleanConverter.cs" />
@@ -286,6 +288,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="ClassDiagram1.cd" />

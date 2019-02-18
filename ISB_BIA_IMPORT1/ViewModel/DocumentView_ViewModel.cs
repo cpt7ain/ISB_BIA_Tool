@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System.Diagnostics;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.Services;
@@ -12,6 +13,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
     public class DocumentView_ViewModel : ViewModelBase
     {
         private FixedDocumentSequence _documentSource;
+        private string _filename;
 
         /// <summary>
         /// Zu betrachtendes Dokument
@@ -34,6 +36,18 @@ namespace ISB_BIA_IMPORT1.ViewModel
                   });
         }
 
+        /// <summary>
+        /// Command zum Zurückkehren zum vorherigen Viewmodel
+        /// </summary>
+        public MyRelayCommand OpenExtern
+        {
+            get => new MyRelayCommand(() =>
+            {
+                Process.Start(_filename);
+                Cleanup();
+                _myNavi.NavigateBack();
+            });
+        }
 
         IMyNavigationService _myNavi;
         /// <summary>
@@ -45,6 +59,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
             _myNavi = myNavigationService;
             // Message Registrierungen mit Überlieferung des zu betrachtenden Dokuments
             Messenger.Default.Register<FixedDocumentSequence>(this, a => { DocumentSource = a; });
+            Messenger.Default.Register<string>(this, a => { _filename = a; });
+
         }
 
         /// <summary>

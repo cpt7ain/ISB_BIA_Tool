@@ -60,7 +60,7 @@ namespace UnitTest_ISB_BIA_IMPORT1
             dataServiceMock.Setup(x => x.GetApplicationCategories()).Returns(dsDataService.GetApplicationCategories());
             dataServiceMock.Setup(x => x.GetApplicationHistory(It.IsAny<int>())).Returns(dsDataService.GetApplicationHistory(1));
             dataServiceMock.Setup(x => x.GetApplicationModelFromDB(It.IsAny<int>())).Returns(dsDataService.GetApplicationModelFromDB(1));
-            dataServiceMock.Setup(x => x.GetApplications()).Returns(dsDataService.GetApplications());
+            dataServiceMock.Setup(x => x.GetApplications(It.IsAny<DateTime>())).Returns(dsDataService.GetApplications(DateTime.Now));
             dataServiceMock.Setup(x => x.GetAttributeModelFromDB(It.IsAny<int>())).Returns(dsDataService.GetAttributeModelFromDB(1));
             dataServiceMock.Setup(x => x.GetAttributeNamesAndInfoForIS()).Returns(dsDataService.GetAttributeNamesAndInfoForIS());
             dataServiceMock.Setup(x => x.GetAttributeNamesForHeader()).Returns(dsDataService.GetAttributeNamesForHeader());
@@ -81,7 +81,8 @@ namespace UnitTest_ISB_BIA_IMPORT1
             dataServiceMock.Setup(x => x.GetPreProcesses()).Returns(dsDataService.GetPreProcesses());
             dataServiceMock.Setup(x => x.GetProcessApplicationHistoryForApplication(It.IsAny<int>())).Returns(dsDataService.GetProcessApplicationHistoryForApplication(1));
             dataServiceMock.Setup(x => x.GetProcessApplicationHistoryForProcess(It.IsAny<int>())).Returns(dsDataService.GetProcessApplicationHistoryForProcess(1));
-            dataServiceMock.Setup(x => x.GetProcesses()).Returns(dsDataService.GetProcesses());
+            dataServiceMock.Setup(x => x.GetProcesses(It.IsAny<DateTime>())).Returns(resultProcesses);
+            dataServiceMock.Setup(x => x.GetProcesses(null)).Returns(resultProcesses);
             dataServiceMock.Setup(x => x.GetProcessesByOE(It.IsAny<ObservableCollection<string>>())).Returns(resultProcesses);
             dataServiceMock.Setup(x => x.GetProcessHistory(It.IsAny<int>())).Returns(resultProcesses);
             dataServiceMock.Setup(x => x.GetProcessModelFromDB(It.IsAny<int>())).Returns(resultPM);
@@ -142,7 +143,8 @@ namespace UnitTest_ISB_BIA_IMPORT1
             naviServiceMock.Setup(x => x.VMHistory).Returns(myNaviService.VMHistory);
             naviServiceMock.Setup(x => x.NavigateTo<Menu_ViewModel>()).Callback(() => { myNaviService.NavigateTo<Menu_ViewModel>(); });
             naviServiceMock.Setup(x => x.NavigateTo<Process_ViewModel>(It.IsAny<int>(), It.IsAny<ProcAppMode>())).Callback(() => { myNaviService.NavigateTo<Process_ViewModel>(1, ProcAppMode.Change); });
-            naviServiceMock.Setup(x => x.NavigateBack()).Callback(() => { Console.WriteLine("called"); myNaviService.NavigateBack(); });
+            naviServiceMock.Setup(x => x.NavigateBack(false)).Callback(() => { Console.WriteLine("called"); myNaviService.NavigateBack(); });
+            naviServiceMock.Setup(x => x.NavigateBack(true)).Callback(() => { Console.WriteLine("called"); myNaviService.NavigateBack(); });
 
         }
 
@@ -160,7 +162,7 @@ namespace UnitTest_ISB_BIA_IMPORT1
             exportServiceMock.Setup(x => x.AllActiveApplicationsExport()).Returns(true);
             exportServiceMock.Setup(x => x.AllActiveProcessesExport()).Returns(true);
             exportServiceMock.Setup(x => x.AllApplicationsExport()).Returns(true);
-            exportServiceMock.Setup(x => x.ExportApplications(It.IsAny<ObservableCollection<ISB_BIA_Applikationen>>(), It.IsAny<string>(), It.IsAny<string>())).Returns(true);
+            exportServiceMock.Setup(x => x.ExportApplications(It.IsAny<ObservableCollection<ISB_BIA_Applikationen>>(), It.IsAny<string>(), It.IsAny<int>())).Returns(true);
             exportServiceMock.Setup(x => x.ExportDeltaAnalysis(It.IsAny<ObservableCollection<ISB_BIA_Delta_Analyse>>())).Returns(true);
             exportServiceMock.Setup(x => x.ExportLog(It.IsAny<ObservableCollection<ISB_BIA_Log>>())).Returns(true);
             exportServiceMock.Setup(x => x.ExportProcesses(It.IsAny<ObservableCollection<ISB_BIA_Prozesse>>(),0)).Returns(true);
@@ -187,7 +189,7 @@ namespace UnitTest_ISB_BIA_IMPORT1
             Main_ViewModel mvm = new Main_ViewModel(diaServiceMock.Object, naviServiceMock.Object, sharedServiceMock.Object, dataServiceMock.Object);
             Assert.IsFalse(received);
             Assert.IsTrue(mvm.CurrentViewModel == null);
-            Assert.IsTrue(naviServiceMock.Object.VMHistory.Count == 0);
+            Assert.IsTrue(naviServiceMock.Object.VMHistory.Count == 1);
             mvm.AdminSelectGroupCommand.Execute(null);
             //Assert that CurrentViewModel change message is received
             Assert.IsTrue(received);
@@ -228,8 +230,8 @@ namespace UnitTest_ISB_BIA_IMPORT1
             Messenger.Default.Register<ViewModelBase>(this, MessageToken.ChangeCurrentVM, s => { received = true; });
             ProcessView_ViewModel mvprocessview = new ProcessView_ViewModel(diaServiceMock.Object, naviServiceMock.Object, exportServiceMock.Object, dataServiceMock.Object, sharedServiceMock.Object, mailServiceMock.Object);
             SourceViewModel mvsource = new SourceViewModel();
-            naviServiceMock.Object.VMHistory.Insert(0, mvsource);
             naviServiceMock.Object.VMHistory.Insert(0, mvprocessview);
+            Assert.IsTrue(naviServiceMock.Object.VMHistory.Count == 2);
 
             //Process Count of Dummy Processes
             Assert.IsTrue(mvprocessview.ProcessList.Count == 20);
@@ -277,6 +279,7 @@ namespace UnitTest_ISB_BIA_IMPORT1
 
             //Set Delete Mode
             mvprocessview.ProcessViewMode = ProcAppListMode.Delete;
+            Assert.IsTrue(mvprocessview.SaveSelectedProcesses.CanExecute(null) == false);
             Assert.IsTrue(mvprocessview.DeleteProc.CanExecute(null) == true);
             Assert.IsTrue(mvprocessview.NavToProcess.CanExecute(null) == false);
             Assert.AreNotEqual(mvprocessview.RowDoubleClick.GetHashCode(), mvprocessview.NavToProcess.GetHashCode());

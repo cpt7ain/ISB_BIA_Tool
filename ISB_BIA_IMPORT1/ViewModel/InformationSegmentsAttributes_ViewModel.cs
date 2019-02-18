@@ -136,7 +136,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 ISAttMode = a;
             });
             //Messenger Registrierung für Benachrichtigungen bei Fehlerhafter Eingabe
-            Messenger.Default.Register<string>(this, MessageToken.ISAttributValidationError, s=> { _myDia.ShowWarning("Bitte gültigen Wert eingeben"); });
+            Messenger.Default.Register<string>(this, MessageToken.ISAttributValidationError, s=> { _myDia.ShowWarning(s); });
 
             #region Aktuelle Einstellungen abrufen
             Setting = _myData.GetSettings();

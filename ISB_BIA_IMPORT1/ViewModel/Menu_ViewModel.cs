@@ -6,6 +6,7 @@ using ISB_BIA_IMPORT1.LinqDataContext;
 using ISB_BIA_IMPORT1.Services;
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -262,7 +263,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
                               XpsDocument xpsDocument = new XpsDocument(file, FileAccess.Read);
                               FixedDocumentSequence fds = xpsDocument.GetFixedDocumentSequence();
                               _myNavi.NavigateTo<DocumentView_ViewModel>();
+                              //XPS Document an Viewmodel senden
                               Messenger.Default.Send(fds);
+                              //Dateiname an Viewmodel senden (für externes Öffnen)
+                              Messenger.Default.Send(file);
                           }
                           else
                           {
@@ -428,7 +432,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Anweisung im MenüVM
         /// </summary>
-        public string Instruction { get; set; }
+        public string[] Instructions { get; set; }
         
         /// <summary>
         /// Angemeldeter User
@@ -477,24 +481,27 @@ namespace ISB_BIA_IMPORT1.ViewModel
             #endregion
 
             //Sichtbarkeiten und Anweisungen für den jeweiligen Usermodus definieren
+            Instructions = new string[3];
+            AppMenuVisible = Visibility.Visible;
+            SBAMenuVisible = Visibility.Visible;
+            SettingsMenuVisible = Visibility.Visible;
+            ProcessBorderVisible = Visibility.Visible;
+            DeltaBorderVisible = Visibility.Visible;
+            Instructions[1] = "Informationssegmente anzeigen";
+            Instructions[2] = "Informationssegment-Attribute anzeigen";
             switch (_myShared.User.UserGroup)
             {
                 case UserGroups.CISO:
+                    Instructions[0] = "Bitte starten Sie im Sinne der Business Impact Analysis mit Ihrer Bearbeitung (Neuanlage, Löschen) von Prozessen über den Menüpunkt 'Prozesse' in der Menüleiste oben.\nBitte füllen Sie mindestens alle Felder mit fettgedrucktem Feldnamen aus, da diese als Pflichtfelder definiert sind.";
+                    Instructions[1] = "Informationssegmente anzeigen und bearbeiten";
+                    Instructions[2] = "Informationssegment-Attribute anzeigen und bearbeiten";
+                    break;
                 case UserGroups.Admin:
-                    AppMenuVisible = Visibility.Visible;
-                    SBAMenuVisible = Visibility.Visible;
-                    SettingsMenuVisible = Visibility.Visible;
-                    ProcessBorderVisible = Visibility.Visible;
-                    DeltaBorderVisible = Visibility.Visible;
-                    Instruction = "Bitte starten Sie im Sinne der Business Impact Analysis mit Ihrer Bearbeitung (Neuanlage, Löschen) von Prozessen über den Menüpunkt 'Prozesse' in der Menüleiste oben.\nBitte füllen Sie mindestens alle Felder mit fettgedrucktem Feldnamen aus, da diese als Pflichtfelder definiert sind.";
+                    Instructions[0] = "Bitte starten Sie im Sinne der Business Impact Analysis mit Ihrer Bearbeitung (Neuanlage, Löschen) von Prozessen über den Menüpunkt 'Prozesse' in der Menüleiste oben.\nBitte füllen Sie mindestens alle Felder mit fettgedrucktem Feldnamen aus, da diese als Pflichtfelder definiert sind.";
                     break;
                 case UserGroups.SBA_User:
-                    AppMenuVisible = Visibility.Visible;
-                    SBAMenuVisible = Visibility.Visible;
                     SettingsMenuVisible = Visibility.Collapsed;
-                    ProcessBorderVisible = Visibility.Visible;
-                    DeltaBorderVisible = Visibility.Visible;
-                    Instruction = "Bitte starten Sie im Sinne der Schutzbedarfsanalyse mit Ihrer Bearbeitung (Neuanlage, Löschen) von Anwendungen über den Menüpunkt 'Schutzbedarfsanalyse' in der Menüleiste oben.\nBitte füllen Sie mindestens alle Felder mit fettgedrucktem Feldnamen aus, da diese als Pflichtfelder definiert sind.";
+                    Instructions[0] = "Bitte starten Sie im Sinne der Schutzbedarfsanalyse mit Ihrer Bearbeitung (Neuanlage, Löschen) von Anwendungen über den Menüpunkt 'Schutzbedarfsanalyse' in der Menüleiste oben.\nBitte füllen Sie mindestens alle Felder mit fettgedrucktem Feldnamen aus, da diese als Pflichtfelder definiert sind.";
                     break;
                 case UserGroups.Normal_User:
                     AppMenuVisible = Visibility.Collapsed;
@@ -502,7 +509,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     SettingsMenuVisible = Visibility.Collapsed;
                     ProcessBorderVisible = Visibility.Collapsed;
                     DeltaBorderVisible = Visibility.Collapsed;
-                    Instruction = "Bitte starten Sie im Sinne der Business Impact Analysis mit Ihrer Bearbeitung (Neuanlage, Löschen) von Prozessen über den Menüpunkt 'Prozesse' in der Menüleiste oben.\nBitte füllen Sie mindestens alle Felder mit fettgedrucktem Feldnamen aus, da diese als Pflichtfelder definiert sind.";
+                    Instructions[0] = "Bitte starten Sie im Sinne der Business Impact Analysis mit Ihrer Bearbeitung (Neuanlage, Löschen) von Prozessen über den Menüpunkt 'Prozesse' in der Menüleiste oben.\nBitte füllen Sie mindestens alle Felder mit fettgedrucktem Feldnamen aus, da diese als Pflichtfelder definiert sind.";
                     break;
             }
             

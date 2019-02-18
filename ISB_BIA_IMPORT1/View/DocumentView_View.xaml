@@ -17,6 +17,7 @@
             <Grid>
                 <Label Content="Info" FontWeight="Bold" Grid.ColumnSpan="2" Margin="10,0,0,0"  VerticalAlignment="Center"/>
                 <Button Content="Zurück" HorizontalAlignment="Right" Background="Wheat"  Margin="0,0,10,0" VerticalAlignment="Center" Command="{Binding NavBack}"/>
+                <Button Content="In eigenem Fenster öffnen" HorizontalAlignment="Center" Background="Wheat"  Margin="0,0,10,0" VerticalAlignment="Center" Command="{Binding OpenExtern}"/>
             </Grid>
         </Border>
         <DocumentViewer Document="{Binding DocumentSource}" Grid.Row="1" Margin="10" BorderBrush="Black" BorderThickness="1"/>

@@ -111,7 +111,7 @@ namespace ISB_BIA_IMPORT1.Services
         /// Liste aller Prozesse (Für Delta-Analyse, inaktive werden noch herausgefilter1; und für CISO/ADMIN ansicht2)
         /// </summary>
         /// <returns> Liste aller Prozesse (aktiv / inaktiv) </returns>
-        ObservableCollection<ISB_BIA_Prozesse> GetProcesses();
+        ObservableCollection<ISB_BIA_Prozesse> GetProcesses(DateTime? d = null);
         /// <summary>
         /// Liste aller (aktiven) Prozesse (Benutzt für ProzessCount in Menü1 und SBA Ansicht2)
         /// </summary>
@@ -305,7 +305,7 @@ namespace ISB_BIA_IMPORT1.Services
         /// Liste aller Applikationen (für Delta1, Anwendungsübersicht2, SBA Übersicht3)
         /// </summary>
         /// <returns> Liste aller Applikationen </returns>
-        ObservableCollection<ISB_BIA_Applikationen> GetApplications();
+        ObservableCollection<ISB_BIA_Applikationen> GetApplications(DateTime? date = null);
         /// <summary>
         /// Liste aller Versionen einer Anwendung
         /// </summary>

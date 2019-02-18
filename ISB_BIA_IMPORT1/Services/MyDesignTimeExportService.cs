@@ -21,7 +21,7 @@ namespace ISB_BIA_IMPORT1.Services
             return true;
         }
 
-        public bool ExportApplications(ObservableCollection<ISB_BIA_Applikationen> appList, string title, string id)
+        public bool ExportApplications(ObservableCollection<ISB_BIA_Applikationen> appList, string title, int id=0)
         {
             return true;
         }

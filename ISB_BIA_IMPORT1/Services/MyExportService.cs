@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using ISB_BIA_IMPORT1.LinqDataContext;
@@ -52,13 +53,14 @@ namespace ISB_BIA_IMPORT1.Services
                 return false;
         }
 
-        public bool ExportApplications(ObservableCollection<ISB_BIA_Applikationen> apps, string title="", string id="")
+        public bool ExportApplications(ObservableCollection<ISB_BIA_Applikationen> apps, string title="", int id=0)
         {
             //SaveFileDialog öffnen mit default Ordner "Dokumente"
+            string a = (id == 0) ? "": id.ToString();
             SaveFileDialog saveFileDialog = new SaveFileDialog()
             {
                 OverwritePrompt = true,
-                FileName = title+"Anwendungsübersicht"+id+ "_Export_" + DateTime.Now.ToShortDateString() + ".xls",
+                FileName = title+"Anwendungsübersicht"+ a + "_Export_" + DateTime.Now.ToShortDateString() + ".xls",
                 Filter = "Excel-Datei xls|*.xls",
                 Title = "Speichern der Anwendungsübersicht",
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
@@ -146,6 +148,44 @@ namespace ISB_BIA_IMPORT1.Services
                         cell.SetCellValue((apps[i].Aktiv == 1)?"Ja":"Nein");
                     }
 
+                    if (id != 0)
+                    {
+                        ObservableCollection<ISB_BIA_Delta_Analyse> historyList = myData.GetProcessApplicationHistoryForApplication(id);
+
+                        var sheet1 = workbook.CreateSheet("Prozess-Applikation Historie");
+                        var headerRow1 = sheet1.CreateRow(0);
+
+                        //Spaltenheader
+                        List<string> HeaderList = new List<string>() { "Prozess Id", "Prozess", "Sub-Prozess", "Applikation Id", "Applikation", "Relation (Verknüpfung)", "Aktuell", "Datum" };
+                        for (int i = 0; i < HeaderList.Count; i++)
+                        {
+                            var cell1 = headerRow1.CreateCell(i);
+                            cell1.SetCellValue(HeaderList[i].ToString());
+                        }
+
+                        for (int i = 0; i < historyList.Count; i++)
+                        {
+                            var rowIndex = i + 1;
+                            var row1 = sheet1.CreateRow(rowIndex);
+                            var cell1 = row1.CreateCell(0);
+                            cell1.SetCellValue(historyList[i].Prozess_Id);
+                            cell1 = row1.CreateCell(1);
+                            cell1.SetCellValue(historyList[i].Prozess);
+                            cell1 = row1.CreateCell(2);
+                            cell1.SetCellValue(historyList[i].Sub_Prozess);
+                            cell1 = row1.CreateCell(3);
+                            cell1.SetCellValue(historyList[i].Applikation_Id);
+                            cell1 = row1.CreateCell(4);
+                            cell1.SetCellValue(historyList[i].Applikation);
+                            cell1 = row1.CreateCell(5);
+                            cell1.SetCellValue((historyList[i].SZ_1 == 1) ? "Ja" : "Nein");
+                            cell1 = row1.CreateCell(6);
+                            cell1.SetCellValue((historyList[i].SZ_2 == 1) ? "Ja" : "Nein");
+                            cell1 = row1.CreateCell(7);
+                            cell1.SetCellValue(historyList[i].Datum.ToString());
+                        }
+                    }
+
                     // MemoryStream variable um in das Sheet zu schreiben
                     var stream = new MemoryStream();
                     workbook.Write(stream);
@@ -161,6 +201,10 @@ namespace ISB_BIA_IMPORT1.Services
                     stream.WriteTo(file);
                     file.Close();
                     stream.Close();
+                    if (myDia.ShowQuestion("Export erfolgreich\nMöchten Sie die Datei nun öffen?", "Export öffnen?"))
+                    {
+                        Process.Start(saveFileDialog.FileName);
+                    }
                     //Erfolg
                     return true;
                 }
@@ -346,7 +390,7 @@ namespace ISB_BIA_IMPORT1.Services
                         var headerRow1 = sheet1.CreateRow(0);
 
                         //Spaltenheader
-                        List<string> HeaderList = new List<string>() { "Prozess Id", "Prozess", "Sub-Prozess", "Applikation Id", "Applikation", "Relation (1 = verknüpft)", "Datum" };
+                        List<string> HeaderList = new List<string>() { "Prozess Id", "Prozess", "Sub-Prozess", "Applikation Id", "Applikation", "Relation (Verknüpfung)", "Aktuell", "Datum" };
                         for (int i = 0; i < HeaderList.Count; i++)
                         {
                             var cell1 = headerRow1.CreateCell(i);
@@ -368,8 +412,10 @@ namespace ISB_BIA_IMPORT1.Services
                             cell1 = row1.CreateCell(4);
                             cell1.SetCellValue(historyList[i].Applikation);
                             cell1 = row1.CreateCell(5);
-                            cell1.SetCellValue(historyList[i].SZ_1);
+                            cell1.SetCellValue((historyList[i].SZ_1 == 1) ? "Ja" : "Nein");
                             cell1 = row1.CreateCell(6);
+                            cell1.SetCellValue((historyList[i].SZ_2 == 1) ? "Ja" : "Nein");
+                            cell1 = row1.CreateCell(7);
                             cell1.SetCellValue(historyList[i].Datum.ToString());
                         }
                     }
@@ -389,6 +435,10 @@ namespace ISB_BIA_IMPORT1.Services
                     stream.WriteTo(file);
                     file.Close();
                     stream.Close();
+                    if (myDia.ShowQuestion("Export erfolgreich\nMöchten Sie die Datei nun öffen?", "Export öffnen?"))
+                    {
+                        Process.Start(saveFileDialog1.FileName);
+                    }
                     return true;
                 }
                 catch (Exception ex)
@@ -409,7 +459,7 @@ namespace ISB_BIA_IMPORT1.Services
             SaveFileDialog saveFileDialog1 = new SaveFileDialog()
             {
                 OverwritePrompt = true,
-                FileName = "BIA_Delta-Analyse_Export_" + DateTime.Now.ToShortDateString() + ".xls",
+                FileName = "BIA_Delta-Analyse_Export_" + DeltaList.First().Datum.ToShortDateString() + ".xls",
                 Filter = "Excel-Datei xls|*.xls",
                 Title = "Speichern der Prozessübersicht",
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)

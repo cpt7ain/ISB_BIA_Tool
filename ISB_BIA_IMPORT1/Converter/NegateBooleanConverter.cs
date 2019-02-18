@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
 
 namespace ISB_BIA_IMPORT1.Converter
@@ -19,15 +20,15 @@ namespace ISB_BIA_IMPORT1.Converter
         /// <returns> negierter Wahrheitswert</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is bool)
+            if (value is bool b)
             {
-                return !((bool)value);
+                return !b;
             }
-            return false;
+            return DependencyProperty.UnsetValue;
         }
 
         /// <summary>
-        /// 
+        /// Nicht benötigt da nur für OneWay-Gebrauch
         /// </summary>
         /// <param name="value"></param>
         /// <param name="targetType"></param>
@@ -36,7 +37,7 @@ namespace ISB_BIA_IMPORT1.Converter
         /// <returns></returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value;
+            return DependencyProperty.UnsetValue;
         }
     }
 }
