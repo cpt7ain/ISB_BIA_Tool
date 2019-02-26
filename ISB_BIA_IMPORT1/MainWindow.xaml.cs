@@ -25,7 +25,7 @@ namespace ISB_BIA_IMPORT1
                 MessageBoxImage.Warning);
             if (result == MessageBoxResult.Yes)
             {
-                Messenger.Default.Send("Close", MessageToken.WindowClosingRequest);
+                Messenger.Default.Send(new NotificationMessage<string>(this,"Close",null), MessageToken.WindowClosingRequest);
             }
             else
             {

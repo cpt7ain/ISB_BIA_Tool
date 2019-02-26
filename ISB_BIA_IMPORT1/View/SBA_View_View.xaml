@@ -63,6 +63,7 @@
                     ItemsSource="{Binding ApplicationList, IsAsync=True}">
                     <DataGrid.InputBindings>
                         <MouseBinding Gesture="LeftDoubleClick" Command="{Binding NavToApp}"/>
+                        <KeyBinding Key="Enter" Command="{Binding NavToApp}"/>
                     </DataGrid.InputBindings>
                     <DataGrid.RowHeaderTemplate>
                         <DataTemplate>

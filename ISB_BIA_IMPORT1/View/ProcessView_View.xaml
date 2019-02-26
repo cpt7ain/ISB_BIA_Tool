@@ -63,6 +63,7 @@
                   ItemsSource="{Binding ProcessList, IsAsync=True}">
                     <DataGrid.InputBindings>
                         <MouseBinding Gesture="LeftDoubleClick" Command="{Binding RowDoubleClick}"/>
+                        <KeyBinding Key="Enter" Command="{Binding RowDoubleClick}"/>
                     </DataGrid.InputBindings>
                     <DataGrid.RowHeaderTemplate>
                         <DataTemplate>

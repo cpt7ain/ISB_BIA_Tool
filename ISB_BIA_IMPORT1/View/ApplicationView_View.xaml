@@ -59,6 +59,7 @@
                   ItemsSource="{Binding ApplicationList, IsAsync=True}">
                     <DataGrid.InputBindings>
                         <MouseBinding Gesture="LeftDoubleClick" Command="{Binding RowDoubleClick}"/>
+                        <KeyBinding Key="Enter" Command="{Binding RowDoubleClick}"/>
                     </DataGrid.InputBindings>
                     <DataGrid.Columns>
                         <DataGridTextColumn Width="570" Header="Anwendung" Binding="{Binding IT_Anwendung_System}"/>

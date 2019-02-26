@@ -2,7 +2,7 @@
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.Model;
-using ISB_BIA_IMPORT1.LinqDataContext;
+using ISB_BIA_IMPORT1.LinqEntityContext;
 using ISB_BIA_IMPORT1.Services;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -113,9 +113,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
         }
 
         #region Services
-        IMyNavigationService _myNavi;
-        IMyDialogService _myDia;
-        IMyDataService _myData;
+        private readonly IMyNavigationService _myNavi;
+        private readonly IMyDialogService _myDia;
+        private readonly IMyDataService _myData;
         #endregion
 
         /// <summary>
@@ -132,11 +132,17 @@ namespace ISB_BIA_IMPORT1.ViewModel
             _myData = myDataService;
             #endregion
             //Messenger Registrierung für Bestimmung des Ansichtsmodus
-            Messenger.Default.Register<ISISAttributeMode>(this, a => {
-                ISAttMode = a;
+            MessengerInstance.Register<NotificationMessage<ISISAttributeMode>>(this, message => 
+            {
+                if (!(message.Sender is IMyNavigationService)) return;
+                ISAttMode = message.Content;
             });
             //Messenger Registrierung für Benachrichtigungen bei Fehlerhafter Eingabe
-            Messenger.Default.Register<string>(this, MessageToken.ISAttributValidationError, s=> { _myDia.ShowWarning(s); });
+            MessengerInstance.Register<NotificationMessage<string>>(this, MessageToken.ISAttributValidationError, message =>
+            {
+                if (!(message.Sender is InformationSegmentAttribute_Model)) return;
+                _myDia.ShowWarning(message.Content);
+            });
 
             #region Aktuelle Einstellungen abrufen
             Setting = _myData.GetSettings();
@@ -192,14 +198,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
             return result;
         }
 
-
-
         /// <summary>
         /// Bereinigt das Viewmodel
         /// </summary>
         override public void Cleanup()
         {
-            Messenger.Default.Unregister(this);
             SimpleIoc.Default.Unregister(this);
             base.Cleanup();
         }

@@ -15,7 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using ISB_BIA_IMPORT1.LinqDataContext;
+using ISB_BIA_IMPORT1.LinqEntityContext;
 
 namespace ISB_BIA_IMPORT1.View
 {
@@ -80,8 +80,8 @@ namespace ISB_BIA_IMPORT1.View
             {
                 if (searchResultList != null && searchResultList.Count() > 1)
                 {
-                    int lastResultId = searchResultList.FirstOrDefault().Id;
-                    searchResultList = searchResultList.Where(b => b.Id != lastResultId);
+                    int lastResultId = searchResultList.FirstOrDefault().Prozess_Id;
+                    searchResultList = searchResultList.Where(b => b.Prozess_Id != lastResultId);
                     ISB_BIA_Prozesse n = null;
                     if (searchResultList.Any())
                     {

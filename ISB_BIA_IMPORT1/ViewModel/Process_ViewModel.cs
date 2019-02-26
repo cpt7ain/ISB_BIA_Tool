@@ -2,7 +2,7 @@
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.Model;
-using ISB_BIA_IMPORT1.LinqDataContext;
+using ISB_BIA_IMPORT1.LinqEntityContext;
 using ISB_BIA_IMPORT1.Services;
 using System;
 using System.Collections;
@@ -622,6 +622,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
             set => Set(() => ButtonSaveVisibility, ref _buttonSaveVisibility, value);
 
         }
+
+        public DateTime T { get; set; }
         /// <summary>
         /// Zum nächsten Tab navigieren
         /// </summary>
@@ -655,7 +657,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       IList items = (IList)list;
                       if (items.Count > 0)
                       {
-                          var collection = items.Cast<ISB_BIA_Applikationen>();
+                          var collection = items.Cast<ISB_BIA_Applikationen>().ToList();
                           //Wenn einzelne Applikation hinzugefügt wird
                           if (collection.Count() == 1)
                           {
@@ -745,7 +747,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       IList items = (IList)list;
                       if (items.Count > 0)
                       {
-                          var collection = items.Cast<ISB_BIA_Applikationen>();
+                          var collection = items.Cast<ISB_BIA_Applikationen>().ToList();
                           //Wenn einzelne Applikation entfernt wird
                           if (collection.Count() == 1)
                           {
@@ -837,10 +839,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 //Prozessdaten auf Fehler prüfen
                 CurrentProcess.EvaluateErrors();
                 EvaluateErrors();
-                //Prozess + Relationen einfügen
+                //Prozess & Relationen einfügen
                 if (_myData.InsertProcessAndRelations(CurrentProcess, Mode, NewApplications, RemoveApplications))
                 {
-                    bool refreshMsg = (Mode == ProcAppMode.Change) ? true : false;
+                    bool refreshMsg = (Mode == ProcAppMode.Change);
                     Cleanup();
                     _myNavi.NavigateBack(refreshMsg);
                     _myData.UnlockObject(Table_Lock_Flags.Process, CurrentProcess.Prozess_Id);
@@ -874,7 +876,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                                 XpsDocument xpsDocument = new XpsDocument(file, FileAccess.Read);
                                 FixedDocumentSequence fds = xpsDocument.GetFixedDocumentSequence();
                                 _myNavi.NavigateTo<DocumentView_ViewModel>();
-                                Messenger.Default.Send(fds);
+                                MessengerInstance.Send(new NotificationMessage<FixedDocumentSequence>(this, fds, null));
                             }
                             else
                             {
@@ -917,7 +919,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                                CurrentProcess.Reifegrad_des_Prozesses = _oldCurrentProcess.Reifegrad_des_Prozesses;
                                break;
                            case 1:
-                               _myDia.ShowMessage((_oldCurrentProcess.Vorgelagerte_Prozesse == string.Empty)?"ist ''":"passt nicht, ist'"+_oldCurrentProcess.Vorgelagerte_Prozesse+"'" );
                                Vorgelagerte_Prozesse = _oldCurrentProcess.Vorgelagerte_Prozesse;
                                Vorgelagerte_Prozesse_Text = "";
                                Nachgelagerte_Prozesse = _oldCurrentProcess.Nachgelagerte_Prozesse;
@@ -976,7 +977,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             get => "Bsp.: Mo-Do: 08-12 / 14-16 Uhr, Fr: 08-14 Uhr";
         }
-
         /// <summary>
         /// Nachricht bei Kritischer Einstufung des Prozesses
         /// </summary>
@@ -1167,24 +1167,20 @@ namespace ISB_BIA_IMPORT1.ViewModel
         #endregion
 
         /// <summary>
-        /// Liste aller aktiven Informationssegmente
-        /// </summary>
-        ObservableCollection<ISB_BIA_Informationssegmente> EnabledISSegments;
-        /// <summary>
         /// Liste aller Attribute
         /// </summary>
-        ObservableCollection<ISB_BIA_Informationssegmente_Attribute> AllAttributesList;
+        readonly ObservableCollection<ISB_BIA_Informationssegmente_Attribute> _allAttributesList;
         /// <summary>
         /// Aktuelle Anwendungseinstellungen
         /// </summary>
         public ISB_BIA_Settings Setting { get; set; }
 
         #region Services
-        IMyNavigationService _myNavi;
-        IMyDialogService _myDia;
-        IMyDataService _myData;
-        IMyExportService _myExport;
-        IMySharedResourceService _myShared;
+        private readonly IMyNavigationService _myNavi;
+        private readonly IMyDialogService _myDia;
+        private readonly IMyDataService _myData;
+        private readonly IMyExportService _myExport;
+        private readonly IMySharedResourceService _myShared;
         #endregion
 
         /// <summary>
@@ -1214,10 +1210,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
             }
 
             //Messenger Registrierung für Prozessbearbeitungsmodus
-            MessengerInstance.Register<int>(this, ProcAppMode.Change, p => {
+            MessengerInstance.Register<NotificationMessage<int>>(this, ProcAppMode.Change, message =>
+            {
+                if (!(message.Sender is IMyNavigationService)) return;
                 Mode = ProcAppMode.Change;
-                CurrentProcess = _myData.GetProcessModelFromDB(p);
-                _oldCurrentProcess = _myData.GetProcessModelFromDB(p);
+                CurrentProcess = _myData.GetProcessModelFromDB(message.Content);
                 //Wenn Daten Fehlerhaft dann zurückkehren
                 if (CurrentProcess == null)
                 {
@@ -1227,6 +1224,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 }
                 else
                 {
+                    _oldCurrentProcess = CurrentProcess.Copy();
                     //Setzen der Properties der Textfelder der Control-abhängigen Infos 
                     Prozessverantwortlicher = CurrentProcess.Prozessverantwortlicher;
                     Vorgelagerte_Prozesse = CurrentProcess.Vorgelagerte_Prozesse;
@@ -1236,13 +1234,14 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 }
             });
             //Messenger Registrierung für Prozesserstellungsmodus
-            MessengerInstance.Register<int>(this, ProcAppMode.New, p => {
+            MessengerInstance.Register<NotificationMessage<int>>(this, ProcAppMode.New, message => 
+            {
+                if (!(message.Sender is IMyNavigationService)) return;
                 Mode = ProcAppMode.New;
                 CurrentProcess = new Process_Model();
-                _oldCurrentProcess = new Process_Model();
             });
             //Messenger Registrierung für Benachrichtigung eines Kritischen Prozesses (kommt von Process_Model)
-            //Messenger.Default.Register<string>(this, MessageToken.ChangedToCriticalNotification,p=> { _myDia.ShowInfo(Krit_Ntf); });
+            //MessengerInstance.Register<string>(this, MessageToken.ChangedToCriticalNotification,p=> { _myDia.ShowInfo(Krit_Ntf); });
             
             #region Listen und Daten für Prozess-Anwendungszuordnung
             AllApplications = new ObservableCollection<ISB_BIA_Applikationen>(_myData.GetActiveApplications().OrderBy(c=>c.IT_Anwendung_System));
@@ -1268,12 +1267,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
 
             #region Einstellungen abrufen
             Setting = _myData.GetSettings();
-            SchutzzielVisible = (Setting.Neue_Schutzziele_aktiviert == "Ja") ? true : false;
+            SchutzzielVisible = (Setting.Neue_Schutzziele_aktiviert == "Ja");
             #endregion
 
             #region Informationssegmente und Attribute abrufen
-            EnabledISSegments = _myData.GetEnabledSegments();
-            AllAttributesList = _myData.GetAttributes();
+            _allAttributesList = _myData.GetAttributes();
             #endregion
         }
 
@@ -1314,12 +1312,12 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 //=> Maximalwert der Schutzziele über alle Attribute berechnen
                 if (list.Count != 0)
                 {
-                    SZ_1_Max = AllAttributesList.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_1);
-                    SZ_2_Max = AllAttributesList.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_2);
-                    SZ_3_Max = AllAttributesList.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_3);
-                    SZ_4_Max = AllAttributesList.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_4);
-                    SZ_5_Max = AllAttributesList.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_5);
-                    SZ_6_Max = AllAttributesList.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_6);
+                    SZ_1_Max = _allAttributesList.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_1);
+                    SZ_2_Max = _allAttributesList.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_2);
+                    SZ_3_Max = _allAttributesList.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_3);
+                    SZ_4_Max = _allAttributesList.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_4);
+                    SZ_5_Max = _allAttributesList.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_5);
+                    SZ_6_Max = _allAttributesList.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_6);
                 }
                 else
                 {
@@ -1343,7 +1341,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         override public void Cleanup()
         {
-            Messenger.Default.Unregister(this);
             SimpleIoc.Default.Unregister(this);
             base.Cleanup();
         }

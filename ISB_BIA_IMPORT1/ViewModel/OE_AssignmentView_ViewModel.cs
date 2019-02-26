@@ -1,7 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
-using GalaSoft.MvvmLight.Messaging;
-using ISB_BIA_IMPORT1.LinqDataContext;
+using ISB_BIA_IMPORT1.LinqEntityContext;
 using ISB_BIA_IMPORT1.Services;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -520,9 +519,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
         }
 
         #region Services
-        IMyNavigationService _myNavi;
-        IMyDialogService _myDia;
-        IMyDataService _myData;
+        private readonly IMyNavigationService _myNavi;
+        private readonly IMyDialogService _myDia;
+        private readonly IMyDataService _myData;
         #endregion
 
         /// <summary>
@@ -577,7 +576,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         override public void Cleanup()
         {
-            Messenger.Default.Unregister(this);
             SimpleIoc.Default.Unregister(this);
             base.Cleanup();
         }

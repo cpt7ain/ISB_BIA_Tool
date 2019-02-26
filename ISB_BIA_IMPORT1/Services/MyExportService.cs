@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using ISB_BIA_IMPORT1.LinqDataContext;
+using ISB_BIA_IMPORT1.LinqEntityContext;
 using Microsoft.Win32;
 using NPOI.HSSF.UserModel;
 
@@ -12,41 +12,38 @@ namespace ISB_BIA_IMPORT1.Services
 {
     class MyExportService : IMyExportService
     {
-        IMyDialogService myDia;
-        IMyDataService myData;
-        IMySharedResourceService myShared;
+        readonly IMyDialogService _myDia;
+        readonly IMyDataService _myData;
+        readonly IMySharedResourceService _myShared;
 
         ISB_BIA_Settings Setting { get; set; }
         ObservableCollection<ISB_BIA_Informationssegmente> ISList { get; set; }
 
-        //!Es werden nur aktive Prozesse exportiert
         public MyExportService(IMyDialogService myDia, IMyDataService myDataService, IMySharedResourceService mySharedResourceService)
         {
-            this.myDia = myDia;
-            this.myData = myDataService;
-            this.myShared = mySharedResourceService;
-            if (!myShared.ConstructionMode) Setting = myData.GetSettings();
-            if (!myShared.ConstructionMode) ISList = myData.GetEnabledSegments();
+            this._myDia = myDia;
+            this._myData = myDataService;
+            this._myShared = mySharedResourceService;
+            if (!_myShared.ConstructionMode) Setting = _myData.GetSettings();
+            if (!_myShared.ConstructionMode) ISList = _myData.GetEnabledSegments();
         }
 
-        //Excel Datei mit Liste aller Applikationen exportieren (für Anwendungsansicht)
         public bool AllApplicationsExport()
         {
             //Alle Applikationen abrufen
             ObservableCollection<ISB_BIA_Applikationen> queryApplications;
-            queryApplications = myData.GetApplications();
+            queryApplications = _myData.GetApplications();
             if (queryApplications != null)
                 return ExportApplications(queryApplications);
             else
                 return false;
         }
 
-        //Excel Datei mit Liste aller aktiven Applikationen exportieren(für SBA Ansicht)
         public bool AllActiveApplicationsExport()
         {
             //Alle Applikationen abrufen
             ObservableCollection<ISB_BIA_Applikationen> queryApplications;
-            queryApplications = myData.GetActiveApplications();
+            queryApplications = _myData.GetActiveApplications();
             if (queryApplications != null)
                 return ExportApplications(queryApplications, "SBA_");
             else
@@ -65,7 +62,7 @@ namespace ISB_BIA_IMPORT1.Services
                 Title = "Speichern der Anwendungsübersicht",
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
             };
-            bool? result = myDia.Save(saveFileDialog);
+            bool? result = _myDia.Save(saveFileDialog);
             if (result == true)
             {
                 try
@@ -73,7 +70,6 @@ namespace ISB_BIA_IMPORT1.Services
                     //Excel Sheet anlegen und Spaltenheader erstellen
                     var workbook = new HSSFWorkbook();
                     var sheet = workbook.CreateSheet("Anwendungsübersicht");
-                    var headerRow = sheet.CreateRow(0);
                     var row = sheet.CreateRow(0);
 
                     var cell = row.CreateCell(0);
@@ -150,7 +146,7 @@ namespace ISB_BIA_IMPORT1.Services
 
                     if (id != 0)
                     {
-                        ObservableCollection<ISB_BIA_Delta_Analyse> historyList = myData.GetProcessApplicationHistoryForApplication(id);
+                        ObservableCollection<ISB_BIA_Delta_Analyse> historyList = _myData.GetProcessApplicationHistoryForApplication(id);
 
                         var sheet1 = workbook.CreateSheet("Prozess-Applikation Historie");
                         var headerRow1 = sheet1.CreateRow(0);
@@ -201,7 +197,7 @@ namespace ISB_BIA_IMPORT1.Services
                     stream.WriteTo(file);
                     file.Close();
                     stream.Close();
-                    if (myDia.ShowQuestion("Export erfolgreich\nMöchten Sie die Datei nun öffen?", "Export öffnen?"))
+                    if (_myDia.ShowQuestion("Export erfolgreich\nMöchten Sie die Datei nun öffen?", "Export öffnen?"))
                     {
                         Process.Start(saveFileDialog.FileName);
                     }
@@ -210,7 +206,7 @@ namespace ISB_BIA_IMPORT1.Services
                 }
                 catch (Exception ex)
                 {
-                    myDia.ShowError("Fehler beim Speichern der Datei.\n", ex);
+                    _myDia.ShowError("Fehler beim Speichern der Datei.\n", ex);
                     return false;
                 }
             }
@@ -223,7 +219,7 @@ namespace ISB_BIA_IMPORT1.Services
         public bool AllActiveProcessesExport()
         {
             ObservableCollection<ISB_BIA_Prozesse> ps;
-            ps = myData.GetActiveProcesses();
+            ps = _myData.GetActiveProcesses();
             if (ps != null)
                 return ExportProcesses(ps);
             else
@@ -241,7 +237,7 @@ namespace ISB_BIA_IMPORT1.Services
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
 
             };
-            bool? result = myDia.Save(saveFileDialog1);
+            bool? result = _myDia.Save(saveFileDialog1);
 
             if (result == true)
             {
@@ -250,7 +246,6 @@ namespace ISB_BIA_IMPORT1.Services
                     // Declare HSSFWorkbook object for create sheet  
                     var workbook = new HSSFWorkbook();
                     var sheet = workbook.CreateSheet("Prozessübersicht");
-                    var headerRow = sheet.CreateRow(0);
                     var row = sheet.CreateRow(0);
 
                     #region Process
@@ -384,7 +379,7 @@ namespace ISB_BIA_IMPORT1.Services
 
                     if (id!=0)
                     {
-                        ObservableCollection<ISB_BIA_Delta_Analyse> historyList = myData.GetProcessApplicationHistoryForProcess(id);
+                        ObservableCollection<ISB_BIA_Delta_Analyse> historyList = _myData.GetProcessApplicationHistoryForProcess(id);
 
                         var sheet1 = workbook.CreateSheet("Prozess-Applikation Historie");
                         var headerRow1 = sheet1.CreateRow(0);
@@ -435,7 +430,7 @@ namespace ISB_BIA_IMPORT1.Services
                     stream.WriteTo(file);
                     file.Close();
                     stream.Close();
-                    if (myDia.ShowQuestion("Export erfolgreich\nMöchten Sie die Datei nun öffen?", "Export öffnen?"))
+                    if (_myDia.ShowQuestion("Export erfolgreich\nMöchten Sie die Datei nun öffen?", "Export öffnen?"))
                     {
                         Process.Start(saveFileDialog1.FileName);
                     }
@@ -443,7 +438,7 @@ namespace ISB_BIA_IMPORT1.Services
                 }
                 catch (Exception ex)
                 {
-                    myDia.ShowError("Fehler beim Speichern.",ex);
+                    _myDia.ShowError("Fehler beim Speichern.",ex);
                     return false;
                 }
             }
@@ -453,7 +448,6 @@ namespace ISB_BIA_IMPORT1.Services
             }
         }
 
-        //Öffnet einen FIleDialog zum Speichern einer Excel-Datei, welche die Delta-Analyse als Export enthält (nur kritische EInträge)
         public bool ExportDeltaAnalysis(ObservableCollection<ISB_BIA_Delta_Analyse> DeltaList)
         {
             SaveFileDialog saveFileDialog1 = new SaveFileDialog()
@@ -464,7 +458,7 @@ namespace ISB_BIA_IMPORT1.Services
                 Title = "Speichern der Prozessübersicht",
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
             };
-            bool? result = myDia.Save(saveFileDialog1);
+            bool? result = _myDia.Save(saveFileDialog1);
 
             if (result == true)
             {
@@ -480,7 +474,7 @@ namespace ISB_BIA_IMPORT1.Services
                     for (int i = 0; i < HeaderList.Count; i++)
                     {
                         var cell = headerRow.CreateCell(i);
-                        cell.SetCellValue(HeaderList[i].ToString());
+                        cell.SetCellValue(HeaderList[i]);
                     }
 
                     for (int i = 0; i < DeltaList.Count; i++)
@@ -536,7 +530,7 @@ namespace ISB_BIA_IMPORT1.Services
                 }
                 catch (Exception ex)
                 {
-                    myDia.ShowError("Fehler beim Speichern.", ex);
+                    _myDia.ShowError("Fehler beim Speichern.", ex);
                     return false;
                 }
             }
@@ -546,7 +540,6 @@ namespace ISB_BIA_IMPORT1.Services
             }
         }
 
-        //Excel Datei mit Log exportieren
         public bool ExportLog(ObservableCollection<ISB_BIA_Log> Log)
         {
             SaveFileDialog saveFileDialog1 = new SaveFileDialog()
@@ -557,7 +550,7 @@ namespace ISB_BIA_IMPORT1.Services
                 Title = "Speichern des Anwendungs-Logs",
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
             };
-            bool? result = myDia.Save(saveFileDialog1);
+            bool? result = _myDia.Save(saveFileDialog1);
 
             if (result == true)
             {
@@ -612,19 +605,18 @@ namespace ISB_BIA_IMPORT1.Services
                     stream.WriteTo(file);
                     file.Close();
                     stream.Close();
-                    myDia.ShowMessage("Export erfolgreich.");
+                    _myDia.ShowMessage("Export erfolgreich.");
                     return true;
                 }
                 catch (Exception ex)
                 {
-                    myDia.ShowError("Export fehlgeschlagen.\n", ex);
+                    _myDia.ShowError("Export fehlgeschlagen.\n", ex);
                     return false;
                 }
             }
             return false;
         }
 
-        //Excel Datei mit Einstellungshistorie exportieren
         public bool ExportSettings(List<ISB_BIA_Settings> Log)
         {
             SaveFileDialog saveFileDialog1 = new SaveFileDialog()
@@ -635,7 +627,7 @@ namespace ISB_BIA_IMPORT1.Services
                 Title = "Speichern des Anwendungs-Einstellungshistorie",
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
             };
-            bool? result = myDia.Save(saveFileDialog1);
+            bool? result = _myDia.Save(saveFileDialog1);
 
             if (result == true)
             {
@@ -706,12 +698,12 @@ namespace ISB_BIA_IMPORT1.Services
                     stream.WriteTo(file);
                     file.Close();
                     stream.Close();
-                    myDia.ShowMessage("Export erfolgreich.");
+                    _myDia.ShowMessage("Export erfolgreich.");
                     return true;
                 }
                 catch (Exception ex)
                 {
-                    myDia.ShowError("Export fehlgeschlagen.\n", ex);
+                    _myDia.ShowError("Export fehlgeschlagen.\n", ex);
                     return false;
                 }
             }

@@ -10,10 +10,10 @@ namespace ISB_BIA_IMPORT1.Model
     {
         #region Backing-Fields
         private int _informationssegment_Id;
-        private string _name;
-        private string _segment;
-        private string _beschreibung;
-        private string _mögliche_Segmentinhalte;
+        private string _name="";
+        private string _segment="";
+        private string _beschreibung="";
+        private string _mögliche_Segmentinhalte="";
         private bool _attribut_1;
         private bool _attribut_2;
         private bool _attribut_3;
@@ -25,7 +25,7 @@ namespace ISB_BIA_IMPORT1.Model
         private bool _attribut_9;
         private bool _attribut_10;
         private DateTime _datum;
-        private string _benutzer;
+        private string _benutzer="";
         #endregion
 
         #region Propteries der Informationssegmente (für DataBinding)

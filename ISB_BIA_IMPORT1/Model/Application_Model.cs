@@ -1,5 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
-using ISB_BIA_IMPORT1.LinqDataContext;
+using ISB_BIA_IMPORT1.LinqEntityContext;
 using ISB_BIA_IMPORT1.ViewModel;
 using System;
 using System.Collections.ObjectModel;
@@ -27,10 +27,21 @@ namespace ISB_BIA_IMPORT1.Model
         private SZ_Values _sZ_4 = 0;
         private SZ_Values _sZ_5 = 0;
         private SZ_Values _sZ_6 = 0;
-        private string _benutzer;
+        private string _benutzer="";
         private DateTime _datum;
         private int _aktiv=1;
         #endregion
+
+        /// <summary>
+        /// Methode, um Daten einer Anwendungsinstanz auf eine neue Instanz zu kopieren
+        /// </summary>
+        /// <returns> Kopie des Objektes </returns>
+        public Application_Model Copy()
+        {
+            Application_Model copy = (Application_Model)MemberwiseClone();
+            copy.ProcessList = new ObservableCollection<ISB_BIA_Prozesse>(ProcessList);
+            return copy;
+        }
 
         #region Properties der aktuellen Anwendung für Darstellung im View(XAML) anhand von DataBinding
         /// <summary>

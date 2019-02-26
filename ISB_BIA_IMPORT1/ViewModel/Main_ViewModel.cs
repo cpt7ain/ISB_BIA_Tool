@@ -132,10 +132,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         }
 
         #region Services
-        IMyDialogService _myDia;
-        IMyNavigationService _myNavi;
-        IMySharedResourceService _myShared;
-        IMyDataService _myData;
+        private readonly IMyDialogService _myDia;
+        private readonly IMyNavigationService _myNavi;
+        private readonly IMySharedResourceService _myShared;
+        private readonly IMyDataService _myData;
         #endregion 
 
         /// <summary>
@@ -155,11 +155,24 @@ namespace ISB_BIA_IMPORT1.ViewModel
             #endregion
 
             //Messenger Registrierung für den Empfang Viewmodel-bestimmender Nachrichten
-            Messenger.Default.Register<ViewModelBase>(this, MessageToken.ChangeCurrentVM, s => { if (s != null) CurrentViewModel = s; else ShutDown(); });
+            MessengerInstance.Register<NotificationMessage<ViewModelBase>>(this, MessageToken.ChangeCurrentVM, s =>
+            {
+                if (!(s.Sender is IMyNavigationService)) return;
+                if (s.Content != null) CurrentViewModel = s.Content;
+                else ShutDown();
+            });
             //Messenger Registrierung für den Empfang Schriftgrößen-bestimmender Nachrichten
-            Messenger.Default.Register<int>(this, MessageToken.ChangeTextSize, s => { MyFontSize = s; });
+            MessengerInstance.Register<NotificationMessage<int>>(this, MessageToken.ChangeTextSize, s =>
+            {
+                if(!(s.Sender is Menu_ViewModel)) return;
+                MyFontSize = s.Content;
+            });
             //Messenger Registrierung für den Empfang Anwendungs-beendender Nachrichten
-            Messenger.Default.Register<string>(this, MessageToken.WindowClosingRequest, s => { ShutDown(); });
+            MessengerInstance.Register<NotificationMessage<string>>(this, MessageToken.WindowClosingRequest, s =>
+            {
+                if (!(s.Sender is MainWindow)) return;
+                ShutDown();
+            });
 
             // Standard-Schriftgröße
             MyFontSize = 14;
@@ -294,13 +307,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     foreach (IdentityReference group in wi.Groups)
                     {
                         // Übsersetzen der SID in den Gruppennnamen
-                        //Fehler abfangen falls SID nicht mehr verfügbar
                         try
                         {
                             result.Add(@group.Translate(typeof(NTAccount)).ToString());
                         }
                         catch
                         {
+                            //Fehler abfangen falls SID nicht mehr verfügbar
                         }
                     }
 
@@ -357,8 +370,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
         }
        
         /*
-        Messenger.Default.Register<NotificationMessage>(this, NotifyUser);
-        Messenger.Default.Register<NotificationMessageAction<MessageBoxResult>>(this, (m) =>
+        MessengerInstance.Register<NotificationMessage>(this, NotifyUser);
+        MessengerInstance.Register<NotificationMessageAction<MessageBoxResult>>(this, (m) =>
             {
                 if ((string)(m.Target) == "cancel")
                 {

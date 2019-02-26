@@ -2,11 +2,10 @@
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.Model;
-using ISB_BIA_IMPORT1.LinqDataContext;
+using ISB_BIA_IMPORT1.LinqEntityContext;
 using ISB_BIA_IMPORT1.Services;
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -257,16 +256,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
                               //else if (myShared.User.UserGroup == UserGroup.Admin) name = "ISB-BIA-Tool_Hilfe - Admin";
                               else name = "ISB-BIA-Tool_Hilfe - CISO";
                           }
-                          string file = _myShared.InitialDirectory + @"\" + name + ".xps";
-                          if (File.Exists(file))
+                          string file1 = _myShared.InitialDirectory + @"\" + name + ".xps";
+                          string file2 = _myShared.InitialDirectory + @"\" + name + ".pdf";
+                          if (File.Exists(file1))
                           {
-                              XpsDocument xpsDocument = new XpsDocument(file, FileAccess.Read);
+                              XpsDocument xpsDocument = new XpsDocument(file1, FileAccess.Read);
                               FixedDocumentSequence fds = xpsDocument.GetFixedDocumentSequence();
                               _myNavi.NavigateTo<DocumentView_ViewModel>();
-                              //XPS Document an Viewmodel senden
-                              Messenger.Default.Send(fds);
-                              //Dateiname an Viewmodel senden (für externes Öffnen)
-                              Messenger.Default.Send(file);
+                              //XPS Document an Viewmodel senden +pdf Pfad für externes Öffnen
+                              MessengerInstance.Send(new NotificationMessage<FixedDocumentSequence>(this,fds, file2));
                           }
                           else
                           {
@@ -347,7 +345,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       if (list != null)
                       {
                           _myNavi.NavigateTo<DeltaAnalysis_ViewModel>();
-                          MessengerInstance.Send(list);
+                          MessengerInstance.Send(new NotificationMessage<ObservableCollection<ISB_BIA_Delta_Analyse>>(this,list,null));
                       }
                   }));
         }
@@ -364,7 +362,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       if (list != null && list.Count > 0)
                       {
                           _myNavi.NavigateTo<DeltaAnalysis_ViewModel>();
-                          MessengerInstance.Send(list);
+                          MessengerInstance.Send(new NotificationMessage<ObservableCollection<ISB_BIA_Delta_Analyse>>(this, list, null));
                       }
                       else
                       {
@@ -398,7 +396,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     ?? (_changeTextSize = new MyRelayCommand(() =>
                     {
                         MyFontSize = (MyFontSize == 14) ? 18 : 14;
-                        Messenger.Default.Send(MyFontSize, MessageToken.ChangeTextSize);
+                        MessengerInstance.Send(new NotificationMessage<int>(this,MyFontSize,null), MessageToken.ChangeTextSize);
                     }));
         }
 
@@ -443,11 +441,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
         }
 
         #region Services
-        IMyNavigationService _myNavi;
-        IMyDialogService _myDia;
-        IMyExportService _myExport;
-        IMyDataService _myData;
-        IMySharedResourceService _myShared;
+        private readonly IMyNavigationService _myNavi;
+        private readonly IMyDialogService _myDia;
+        private readonly IMyExportService _myExport;
+        private readonly IMyDataService _myData;
+        private readonly IMySharedResourceService _myShared;
         #endregion
 
         /// <summary>
@@ -522,7 +520,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         override public void Cleanup()
         {
-            Messenger.Default.Unregister(this);
             SimpleIoc.Default.Unregister(this);
             base.Cleanup();
         }

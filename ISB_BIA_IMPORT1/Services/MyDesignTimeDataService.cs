@@ -1,6 +1,6 @@
 ﻿using ISB_BIA_IMPORT1.Model;
 using ISB_BIA_IMPORT1.ViewModel;
-using ISB_BIA_IMPORT1.LinqDataContext;
+using ISB_BIA_IMPORT1.LinqEntityContext;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,7 +22,7 @@ namespace ISB_BIA_IMPORT1.Services
             return true;
         }
 
-        public bool CreateDataModel(List<string> sqlCommandList, DataTable dt_Processes, DataTable dt_Applications, DataTable dt_Relation, DataTable dt_InformationSegments, DataTable dt_InformationSegmentAttributes)
+        public bool CreateDataModel(DataTable dt_Processes, DataTable dt_Applications, DataTable dt_Relation, DataTable dt_InformationSegments, DataTable dt_InformationSegmentAttributes)
         {
             return true;
         }
@@ -65,7 +65,6 @@ namespace ISB_BIA_IMPORT1.Services
             var p1 = from n in Enumerable.Range(1, 10)
                          select new ISB_BIA_Prozesse
                          {
-                             Id = n,
                              Prozess_Id = n,
                              Prozess = "Prozess" + n,
                              Sub_Prozess = "Sub" + n,
@@ -100,7 +99,6 @@ namespace ISB_BIA_IMPORT1.Services
             var p2 = from n in Enumerable.Range(1, 10)
                          select new ISB_BIA_Prozesse
                          {
-                             Id = n+10,
                              Prozess_Id = n+10,
                              Prozess = "Prozess" + n + 10,
                              Sub_Prozess = "Sub" + n + 10,
@@ -248,7 +246,6 @@ namespace ISB_BIA_IMPORT1.Services
             var people = from n in Enumerable.Range(1, 100)
                          select new ISB_BIA_Applikationen
                          {
-                             Id = n,
                              Applikation_Id = n,
                              IT_Anwendung_System = "TestAnwendung"+n,
                              IT_Betriebsart = "TestKategorie"+n,
@@ -418,7 +415,6 @@ namespace ISB_BIA_IMPORT1.Services
             var people = from n in Enumerable.Range(1, 25)
                          select new ISB_BIA_Informationssegmente
                          {
-                             Id = n,
                              Informationssegment_Id = n,
                              Name = "IS" + n,
                              Segment = "Segment" + n,
@@ -445,7 +441,6 @@ namespace ISB_BIA_IMPORT1.Services
             var people = from n in Enumerable.Range(1, 100)
                          select new ISB_BIA_Informationssegmente_Attribute
                          {
-                             Id = n,
                              Attribut_Id = n,
                              Name = "Att" + n,
                              Info = "Info " + n,
@@ -600,7 +595,6 @@ namespace ISB_BIA_IMPORT1.Services
             var people = from n in Enumerable.Range(1, 20)
                          select new ISB_BIA_Delta_Analyse
                          {
-                             Id = n,
                              Prozess_Id = n,
                              Prozess = "Pro" + n,
                              Sub_Prozess = "Sub " + n,

@@ -1,7 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
-using ISB_BIA_IMPORT1.LinqDataContext;
+using ISB_BIA_IMPORT1.LinqEntityContext;
 using ISB_BIA_IMPORT1.Services;
 using System;
 using System.Collections.ObjectModel;
@@ -134,9 +134,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
         }
 
         #region Services
-        IMyNavigationService _myNavi;
-        IMyExportService _myExport;
-        IMyDataService _myData;
+        private readonly IMyNavigationService _myNavi;
+        private readonly IMyExportService _myExport;
+        private readonly IMyDataService _myData;
         #endregion
 
         /// <summary>
@@ -173,8 +173,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 DeltaList = new ObservableCollection<ISB_BIA_Delta_Analyse>();
                 #endregion
                 #region Registrierung für Messages um DeltaAnalyse zu erhalten
-                Messenger.Default.Register<ObservableCollection<ISB_BIA_Delta_Analyse>>(this, a => {
-                    List = a;
+                MessengerInstance.Register<NotificationMessage<ObservableCollection<ISB_BIA_Delta_Analyse>>>(this, a => 
+                {
+                    if (!(a.Sender is Menu_ViewModel)) return;
+                    List = a.Content;
                     View = (CollectionView)CollectionViewSource.GetDefaultView(List);
                     View.Filter = DeltaFilter;
                 });
@@ -236,7 +238,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         override public void Cleanup()
         {
-            Messenger.Default.Unregister(this);
             SimpleIoc.Default.Unregister(this);
             base.Cleanup();
         }

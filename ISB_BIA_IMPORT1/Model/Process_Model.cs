@@ -1,6 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
-using ISB_BIA_IMPORT1.LinqDataContext;
+using ISB_BIA_IMPORT1.LinqEntityContext;
 using ISB_BIA_IMPORT1.ViewModel;
 using System;
 using System.Collections;
@@ -48,11 +48,22 @@ namespace ISB_BIA_IMPORT1.Model
         private string _relevantes_IS_3 = "";
         private string _relevantes_IS_4 = "";
         private string _relevantes_IS_5 = "";
-        private string _benutzer;
+        private string _benutzer="";
         private DateTime _datum;
         private int _aktiv = 1;
 
         #endregion
+
+        /// <summary>
+        /// Methode, um Daten einer Prozessesinstanz auf eine neue Instanz zu kopieren
+        /// </summary>
+        /// <returns> Kopie des Objektes </returns>
+        public Process_Model Copy()
+        {
+            Process_Model copy=(Process_Model)MemberwiseClone();
+            copy.ApplicationList = new ObservableCollection<ISB_BIA_Applikationen>(ApplicationList);
+            return copy;
+        }
 
         #region Prozess Eigenschaften
 
@@ -126,7 +137,7 @@ namespace ISB_BIA_IMPORT1.Model
                 /*
                 if (value == "Ja" && _kritischer_Prozess == "Nein")
                 {
-                    Messenger.Default.Send("Changed", MessageToken.ChangedToCriticalNotification);
+                    MessengerInstance.Send("Changed", MessageToken.ChangedToCriticalNotification);
                 }
                 */
                 Set(() => Kritischer_Prozess, ref _kritischer_Prozess, value);

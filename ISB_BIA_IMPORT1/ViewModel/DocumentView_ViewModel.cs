@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.IO;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
@@ -43,23 +44,40 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             get => new MyRelayCommand(() =>
             {
-                Process.Start(_filename);
-                Cleanup();
-                _myNavi.NavigateBack();
+                if (File.Exists(_filename))
+                {
+                    Process.Start(_filename);
+                    Cleanup();
+                    _myNavi.NavigateBack();
+                }
+                else
+                {
+                    _myDia.ShowInfo("Keine Externe Beschreibung verfügbar");
+                }
             });
         }
 
-        IMyNavigationService _myNavi;
+        #region Services
+        private readonly IMyNavigationService _myNavi;
+        private readonly IMyDialogService _myDia;
+        #endregion
+
         /// <summary>
         /// Konstruktor
         /// </summary>
         /// <param name="myNavigationService"></param>
-        public DocumentView_ViewModel(IMyNavigationService myNavigationService)
+        /// <param name="myDialogService"></param>
+        public DocumentView_ViewModel(IMyNavigationService myNavigationService, IMyDialogService myDialogService)
         {
             _myNavi = myNavigationService;
+            _myDia = myDialogService;
             // Message Registrierungen mit Überlieferung des zu betrachtenden Dokuments
-            Messenger.Default.Register<FixedDocumentSequence>(this, a => { DocumentSource = a; });
-            Messenger.Default.Register<string>(this, a => { _filename = a; });
+            MessengerInstance.Register<NotificationMessage<FixedDocumentSequence>>(this, a =>
+            {
+                DocumentSource = a.Content;
+                if (a.Sender is Menu_ViewModel)
+                    _filename = a.Notification;
+            });
 
         }
 
@@ -68,7 +86,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         override public void Cleanup()
         {
-            Messenger.Default.Unregister(this);
             SimpleIoc.Default.Unregister(this);
             base.Cleanup();
         }

@@ -47,6 +47,7 @@
                     Grid.Row="1">
                     <DataGrid.InputBindings>
                         <MouseBinding Gesture="LeftDoubleClick" Command="{Binding NavToIS}"/>
+                        <KeyBinding Key="Enter" Command="{Binding NavToIS}"/>
                     </DataGrid.InputBindings>
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="50"/>

@@ -1,5 +1,4 @@
-﻿/*
-using ISB_BIA_IMPORT1.Model;
+﻿using ISB_BIA_IMPORT1.Model;
 using ISB_BIA_IMPORT1.ViewModel;
 using ISB_BIA_IMPORT1.LinqEntityContext;
 using System;
@@ -11,13 +10,13 @@ using System.Data;
 
 namespace ISB_BIA_IMPORT1.Services
 {
-    class MyDataService : IMyDataService
+    class MyDataService1 : IMyDataService
     {
         readonly IMyDialogService _myDia;
         readonly IMySharedResourceService _myShared;
         readonly IMyMailNotificationService _myMail;
 
-        public MyDataService(IMyDialogService myDia, IMySharedResourceService myShared, IMyMailNotificationService myMail)
+        public MyDataService1(IMyDialogService myDia, IMySharedResourceService myShared, IMyMailNotificationService myMail)
         {
             this._myDia = myDia;
             this._myShared = myShared;
@@ -27,19 +26,16 @@ namespace ISB_BIA_IMPORT1.Services
         #region Datenmodell erstellen
         public bool CheckDBConnection()
         {
-            string s = "";
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
-                    s = db.Connection.ConnectionString;
-                    db.Connection.Open();
+                    return db.Database.Exists();
                 }
-                return true;
             }
             catch (Exception ex)
             {
-                _myDia.ShowError("Es konnte keine Verbindung zur Datenbank [" + s + "] hergestellt werden.\nDie Anwendung wird geschlossen.", ex);
+                _myDia.ShowError("Es konnte keine Verbindung zur Datenbank hergestellt werden.\nDie Anwendung wird geschlossen.", ex);
                 return false;
             }
         }
@@ -275,17 +271,19 @@ namespace ISB_BIA_IMPORT1.Services
 
             try
             {
+                string connectionString;
                 //Löschen der Tabellen wenn vorhanden und neu erstellen
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
+                    //Connectionstring aus der .config Datei
+                    connectionString = db.Database.Connection.ConnectionString;
+
                     foreach (string s in sqlCommandList)
                     {
-                        db.ExecuteCommand(s);
+                        db.Database.ExecuteSqlCommand(s);
                     }
-                    db.SubmitChanges();
+                    db.SaveChanges();
                 }
-                //Connectionstring aus der .config Datei
-                string connectionString = _myShared.ConnectionString;
 
                 //Schreiben der DataTables in die Datenbank (Initialer Stand der Daten)
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -303,7 +301,7 @@ namespace ISB_BIA_IMPORT1.Services
                     dt_Relation.Dispose();
                 }
 
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
 
                     //Initialer Inhalt der Tabelle für OE-Gruppenbezeichnungen wird aus Prozesstabelle entnommen
@@ -317,7 +315,7 @@ namespace ISB_BIA_IMPORT1.Services
                             Datum = DateTime.Now,
                             Benutzer = ""
                         };
-                        db.ISB_BIA_OEs.InsertOnSubmit(oe);
+                        db.ISB_BIA_OEs.Add(oe);
                     }
 
                     //Initiale Einstellungen werden gesetzt
@@ -339,8 +337,8 @@ namespace ISB_BIA_IMPORT1.Services
                         Datum = DateTime.Now,
                         Benutzer = Environment.UserName
                     };
-                    db.ISB_BIA_Settings.InsertOnSubmit(initial_settings);
-                    db.SubmitChanges();
+                    db.ISB_BIA_Settings.Add(initial_settings);
+                    db.SaveChanges();
 
                 }
 
@@ -380,7 +378,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     ISB_BIA_Lock lockObj = (db.ISB_BIA_Lock.Where(x => x.Table_Flag == (int)table_Flag && x.Object_Id == id).FirstOrDefault());
                     return (lockObj != null) ? lockObj.BenutzerNnVn + " (" + lockObj.Benutzer + ")" : "";
@@ -396,7 +394,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     ISB_BIA_Lock lockObject = new ISB_BIA_Lock()
                     {
@@ -406,8 +404,8 @@ namespace ISB_BIA_IMPORT1.Services
                         Datum = DateTime.Now,
                         Benutzer = _myShared.User.Username
                     };
-                    db.ISB_BIA_Lock.InsertOnSubmit(lockObject);
-                    db.SubmitChanges();
+                    db.ISB_BIA_Lock.Add(lockObject);
+                    db.SaveChanges();
                     return true;
                 }
             }
@@ -421,10 +419,12 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
-                    db.ISB_BIA_Lock.DeleteAllOnSubmit(db.ISB_BIA_Lock.Where(x => x.Table_Flag == (int)table_Flag && x.Object_Id == id).ToList());
-                    db.SubmitChanges();
+                    var toDelete = db.ISB_BIA_Lock.Where(x => x.Table_Flag == (int) table_Flag && x.Object_Id == id).ToList();
+                    foreach(var i in toDelete)
+                        db.ISB_BIA_Lock.Remove(i);
+                    db.SaveChanges();
                     return true;
                 }
             }
@@ -438,10 +438,12 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
-                    db.ISB_BIA_Lock.DeleteAllOnSubmit(db.ISB_BIA_Lock.Where(x => x.Benutzer == Environment.UserName).ToList());
-                    db.SubmitChanges();
+                    var toDelete = db.ISB_BIA_Lock.Where(x => x.Benutzer == Environment.UserName).ToList();
+                    foreach (var i in toDelete)
+                        db.ISB_BIA_Lock.Remove(i);
+                    db.SaveChanges();
                 }
                 return true;
             }
@@ -455,10 +457,11 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     List<ISB_BIA_Lock> list = db.ISB_BIA_Lock.ToList();
-                    db.ISB_BIA_Lock.DeleteAllOnSubmit(list);
+                    foreach (var i in list)
+                        db.ISB_BIA_Lock.Remove(i);
                     //Logeintrag erzeugen
                     ISB_BIA_Log logEntry = new ISB_BIA_Log
                     {
@@ -470,8 +473,8 @@ namespace ISB_BIA_IMPORT1.Services
                         Datum = DateTime.Now,
                         Benutzer = Environment.UserName
                     };
-                    db.ISB_BIA_Log.InsertOnSubmit(logEntry);
-                    db.SubmitChanges();
+                    db.ISB_BIA_Log.Add(logEntry);
+                    db.SaveChanges();
                 }
                 return true;
             }
@@ -491,11 +494,10 @@ namespace ISB_BIA_IMPORT1.Services
                 //Letzte Version des Prozesses abrufen
                 ISB_BIA_Prozesse linqProc;
                 ObservableCollection<ISB_BIA_Applikationen> linqApps;
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     //Prozess
-                    linqProc = db.ISB_BIA_Prozesse.Where(c => c.Prozess_Id == id)
-                        .OrderByDescending(p => p.Datum).FirstOrDefault();
+                    linqProc = db.ISB_BIA_Prozesse.Where(c => c.Prozess_Id == id).OrderByDescending(p => p.Datum).FirstOrDefault();
                     //Applikationsliste
                     List<ISB_BIA_Prozesse_Applikationen> proc_AppCurrent = db.ISB_BIA_Prozesse_Applikationen.Where(x => x.Prozess_Id == id).GroupBy(y => y.Applikation_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).ToList();
                     List<int> listIdCurrentApplications = proc_AppCurrent.Where(x => x.Relation == 1).Select(y => y.Applikation_Id).ToList();
@@ -598,7 +600,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     List<ISB_BIA_Informationssegmente> listIS = db.ISB_BIA_Informationssegmente.Where(x => x.Segment != "Lorem ipsum").GroupBy(y => y.Informationssegment_Id).Select(c => c.OrderByDescending(d => d.Datum).FirstOrDefault()).ToList();
                     listIS.Insert(0, new ISB_BIA_Informationssegmente() { Name = "", Segment = "<leer>" });
@@ -615,7 +617,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     return new ObservableCollection<ISB_BIA_Prozesse>(
                         db.ISB_BIA_Prozesse.Where(n => listOE.Contains(n.OE_Filter)).GroupBy(p => p.Prozess_Id)
@@ -634,7 +636,7 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 if (!date.HasValue) date = DateTime.Now;
 
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     return new ObservableCollection<ISB_BIA_Prozesse>(
                         db.ISB_BIA_Prozesse.Where(d => d.Datum <= date).GroupBy(p => p.Prozess_Id)
@@ -652,7 +654,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     return new ObservableCollection<ISB_BIA_Prozesse>(
                         db.ISB_BIA_Prozesse.GroupBy(p => p.Prozess_Id)
@@ -670,7 +672,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     return new ObservableCollection<string>(db.ISB_BIA_Prozesse.Where(n => n.Prozessverantwortlicher != "" && n.Prozessverantwortlicher != " ").Select(p => p.Prozessverantwortlicher).Distinct());
                 }
@@ -685,7 +687,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     return new ObservableCollection<string>(db.ISB_BIA_OEs.Where(x => x.OE_Nummer.StartsWith(userOE)).Select(p => p.OE_Name).Distinct());
                 }
@@ -700,7 +702,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     return new ObservableCollection<string>(db.ISB_BIA_OEs.Select(p => p.OE_Name).Distinct());
                 }
@@ -715,7 +717,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     return new ObservableCollection<string>(db.ISB_BIA_Prozesse.Select(p => p.Vorgelagerte_Prozesse).ToList().Distinct(StringComparer.Ordinal).OrderBy(a => a));
                 }
@@ -730,7 +732,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     return new ObservableCollection<string>(db.ISB_BIA_Prozesse.Select(p => p.Nachgelagerte_Prozesse).ToList().Distinct(StringComparer.Ordinal).OrderBy(a => a));
                 }
@@ -745,7 +747,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     return new ObservableCollection<ISB_BIA_Prozesse>(
                         db.ISB_BIA_Prozesse.Where(p => p.Prozess_Id == process_id)
@@ -770,7 +772,7 @@ namespace ISB_BIA_IMPORT1.Services
                 try
                 {
                     //In Datenbank schreiben
-                    using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                    using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                     {
                         DateTime d = DateTime.Now;
                         //Bei Neuanlage neue ID berechnen
@@ -779,7 +781,7 @@ namespace ISB_BIA_IMPORT1.Services
                         p.Benutzer = Environment.UserName;
                         p.Datum = d;
                         //Nach DB-Format Mappen und einfügen
-                        db.ISB_BIA_Prozesse.InsertOnSubmit(MapProcessModelToDB(p));
+                        db.ISB_BIA_Prozesse.Add(MapProcessModelToDB(p));
                         //Logeintrag erzeugen
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
@@ -791,7 +793,7 @@ namespace ISB_BIA_IMPORT1.Services
                             Datum = d,
                             Benutzer = p.Benutzer
                         };
-                        db.ISB_BIA_Log.InsertOnSubmit(logEntry);
+                        db.ISB_BIA_Log.Add(logEntry);
 
                         #region relation
                         int k = add.Count;
@@ -812,7 +814,7 @@ namespace ISB_BIA_IMPORT1.Services
                             };
 
                             //Schreiben in Datenbank
-                            db.ISB_BIA_Prozesse_Applikationen.InsertOnSubmit(proc_app);
+                            db.ISB_BIA_Prozesse_Applikationen.Add(proc_app);
 
                             string s = (proc_app.Relation == 1) ? "Verknüpfung" : "Trennung";
 
@@ -826,7 +828,7 @@ namespace ISB_BIA_IMPORT1.Services
                                 Datum = d,
                                 Benutzer = p.Benutzer,
                             };
-                            db.ISB_BIA_Log.InsertOnSubmit(logEntryRelation);
+                            db.ISB_BIA_Log.Add(logEntryRelation);
                         }
                         #endregion
 
@@ -847,7 +849,7 @@ namespace ISB_BIA_IMPORT1.Services
                             "Datum: " + d;
                         _myMail.Send_NotificationMail(subject, body, _myShared.Current_Environment);
                         #endregion
-                        db.SubmitChanges();
+                        db.SaveChanges();
                     }
                     _myDia.ShowInfo("Prozess gespeichert");
                     return true;
@@ -857,7 +859,7 @@ namespace ISB_BIA_IMPORT1.Services
                     //LogEntry bei Fehler erstellen + Schreiben in Datenbank
                     try
                     {
-                        using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                        using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                         {
                             ISB_BIA_Log logEntry = new ISB_BIA_Log
                             {
@@ -870,8 +872,8 @@ namespace ISB_BIA_IMPORT1.Services
                                 Benutzer = Environment.UserName
                             };
 
-                            db.ISB_BIA_Log.InsertOnSubmit(logEntry);
-                            db.SubmitChanges();
+                            db.ISB_BIA_Log.Add(logEntry);
+                            db.SaveChanges();
                             _myDia.ShowError("Fehler beim Speichern des Prozesses!\nEin Log Eintrag wurde erzeugt.", ex1);
                             return false;
                         }
@@ -933,10 +935,10 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     toDelete.Datum = DateTime.Now;
-                    db.ISB_BIA_Prozesse.InsertOnSubmit(toDelete);
+                    db.ISB_BIA_Prozesse.Add(toDelete);
                     //Logeintrag erzeugen
                     ISB_BIA_Log logEntry = new ISB_BIA_Log
                     {
@@ -948,8 +950,8 @@ namespace ISB_BIA_IMPORT1.Services
                         Datum = toDelete.Datum,
                         Benutzer = Environment.UserName
                     };
-                    db.ISB_BIA_Log.InsertOnSubmit(logEntry);
-                    db.SubmitChanges();
+                    db.ISB_BIA_Log.Add(logEntry);
+                    db.SaveChanges();
                     #region Mail Notification senden
                     string subject = "BIA-Tool Auto-Notification: Prozess gelöscht";
                     string body = "Prozess-ID: " + toDelete.Prozess_Id + Environment.NewLine +
@@ -968,7 +970,7 @@ namespace ISB_BIA_IMPORT1.Services
                 //Logeintrag bei Fehler
                 try
                 {
-                    using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                    using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                     {
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
@@ -980,8 +982,8 @@ namespace ISB_BIA_IMPORT1.Services
                             Datum = toDelete.Datum,
                             Benutzer = Environment.UserName
                         };
-                        db.ISB_BIA_Log.InsertOnSubmit(logEntry);
-                        db.SubmitChanges();
+                        db.ISB_BIA_Log.Add(logEntry);
+                        db.SaveChanges();
                         _myDia.ShowError("Prozess konnte nicht gelöscht werden.\n", ex1);
                         return null;
                     }
@@ -1021,7 +1023,7 @@ namespace ISB_BIA_IMPORT1.Services
                     //Schreiben in DB
                     try
                     {
-                        using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                        using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                         {
                             foreach (ISB_BIA_Prozesse process_old in pList)
                             {
@@ -1060,7 +1062,7 @@ namespace ISB_BIA_IMPORT1.Services
                                 };
                                 process_refresh.Benutzer = Environment.UserName;
                                 process_refresh.Datum = DateTime.Now;
-                                db.ISB_BIA_Prozesse.InsertOnSubmit(process_refresh);
+                                db.ISB_BIA_Prozesse.Add(process_refresh);
                                 //Logeintrag erzeugen
                                 ISB_BIA_Log logEntry = new ISB_BIA_Log
                                 {
@@ -1072,10 +1074,10 @@ namespace ISB_BIA_IMPORT1.Services
                                     Id_2 = 0,
                                     Benutzer = Environment.UserName
                                 };
-                                db.ISB_BIA_Log.InsertOnSubmit(logEntry);
+                                db.ISB_BIA_Log.Add(logEntry);
                                 refreshedProcesses.Add(process_refresh);
                             }
-                            db.SubmitChanges();
+                            db.SaveChanges();
                             #region Mail Notification senden
                             string body = "Benutzer: " + Environment.UserName + "\nErfolgreich: " + refreshedProcesses.Count + "\nFolgende Prozesse wurden ohne Änderungen aktualisiert:";
                             string subject = "BIA-Tool Auto-Notification: Aktualisieren von Prozessen";
@@ -1096,7 +1098,7 @@ namespace ISB_BIA_IMPORT1.Services
                         //Bei Fehler Logeintrag
                         try
                         {
-                            using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                            using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                             {
                                 ISB_BIA_Log logEntry = new ISB_BIA_Log
                                 {
@@ -1108,8 +1110,8 @@ namespace ISB_BIA_IMPORT1.Services
                                     Id_2 = 0,
                                     Benutzer = Environment.UserName
                                 };
-                                db.ISB_BIA_Log.InsertOnSubmit(logEntry);
-                                db.SubmitChanges();
+                                db.ISB_BIA_Log.Add(logEntry);
+                                db.SaveChanges();
                             }
                             _myDia.ShowError("Die ausgewählten Prozesse konnten nicht gespeichert werden.", ex);
                             return false;
@@ -1143,7 +1145,7 @@ namespace ISB_BIA_IMPORT1.Services
                 ISB_BIA_Applikationen linqApp;
                 ObservableCollection<ISB_BIA_Prozesse> linqProcs;
                 //Letzte Version der Anwendung abrufen
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     linqApp = db.ISB_BIA_Applikationen.Where(c => c.Applikation_Id == id)
                         .OrderByDescending(p => p.Datum).FirstOrDefault();
@@ -1223,7 +1225,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     return new ObservableCollection<string>(db.ISB_BIA_Applikationen.Select(p => p.Rechenzentrum).Distinct());
                 }
@@ -1238,7 +1240,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     return new ObservableCollection<string>(db.ISB_BIA_Applikationen.Select(p => p.Server).Distinct());
                 }
@@ -1253,7 +1255,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     return new ObservableCollection<string>(db.ISB_BIA_Applikationen.Select(p => p.Virtuelle_Maschine).Distinct());
                 }
@@ -1268,7 +1270,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     return new ObservableCollection<string>(db.ISB_BIA_Applikationen.Select(p => p.Typ).Distinct());
                 }
@@ -1282,7 +1284,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     return new ObservableCollection<string>(db.ISB_BIA_Applikationen.Select(p => p.IT_Betriebsart).Distinct());
                 }
@@ -1298,7 +1300,7 @@ namespace ISB_BIA_IMPORT1.Services
             try
             {
                 if (!date.HasValue) date = DateTime.Now;
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     return new ObservableCollection<ISB_BIA_Applikationen>(
                         db.ISB_BIA_Applikationen.Where(d => d.Datum <= date).GroupBy(a => a.Applikation_Id)
@@ -1316,7 +1318,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     return new ObservableCollection<ISB_BIA_Applikationen>(
                         db.ISB_BIA_Applikationen.Where(a => a.Applikation_Id == applikation_Id).
@@ -1342,7 +1344,7 @@ namespace ISB_BIA_IMPORT1.Services
                 }
                 try
                 {
-                    using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                    using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                     {
                         //neue Anwendungs ID erzeugen im Falle eines neuen Prozesses
                         if (mode == ProcAppMode.New)
@@ -1351,7 +1353,7 @@ namespace ISB_BIA_IMPORT1.Services
                         a.Benutzer = Environment.UserName;
                         a.Datum = DateTime.Now;
                         //Mappen und Einfügen
-                        db.ISB_BIA_Applikationen.InsertOnSubmit(MapApplicationModelToDB(a));
+                        db.ISB_BIA_Applikationen.Add(MapApplicationModelToDB(a));
                         //Logeintrag erstellen
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
@@ -1363,8 +1365,8 @@ namespace ISB_BIA_IMPORT1.Services
                             Datum = DateTime.Now,
                             Benutzer = a.Benutzer
                         };
-                        db.ISB_BIA_Log.InsertOnSubmit(logEntry);
-                        db.SubmitChanges();
+                        db.ISB_BIA_Log.Add(logEntry);
+                        db.SaveChanges();
                     }
                     _myDia.ShowMessage("Anwendung eingefügt");
                     return true;
@@ -1374,7 +1376,7 @@ namespace ISB_BIA_IMPORT1.Services
                     //Logeintrag bei Fehler erstellen
                     try
                     {
-                        using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                        using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                         {
                             ISB_BIA_Log logEntry = new ISB_BIA_Log
                             {
@@ -1387,8 +1389,8 @@ namespace ISB_BIA_IMPORT1.Services
                                 Benutzer = Environment.UserName
                             };
 
-                            db.ISB_BIA_Log.InsertOnSubmit(logEntry);
-                            db.SubmitChanges();
+                            db.ISB_BIA_Log.Add(logEntry);
+                            db.SaveChanges();
                             _myDia.ShowError("Fehler beim Speichern der Anwendung!\nEin Log Eintrag wurde erzeugt.", ex1);
                             return false;
                         }
@@ -1435,10 +1437,10 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     toDelete.Datum = DateTime.Now;
-                    db.ISB_BIA_Applikationen.InsertOnSubmit(toDelete);
+                    db.ISB_BIA_Applikationen.Add(toDelete);
                     ISB_BIA_Log logEntry = new ISB_BIA_Log
                     {
                         Action = "Löschen einer Anwendung (Setzen auf inaktiv)",
@@ -1449,8 +1451,8 @@ namespace ISB_BIA_IMPORT1.Services
                         Datum = toDelete.Datum,
                         Benutzer = Environment.UserName
                     };
-                    db.ISB_BIA_Log.InsertOnSubmit(logEntry);
-                    db.SubmitChanges();
+                    db.ISB_BIA_Log.Add(logEntry);
+                    db.SaveChanges();
                 }
                 _myDia.ShowMessage("Anwendung gelöscht");
                 return toDelete;
@@ -1459,7 +1461,7 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 try
                 {
-                    using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                    using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                     {
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
@@ -1471,8 +1473,8 @@ namespace ISB_BIA_IMPORT1.Services
                             Datum = toDelete.Datum,
                             Benutzer = Environment.UserName
                         };
-                        db.ISB_BIA_Log.InsertOnSubmit(logEntry);
-                        db.SubmitChanges();
+                        db.ISB_BIA_Log.Add(logEntry);
+                        db.SaveChanges();
                         _myDia.ShowError("Applikation konnte nicht gelöscht werden.(1)\n", ex1);
                         return null;
                     }
@@ -1509,7 +1511,7 @@ namespace ISB_BIA_IMPORT1.Services
                 {
                     try
                     {
-                        using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                        using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                         {
                             foreach (ISB_BIA_Applikationen application_old in aList)
                             {
@@ -1534,7 +1536,7 @@ namespace ISB_BIA_IMPORT1.Services
                                 };
                                 application_refresh.Benutzer = Environment.UserName;
                                 application_refresh.Datum = DateTime.Now;
-                                db.ISB_BIA_Applikationen.InsertOnSubmit(application_refresh);
+                                db.ISB_BIA_Applikationen.Add(application_refresh);
                                 //Logeintrag erzeugen
                                 ISB_BIA_Log logEntry = new ISB_BIA_Log
                                 {
@@ -1546,9 +1548,9 @@ namespace ISB_BIA_IMPORT1.Services
                                     Id_2 = 0,
                                     Benutzer = Environment.UserName
                                 };
-                                db.ISB_BIA_Log.InsertOnSubmit(logEntry);
+                                db.ISB_BIA_Log.Add(logEntry);
                             }
-                            db.SubmitChanges();
+                            db.SaveChanges();
                             _myDia.ShowInfo("Anwendungen erfolgreich gespeichert.");
                             return true;
                         }
@@ -1558,7 +1560,7 @@ namespace ISB_BIA_IMPORT1.Services
                         //Bei Fehler Logeintrag
                         try
                         {
-                            using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                            using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                             {
                                 ISB_BIA_Log logEntry = new ISB_BIA_Log
                                 {
@@ -1570,8 +1572,8 @@ namespace ISB_BIA_IMPORT1.Services
                                     Id_2 = 0,
                                     Benutzer = Environment.UserName
                                 };
-                                db.ISB_BIA_Log.InsertOnSubmit(logEntry);
-                                db.SubmitChanges();
+                                db.ISB_BIA_Log.Add(logEntry);
+                                db.SaveChanges();
                             }
                             _myDia.ShowError("Die ausgewählten Anwendungen konnten nicht gespeichert werden.", ex);
                             return false;
@@ -1603,7 +1605,7 @@ namespace ISB_BIA_IMPORT1.Services
             try
             {
                 ISB_BIA_Settings linqSettings;
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     linqSettings = db.ISB_BIA_Settings
                         .OrderByDescending(p => p.Datum).FirstOrDefault();
@@ -1668,7 +1670,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     return db.ISB_BIA_Settings.OrderByDescending(d => d.Datum).FirstOrDefault();
                 }
@@ -1683,7 +1685,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     return db.ISB_BIA_Settings.OrderByDescending(d => d.Datum).ToList();
                 }
@@ -1712,11 +1714,11 @@ namespace ISB_BIA_IMPORT1.Services
                     || newSettings.Attribut10_aktiviert != oldSettings.Attribut10_aktiviert
                     || newSettings.Multi_Save != oldSettings.Multi_Save)
                 {
-                    using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                    using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                     {
                         newSettings.Datum = DateTime.Now;
                         newSettings.Benutzer = Environment.UserName;
-                        db.ISB_BIA_Settings.InsertOnSubmit(newSettings);
+                        db.ISB_BIA_Settings.Add(newSettings);
 
                         //Logeintrag erzeugen
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
@@ -1729,8 +1731,8 @@ namespace ISB_BIA_IMPORT1.Services
                             Datum = DateTime.Now,
                             Benutzer = newSettings.Benutzer
                         };
-                        db.ISB_BIA_Log.InsertOnSubmit(logEntry);
-                        db.SubmitChanges();
+                        db.ISB_BIA_Log.Add(logEntry);
+                        db.SaveChanges();
                     }
                     _myDia.ShowMessage("Einstellungen gespeichert.");
                     return true;
@@ -1755,7 +1757,7 @@ namespace ISB_BIA_IMPORT1.Services
             try
             {
                 ISB_BIA_Informationssegmente linqIS;
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     linqIS = db.ISB_BIA_Informationssegmente.Where(c => c.Informationssegment_Id == id)
                         .OrderByDescending(p => p.Datum).FirstOrDefault();
@@ -1822,7 +1824,7 @@ namespace ISB_BIA_IMPORT1.Services
             try
             {
                 ISB_BIA_Informationssegmente_Attribute linqAttribute;
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     linqAttribute = db.ISB_BIA_Informationssegmente_Attribute.Where(c => c.Attribut_Id == id)
                         .OrderByDescending(p => p.Datum).FirstOrDefault();
@@ -1882,7 +1884,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     return new ObservableCollection<ISB_BIA_Informationssegmente>(
                         db.ISB_BIA_Informationssegmente.GroupBy(a => a.Informationssegment_Id)
@@ -1899,7 +1901,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     return new ObservableCollection<ISB_BIA_Informationssegmente>(
                         db.ISB_BIA_Informationssegmente.Where(x => x.Segment != "Lorem ipsum").GroupBy(a => a.Informationssegment_Id)
@@ -1914,7 +1916,7 @@ namespace ISB_BIA_IMPORT1.Services
         }
         public List<ISB_BIA_Informationssegmente> Get5SegmentsForCalculation(Process_Model process)
         {
-            using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+            using (DataEntities db = new DataEntities(_myShared.ConnectionString))
             {
                 //Zutreffende Segmente auswählen
                 return GetEnabledSegments().Where(x =>
@@ -1929,7 +1931,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     return db.ISB_BIA_Informationssegmente.Where(y => y.Name == iSName).
                         GroupBy(a => a.Informationssegment_Id).Select(g => g.OrderByDescending(p => p.Datum).FirstOrDefault()).FirstOrDefault();
@@ -1945,7 +1947,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     return new ObservableCollection<ISB_BIA_Informationssegmente_Attribute>(
                         db.ISB_BIA_Informationssegmente_Attribute.GroupBy(a => a.Attribut_Id)
@@ -1962,7 +1964,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     return new ObservableCollection<string>(
                         db.ISB_BIA_Informationssegmente_Attribute.GroupBy(x => x.Attribut_Id).
@@ -1980,7 +1982,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     return new ObservableCollection<string>(
                         db.ISB_BIA_Informationssegmente_Attribute.GroupBy(x => x.Attribut_Id).
@@ -2013,13 +2015,13 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 try
                 {
-                    using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                    using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                     {
                         //Schreiben in Datenbank
                         newIS.Datum = DateTime.Now;
                         newIS.Benutzer = Environment.UserName;
                         //Mappen und in DB einfügen
-                        db.ISB_BIA_Informationssegmente.InsertOnSubmit(MapSegmentModelToDB(newIS));
+                        db.ISB_BIA_Informationssegmente.Add(MapSegmentModelToDB(newIS));
                         //Logeintrag erzeugen
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
@@ -2031,8 +2033,8 @@ namespace ISB_BIA_IMPORT1.Services
                             Datum = newIS.Datum,
                             Benutzer = newIS.Benutzer
                         };
-                        db.ISB_BIA_Log.InsertOnSubmit(logEntry);
-                        db.SubmitChanges();
+                        db.ISB_BIA_Log.Add(logEntry);
+                        db.SaveChanges();
                         _myDia.ShowInfo("Informationssegment gespeichert");
                         return true;
                     }
@@ -2042,7 +2044,7 @@ namespace ISB_BIA_IMPORT1.Services
                     //LogEntry bei Fehler erstellen & Schreiben in Datenbank
                     try
                     {
-                        using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                        using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                         {
                             ISB_BIA_Log logEntry = new ISB_BIA_Log
                             {
@@ -2054,8 +2056,8 @@ namespace ISB_BIA_IMPORT1.Services
                                 Datum = newIS.Datum,
                                 Benutzer = newIS.Benutzer
                             };
-                            db.ISB_BIA_Log.InsertOnSubmit(logEntry);
-                            db.SubmitChanges();
+                            db.ISB_BIA_Log.Add(logEntry);
+                            db.SaveChanges();
                             _myDia.ShowError("Fehler beim Speichern des Informationssegments!\nEin Log Eintrag wurde erzeugt.", ex1);
                             return false;
                         }
@@ -2085,7 +2087,7 @@ namespace ISB_BIA_IMPORT1.Services
                 //Schreiben in Datenbank
                 try
                 {
-                    using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                    using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                     {
                         foreach (InformationSegmentAttribute_Model isx in newAttributeList)
                         {
@@ -2104,7 +2106,7 @@ namespace ISB_BIA_IMPORT1.Services
                                 ISB_BIA_Informationssegmente_Attribute isMapped = MapAttributeModelToDB(isx);
                                 isMapped.Datum = DateTime.Now;
                                 isMapped.Benutzer = Environment.UserName;
-                                db.ISB_BIA_Informationssegmente_Attribute.InsertOnSubmit(isMapped);
+                                db.ISB_BIA_Informationssegmente_Attribute.Add(isMapped);
 
                                 //Log Eintrag für erfolgreiches schreiben in Datenbank
                                 ISB_BIA_Log logEntry = new ISB_BIA_Log
@@ -2117,13 +2119,13 @@ namespace ISB_BIA_IMPORT1.Services
                                     Datum = DateTime.Now,
                                     Benutzer = Environment.UserName
                                 };
-                                db.ISB_BIA_Log.InsertOnSubmit(logEntry);
+                                db.ISB_BIA_Log.Add(logEntry);
                             }
                         }
                         if (!change) _myDia.ShowInfo("Keine Änderungen entdeckt");
                         else
                         {
-                            db.SubmitChanges();
+                            db.SaveChanges();
                             _myDia.ShowInfo("Attribute gespeichert");
                         }
                     }
@@ -2134,7 +2136,7 @@ namespace ISB_BIA_IMPORT1.Services
                     //LogEntry bei Fehler erstellen + Schreiben in Datenbank
                     try
                     {
-                        using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                        using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                         {
                             ISB_BIA_Log logEntry = new ISB_BIA_Log
                             {
@@ -2146,8 +2148,8 @@ namespace ISB_BIA_IMPORT1.Services
                                 Id_2 = 0,
                                 Benutzer = Environment.UserName
                             };
-                            db.ISB_BIA_Log.InsertOnSubmit(logEntry);
-                            db.SubmitChanges();
+                            db.ISB_BIA_Log.Add(logEntry);
+                            db.SaveChanges();
                             _myDia.ShowError("Fehler beim Speichern der Attributliste", ex1);
                             return false;
                         }
@@ -2166,7 +2168,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     return new ObservableCollection<ISB_BIA_Applikationen>(
                         db.ISB_BIA_Applikationen.GroupBy(y => y.Applikation_Id).
@@ -2185,7 +2187,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     List<ISB_BIA_Applikationen> ocCategories = db.ISB_BIA_Applikationen.GroupBy(y => y.Applikation_Id).Select(z => z.OrderByDescending(p => p.Datum).FirstOrDefault()).Where(u => u.Aktiv == 1).GroupBy(x => x.IT_Betriebsart).Select(group => group.FirstOrDefault()).ToList();
                     //Für späteres Filtern: Eintrag für alle Kategorien
@@ -2204,7 +2206,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     ObservableCollection<ISB_BIA_Delta_Analyse> result = new ObservableCollection<ISB_BIA_Delta_Analyse>();
                     List<ISB_BIA_Prozesse_Applikationen> procAppList = db.ISB_BIA_Prozesse_Applikationen.Where(x => x.Prozess_Id == id).OrderByDescending(c => c.Datum).ToList();
@@ -2243,7 +2245,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     ObservableCollection<ISB_BIA_Delta_Analyse> result = new ObservableCollection<ISB_BIA_Delta_Analyse>();
                     //Alle Einträge für Prozess
@@ -2286,7 +2288,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     return new ObservableCollection<ISB_BIA_Delta_Analyse>(
                         db.ISB_BIA_Delta_Analyse.OrderBy(x => x.Prozess_Id).ToList());
@@ -2303,7 +2305,7 @@ namespace ISB_BIA_IMPORT1.Services
             try
             {
                 List<ISB_BIA_Prozesse_Applikationen> proc_App;
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     //einen Tag aufaddieren da immer zeit 00:00 benutzt wird & sonst Fehler für spätere Einträge des Tages auftreten
                     d = d.AddDays(1);
@@ -2339,7 +2341,7 @@ namespace ISB_BIA_IMPORT1.Services
             List<ISB_BIA_Delta_Analyse> DeltaList = new List<ISB_BIA_Delta_Analyse>();
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     //Erstelle Liste der Prozesse und Anwendungen mit dem zu dem gewählten Zeitpunkt aktuellsten Stand
                     ObservableCollection<ISB_BIA_Prozesse> processes = GetProcesses(date);
@@ -2347,8 +2349,9 @@ namespace ISB_BIA_IMPORT1.Services
                     if (toDB)
                     {
                         var delete = db.ISB_BIA_Delta_Analyse.ToList();
-                        db.ISB_BIA_Delta_Analyse.DeleteAllOnSubmit(delete);
-                        db.SubmitChanges();
+                        foreach(var i in delete)
+                            db.ISB_BIA_Delta_Analyse.Remove(i);
+                        db.SaveChanges();
                     }
                     //Delta-Analyse für jede Prozess-Applikation Relation
                     foreach (ISB_BIA_Prozesse_Applikationen pa in proc_App)
@@ -2379,7 +2382,7 @@ namespace ISB_BIA_IMPORT1.Services
                             Datum = date.Subtract(TimeSpan.FromDays(1))
                         };
                         DeltaList.Add(d);
-                        if (toDB) db.ISB_BIA_Delta_Analyse.InsertOnSubmit(d);
+                        if (toDB) db.ISB_BIA_Delta_Analyse.Add(d);
                     }
                     if (toDB)
                     {
@@ -2394,8 +2397,8 @@ namespace ISB_BIA_IMPORT1.Services
                             Datum = DateTime.Now,
                             Benutzer = Environment.UserName
                         };
-                        db.ISB_BIA_Log.InsertOnSubmit(logEntry);
-                        db.SubmitChanges();
+                        db.ISB_BIA_Log.Add(logEntry);
+                        db.SaveChanges();
                     }
                 }
                 //Rückgabe der Delta-Liste zum Anzeigen der Ergebnisse
@@ -2405,7 +2408,7 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 try
                 {
-                    using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                    using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                     {
                         _myDia.ShowError("Fehler: Ertellen der Delta-Analyse.", ex);
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
@@ -2418,8 +2421,8 @@ namespace ISB_BIA_IMPORT1.Services
                             Datum = DateTime.Now,
                             Benutzer = Environment.UserName
                         };
-                        db.ISB_BIA_Log.InsertOnSubmit(logEntry);
-                        db.SubmitChanges();
+                        db.ISB_BIA_Log.Add(logEntry);
+                        db.SaveChanges();
                         _myDia.ShowError("Fehler beim Speichern der Delta-Analyse!\nEin Log Eintrag wurde erzeugt." + ex.ToString(), ex);
                         return null;
                     }
@@ -2438,7 +2441,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     List<ISB_BIA_OEs> queryName = db.ISB_BIA_OEs.Where(c => c.OE_Name != "").
                         GroupBy(x => x.OE_Name).Select(g => g.OrderBy(p => p.Datum).FirstOrDefault()).ToList();
@@ -2455,7 +2458,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     List<ISB_BIA_OEs> queryKennung = db.ISB_BIA_OEs.Where(y => y.OE_Nummer != null && y.OE_Nummer != "").GroupBy(x => x.OE_Nummer).Select(g => g.OrderBy(p => p.Datum).FirstOrDefault()).ToList();
                     return new ObservableCollection<ISB_BIA_OEs>(queryKennung);
@@ -2471,7 +2474,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     List<ISB_BIA_OEs> queryLink = db.ISB_BIA_OEs.Where(x => x.OE_Nummer != "").OrderBy(c => c.OE_Name).ToList();
                     return new ObservableCollection<ISB_BIA_OEs>(queryLink);
@@ -2488,7 +2491,7 @@ namespace ISB_BIA_IMPORT1.Services
             try
             {
                 //neu erstellen: OE Gruppe
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     //Indikator ob Name bereits existiert
                     int already_exists = db.ISB_BIA_OEs.Where(x => x.OE_Name == name).ToList().Count;
@@ -2502,7 +2505,7 @@ namespace ISB_BIA_IMPORT1.Services
                             Benutzer = Environment.UserName,
                             Datum = DateTime.Now
                         };
-                        db.ISB_BIA_OEs.InsertOnSubmit(new_Link);
+                        db.ISB_BIA_OEs.Add(new_Link);
                         //Erstellen eines LogEntries und schreiben in Datenbank
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
@@ -2514,9 +2517,9 @@ namespace ISB_BIA_IMPORT1.Services
                             Datum = DateTime.Now,
                             Benutzer = Environment.UserName
                         };
-                        db.ISB_BIA_Log.InsertOnSubmit(logEntry);
+                        db.ISB_BIA_Log.Add(logEntry);
 
-                        db.SubmitChanges();
+                        db.SaveChanges();
                         _myDia.ShowInfo("OE wurde erstellt.");
                         return new_Link;
                     }
@@ -2540,7 +2543,7 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 try
                 {
-                    using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                    using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                     {
                         //Indikator ob Name bereits existiert
                         int already_exists = db.ISB_BIA_OEs.Where(x => x.OE_Name == name).ToList().Count;
@@ -2611,7 +2614,7 @@ namespace ISB_BIA_IMPORT1.Services
                                     Relevantes_IS_4 = process_old.Relevantes_IS_4,
                                     Relevantes_IS_5 = process_old.Relevantes_IS_5
                                 };
-                                db.ISB_BIA_Prozesse.InsertOnSubmit(process_new);
+                                db.ISB_BIA_Prozesse.Add(process_new);
                             }
 
                             //Erstellen eines LogEntries und schreiben in Datenbank
@@ -2625,8 +2628,8 @@ namespace ISB_BIA_IMPORT1.Services
                                 Datum = DateTime.Now,
                                 Benutzer = Environment.UserName
                             };
-                            db.ISB_BIA_Log.InsertOnSubmit(logEntry);
-                            db.SubmitChanges();
+                            db.ISB_BIA_Log.Add(logEntry);
+                            db.SaveChanges();
                             _myDia.ShowInfo("OE-Bezeichnung geändert!");
                             return true;
                         }
@@ -2656,7 +2659,7 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 try
                 {
-                    using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                    using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                     {
                         //OE Gruppe kann nur gelöscht werden, wenn kein Prozess mehr dieser Gruppe zugeordnet ist
                         List<ISB_BIA_Prozesse> list1 = db.ISB_BIA_Prozesse.Where(x => x.OE_Filter == oeName).ToList();
@@ -2687,7 +2690,9 @@ namespace ISB_BIA_IMPORT1.Services
                         try
                         {
                             //Löschen aller Zuordnungen mit dieser Gruppe
-                            db.ISB_BIA_OEs.DeleteAllOnSubmit(db.ISB_BIA_OEs.Where(x => x.OE_Name == oeName));
+                            var delete = db.ISB_BIA_OEs.Where(x => x.OE_Name == oeName);
+                            foreach (var i in delete)
+                                db.ISB_BIA_OEs.Remove(i);
                             ISB_BIA_Log logEntry = new ISB_BIA_Log
                             {
                                 Action = "Löschen einer OE",
@@ -2698,8 +2703,8 @@ namespace ISB_BIA_IMPORT1.Services
                                 Datum = DateTime.Now,
                                 Benutzer = Environment.UserName
                             };
-                            db.ISB_BIA_Log.InsertOnSubmit(logEntry);
-                            db.SubmitChanges();
+                            db.ISB_BIA_Log.Add(logEntry);
+                            db.SaveChanges();
                             _myDia.ShowInfo("OE wurde gelöscht.");
                             return true;
                         }
@@ -2726,10 +2731,12 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 try
                 {
-                    using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                    using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                     {
                         //Löschen der angegebenen Zuordnung
-                        db.ISB_BIA_OEs.DeleteAllOnSubmit(db.ISB_BIA_OEs.Where(x => x.OE_Nummer == oeNumber && x.OE_Name == oeName));
+                        var delete = db.ISB_BIA_OEs.Where(x => x.OE_Nummer == oeNumber && x.OE_Name == oeName);
+                        foreach (var i in delete)
+                            db.ISB_BIA_OEs.Remove(i);
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
                             Action = "Löschen einer OE-Zuordnung",
@@ -2740,8 +2747,8 @@ namespace ISB_BIA_IMPORT1.Services
                             Datum = DateTime.Now,
                             Benutzer = Environment.UserName
                         };
-                        db.ISB_BIA_Log.InsertOnSubmit(logEntry);
-                        db.SubmitChanges();
+                        db.ISB_BIA_Log.Add(logEntry);
+                        db.SaveChanges();
                         _myDia.ShowInfo("OE-Zuordnung wurde gelöscht.");
                         return true;
                     }
@@ -2763,10 +2770,12 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 try
                 {
-                    using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                    using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                     {
                         //Löschen aller Zuordnungen mit dieser OE-Nummer
-                        db.ISB_BIA_OEs.DeleteAllOnSubmit(db.ISB_BIA_OEs.Where(x => x.OE_Nummer == oeNumber));
+                        var delete = db.ISB_BIA_OEs.Where(x => x.OE_Nummer == oeNumber);
+                        foreach (var i in delete)
+                            db.ISB_BIA_OEs.Remove(i);
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
                             Action = "Löschen einer OE-Nummer",
@@ -2777,8 +2786,8 @@ namespace ISB_BIA_IMPORT1.Services
                             Datum = DateTime.Now,
                             Benutzer = Environment.UserName
                         };
-                        db.ISB_BIA_Log.InsertOnSubmit(logEntry);
-                        db.SubmitChanges();
+                        db.ISB_BIA_Log.Add(logEntry);
+                        db.SaveChanges();
                         _myDia.ShowInfo("OE-Nummer wurde gelöscht.");
                         return true;
                     }
@@ -2798,7 +2807,7 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 try
                 {
-                    using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                    using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                     {
                         //Prüfen ob Zuordnung bereits vorhanden
                         if (db.ISB_BIA_OEs.Where(x => x.OE_Name == name.OE_Name && x.OE_Nummer == number.OE_Nummer).ToList().Count == 0)
@@ -2811,7 +2820,7 @@ namespace ISB_BIA_IMPORT1.Services
                                 Benutzer = Environment.UserName,
                                 Datum = DateTime.Now
                             };
-                            db.ISB_BIA_OEs.InsertOnSubmit(new_Link);
+                            db.ISB_BIA_OEs.Add(new_Link);
                             //Erstellen eines LogEntries und schreiben in Datenbank
                             ISB_BIA_Log logEntry = new ISB_BIA_Log
                             {
@@ -2823,8 +2832,8 @@ namespace ISB_BIA_IMPORT1.Services
                                 Datum = DateTime.Now,
                                 Benutzer = Environment.UserName
                             };
-                            db.ISB_BIA_Log.InsertOnSubmit(logEntry);
-                            db.SubmitChanges();
+                            db.ISB_BIA_Log.Add(logEntry);
+                            db.SaveChanges();
                             _myDia.ShowInfo("OE-Zuordnung wurde erstellt.");
                             return new_Link;
                         }
@@ -2853,7 +2862,7 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 try
                 {
-                    using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                    using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                     {
                         //Prüfen ob Zuordnung bereits existiert
                         if (db.ISB_BIA_OEs.Where(x => x.OE_Name == name.OE_Name && x.OE_Nummer == number).ToList().Count == 0)
@@ -2866,7 +2875,7 @@ namespace ISB_BIA_IMPORT1.Services
                                 Benutzer = Environment.UserName,
                                 Datum = DateTime.Now
                             };
-                            db.ISB_BIA_OEs.InsertOnSubmit(new_Number);
+                            db.ISB_BIA_OEs.Add(new_Number);
                             //Erstellen eines LogEntries und schreiben in Datenbank
                             ISB_BIA_Log logEntry = new ISB_BIA_Log
                             {
@@ -2878,8 +2887,8 @@ namespace ISB_BIA_IMPORT1.Services
                                 Datum = DateTime.Now,
                                 Benutzer = Environment.UserName
                             };
-                            db.ISB_BIA_Log.InsertOnSubmit(logEntry);
-                            db.SubmitChanges();
+                            db.ISB_BIA_Log.Add(logEntry);
+                            db.SaveChanges();
                             _myDia.ShowInfo("OE-Nummer wurde erstellt.");
                             return new_Number;
                         }
@@ -2908,7 +2917,7 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 try
                 {
-                    using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                    using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                     {
                         //Prüfen ob Nummer bereits vorhanden
                         if (db.ISB_BIA_OEs.Where(x => x.OE_Nummer == number).ToList().Count > 0)
@@ -2928,10 +2937,11 @@ namespace ISB_BIA_IMPORT1.Services
                                 Datum = DateTime.Now,
                             };
                             //Zuordnung mit neuer nummer einfügen
-                            db.ISB_BIA_OEs.InsertOnSubmit(newNumber);
+                            db.ISB_BIA_OEs.Add(newNumber);
                         }
                         //Alte Zuordnungen löschen
-                        db.ISB_BIA_OEs.DeleteAllOnSubmit(numbers);
+                        foreach (var i in numbers)
+                            db.ISB_BIA_OEs.Remove(i);
 
                         //Erstellen eines LogEntries und schreiben in Datenbank
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
@@ -2944,8 +2954,8 @@ namespace ISB_BIA_IMPORT1.Services
                             Datum = DateTime.Now,
                             Benutzer = Environment.UserName
                         };
-                        db.ISB_BIA_Log.InsertOnSubmit(logEntry);
-                        db.SubmitChanges();
+                        db.ISB_BIA_Log.Add(logEntry);
+                        db.SaveChanges();
                         _myDia.ShowInfo("OE-Nummer wurde geändert.");
                         return true;
                     }
@@ -2969,7 +2979,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
+                using (DataEntities db = new DataEntities(_myShared.ConnectionString))
                 {
                     return new ObservableCollection<ISB_BIA_Log>(db.ISB_BIA_Log.OrderByDescending(x => x.Datum).ToList());
                 }
@@ -2984,4 +2994,3 @@ namespace ISB_BIA_IMPORT1.Services
         #endregion
     }
 }
-*/

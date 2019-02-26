@@ -1,5 +1,4 @@
-﻿/*
-using ISB_BIA_IMPORT1.Model;
+﻿using ISB_BIA_IMPORT1.Model;
 using ISB_BIA_IMPORT1.ViewModel;
 using ISB_BIA_IMPORT1.LinqEntityContext;
 using System;
@@ -11,13 +10,14 @@ using System.Data;
 
 namespace ISB_BIA_IMPORT1.Services
 {
-    class MyDataService : IMyDataService
+    class MyDataServiceHistorization
     {
+        /*
         readonly IMyDialogService _myDia;
         readonly IMySharedResourceService _myShared;
         readonly IMyMailNotificationService _myMail;
 
-        public MyDataService(IMyDialogService myDia, IMySharedResourceService myShared, IMyMailNotificationService myMail)
+        public MyDataServiceHistorization(IMyDialogService myDia, IMySharedResourceService myShared, IMyMailNotificationService myMail)
         {
             this._myDia = myDia;
             this._myShared = myShared;
@@ -48,7 +48,7 @@ namespace ISB_BIA_IMPORT1.Services
 
             #region SQL Strings für Erstellen der Tabellen mit Headern analog zu Excel (!Trotzdem nicht ändern, da im Code per Linq2SQL Klassenmember aufegrufen werden)
             #region Tabellen Löschungs SQL Anweisungen
-            string _sqlDropProc_App = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" + _myShared.Tbl_Proz_App + "') DROP Table " + _myShared.Tbl_Proz_App + "; " +
+            string _sqlDropProc_App = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" + _myShared.Tbl_Proz_App + "') DROP Table " + _myShared.Tbl_Proz_App+"; "+
                                       "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" + _myShared.Tbl_Proz_App + "_History') DROP Table " + _myShared.Tbl_Proz_App + "_History";
             string _sqlDropProcesses = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" + _myShared.Tbl_Prozesse + "') DROP Table " + _myShared.Tbl_Prozesse + "; " +
                                       "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" + _myShared.Tbl_Prozesse + "_History') DROP Table " + _myShared.Tbl_Prozesse + "_History";
@@ -65,17 +65,27 @@ namespace ISB_BIA_IMPORT1.Services
             string _sqlDropLock = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" + _myShared.Tbl_Lock + "') DROP Table " + _myShared.Tbl_Lock;
             #endregion
             string sqlCreaProcApp =
-                "    CREATE TABLE [dbo].[" + _myShared.Tbl_Proz_App + "] (" +
-                "    [Prozess_Id] INT NOT NULL," +
-                "    [Datum_Prozess] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:59.500',121))," +
-                "    [Applikation_Id] INT NOT NULL," +
-                "    [Datum_Applikation] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:59.500',121))," +
+                 "    CREATE TABLE [dbo].[" + _myShared.Tbl_Proz_App + "] (" +
+                 "    [Id]          INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
+                 "    [Prozess] INT NOT NULL," +
+                 "    [Applikation] INT NOT NULL," +
+                 "    [Relation] INT NOT NULL," +
+                 "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
+                 "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
+                 "    CONSTRAINT FK_Process FOREIGN KEY (Prozess) REFERENCES " + _myShared.Tbl_Prozesse + " (" + dt_Processes.Columns[0] + ")," +
+                 "    CONSTRAINT FK_Application FOREIGN KEY (Applikation) REFERENCES " + _myShared.Tbl_Applikationen + " (" + dt_Applications.Columns[0] + ")," +
+                 "    UNIQUE(Prozess,Applikation)," +
+                 "); ";
+
+            string sqlCreaProcAppH =
+                "    CREATE TABLE [dbo].[" + _myShared.Tbl_Proz_App + "_History] (" +
+                "    [Id]          INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
+                "    [Prozess] INT NOT NULL," +
+                "    [Applikation] INT NOT NULL," +
                 "    [Relation] INT NOT NULL," +
-                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:59.500',121))," +
+                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
                 "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
-                "    PRIMARY KEY(Prozess_Id, Applikation_Id, Datum)," +
-                "    Foreign Key(Prozess_Id, Datum_Prozess) references [" + _myShared.Tbl_Prozesse + "](Prozess_Id,Datum)," +
-                "    Foreign Key(Applikation_Id, Datum_Applikation) references [" + _myShared.Tbl_Applikationen + "](Applikation_Id,Datum)" +
+                "    UNIQUE(Prozess,Applikation,Datum)," +
                 "); ";
 
             //Tabellen erstellen, deren Spaltennamen den Spaltennamen des Quell-Excel-Sheets entsprechen
@@ -83,13 +93,13 @@ namespace ISB_BIA_IMPORT1.Services
             //im Code vorgenommen werden (Linq-to-SQL Modell erneuern, Variablenaufrufe im Code ändern)
             string sqlCreaSBA =
                 "CREATE TABLE[dbo].[" + _myShared.Tbl_Applikationen + "](" +
-                "    [" + dt_Applications.Columns[0] + "] INT NOT NULL," +
+                "    [" + dt_Applications.Columns[0] + "] INT NOT NULL PRIMARY KEY," +
                 "    [" + dt_Applications.Columns[1] + "] NVARCHAR(350) NOT NULL," +
                 "    [" + dt_Applications.Columns[2] + "] NVARCHAR(350) NOT NULL," +
                 "    [" + dt_Applications.Columns[3] + "] NVARCHAR(350) NOT NULL," +
                 "    [" + dt_Applications.Columns[4] + "] NVARCHAR(350) NOT NULL," +
                 "    [" + dt_Applications.Columns[5] + "] NVARCHAR(350) NOT NULL," +
-                "    [" + dt_Applications.Columns[6] + "] NVARCHAR(350) NOT NULL," +
+                "    [" + dt_Applications.Columns[6] + "] NVARCHAR(1000) NOT NULL," +
                 "    [" + dt_Applications.Columns[7] + "] NVARCHAR(20) NOT NULL," +
                 "    [" + dt_Applications.Columns[8] + "] INT NOT NULL," +
                 "    [" + dt_Applications.Columns[9] + "] INT NOT NULL," +
@@ -98,24 +108,47 @@ namespace ISB_BIA_IMPORT1.Services
                 "    [" + dt_Applications.Columns[12] + "] INT NOT NULL," +
                 "    [" + dt_Applications.Columns[13] + "] INT NOT NULL," +
                 "    [Aktiv] INT NOT NULL DEFAULT(1)," +
-                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:59.500',121))," +
+                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
                 "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
-                "    PRIMARY KEY(" + dt_Applications.Columns[0] + ",Datum)" +
+                "    Unique (" + dt_Applications.Columns[0] + ",Datum)" +
+                ");";
+
+            string sqlCreaSBAH =
+                "CREATE TABLE[dbo].[" + _myShared.Tbl_Applikationen + "_History](" +
+                "    [Id]                  INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
+                "    [" + dt_Applications.Columns[0] + "] INT NOT NULL," +
+                "    [" + dt_Applications.Columns[1] + "] NVARCHAR(350) NOT NULL," +
+                "    [" + dt_Applications.Columns[2] + "] NVARCHAR(350) NOT NULL," +
+                "    [" + dt_Applications.Columns[3] + "] NVARCHAR(350) NOT NULL," +
+                "    [" + dt_Applications.Columns[4] + "] NVARCHAR(350) NOT NULL," +
+                "    [" + dt_Applications.Columns[5] + "] NVARCHAR(350) NOT NULL," +
+                "    [" + dt_Applications.Columns[6] + "] NVARCHAR(1000) NOT NULL," +
+                "    [" + dt_Applications.Columns[7] + "] NVARCHAR(20) NOT NULL," +
+                "    [" + dt_Applications.Columns[8] + "] INT NOT NULL," +
+                "    [" + dt_Applications.Columns[9] + "] INT NOT NULL," +
+                "    [" + dt_Applications.Columns[10] + "] INT NOT NULL," +
+                "    [" + dt_Applications.Columns[11] + "] INT NOT NULL," +
+                "    [" + dt_Applications.Columns[12] + "] INT NOT NULL," +
+                "    [" + dt_Applications.Columns[13] + "] INT NOT NULL," +
+                "    [Aktiv] INT NOT NULL DEFAULT(1)," +
+                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
+                "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
+                "    Unique (" + dt_Applications.Columns[0] + ",Datum)" +
                 ");";
 
             string sqlCreaProcesses =
                 "CREATE TABLE[dbo].[" + _myShared.Tbl_Prozesse + "](" +
-                "    [" + dt_Processes.Columns[0] + "] INT NOT NULL," +
-                "    [" + dt_Processes.Columns[1] + "] NVARCHAR(200) NOT NULL," +
+                "    [" + dt_Processes.Columns[0] + "] INT NOT NULL PRIMARY KEY," +
+                "    [" + dt_Processes.Columns[1] + "] NVARCHAR(350) NOT NULL," +
                 "    [" + dt_Processes.Columns[2] + "] NVARCHAR(350) NOT NULL," +
                 "    [" + dt_Processes.Columns[3] + "] NVARCHAR(350) NOT NULL," +
                 "    [" + dt_Processes.Columns[4] + "] NVARCHAR(50) NOT NULL," +
-                "    [" + dt_Processes.Columns[5] + "] NVARCHAR(10) NOT NULL," +
-                "    [" + dt_Processes.Columns[6] + "] NVARCHAR(20) NOT NULL," +
-                "    [" + dt_Processes.Columns[7] + "] NVARCHAR(20) NOT NULL," +
-                "    [" + dt_Processes.Columns[8] + "] NVARCHAR(10) NOT NULL," +
-                "    [" + dt_Processes.Columns[9] + "] NVARCHAR(10) NOT NULL," +
-                "    [" + dt_Processes.Columns[10] + "] NVARCHAR(10) NOT NULL," +
+                "    [" + dt_Processes.Columns[5] + "] NVARCHAR(50) NOT NULL," +
+                "    [" + dt_Processes.Columns[6] + "] NVARCHAR(50) NOT NULL," +
+                "    [" + dt_Processes.Columns[7] + "] NVARCHAR(50) NOT NULL," +
+                "    [" + dt_Processes.Columns[8] + "] NVARCHAR(50) NOT NULL," +
+                "    [" + dt_Processes.Columns[9] + "] NVARCHAR(50) NOT NULL," +
+                "    [" + dt_Processes.Columns[10] + "] NVARCHAR(50) NOT NULL," +
                 "    [" + dt_Processes.Columns[11] + "] INT NOT NULL," +
                 "    [" + dt_Processes.Columns[12] + "] INT NOT NULL," +
                 "    [" + dt_Processes.Columns[13] + "] INT NOT NULL," +
@@ -134,35 +167,111 @@ namespace ISB_BIA_IMPORT1.Services
                 "    [" + dt_Processes.Columns[26] + "] NVARCHAR(50) NOT NULL," +
                 "    [" + dt_Processes.Columns[27] + "] NVARCHAR(50) NOT NULL," +
                 "    [Aktiv] INT NOT NULL DEFAULT(1)," +
-                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:59.500',121))," +
+                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59' ,120))," +
                 "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
-                "    PRIMARY KEY(" + dt_Processes.Columns[0] + ",Datum)" +
+                "    Unique (" + dt_Processes.Columns[0] + ",Datum)" +
+            ");";
+
+            string sqlCreaProcessesH =
+                "CREATE TABLE[dbo].[" + _myShared.Tbl_Prozesse + "_History](" +
+                "    [Id]                              INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
+                "    [" + dt_Processes.Columns[0] + "] INT NOT NULL," +
+                "    [" + dt_Processes.Columns[1] + "] NVARCHAR(350) NOT NULL," +
+                "    [" + dt_Processes.Columns[2] + "] NVARCHAR(350) NOT NULL," +
+                "    [" + dt_Processes.Columns[3] + "] NVARCHAR(350) NOT NULL," +
+                "    [" + dt_Processes.Columns[4] + "] NVARCHAR(50) NOT NULL," +
+                "    [" + dt_Processes.Columns[5] + "] NVARCHAR(50) NOT NULL," +
+                "    [" + dt_Processes.Columns[6] + "] NVARCHAR(50) NOT NULL," +
+                "    [" + dt_Processes.Columns[7] + "] NVARCHAR(50) NOT NULL," +
+                "    [" + dt_Processes.Columns[8] + "] NVARCHAR(50) NOT NULL," +
+                "    [" + dt_Processes.Columns[9] + "] NVARCHAR(50) NOT NULL," +
+                "    [" + dt_Processes.Columns[10] + "] NVARCHAR(50) NOT NULL," +
+                "    [" + dt_Processes.Columns[11] + "] INT NOT NULL," +
+                "    [" + dt_Processes.Columns[12] + "] INT NOT NULL," +
+                "    [" + dt_Processes.Columns[13] + "] INT NOT NULL," +
+                "    [" + dt_Processes.Columns[14] + "] INT NOT NULL," +
+                "    [" + dt_Processes.Columns[15] + "] INT NOT NULL," +
+                "    [" + dt_Processes.Columns[16] + "] INT NOT NULL," +
+                "    [" + dt_Processes.Columns[17] + "] NVARCHAR(350) NOT NULL," +
+                "    [" + dt_Processes.Columns[18] + "] NVARCHAR(350) NOT NULL," +
+                "    [" + dt_Processes.Columns[19] + "] NVARCHAR(350) NOT NULL," +
+                "    [" + dt_Processes.Columns[20] + "] INT NOT NULL," +
+                "    [" + dt_Processes.Columns[21] + "] INT NOT NULL," +
+                "    [" + dt_Processes.Columns[22] + "] INT NOT NULL," +
+                "    [" + dt_Processes.Columns[23] + "] NVARCHAR(50) NOT NULL," +
+                "    [" + dt_Processes.Columns[24] + "] NVARCHAR(50) NOT NULL," +
+                "    [" + dt_Processes.Columns[25] + "] NVARCHAR(50) NOT NULL," +
+                "    [" + dt_Processes.Columns[26] + "] NVARCHAR(50) NOT NULL," +
+                "    [" + dt_Processes.Columns[27] + "] NVARCHAR(50) NOT NULL," +
+                "    [Aktiv] INT NOT NULL DEFAULT(1)," +
+                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59' ,120))," +
+                "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
+                "    Unique (" + dt_Processes.Columns[0] + ",Datum)" +
             ");";
 
             string sqlCreaIS =
                 "CREATE TABLE[dbo].[" + _myShared.Tbl_IS + "](" +
-                "    [" + dt_InformationSegments.Columns[0] + "] INT NOT NULL," +
-                "    [" + dt_InformationSegments.Columns[1] + "] VARCHAR(10) NOT NULL," +
-                "    [" + dt_InformationSegments.Columns[2] + "] VARCHAR(200) NOT NULL," +
-                "    [" + dt_InformationSegments.Columns[3] + "] VARCHAR(2000) NOT NULL," +
-                "    [" + dt_InformationSegments.Columns[4] + "] VARCHAR(2000) NOT NULL," +
-                "    [" + dt_InformationSegments.Columns[5] + "] VARCHAR(10) NOT NULL," +
-                "    [" + dt_InformationSegments.Columns[6] + "] VARCHAR(10) NOT NULL," +
-                "    [" + dt_InformationSegments.Columns[7] + "] VARCHAR(10) NOT NULL," +
-                "    [" + dt_InformationSegments.Columns[8] + "] VARCHAR(10) NOT NULL," +
-                "    [" + dt_InformationSegments.Columns[9] + "] VARCHAR(10) NOT NULL," +
-                "    [" + dt_InformationSegments.Columns[10] + "] VARCHAR(10) NOT NULL," +
-                "    [" + dt_InformationSegments.Columns[11] + "] VARCHAR(10) NOT NULL," +
-                "    [" + dt_InformationSegments.Columns[12] + "] VARCHAR(10) NOT NULL," +
-                "    [" + dt_InformationSegments.Columns[13] + "] VARCHAR(10) NOT NULL," +
-                "    [" + dt_InformationSegments.Columns[14] + "] VARCHAR(10) NOT NULL," +
-                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:59.500',121))," +
+                "    [" + dt_InformationSegments.Columns[0] + "] INT NOT NULL PRIMARY KEY," +
+                "    [" + dt_InformationSegments.Columns[1] + "] VARCHAR(50) NOT NULL," +
+                "    [" + dt_InformationSegments.Columns[2] + "] VARCHAR(1000) NOT NULL," +
+                "    [" + dt_InformationSegments.Columns[3] + "] VARCHAR(1000) NOT NULL," +
+                "    [" + dt_InformationSegments.Columns[4] + "] VARCHAR(1000) NOT NULL," +
+                "    [" + dt_InformationSegments.Columns[5] + "] VARCHAR(1000) NOT NULL," +
+                "    [" + dt_InformationSegments.Columns[6] + "] VARCHAR(1000) NOT NULL," +
+                "    [" + dt_InformationSegments.Columns[7] + "] VARCHAR(1000) NOT NULL," +
+                "    [" + dt_InformationSegments.Columns[8] + "] VARCHAR(1000) NOT NULL," +
+                "    [" + dt_InformationSegments.Columns[9] + "] VARCHAR(1000) NOT NULL," +
+                "    [" + dt_InformationSegments.Columns[10] + "] VARCHAR(1000) NOT NULL," +
+                "    [" + dt_InformationSegments.Columns[11] + "] VARCHAR(1000) NOT NULL," +
+                "    [" + dt_InformationSegments.Columns[12] + "] VARCHAR(1000) NOT NULL," +
+                "    [" + dt_InformationSegments.Columns[13] + "] VARCHAR(1000) NOT NULL," +
+                "    [" + dt_InformationSegments.Columns[14] + "] VARCHAR(1000) NOT NULL," +
+                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
                 "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
-                "    PRIMARY KEY(" + dt_InformationSegments.Columns[0] + ", Datum)" +
+                "    Unique (" + dt_InformationSegments.Columns[0] + ", Datum)" +
+                ");";
+
+            string sqlCreaISH =
+                "CREATE TABLE[dbo].[" + _myShared.Tbl_IS + "_History](" +
+                "    [Id]                  INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
+                "    [" + dt_InformationSegments.Columns[0] + "] INT NOT NULL," +
+                "    [" + dt_InformationSegments.Columns[1] + "] VARCHAR(50) NOT NULL," +
+                "    [" + dt_InformationSegments.Columns[2] + "] VARCHAR(1000) NOT NULL," +
+                "    [" + dt_InformationSegments.Columns[3] + "] VARCHAR(1000) NOT NULL," +
+                "    [" + dt_InformationSegments.Columns[4] + "] VARCHAR(1000) NOT NULL," +
+                "    [" + dt_InformationSegments.Columns[5] + "] VARCHAR(1000) NOT NULL," +
+                "    [" + dt_InformationSegments.Columns[6] + "] VARCHAR(1000) NOT NULL," +
+                "    [" + dt_InformationSegments.Columns[7] + "] VARCHAR(1000) NOT NULL," +
+                "    [" + dt_InformationSegments.Columns[8] + "] VARCHAR(1000) NOT NULL," +
+                "    [" + dt_InformationSegments.Columns[9] + "] VARCHAR(1000) NOT NULL," +
+                "    [" + dt_InformationSegments.Columns[10] + "] VARCHAR(1000) NOT NULL," +
+                "    [" + dt_InformationSegments.Columns[11] + "] VARCHAR(1000) NOT NULL," +
+                "    [" + dt_InformationSegments.Columns[12] + "] VARCHAR(1000) NOT NULL," +
+                "    [" + dt_InformationSegments.Columns[13] + "] VARCHAR(1000) NOT NULL," +
+                "    [" + dt_InformationSegments.Columns[14] + "] VARCHAR(1000) NOT NULL," +
+                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
+                "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
+                "    Unique (" + dt_InformationSegments.Columns[0] + ", Datum)" +
                 ");";
 
             string sqlCreaISAttribut =
                 "CREATE TABLE[dbo].[" + _myShared.Tbl_IS_Attribute + "](" +
+                "    [" + dt_InformationSegmentAttributes.Columns[0] + "] INT NOT NULL PRIMARY KEY," +
+                "    [" + dt_InformationSegmentAttributes.Columns[1] + "] VARCHAR(200) NOT NULL," +
+                "    [" + dt_InformationSegmentAttributes.Columns[2] + "] VARCHAR(200) NOT NULL," +
+                "    [" + dt_InformationSegmentAttributes.Columns[3] + "] INT NOT NULL," +
+                "    [" + dt_InformationSegmentAttributes.Columns[4] + "] INT NOT NULL," +
+                "    [" + dt_InformationSegmentAttributes.Columns[5] + "] INT NOT NULL," +
+                "    [" + dt_InformationSegmentAttributes.Columns[6] + "] INT NOT NULL," +
+                "    [" + dt_InformationSegmentAttributes.Columns[7] + "] INT NOT NULL," +
+                "    [" + dt_InformationSegmentAttributes.Columns[8] + "] INT NOT NULL," +
+                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
+                "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
+                ");";
+
+            string sqlCreaISAttributH =
+                "CREATE TABLE[dbo].[" + _myShared.Tbl_IS_Attribute + "_History](" +
+                "    [Id]                  INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
                 "    [" + dt_InformationSegmentAttributes.Columns[0] + "] INT NOT NULL," +
                 "    [" + dt_InformationSegmentAttributes.Columns[1] + "] VARCHAR(200) NOT NULL," +
                 "    [" + dt_InformationSegmentAttributes.Columns[2] + "] VARCHAR(200) NOT NULL," +
@@ -172,13 +281,14 @@ namespace ISB_BIA_IMPORT1.Services
                 "    [" + dt_InformationSegmentAttributes.Columns[6] + "] INT NOT NULL," +
                 "    [" + dt_InformationSegmentAttributes.Columns[7] + "] INT NOT NULL," +
                 "    [" + dt_InformationSegmentAttributes.Columns[8] + "] INT NOT NULL," +
-                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:59.500',121))," +
+                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
                 "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
-                "    PRIMARY KEY(" + dt_InformationSegmentAttributes.Columns[0] + ", Datum)" +
+                "    Unique (" + dt_InformationSegmentAttributes.Columns[0] + ", Datum)" +
                 ");";
 
             string sqlCreaDelta =
                 "CREATE TABLE[dbo].[" + _myShared.Tbl_Delta + "](" +
+                "    [Id]                  INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
                 "    [Prozess_Id] INT NOT NULL," +
                 "    [Prozess] VARCHAR(350) NOT NULL," +
                 "    [Sub_Prozess] VARCHAR(350) NOT NULL," +
@@ -192,10 +302,10 @@ namespace ISB_BIA_IMPORT1.Services
                 "    [SZ_4] INT NOT NULL," +
                 "    [SZ_5] INT NOT NULL," +
                 "    [SZ_6] INT NOT NULL," +
-                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:59.500',121))," +
-                "    PRIMARY KEY(Prozess_Id, Applikation_Id)," +
-                "    Foreign Key(Prozess_Id,Datum_Prozess) references [" + _myShared.Tbl_Prozesse + "](Prozess_Id,Datum)," +
-                "    Foreign Key(Applikation_Id,Datum_Applikation) references [" + _myShared.Tbl_Applikationen + "](Applikation_Id,Datum)" +
+                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
+                "    Unique (Prozess_Id, Applikation_Id)," +
+                "    Foreign Key(Prozess_Id) references [" + _myShared.Tbl_Prozesse + "](Prozess_Id)," +
+                "    Foreign Key(Applikation_Id) references [" + _myShared.Tbl_Applikationen + "](Applikation_Id)" +
                 ");";
 
             string sqlCreaLog =
@@ -206,7 +316,7 @@ namespace ISB_BIA_IMPORT1.Services
                 "    [Details] VARCHAR(1000) NOT NULL," +
                 "    [Id_1] INT NOT NULL," +
                 "    [Id_2] INT NOT NULL," +
-                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:59.500',121))," +
+                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
                 "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
                 ");";
 
@@ -215,7 +325,7 @@ namespace ISB_BIA_IMPORT1.Services
                 "    [Id]                  INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
                 "    [OE_Name] VARCHAR(200) NOT NULL," +
                 "    [OE_Nummer] VARCHAR(200) NOT NULL," +
-                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:59.500',121))," +
+                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
                 "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
                 "    Unique (OE_Name, OE_Nummer)" +
                 ");";
@@ -236,7 +346,7 @@ namespace ISB_BIA_IMPORT1.Services
                 "    [Attribut9_aktiviert] VARCHAR(10) NOT NULL," +
                 "    [Attribut10_aktiviert] VARCHAR(10) NOT NULL," +
                 "    [Multi_Save] VARCHAR(10) NOT NULL," +
-                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:59.500',121))," +
+                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
                 "    [Benutzer] NVARCHAR(50) NOT NULL," +
                 ");";
 
@@ -245,7 +355,7 @@ namespace ISB_BIA_IMPORT1.Services
                 "    [Id]                  INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
                 "    [Table_Flag] INT NOT NULL," +
                 "    [Object_Id] INT NOT NULL," +
-                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:59.500',121))," +
+                "    [Datum] DATETIME NOT NULL," +
                 "    [BenutzerNnVn] NVARCHAR(50) NOT NULL DEFAULT('')," +
                 "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
                 ");";
@@ -257,14 +367,19 @@ namespace ISB_BIA_IMPORT1.Services
             sqlCommandList.Add(_sqlDropProc_App);
             sqlCommandList.Add(_sqlDropSBA);
             sqlCommandList.Add(sqlCreaSBA);
+            sqlCommandList.Add(sqlCreaSBAH);
             sqlCommandList.Add(_sqlDropProcesses);
             sqlCommandList.Add(sqlCreaProcesses);
+            sqlCommandList.Add(sqlCreaProcessesH);
             sqlCommandList.Add(sqlCreaProcApp);
+            sqlCommandList.Add(sqlCreaProcAppH);
             sqlCommandList.Add(sqlCreaDelta);
             sqlCommandList.Add(_sqlDropIS);
             sqlCommandList.Add(sqlCreaIS);
+            sqlCommandList.Add(sqlCreaISH);
             sqlCommandList.Add(_sqlDropISAttribut);
             sqlCommandList.Add(sqlCreaISAttribut);
+            sqlCommandList.Add(sqlCreaISAttributH);
             sqlCommandList.Add(_sqlDropOEs);
             sqlCommandList.Add(sqlCreaOEs);
             sqlCommandList.Add(_sqlDropSettings);
@@ -290,12 +405,27 @@ namespace ISB_BIA_IMPORT1.Services
                 //Schreiben der DataTables in die Datenbank (Initialer Stand der Daten)
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
+                    _myDia.ShowMessage("1");
                     SQLBulkCopy(_myShared.Tbl_Prozesse, con, dt_Processes);
+                    _myDia.ShowMessage("2");
+                    SQLBulkCopy(_myShared.Tbl_Prozesse+"_History", con, dt_Processes);
+                    _myDia.ShowMessage("3");
                     SQLBulkCopy(_myShared.Tbl_Applikationen, con, dt_Applications);
+                    _myDia.ShowMessage("4");
+                    SQLBulkCopy(_myShared.Tbl_Applikationen + "_History", con, dt_Applications);
+                    _myDia.ShowMessage("5");
                     SQLBulkCopy(_myShared.Tbl_Proz_App, con, dt_Relation);
+                    _myDia.ShowMessage("6");
+                    SQLBulkCopy(_myShared.Tbl_Proz_App + "_History", con, dt_Relation);
+                    _myDia.ShowMessage("7");
                     SQLBulkCopy(_myShared.Tbl_IS, con, dt_InformationSegments);
+                    _myDia.ShowMessage("8");
+                    SQLBulkCopy(_myShared.Tbl_IS + "_History", con, dt_InformationSegments);
+                    _myDia.ShowMessage("9");
                     SQLBulkCopy(_myShared.Tbl_IS_Attribute, con, dt_InformationSegmentAttributes);
-
+                    _myDia.ShowMessage("10");
+                    SQLBulkCopy(_myShared.Tbl_IS_Attribute + "_History", con, dt_InformationSegmentAttributes);
+                    _myDia.ShowMessage("11");
                     dt_Applications.Dispose();
                     dt_Processes.Dispose();
                     dt_InformationSegments.Dispose();
@@ -758,6 +888,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
+
         public bool InsertProcessAndRelations(Process_Model p, ProcAppMode mode, ObservableCollection<ISB_BIA_Applikationen> add, ObservableCollection<ISB_BIA_Applikationen> remove)
         {
             if (p.IsValid)
@@ -772,14 +903,20 @@ namespace ISB_BIA_IMPORT1.Services
                     //In Datenbank schreiben
                     using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
                     {
-                        DateTime d = DateTime.Now;
-                        //Bei Neuanlage neue ID berechnen
-                        if (mode == ProcAppMode.New)
-                            p.Prozess_Id = db.ISB_BIA_Prozesse.Max(x => x.Prozess_Id) + 1;
                         p.Benutzer = Environment.UserName;
-                        p.Datum = d;
+                        p.Datum = DateTime.Now;
                         //Nach DB-Format Mappen und einfügen
-                        db.ISB_BIA_Prozesse.InsertOnSubmit(MapProcessModelToDB(p));
+                        if (mode == ProcAppMode.Change)
+                        {
+                            db.ISB_BIA_Prozesse.Attach(MapProcessModelToDB(p), db.ISB_BIA_Prozesse.Single(x => x.Prozess_Id == p.Prozess_Id));
+                            //db.ISB_BIA_Prozesse_History.InsertOnSubmit(MapProcessModelToDBHistory(p));
+                        }
+                        else if (mode == ProcAppMode.New)
+                        {
+                            p.Prozess_Id = db.ISB_BIA_Prozesse.Max(x => x.Prozess_Id) + 1;
+                            db.ISB_BIA_Prozesse.InsertOnSubmit(MapProcessModelToDB(p));
+                            //db.ISB_BIA_Prozesse_History.InsertOnSubmit(MapProcessModelToDBHistory(p));
+                        }
                         //Logeintrag erzeugen
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
@@ -788,7 +925,7 @@ namespace ISB_BIA_IMPORT1.Services
                             Details = "Id = " + p.Prozess_Id + ", Name = '" + p.Prozess + "', Sub-Name = '" + p.Sub_Prozess + "'",
                             Id_1 = p.Prozess_Id,
                             Id_2 = 0,
-                            Datum = d,
+                            Datum = DateTime.Now,
                             Benutzer = p.Benutzer
                         };
                         db.ISB_BIA_Log.InsertOnSubmit(logEntry);
@@ -802,17 +939,28 @@ namespace ISB_BIA_IMPORT1.Services
                             i++;
                             ISB_BIA_Prozesse_Applikationen proc_app = new ISB_BIA_Prozesse_Applikationen
                             {
-                                Applikation_Id = a.Applikation_Id,
-                                Datum_Applikation = a.Datum,
-                                Prozess_Id = p.Prozess_Id,
-                                Datum_Prozess = d,
+                                Applikation = a.Applikation_Id,
+                                Prozess = p.Prozess_Id,
                                 Relation = (i <= k) ? 1 : 0,
-                                Datum = d,
+                                Datum = DateTime.Now,
                                 Benutzer = Environment.UserName
                             };
 
-                            //Schreiben in Datenbank
-                            db.ISB_BIA_Prozesse_Applikationen.InsertOnSubmit(proc_app);
+                            if (db.ISB_BIA_Prozesse_Applikationen.Count(x =>
+                                    x.Prozess == proc_app.Prozess && x.Applikation == proc_app.Applikation) > 0)
+                            {
+                                //Wenn Beziehung bereits vorhanden war
+                                ISB_BIA_Prozesse_Applikationen pa = db.ISB_BIA_Prozesse_Applikationen
+                                    .FirstOrDefault(x => x.Prozess == proc_app.Prozess && x.Applikation == proc_app.Applikation);
+                                db.ISB_BIA_Prozesse_Applikationen.Attach(proc_app,pa);
+                                //db.ISB_BIA_Prozesse_Applikationen_History.InsertOnSubmit(proc_appH);
+                            }
+                            else
+                            {
+                                //Wenn Beziehung neu
+                                db.ISB_BIA_Prozesse_Applikationen.InsertOnSubmit(proc_app);
+                                //db.ISB_BIA_Prozesse_Applikationen_History.InsertOnSubmit(proc_appH);
+                            }
 
                             string s = (proc_app.Relation == 1) ? "Verknüpfung" : "Trennung";
 
@@ -820,10 +968,10 @@ namespace ISB_BIA_IMPORT1.Services
                             {
                                 Action = "Ändern einer Prozesses-Applikations-Relation: " + s,
                                 Tabelle = _myShared.Tbl_Proz_App,
-                                Details = "Prozess Id = " + proc_app.Prozess_Id + ", App. Id = " + proc_app.Applikation_Id + ", App. Name = '" + a.IT_Anwendung_System + "'",
-                                Id_1 = proc_app.Prozess_Id,
-                                Id_2 = proc_app.Applikation_Id,
-                                Datum = d,
+                                Details = "Prozess Id = " + proc_app.Prozess + ", App. Id = " + proc_app.Applikation + ", App. Name = '" + a.IT_Anwendung_System + "'",
+                                Id_1 = proc_app.Prozess,
+                                Id_2 = proc_app.Applikation,
+                                Datum = p.Datum,
                                 Benutzer = p.Benutzer,
                             };
                             db.ISB_BIA_Log.InsertOnSubmit(logEntryRelation);
@@ -844,7 +992,7 @@ namespace ISB_BIA_IMPORT1.Services
                             "Prozess Name: " + p.Prozess + Environment.NewLine +
                             "OE: " + p.OE_Filter + Environment.NewLine +
                             "Prozessverantwortlicher: " + p.Prozessverantwortlicher + Environment.NewLine +
-                            "Datum: " + d;
+                            "Datum: " + p.Datum;
                         _myMail.Send_NotificationMail(subject, body, _myShared.Current_Environment);
                         #endregion
                         db.SubmitChanges();
@@ -1149,11 +1297,11 @@ namespace ISB_BIA_IMPORT1.Services
                         .OrderByDescending(p => p.Datum).FirstOrDefault();
 
                     List<ISB_BIA_Prozesse_Applikationen> proc_AppCurrent =
-                        db.ISB_BIA_Prozesse_Applikationen.Where(x => x.Applikation_Id == id).
-                            GroupBy(y => y.Prozess_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).ToList();
+                        db.ISB_BIA_Prozesse_Applikationen.Where(x => x.Applikation == id).
+                            GroupBy(y => y.Prozess).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).ToList();
                     //Aktive Relationen filtern
                     List<int> listIdCurrentProcesses =
-                        proc_AppCurrent.Where(x => x.Relation == 1).Select(y => y.Prozess_Id).ToList();
+                        proc_AppCurrent.Where(x => x.Relation == 1).Select(y => y.Prozess).ToList();
                     if (listIdCurrentProcesses.Count == 0)
                         linqProcs = new ObservableCollection<ISB_BIA_Prozesse>();
                     else
@@ -2207,15 +2355,15 @@ namespace ISB_BIA_IMPORT1.Services
                 using (MyLinqContextDataContext db = new MyLinqContextDataContext(_myShared.ConnectionString))
                 {
                     ObservableCollection<ISB_BIA_Delta_Analyse> result = new ObservableCollection<ISB_BIA_Delta_Analyse>();
-                    List<ISB_BIA_Prozesse_Applikationen> procAppList = db.ISB_BIA_Prozesse_Applikationen.Where(x => x.Prozess_Id == id).OrderByDescending(c => c.Datum).ToList();
-                    List<ISB_BIA_Prozesse_Applikationen> procAppListCurrent = procAppList.GroupBy(x => x.Applikation_Id)
+                    List<ISB_BIA_Prozesse_Applikationen> procAppList = db.ISB_BIA_Prozesse_Applikationen.Where(x => x.Prozess == id).OrderByDescending(c => c.Datum).ToList();
+                    List<ISB_BIA_Prozesse_Applikationen> procAppListCurrent = procAppList.GroupBy(x => x.Applikation)
                         .Select(c => c.OrderByDescending(v => v.Datum).FirstOrDefault()).ToList();
                     List<ISB_BIA_Prozesse> processes = db.ISB_BIA_Prozesse.ToList();
                     List<ISB_BIA_Applikationen> applications = db.ISB_BIA_Applikationen.ToList();
                     foreach (ISB_BIA_Prozesse_Applikationen k in procAppList)
                     {
-                        ISB_BIA_Prozesse p = processes.Where(x => x.Prozess_Id == k.Prozess_Id).GroupBy(l => l.Prozess_Id).Select(g => g.OrderByDescending(d => d.Datum).FirstOrDefault()).FirstOrDefault();
-                        ISB_BIA_Applikationen a = applications.Where(x => x.Applikation_Id == k.Applikation_Id).GroupBy(l => l.Applikation_Id).Select(g => g.OrderByDescending(d => d.Datum).FirstOrDefault()).FirstOrDefault();
+                        ISB_BIA_Prozesse p = processes.Where(x => x.Prozess_Id == k.Prozess).GroupBy(l => l.Prozess_Id).Select(g => g.OrderByDescending(d => d.Datum).FirstOrDefault()).FirstOrDefault();
+                        ISB_BIA_Applikationen a = applications.Where(x => x.Applikation_Id == k.Applikation).GroupBy(l => l.Applikation_Id).Select(g => g.OrderByDescending(d => d.Datum).FirstOrDefault()).FirstOrDefault();
 
                         ISB_BIA_Delta_Analyse n = new ISB_BIA_Delta_Analyse()
                         {
@@ -2225,7 +2373,7 @@ namespace ISB_BIA_IMPORT1.Services
                             Applikation_Id = a.Applikation_Id,
                             Applikation = a.IT_Anwendung_System,
                             SZ_1 = k.Relation,
-                            SZ_2 = (procAppListCurrent.Count(x => x.Applikation_Id == k.Applikation_Id && x.Prozess_Id == k.Prozess_Id && x.Datum == k.Datum) > 0) ? 1 : 0,
+                            //SZ_2 = (procAppListCurrent.Select(x => x.Id).ToList().Contains(k.Id)) ? 1 : 0,
                             Datum = k.Datum
                         };
                         result.Add(n);
@@ -2247,16 +2395,16 @@ namespace ISB_BIA_IMPORT1.Services
                 {
                     ObservableCollection<ISB_BIA_Delta_Analyse> result = new ObservableCollection<ISB_BIA_Delta_Analyse>();
                     //Alle Einträge für Prozess
-                    List<ISB_BIA_Prozesse_Applikationen> procAppList = db.ISB_BIA_Prozesse_Applikationen.Where(x => x.Applikation_Id == id).OrderByDescending(c => c.Datum).ToList();
+                    List<ISB_BIA_Prozesse_Applikationen> procAppList = db.ISB_BIA_Prozesse_Applikationen.Where(x => x.Applikation == id).OrderByDescending(c => c.Datum).ToList();
                     //Alle aktuellen Einträge für Prozess (später gekennzeichnet)
-                    List<ISB_BIA_Prozesse_Applikationen> procAppListCurrent = procAppList.GroupBy(x => x.Prozess_Id)
+                    List<ISB_BIA_Prozesse_Applikationen> procAppListCurrent = procAppList.GroupBy(x => x.Prozess)
                         .Select(c => c.OrderByDescending(v => v.Datum).FirstOrDefault()).ToList();
                     List<ISB_BIA_Prozesse> processes = db.ISB_BIA_Prozesse.ToList();
                     List<ISB_BIA_Applikationen> applications = db.ISB_BIA_Applikationen.ToList();
                     foreach (ISB_BIA_Prozesse_Applikationen k in procAppList)
                     {
-                        ISB_BIA_Prozesse p = processes.Where(x => x.Prozess_Id == k.Prozess_Id).GroupBy(l => l.Prozess_Id).Select(g => g.OrderByDescending(d => d.Datum).FirstOrDefault()).FirstOrDefault();
-                        ISB_BIA_Applikationen a = applications.Where(x => x.Applikation_Id == k.Applikation_Id).GroupBy(l => l.Applikation_Id).Select(g => g.OrderByDescending(d => d.Datum).FirstOrDefault()).FirstOrDefault();
+                        ISB_BIA_Prozesse p = processes.Where(x => x.Prozess_Id == k.Prozess).GroupBy(l => l.Prozess_Id).Select(g => g.OrderByDescending(d => d.Datum).FirstOrDefault()).FirstOrDefault();
+                        ISB_BIA_Applikationen a = applications.Where(x => x.Applikation_Id == k.Applikation).GroupBy(l => l.Applikation_Id).Select(g => g.OrderByDescending(d => d.Datum).FirstOrDefault()).FirstOrDefault();
                         ISB_BIA_Delta_Analyse n = new ISB_BIA_Delta_Analyse()
                         {
                             Prozess_Id = p.Prozess_Id,
@@ -2265,7 +2413,7 @@ namespace ISB_BIA_IMPORT1.Services
                             Applikation_Id = a.Applikation_Id,
                             Applikation = a.IT_Anwendung_System,
                             SZ_1 = k.Relation,
-                            SZ_2 = (procAppListCurrent.Count(x => x.Applikation_Id == k.Applikation_Id && x.Prozess_Id == k.Prozess_Id && x.Datum == k.Datum) > 0) ? 1 : 0,
+                            //SZ_2 = (procAppListCurrent.Select(x => x.Id).ToList().Contains(k.Id)) ? 1 : 0,
                             Datum = k.Datum
                         };
                         result.Add(n);
@@ -2309,8 +2457,8 @@ namespace ISB_BIA_IMPORT1.Services
                     d = d.AddDays(1);
                     //Nur aktuelle 1er Relationen bis zu dem bestimmten Datum aus Relationentabelle abfragen
                     proc_App = db.ISB_BIA_Prozesse_Applikationen.Where(q => q.Datum <= d && q.Relation == 1)
-                        .GroupBy(x => new { x.Prozess_Id, x.Applikation_Id })
-                        .Select(z => z.OrderBy(q => q.Prozess_Id).FirstOrDefault()).ToList();
+                        .GroupBy(x => new { x.Prozess, x.Applikation })
+                        .Select(z => z.OrderBy(q => q.Prozess).FirstOrDefault()).ToList();
                 }
                 if (proc_App.Count != 0)
                 {
@@ -2353,8 +2501,8 @@ namespace ISB_BIA_IMPORT1.Services
                     //Delta-Analyse für jede Prozess-Applikation Relation
                     foreach (ISB_BIA_Prozesse_Applikationen pa in proc_App)
                     {
-                        ISB_BIA_Prozesse p = processes.Where(x => x.Prozess_Id == pa.Prozess_Id).FirstOrDefault();
-                        ISB_BIA_Applikationen a = applications.Where(x => x.Applikation_Id == pa.Applikation_Id).FirstOrDefault();
+                        ISB_BIA_Prozesse p = processes.Where(x => x.Prozess_Id == pa.Prozess).FirstOrDefault();
+                        ISB_BIA_Applikationen a = applications.Where(x => x.Applikation_Id == pa.Applikation).FirstOrDefault();
                         //"Gelöschte" Prozesse / Anwendungen irrelevant
                         if (a.Aktiv == 0 || p.Aktiv == 0)
                         {
@@ -2982,6 +3130,7 @@ namespace ISB_BIA_IMPORT1.Services
             }
         }
         #endregion
+        */
     }
+    
 }
-*/

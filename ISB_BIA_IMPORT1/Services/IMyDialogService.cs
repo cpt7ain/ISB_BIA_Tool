@@ -55,8 +55,8 @@ namespace ISB_BIA_IMPORT1.Services
         /// <summary>
         /// Öffnet ein Dialogfeld eines SaveFileDialogs, um einen Dateinamen auszuwählen unter dem eine Datei gespeichert werden soll
         /// </summary>
-        /// <param name="svd"></param>
+        /// <param name="sfd"></param>
         /// <returns> Wahrheitswert ob File ausgewählt wurde oder der Vorgang abgebrochen wurde </returns>
-        bool? Save(SaveFileDialog svd);
+        bool? Save(SaveFileDialog sfd);
     }
 }

@@ -4,7 +4,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using ISB_BIA_IMPORT1.LinqDataContext;
+using ISB_BIA_IMPORT1.LinqEntityContext;
+using ISB_BIA_IMPORT1.ViewModel;
 
 namespace ISB_BIA_IMPORT1.View
 {
@@ -69,8 +70,8 @@ namespace ISB_BIA_IMPORT1.View
             {
                 if (searchResultList != null && searchResultList.Count() > 1)
                 {
-                    int lastResultId = searchResultList.FirstOrDefault().Id;
-                    searchResultList = searchResultList.Where(b => b.Id != lastResultId);
+                    int lastResultId = searchResultList.FirstOrDefault().Applikation_Id;
+                    searchResultList = searchResultList.Where(b => b.Applikation_Id != lastResultId);
                     ISB_BIA_Applikationen n = null;
                     if (searchResultList.Any())
                     {

@@ -30,9 +30,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         public ViewModelLocator()
         {
-            // Setzen des verwendeten IoC Conatiners (auf SimpleIoC)
+            // Setzen des verwendeten IoC Conatiners (auf SimpleIoC) um Referenzen auf den verwendeten IoC Container zu vermeiden
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
-
+          
             if (ViewModelBase.IsInDesignModeStatic)
             {
                 // Create design time view services and models
@@ -40,7 +40,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 SimpleIoc.Default.Register<IMyDialogService, MyDesignTimeDialogService>();
                 SimpleIoc.Default.Register<IMySharedResourceService, MyDesignTimeSharedResourceService>();
                 SimpleIoc.Default.Register<IMyNavigationService, MyDesignTimeNavigationService>();
-                SimpleIoc.Default.Register<IMyDataService, MyDesignTimeDataService>();
+                //SimpleIoc.Default.Register<IMyDataService, MyDesignTimeDataService>();
                 SimpleIoc.Default.Register<IMyExportService, MyDesignTimeExportService>();
                 SimpleIoc.Default.Register<IMyMailNotificationService, MyDesignTimeMailNotificationService>();
                 #endregion
@@ -52,12 +52,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 SimpleIoc.Default.Register<IMyDialogService, MyDialogService>();
                 SimpleIoc.Default.Register<IMySharedResourceService, MySharedResourceService>();
                 SimpleIoc.Default.Register<IMyNavigationService, MyNavigationService>();
-                SimpleIoc.Default.Register<IMyDataService, MyDataService>();
+                SimpleIoc.Default.Register<IMyDataService, MyDataService1>();
                 SimpleIoc.Default.Register<IMyExportService, MyExportService>();
                 SimpleIoc.Default.Register<IMyMailNotificationService, MyMailNotificationService>();
                 #endregion
             }
 
+            //Registrieren aller der Viewmodels
             SimpleIoc.Default.Register<Main_ViewModel>();
             SimpleIoc.Default.Register<Menu_ViewModel>();
             SimpleIoc.Default.Register<ProcessView_ViewModel>();

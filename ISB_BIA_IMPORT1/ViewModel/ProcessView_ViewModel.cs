@@ -2,7 +2,7 @@
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.Model;
-using ISB_BIA_IMPORT1.LinqDataContext;
+using ISB_BIA_IMPORT1.LinqEntityContext;
 using ISB_BIA_IMPORT1.Services;
 using System;
 using System.Collections.Generic;
@@ -271,11 +271,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
         }
 
         #region Sevices
-        IMyNavigationService _myNavi;
-        IMyDialogService _myDia;
-        IMyExportService _myExport;
-        IMyDataService _myData;
-        IMySharedResourceService _myShared;
+        private readonly IMyNavigationService _myNavi;
+        private readonly IMyDialogService _myDia;
+        private readonly IMyExportService _myExport;
+        private readonly IMyDataService _myData;
+        private readonly IMySharedResourceService _myShared;
         #endregion
 
         /// <summary>
@@ -286,10 +286,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <param name="myExportService"></param>
         /// <param name="myDataService"></param>
         /// <param name="mySharedResourceService"></param>
-        /// <param name="myMailNotificationService"></param>
         public ProcessView_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService,
             IMyExportService myExportService, IMyDataService myDataService,
-            IMySharedResourceService mySharedResourceService, IMyMailNotificationService myMailNotificationService)
+            IMySharedResourceService mySharedResourceService, IMyMailNotificationService @object)
         {
             #region Services
             _myDia = myDialogService;
@@ -310,8 +309,16 @@ namespace ISB_BIA_IMPORT1.ViewModel
             }
             else
             {
-                Messenger.Default.Register<ProcAppListMode>(this, p => { ProcessViewMode = p; });
-                Messenger.Default.Register<string>(this, MessageToken.RefreshData, s => { Refresh(); });
+                MessengerInstance.Register<NotificationMessage<ProcAppListMode>>(this, message =>
+                {
+                    if (!(message.Sender is IMyNavigationService)) return;
+                    ProcessViewMode = message.Content;
+                });
+                MessengerInstance.Register<NotificationMessage<string>>(this, MessageToken.RefreshData, message =>
+                {
+                    if (!(message.Sender is IMyNavigationService)) return;
+                    Refresh();
+                });
                 Setting = _myData.GetSettings();
                 //Laden der Daten
                 Refresh();
@@ -348,7 +355,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         override public void Cleanup()
         {
-            Messenger.Default.Unregister(this);
             SimpleIoc.Default.Unregister(this);
             base.Cleanup();
         }

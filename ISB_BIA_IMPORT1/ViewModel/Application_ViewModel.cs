@@ -2,7 +2,7 @@
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.Model;
-using ISB_BIA_IMPORT1.LinqDataContext;
+using ISB_BIA_IMPORT1.LinqEntityContext;
 using ISB_BIA_IMPORT1.Services;
 using System;
 using System.Collections.ObjectModel;
@@ -20,6 +20,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
     {
         #region Backing-Fields
         private Application_Model _currentApplication;
+        private Application_Model _oldCurrentApplication;
+
         private string _rechenzentrum = "";
         private string _rechenzentrum_Text = "";
         private bool _rechenzentrum_Check;
@@ -47,6 +49,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private Visibility _buttonSaveVisibility;
         private MyRelayCommand _exportApplicationHistory;
         private MyRelayCommand<string> _info;
+        private MyRelayCommand _resetValues;
         #endregion
 
         /// <summary>
@@ -444,7 +447,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             {
                 if (_myData.InsertApplication(CurrentApplication, Mode))
                 {
-                    bool refreshMsg = (Mode == ProcAppMode.Change) ? true : false;
+                    bool refreshMsg = (Mode == ProcAppMode.Change);
                     Cleanup();
                     _myNavi.NavigateBack(refreshMsg);
                     _myData.UnlockObject(Table_Lock_Flags.Application, CurrentApplication.Applikation_Id);
@@ -469,7 +472,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                                 XpsDocument xpsDocument = new XpsDocument(file, FileAccess.Read);
                                 FixedDocumentSequence fds = xpsDocument.GetFixedDocumentSequence();
                                 _myNavi.NavigateTo<DocumentView_ViewModel>();
-                                Messenger.Default.Send(fds);
+                                MessengerInstance.Send(new NotificationMessage<FixedDocumentSequence>(this,fds,null));
                             }
                             else
                             {
@@ -494,16 +497,53 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     }, () => Mode == ProcAppMode.Change));
         }
         /// <summary>
+        /// Zurücksetzen der Daten der aktuellen Maske (Nur bei Anwendungsbearbeitung, nicht Neuanlage)
+        /// </summary>
+        public MyRelayCommand ResetValues
+        {
+            get => _resetValues
+                   ?? (_resetValues = new MyRelayCommand(() =>
+                   {
+                       switch (CurrentTab)
+                       {
+                           case 0:
+                               CurrentApplication.IT_Anwendung_System = _oldCurrentApplication.IT_Anwendung_System;
+                               IT_Betriebsart = _oldCurrentApplication.IT_Betriebsart;
+                               IT_Betriebsart_Text = "";
+                               CurrentApplication.Wichtiges_Anwendungssystem = _oldCurrentApplication.Wichtiges_Anwendungssystem;
+                               break;
+                           case 1:
+                               Rechenzentrum = _oldCurrentApplication.Rechenzentrum;
+                               Rechenzentrum_Text = "";
+                               Server = _oldCurrentApplication.Server;
+                               Server_Text = "";
+                               Virtuelle_Maschine = _oldCurrentApplication.Virtuelle_Maschine;
+                               Virtuelle_Maschine_Text = "";
+                               Typ = _oldCurrentApplication.Typ;
+                               Typ_Text = "";
+                               break;
+                           case 2:
+                               CurrentApplication.SZ_1 = _oldCurrentApplication.SZ_1;
+                               CurrentApplication.SZ_2 = _oldCurrentApplication.SZ_2;
+                               CurrentApplication.SZ_3 = _oldCurrentApplication.SZ_3;
+                               CurrentApplication.SZ_4 = _oldCurrentApplication.SZ_4;
+                               CurrentApplication.SZ_5 = _oldCurrentApplication.SZ_5;
+                               CurrentApplication.SZ_6 = _oldCurrentApplication.SZ_6;
+                               break;
+                       }
+                   }));
+        }
+        /// <summary>
         /// Einstellungen (aus DB abgerufen)
         /// </summary>
         public ISB_BIA_Settings Setting { get; set; }
 
         #region Services
-        IMyNavigationService _myNavi;
-        IMyDialogService _myDia;
-        IMyDataService _myData;
-        IMyExportService _myExport;
-        IMySharedResourceService _myShared;
+        private readonly IMyNavigationService _myNavi;
+        private readonly IMyDialogService _myDia;
+        private readonly IMyDataService _myData;
+        private readonly IMyExportService _myExport;
+        private readonly IMySharedResourceService _myShared;
         #endregion
 
         /// <summary>
@@ -538,9 +578,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
             else
             {
                 #region Messenger Registrierungen für 2 Modi (Anwendung bearbeiten, neue Anwendung anlegen)
-                MessengerInstance.Register<int>(this, ProcAppMode.Change, p => {
+                //NotificationMessage<int> a = new NotificationMessage<int>(4,"");
+                MessengerInstance.Register<NotificationMessage<int>>(this, ProcAppMode.Change, message => {
+                    if (!(message.Sender is IMyNavigationService)) return;
                     Mode = ProcAppMode.Change;
-                    CurrentApplication = _myData.GetApplicationModelFromDB(p);
+                    CurrentApplication = _myData.GetApplicationModelFromDB(message.Content);
                     //Wenn Daten Fehlerhaft dann zurückkehren
                     if (CurrentApplication == null)
                     {
@@ -550,6 +592,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     }
                     else
                     {
+                        _oldCurrentApplication = CurrentApplication.Copy();
                         //Setzen der Properties der Textfelder der Control-abhängigen Infos 
                         Rechenzentrum = CurrentApplication.Rechenzentrum;
                         Server = CurrentApplication.Server;
@@ -558,7 +601,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
                         IT_Betriebsart = CurrentApplication.IT_Betriebsart;
                     }
                 });
-                MessengerInstance.Register<int>(this, ProcAppMode.New, p => {
+                MessengerInstance.Register<NotificationMessage<int>>(this, ProcAppMode.New, message => {
+                    if (!(message.Sender is IMyNavigationService)) return;
                     Mode = ProcAppMode.New;
                     CurrentApplication = new Application_Model();
                 });
@@ -572,7 +616,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 #endregion
                 #region Aus Settings-Tabelle Abfragen ob neue Schutzziele (5+6) aktiviert sind (angezeigt werden)
                 Setting = _myData.GetSettings();
-                SchutzzielVisible = (Setting.Neue_Schutzziele_aktiviert == "Ja") ? true : false;
+                SchutzzielVisible = (Setting.Neue_Schutzziele_aktiviert == "Ja");
                 #endregion
             }
 
@@ -583,7 +627,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         override public void Cleanup()
         {
-            Messenger.Default.Unregister(this);
             SimpleIoc.Default.Unregister(this);
             base.Cleanup();
         }

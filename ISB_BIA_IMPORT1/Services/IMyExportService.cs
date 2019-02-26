@@ -1,4 +1,4 @@
-﻿using ISB_BIA_IMPORT1.LinqDataContext;
+﻿using ISB_BIA_IMPORT1.LinqEntityContext;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 

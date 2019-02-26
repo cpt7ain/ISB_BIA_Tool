@@ -12,8 +12,8 @@ namespace ISB_BIA_IMPORT1.Model
     {
         #region Backing-Fields
         private int _attribut_Id;
-        private string _name;
-        private string _info;
+        private string _name="";
+        private string _info="";
         private string _sZ_1;
         private string _sZ_2;
         private string _sZ_3;
@@ -150,7 +150,7 @@ namespace ISB_BIA_IMPORT1.Model
         /// </summary>
         private void NotifyOnValidationError(string msg)
         {
-            Messenger.Default.Send(msg, MessageToken.ISAttributValidationError);
+            Messenger.Default.Send(new NotificationMessage<string>(this, msg, null), MessageToken.ISAttributValidationError);
         }
     }
 }

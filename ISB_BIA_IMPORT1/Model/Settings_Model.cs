@@ -9,15 +9,12 @@ namespace ISB_BIA_IMPORT1.Model
     public class Settings_Model: ObservableObject
     {
         #region Backing-Fields
-        private string _cISOS;
-        private string _admins;
-        private string _sBA_Users;
-        private string _sZ_1_Name;
-        private string _sZ_2_Name;
-        private string _sZ_3_Name;
-        private string _sZ_4_Name;
-        private string _sZ_5_Name;
-        private string _sZ_6_Name;
+        private string _sZ_1_Name="";
+        private string _sZ_2_Name="";
+        private string _sZ_3_Name="";
+        private string _sZ_4_Name="";
+        private string _sZ_5_Name="";
+        private string _sZ_6_Name="";
         private bool _neue_Schutzziele_aktiviert;
         private bool _bIA_abgeschlossen;
         private bool _sBA_abgeschlossen;
@@ -26,33 +23,9 @@ namespace ISB_BIA_IMPORT1.Model
         private bool _attribut10_aktiviert;
         private bool _multi_Save;
         private DateTime _datum;
-        private string _benutzer;
+        private string _benutzer="";
         #endregion
 
-        /// <summary>
-        /// String der "CISO User" (Semikolon separiert, werden von Einstellungen überschrieben wenn Datenmodell korrekt, wird bei Erneuereung des Datenmodells in db geschrieben)
-        /// </summary>
-        public string CISOs
-        {
-            get => _cISOS;
-            set => Set(() => CISOs, ref _cISOS, value);
-        }
-        /// <summary>
-        /// String der "Admin User" (Semikolon separiert, werden von Einstellungen überschrieben wenn Datenmodell korrekt, wird bei Erneuereung des Datenmodells in db geschrieben)
-        /// </summary>
-        public string Admins
-        {
-            get => _admins;
-            set => Set(() => Admins, ref _admins, value);
-        }
-        /// <summary>
-        /// String der "SBA User" (Semikolon separiert, werden von Einstellungen überschrieben wenn Datenmodell korrekt, wird bei Erneuereung des Datenmodells in db geschrieben)
-        /// </summary>
-        public string SBA_Users
-        {
-            get => _admins;
-            set => Set(() => SBA_Users, ref _sBA_Users, value);
-        }
         /// <summary>
         /// Name Schutzziel 1
         /// </summary>

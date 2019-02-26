@@ -1,7 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
-using ISB_BIA_IMPORT1.LinqDataContext;
+using ISB_BIA_IMPORT1.LinqEntityContext;
 using ISB_BIA_IMPORT1.Services;
 using System;
 using System.Collections.Generic;
@@ -238,10 +238,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         public ISB_BIA_Settings Setting { get; set; }
 
         #region Services
-        IMyNavigationService _myNavi;
-        IMyDialogService _myDia;
-        IMyExportService _myExport;
-        IMyDataService _myData;
+        private readonly IMyNavigationService _myNavi;
+        private readonly IMyDialogService _myDia;
+        private readonly IMyExportService _myExport;
+        private readonly IMyDataService _myData;
         #endregion
 
         /// <summary>
@@ -257,7 +257,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
             _myDia = myDialogService;
             _myExport = myExportService;
             _myData = myDataService;
-            Messenger.Default.Register<string>(this, MessageToken.RefreshData, s => { Refresh(); });
+            MessengerInstance.Register<NotificationMessage<string>>(this, MessageToken.RefreshData, message =>
+            {
+                if (!(message.Sender is IMyNavigationService)) return;
+                Refresh();
+            });
             Setting = _myData.GetSettings();
             Refresh();
         }
@@ -287,7 +291,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         override public void Cleanup()
         {
-            Messenger.Default.Unregister(this);
             SimpleIoc.Default.Unregister(this);
             base.Cleanup();
         }

@@ -1,0 +1,787 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="DataModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="ISB_BIA_Applikationen">
+          <Key>
+            <PropertyRef Name="Applikation_Id" />
+            <PropertyRef Name="Datum" />
+          </Key>
+          <Property Name="Applikation_Id" Type="int" Nullable="false" />
+          <Property Name="Rechenzentrum" Type="nvarchar" MaxLength="350" Nullable="false" />
+          <Property Name="Server" Type="nvarchar" MaxLength="350" Nullable="false" />
+          <Property Name="Virtuelle_Maschine" Type="nvarchar" MaxLength="350" Nullable="false" />
+          <Property Name="Typ" Type="nvarchar" MaxLength="350" Nullable="false" />
+          <Property Name="IT_Betriebsart" Type="nvarchar" MaxLength="350" Nullable="false" />
+          <Property Name="IT_Anwendung_System" Type="nvarchar" MaxLength="350" Nullable="false" />
+          <Property Name="Wichtiges_Anwendungssystem" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="SZ_1" Type="int" Nullable="false" />
+          <Property Name="SZ_2" Type="int" Nullable="false" />
+          <Property Name="SZ_3" Type="int" Nullable="false" />
+          <Property Name="SZ_4" Type="int" Nullable="false" />
+          <Property Name="SZ_5" Type="int" Nullable="false" />
+          <Property Name="SZ_6" Type="int" Nullable="false" />
+          <Property Name="Aktiv" Type="int" Nullable="false" />
+          <Property Name="Datum" Type="datetime" Nullable="false" />
+          <Property Name="Benutzer" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ISB_BIA_Delta_Analyse">
+          <Key>
+            <PropertyRef Name="Prozess_Id" />
+            <PropertyRef Name="Applikation_Id" />
+          </Key>
+          <Property Name="Prozess_Id" Type="int" Nullable="false" />
+          <Property Name="Prozess" Type="varchar" MaxLength="350" Nullable="false" />
+          <Property Name="Sub_Prozess" Type="varchar" MaxLength="350" Nullable="false" />
+          <Property Name="Datum_Prozess" Type="datetime" Nullable="false" />
+          <Property Name="Applikation_Id" Type="int" Nullable="false" />
+          <Property Name="Applikation" Type="varchar" MaxLength="350" Nullable="false" />
+          <Property Name="Datum_Applikation" Type="datetime" Nullable="false" />
+          <Property Name="SZ_1" Type="int" Nullable="false" />
+          <Property Name="SZ_2" Type="int" Nullable="false" />
+          <Property Name="SZ_3" Type="int" Nullable="false" />
+          <Property Name="SZ_4" Type="int" Nullable="false" />
+          <Property Name="SZ_5" Type="int" Nullable="false" />
+          <Property Name="SZ_6" Type="int" Nullable="false" />
+          <Property Name="Datum" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ISB_BIA_Informationssegmente">
+          <Key>
+            <PropertyRef Name="Informationssegment_Id" />
+            <PropertyRef Name="Datum" />
+          </Key>
+          <Property Name="Informationssegment_Id" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Segment" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="Beschreibung" Type="varchar" MaxLength="2000" Nullable="false" />
+          <Property Name="Mögliche_Segmentinhalte" Type="varchar" MaxLength="2000" Nullable="false" />
+          <Property Name="Attribut_1" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Attribut_2" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Attribut_3" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Attribut_4" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Attribut_5" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Attribut_6" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Attribut_7" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Attribut_8" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Attribut_9" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Attribut_10" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Datum" Type="datetime" Nullable="false" />
+          <Property Name="Benutzer" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ISB_BIA_Informationssegmente_Attribute">
+          <Key>
+            <PropertyRef Name="Attribut_Id" />
+            <PropertyRef Name="Datum" />
+          </Key>
+          <Property Name="Attribut_Id" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="Info" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="SZ_1" Type="int" Nullable="false" />
+          <Property Name="SZ_2" Type="int" Nullable="false" />
+          <Property Name="SZ_3" Type="int" Nullable="false" />
+          <Property Name="SZ_4" Type="int" Nullable="false" />
+          <Property Name="SZ_5" Type="int" Nullable="false" />
+          <Property Name="SZ_6" Type="int" Nullable="false" />
+          <Property Name="Datum" Type="datetime" Nullable="false" />
+          <Property Name="Benutzer" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ISB_BIA_Lock">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Table_Flag" Type="int" Nullable="false" />
+          <Property Name="Object_Id" Type="int" Nullable="false" />
+          <Property Name="Datum" Type="datetime" Nullable="false" />
+          <Property Name="BenutzerNnVn" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Benutzer" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ISB_BIA_Log">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Action" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="Tabelle" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="Details" Type="varchar" MaxLength="1000" Nullable="false" />
+          <Property Name="Id_1" Type="int" Nullable="false" />
+          <Property Name="Id_2" Type="int" Nullable="false" />
+          <Property Name="Datum" Type="datetime" Nullable="false" />
+          <Property Name="Benutzer" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ISB_BIA_OEs">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OE_Name" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="OE_Nummer" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="Datum" Type="datetime" Nullable="false" />
+          <Property Name="Benutzer" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ISB_BIA_Prozesse">
+          <Key>
+            <PropertyRef Name="Prozess_Id" />
+            <PropertyRef Name="Datum" />
+          </Key>
+          <Property Name="Prozess_Id" Type="int" Nullable="false" />
+          <Property Name="OE_Filter" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="Prozess" Type="nvarchar" MaxLength="350" Nullable="false" />
+          <Property Name="Sub_Prozess" Type="nvarchar" MaxLength="350" Nullable="false" />
+          <Property Name="Prozessverantwortlicher" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Kritischer_Prozess" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="Kritikalität_des_Prozesses" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="Reifegrad_des_Prozesses" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="Regulatorisch" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="Reputatorisch" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="Finanziell" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="SZ_1" Type="int" Nullable="false" />
+          <Property Name="SZ_2" Type="int" Nullable="false" />
+          <Property Name="SZ_3" Type="int" Nullable="false" />
+          <Property Name="SZ_4" Type="int" Nullable="false" />
+          <Property Name="SZ_5" Type="int" Nullable="false" />
+          <Property Name="SZ_6" Type="int" Nullable="false" />
+          <Property Name="Vorgelagerte_Prozesse" Type="nvarchar" MaxLength="350" Nullable="false" />
+          <Property Name="Nachgelagerte_Prozesse" Type="nvarchar" MaxLength="350" Nullable="false" />
+          <Property Name="Servicezeit_Helpdesk" Type="nvarchar" MaxLength="350" Nullable="false" />
+          <Property Name="RPO_Datenverlustzeit_Recovery_Point_Objective" Type="int" Nullable="false" />
+          <Property Name="RTO_Wiederanlaufzeit_Recovery_Time_Objective" Type="int" Nullable="false" />
+          <Property Name="RTO_Wiederanlaufzeit_Recovery_Time_Objective_Notfall" Type="int" Nullable="false" />
+          <Property Name="Relevantes_IS_1" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Relevantes_IS_2" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Relevantes_IS_3" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Relevantes_IS_4" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Relevantes_IS_5" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Aktiv" Type="int" Nullable="false" />
+          <Property Name="Datum" Type="datetime" Nullable="false" />
+          <Property Name="Benutzer" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ISB_BIA_Prozesse_Applikationen">
+          <Key>
+            <PropertyRef Name="Prozess_Id" />
+            <PropertyRef Name="Applikation_Id" />
+            <PropertyRef Name="Datum" />
+          </Key>
+          <Property Name="Prozess_Id" Type="int" Nullable="false" />
+          <Property Name="Datum_Prozess" Type="datetime" Nullable="false" />
+          <Property Name="Applikation_Id" Type="int" Nullable="false" />
+          <Property Name="Datum_Applikation" Type="datetime" Nullable="false" />
+          <Property Name="Relation" Type="int" Nullable="false" />
+          <Property Name="Datum" Type="datetime" Nullable="false" />
+          <Property Name="Benutzer" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ISB_BIA_Settings">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SZ_1_Name" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="SZ_2_Name" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="SZ_3_Name" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="SZ_4_Name" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="SZ_5_Name" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="SZ_6_Name" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Neue_Schutzziele_aktiviert" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="BIA_abgeschlossen" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="SBA_abgeschlossen" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Delta_abgeschlossen" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Attribut9_aktiviert" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Attribut10_aktiviert" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Multi_Save" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Datum" Type="datetime" Nullable="false" />
+          <Property Name="Benutzer" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <Association Name="FK__ISB_BIA_Delta_An__5761E1AA">
+          <End Role="ISB_BIA_Prozesse" Type="Self.ISB_BIA_Prozesse" Multiplicity="1" />
+          <End Role="ISB_BIA_Delta_Analyse" Type="Self.ISB_BIA_Delta_Analyse" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ISB_BIA_Prozesse">
+              <PropertyRef Name="Prozess_Id" />
+              <PropertyRef Name="Datum" />
+            </Principal>
+            <Dependent Role="ISB_BIA_Delta_Analyse">
+              <PropertyRef Name="Prozess_Id" />
+              <PropertyRef Name="Datum_Prozess" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ISB_BIA_Delta_An__585605E3">
+          <End Role="ISB_BIA_Applikationen" Type="Self.ISB_BIA_Applikationen" Multiplicity="1" />
+          <End Role="ISB_BIA_Delta_Analyse" Type="Self.ISB_BIA_Delta_Analyse" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ISB_BIA_Applikationen">
+              <PropertyRef Name="Applikation_Id" />
+              <PropertyRef Name="Datum" />
+            </Principal>
+            <Dependent Role="ISB_BIA_Delta_Analyse">
+              <PropertyRef Name="Applikation_Id" />
+              <PropertyRef Name="Datum_Applikation" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ISB_BIA_Prozesse__529D2C8D">
+          <End Role="ISB_BIA_Prozesse" Type="Self.ISB_BIA_Prozesse" Multiplicity="1" />
+          <End Role="ISB_BIA_Prozesse_Applikationen" Type="Self.ISB_BIA_Prozesse_Applikationen" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ISB_BIA_Prozesse">
+              <PropertyRef Name="Prozess_Id" />
+              <PropertyRef Name="Datum" />
+            </Principal>
+            <Dependent Role="ISB_BIA_Prozesse_Applikationen">
+              <PropertyRef Name="Prozess_Id" />
+              <PropertyRef Name="Datum_Prozess" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ISB_BIA_Prozesse__539150C6">
+          <End Role="ISB_BIA_Applikationen" Type="Self.ISB_BIA_Applikationen" Multiplicity="1" />
+          <End Role="ISB_BIA_Prozesse_Applikationen" Type="Self.ISB_BIA_Prozesse_Applikationen" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ISB_BIA_Applikationen">
+              <PropertyRef Name="Applikation_Id" />
+              <PropertyRef Name="Datum" />
+            </Principal>
+            <Dependent Role="ISB_BIA_Prozesse_Applikationen">
+              <PropertyRef Name="Applikation_Id" />
+              <PropertyRef Name="Datum_Applikation" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="DataModelStoreContainer">
+          <EntitySet Name="ISB_BIA_Applikationen" EntityType="Self.ISB_BIA_Applikationen" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ISB_BIA_Delta_Analyse" EntityType="Self.ISB_BIA_Delta_Analyse" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ISB_BIA_Informationssegmente" EntityType="Self.ISB_BIA_Informationssegmente" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ISB_BIA_Informationssegmente_Attribute" EntityType="Self.ISB_BIA_Informationssegmente_Attribute" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ISB_BIA_Lock" EntityType="Self.ISB_BIA_Lock" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ISB_BIA_Log" EntityType="Self.ISB_BIA_Log" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ISB_BIA_OEs" EntityType="Self.ISB_BIA_OEs" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ISB_BIA_Prozesse" EntityType="Self.ISB_BIA_Prozesse" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ISB_BIA_Prozesse_Applikationen" EntityType="Self.ISB_BIA_Prozesse_Applikationen" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ISB_BIA_Settings" EntityType="Self.ISB_BIA_Settings" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__ISB_BIA_Delta_An__5761E1AA" Association="Self.FK__ISB_BIA_Delta_An__5761E1AA">
+            <End Role="ISB_BIA_Prozesse" EntitySet="ISB_BIA_Prozesse" />
+            <End Role="ISB_BIA_Delta_Analyse" EntitySet="ISB_BIA_Delta_Analyse" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ISB_BIA_Delta_An__585605E3" Association="Self.FK__ISB_BIA_Delta_An__585605E3">
+            <End Role="ISB_BIA_Applikationen" EntitySet="ISB_BIA_Applikationen" />
+            <End Role="ISB_BIA_Delta_Analyse" EntitySet="ISB_BIA_Delta_Analyse" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ISB_BIA_Prozesse__529D2C8D" Association="Self.FK__ISB_BIA_Prozesse__529D2C8D">
+            <End Role="ISB_BIA_Prozesse" EntitySet="ISB_BIA_Prozesse" />
+            <End Role="ISB_BIA_Prozesse_Applikationen" EntitySet="ISB_BIA_Prozesse_Applikationen" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ISB_BIA_Prozesse__539150C6" Association="Self.FK__ISB_BIA_Prozesse__539150C6">
+            <End Role="ISB_BIA_Applikationen" EntitySet="ISB_BIA_Applikationen" />
+            <End Role="ISB_BIA_Prozesse_Applikationen" EntitySet="ISB_BIA_Prozesse_Applikationen" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="DataModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="ISB_BIA_Applikationen">
+          <Key>
+            <PropertyRef Name="Applikation_Id" />
+            <PropertyRef Name="Datum" />
+          </Key>
+          <Property Name="Applikation_Id" Type="Int32" Nullable="false" />
+          <Property Name="Rechenzentrum" Type="String" MaxLength="350" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Server" Type="String" MaxLength="350" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Virtuelle_Maschine" Type="String" MaxLength="350" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Typ" Type="String" MaxLength="350" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="IT_Betriebsart" Type="String" MaxLength="350" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="IT_Anwendung_System" Type="String" MaxLength="350" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Wichtiges_Anwendungssystem" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="SZ_1" Type="Int32" Nullable="false" />
+          <Property Name="SZ_2" Type="Int32" Nullable="false" />
+          <Property Name="SZ_3" Type="Int32" Nullable="false" />
+          <Property Name="SZ_4" Type="Int32" Nullable="false" />
+          <Property Name="SZ_5" Type="Int32" Nullable="false" />
+          <Property Name="SZ_6" Type="Int32" Nullable="false" />
+          <Property Name="Aktiv" Type="Int32" Nullable="false" />
+          <Property Name="Datum" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Benutzer" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="ISB_BIA_Delta_Analyse" Relationship="Self.FK__ISB_BIA_Delta_An__372A1C42" FromRole="ISB_BIA_Applikationen" ToRole="ISB_BIA_Delta_Analyse" />
+          <NavigationProperty Name="ISB_BIA_Prozesse_Applikationen" Relationship="Self.FK__ISB_BIA_Prozesse__32656725" FromRole="ISB_BIA_Applikationen" ToRole="ISB_BIA_Prozesse_Applikationen" />
+        </EntityType>
+        <EntityType Name="ISB_BIA_Delta_Analyse">
+          <Key>
+            <PropertyRef Name="Prozess_Id" />
+            <PropertyRef Name="Applikation_Id" />
+          </Key>
+          <Property Name="Prozess_Id" Type="Int32" Nullable="false" />
+          <Property Name="Prozess" Type="String" MaxLength="350" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Sub_Prozess" Type="String" MaxLength="350" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Datum_Prozess" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Applikation_Id" Type="Int32" Nullable="false" />
+          <Property Name="Applikation" Type="String" MaxLength="350" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Datum_Applikation" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="SZ_1" Type="Int32" Nullable="false" />
+          <Property Name="SZ_2" Type="Int32" Nullable="false" />
+          <Property Name="SZ_3" Type="Int32" Nullable="false" />
+          <Property Name="SZ_4" Type="Int32" Nullable="false" />
+          <Property Name="SZ_5" Type="Int32" Nullable="false" />
+          <Property Name="SZ_6" Type="Int32" Nullable="false" />
+          <Property Name="Datum" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="ISB_BIA_Applikationen" Relationship="Self.FK__ISB_BIA_Delta_An__372A1C42" FromRole="ISB_BIA_Delta_Analyse" ToRole="ISB_BIA_Applikationen" />
+          <NavigationProperty Name="ISB_BIA_Prozesse" Relationship="Self.FK__ISB_BIA_Delta_An__3635F809" FromRole="ISB_BIA_Delta_Analyse" ToRole="ISB_BIA_Prozesse" />
+        </EntityType>
+        <EntityType Name="ISB_BIA_Informationssegmente">
+          <Key>
+            <PropertyRef Name="Informationssegment_Id" />
+            <PropertyRef Name="Datum" />
+          </Key>
+          <Property Name="Informationssegment_Id" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Segment" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Beschreibung" Type="String" MaxLength="2000" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Mögliche_Segmentinhalte" Type="String" MaxLength="2000" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Attribut_1" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Attribut_2" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Attribut_3" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Attribut_4" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Attribut_5" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Attribut_6" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Attribut_7" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Attribut_8" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Attribut_9" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Attribut_10" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Datum" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Benutzer" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ISB_BIA_Informationssegmente_Attribute">
+          <Key>
+            <PropertyRef Name="Attribut_Id" />
+            <PropertyRef Name="Datum" />
+          </Key>
+          <Property Name="Attribut_Id" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Info" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SZ_1" Type="Int32" Nullable="false" />
+          <Property Name="SZ_2" Type="Int32" Nullable="false" />
+          <Property Name="SZ_3" Type="Int32" Nullable="false" />
+          <Property Name="SZ_4" Type="Int32" Nullable="false" />
+          <Property Name="SZ_5" Type="Int32" Nullable="false" />
+          <Property Name="SZ_6" Type="Int32" Nullable="false" />
+          <Property Name="Datum" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Benutzer" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ISB_BIA_Lock">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Table_Flag" Type="Int32" Nullable="false" />
+          <Property Name="Object_Id" Type="Int32" Nullable="false" />
+          <Property Name="Datum" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="BenutzerNnVn" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Benutzer" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ISB_BIA_Log">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Action" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Tabelle" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Details" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Id_1" Type="Int32" Nullable="false" />
+          <Property Name="Id_2" Type="Int32" Nullable="false" />
+          <Property Name="Datum" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Benutzer" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ISB_BIA_OEs">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OE_Name" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="OE_Nummer" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Datum" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Benutzer" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ISB_BIA_Prozesse">
+          <Key>
+            <PropertyRef Name="Prozess_Id" />
+            <PropertyRef Name="Datum" />
+          </Key>
+          <Property Name="Prozess_Id" Type="Int32" Nullable="false" />
+          <Property Name="OE_Filter" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Prozess" Type="String" MaxLength="350" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Sub_Prozess" Type="String" MaxLength="350" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Prozessverantwortlicher" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Kritischer_Prozess" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Kritikalität_des_Prozesses" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Reifegrad_des_Prozesses" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Regulatorisch" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Reputatorisch" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Finanziell" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="SZ_1" Type="Int32" Nullable="false" />
+          <Property Name="SZ_2" Type="Int32" Nullable="false" />
+          <Property Name="SZ_3" Type="Int32" Nullable="false" />
+          <Property Name="SZ_4" Type="Int32" Nullable="false" />
+          <Property Name="SZ_5" Type="Int32" Nullable="false" />
+          <Property Name="SZ_6" Type="Int32" Nullable="false" />
+          <Property Name="Vorgelagerte_Prozesse" Type="String" MaxLength="350" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Nachgelagerte_Prozesse" Type="String" MaxLength="350" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Servicezeit_Helpdesk" Type="String" MaxLength="350" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="RPO_Datenverlustzeit_Recovery_Point_Objective" Type="Int32" Nullable="false" />
+          <Property Name="RTO_Wiederanlaufzeit_Recovery_Time_Objective" Type="Int32" Nullable="false" />
+          <Property Name="RTO_Wiederanlaufzeit_Recovery_Time_Objective_Notfall" Type="Int32" Nullable="false" />
+          <Property Name="Relevantes_IS_1" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Relevantes_IS_2" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Relevantes_IS_3" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Relevantes_IS_4" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Relevantes_IS_5" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Aktiv" Type="Int32" Nullable="false" />
+          <Property Name="Datum" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Benutzer" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="ISB_BIA_Delta_Analyse" Relationship="Self.FK__ISB_BIA_Delta_An__3635F809" FromRole="ISB_BIA_Prozesse" ToRole="ISB_BIA_Delta_Analyse" />
+          <NavigationProperty Name="ISB_BIA_Prozesse_Applikationen" Relationship="Self.FK__ISB_BIA_Prozesse__317142EC" FromRole="ISB_BIA_Prozesse" ToRole="ISB_BIA_Prozesse_Applikationen" />
+        </EntityType>
+        <EntityType Name="ISB_BIA_Prozesse_Applikationen">
+          <Key>
+            <PropertyRef Name="Prozess_Id" />
+            <PropertyRef Name="Applikation_Id" />
+            <PropertyRef Name="Datum" />
+          </Key>
+          <Property Name="Prozess_Id" Type="Int32" Nullable="false" />
+          <Property Name="Datum_Prozess" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Applikation_Id" Type="Int32" Nullable="false" />
+          <Property Name="Datum_Applikation" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Relation" Type="Int32" Nullable="false" />
+          <Property Name="Datum" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Benutzer" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="ISB_BIA_Applikationen" Relationship="Self.FK__ISB_BIA_Prozesse__32656725" FromRole="ISB_BIA_Prozesse_Applikationen" ToRole="ISB_BIA_Applikationen" />
+          <NavigationProperty Name="ISB_BIA_Prozesse" Relationship="Self.FK__ISB_BIA_Prozesse__317142EC" FromRole="ISB_BIA_Prozesse_Applikationen" ToRole="ISB_BIA_Prozesse" />
+        </EntityType>
+        <EntityType Name="ISB_BIA_Settings">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SZ_1_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SZ_2_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SZ_3_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SZ_4_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SZ_5_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SZ_6_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Neue_Schutzziele_aktiviert" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="BIA_abgeschlossen" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SBA_abgeschlossen" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Delta_abgeschlossen" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Attribut9_aktiviert" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Attribut10_aktiviert" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Multi_Save" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Datum" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Benutzer" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <Association Name="FK__ISB_BIA_Delta_An__372A1C42">
+          <End Role="ISB_BIA_Applikationen" Type="Self.ISB_BIA_Applikationen" Multiplicity="1" />
+          <End Role="ISB_BIA_Delta_Analyse" Type="Self.ISB_BIA_Delta_Analyse" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ISB_BIA_Applikationen">
+              <PropertyRef Name="Applikation_Id" />
+              <PropertyRef Name="Datum" />
+            </Principal>
+            <Dependent Role="ISB_BIA_Delta_Analyse">
+              <PropertyRef Name="Applikation_Id" />
+              <PropertyRef Name="Datum_Applikation" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ISB_BIA_Prozesse__32656725">
+          <End Role="ISB_BIA_Applikationen" Type="Self.ISB_BIA_Applikationen" Multiplicity="1" />
+          <End Role="ISB_BIA_Prozesse_Applikationen" Type="Self.ISB_BIA_Prozesse_Applikationen" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ISB_BIA_Applikationen">
+              <PropertyRef Name="Applikation_Id" />
+              <PropertyRef Name="Datum" />
+            </Principal>
+            <Dependent Role="ISB_BIA_Prozesse_Applikationen">
+              <PropertyRef Name="Applikation_Id" />
+              <PropertyRef Name="Datum_Applikation" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ISB_BIA_Delta_An__3635F809">
+          <End Role="ISB_BIA_Prozesse" Type="Self.ISB_BIA_Prozesse" Multiplicity="1" />
+          <End Role="ISB_BIA_Delta_Analyse" Type="Self.ISB_BIA_Delta_Analyse" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ISB_BIA_Prozesse">
+              <PropertyRef Name="Prozess_Id" />
+              <PropertyRef Name="Datum" />
+            </Principal>
+            <Dependent Role="ISB_BIA_Delta_Analyse">
+              <PropertyRef Name="Prozess_Id" />
+              <PropertyRef Name="Datum_Prozess" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ISB_BIA_Prozesse__317142EC">
+          <End Role="ISB_BIA_Prozesse" Type="Self.ISB_BIA_Prozesse" Multiplicity="1" />
+          <End Role="ISB_BIA_Prozesse_Applikationen" Type="Self.ISB_BIA_Prozesse_Applikationen" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ISB_BIA_Prozesse">
+              <PropertyRef Name="Prozess_Id" />
+              <PropertyRef Name="Datum" />
+            </Principal>
+            <Dependent Role="ISB_BIA_Prozesse_Applikationen">
+              <PropertyRef Name="Prozess_Id" />
+              <PropertyRef Name="Datum_Prozess" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="DataEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="ISB_BIA_Applikationen" EntityType="Self.ISB_BIA_Applikationen" />
+          <EntitySet Name="ISB_BIA_Delta_Analyse" EntityType="Self.ISB_BIA_Delta_Analyse" />
+          <EntitySet Name="ISB_BIA_Informationssegmente" EntityType="Self.ISB_BIA_Informationssegmente" />
+          <EntitySet Name="ISB_BIA_Informationssegmente_Attribute" EntityType="Self.ISB_BIA_Informationssegmente_Attribute" />
+          <EntitySet Name="ISB_BIA_Lock" EntityType="Self.ISB_BIA_Lock" />
+          <EntitySet Name="ISB_BIA_Log" EntityType="Self.ISB_BIA_Log" />
+          <EntitySet Name="ISB_BIA_OEs" EntityType="Self.ISB_BIA_OEs" />
+          <EntitySet Name="ISB_BIA_Prozesse" EntityType="Self.ISB_BIA_Prozesse" />
+          <EntitySet Name="ISB_BIA_Prozesse_Applikationen" EntityType="Self.ISB_BIA_Prozesse_Applikationen" />
+          <EntitySet Name="ISB_BIA_Settings" EntityType="Self.ISB_BIA_Settings" />
+          <AssociationSet Name="FK__ISB_BIA_Delta_An__372A1C42" Association="Self.FK__ISB_BIA_Delta_An__372A1C42">
+            <End Role="ISB_BIA_Applikationen" EntitySet="ISB_BIA_Applikationen" />
+            <End Role="ISB_BIA_Delta_Analyse" EntitySet="ISB_BIA_Delta_Analyse" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ISB_BIA_Prozesse__32656725" Association="Self.FK__ISB_BIA_Prozesse__32656725">
+            <End Role="ISB_BIA_Applikationen" EntitySet="ISB_BIA_Applikationen" />
+            <End Role="ISB_BIA_Prozesse_Applikationen" EntitySet="ISB_BIA_Prozesse_Applikationen" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ISB_BIA_Delta_An__3635F809" Association="Self.FK__ISB_BIA_Delta_An__3635F809">
+            <End Role="ISB_BIA_Prozesse" EntitySet="ISB_BIA_Prozesse" />
+            <End Role="ISB_BIA_Delta_Analyse" EntitySet="ISB_BIA_Delta_Analyse" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ISB_BIA_Prozesse__317142EC" Association="Self.FK__ISB_BIA_Prozesse__317142EC">
+            <End Role="ISB_BIA_Prozesse" EntitySet="ISB_BIA_Prozesse" />
+            <End Role="ISB_BIA_Prozesse_Applikationen" EntitySet="ISB_BIA_Prozesse_Applikationen" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="DataModelStoreContainer" CdmEntityContainer="DataEntities">
+          <EntitySetMapping Name="ISB_BIA_Applikationen">
+            <EntityTypeMapping TypeName="DataModel.ISB_BIA_Applikationen">
+              <MappingFragment StoreEntitySet="ISB_BIA_Applikationen">
+                <ScalarProperty Name="Applikation_Id" ColumnName="Applikation_Id" />
+                <ScalarProperty Name="Rechenzentrum" ColumnName="Rechenzentrum" />
+                <ScalarProperty Name="Server" ColumnName="Server" />
+                <ScalarProperty Name="Virtuelle_Maschine" ColumnName="Virtuelle_Maschine" />
+                <ScalarProperty Name="Typ" ColumnName="Typ" />
+                <ScalarProperty Name="IT_Betriebsart" ColumnName="IT_Betriebsart" />
+                <ScalarProperty Name="IT_Anwendung_System" ColumnName="IT_Anwendung_System" />
+                <ScalarProperty Name="Wichtiges_Anwendungssystem" ColumnName="Wichtiges_Anwendungssystem" />
+                <ScalarProperty Name="SZ_1" ColumnName="SZ_1" />
+                <ScalarProperty Name="SZ_2" ColumnName="SZ_2" />
+                <ScalarProperty Name="SZ_3" ColumnName="SZ_3" />
+                <ScalarProperty Name="SZ_4" ColumnName="SZ_4" />
+                <ScalarProperty Name="SZ_5" ColumnName="SZ_5" />
+                <ScalarProperty Name="SZ_6" ColumnName="SZ_6" />
+                <ScalarProperty Name="Aktiv" ColumnName="Aktiv" />
+                <ScalarProperty Name="Datum" ColumnName="Datum" />
+                <ScalarProperty Name="Benutzer" ColumnName="Benutzer" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ISB_BIA_Delta_Analyse">
+            <EntityTypeMapping TypeName="DataModel.ISB_BIA_Delta_Analyse">
+              <MappingFragment StoreEntitySet="ISB_BIA_Delta_Analyse">
+                <ScalarProperty Name="Prozess_Id" ColumnName="Prozess_Id" />
+                <ScalarProperty Name="Prozess" ColumnName="Prozess" />
+                <ScalarProperty Name="Sub_Prozess" ColumnName="Sub_Prozess" />
+                <ScalarProperty Name="Datum_Prozess" ColumnName="Datum_Prozess" />
+                <ScalarProperty Name="Applikation_Id" ColumnName="Applikation_Id" />
+                <ScalarProperty Name="Applikation" ColumnName="Applikation" />
+                <ScalarProperty Name="Datum_Applikation" ColumnName="Datum_Applikation" />
+                <ScalarProperty Name="SZ_1" ColumnName="SZ_1" />
+                <ScalarProperty Name="SZ_2" ColumnName="SZ_2" />
+                <ScalarProperty Name="SZ_3" ColumnName="SZ_3" />
+                <ScalarProperty Name="SZ_4" ColumnName="SZ_4" />
+                <ScalarProperty Name="SZ_5" ColumnName="SZ_5" />
+                <ScalarProperty Name="SZ_6" ColumnName="SZ_6" />
+                <ScalarProperty Name="Datum" ColumnName="Datum" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ISB_BIA_Informationssegmente">
+            <EntityTypeMapping TypeName="DataModel.ISB_BIA_Informationssegmente">
+              <MappingFragment StoreEntitySet="ISB_BIA_Informationssegmente">
+                <ScalarProperty Name="Informationssegment_Id" ColumnName="Informationssegment_Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Segment" ColumnName="Segment" />
+                <ScalarProperty Name="Beschreibung" ColumnName="Beschreibung" />
+                <ScalarProperty Name="Mögliche_Segmentinhalte" ColumnName="Mögliche_Segmentinhalte" />
+                <ScalarProperty Name="Attribut_1" ColumnName="Attribut_1" />
+                <ScalarProperty Name="Attribut_2" ColumnName="Attribut_2" />
+                <ScalarProperty Name="Attribut_3" ColumnName="Attribut_3" />
+                <ScalarProperty Name="Attribut_4" ColumnName="Attribut_4" />
+                <ScalarProperty Name="Attribut_5" ColumnName="Attribut_5" />
+                <ScalarProperty Name="Attribut_6" ColumnName="Attribut_6" />
+                <ScalarProperty Name="Attribut_7" ColumnName="Attribut_7" />
+                <ScalarProperty Name="Attribut_8" ColumnName="Attribut_8" />
+                <ScalarProperty Name="Attribut_9" ColumnName="Attribut_9" />
+                <ScalarProperty Name="Attribut_10" ColumnName="Attribut_10" />
+                <ScalarProperty Name="Datum" ColumnName="Datum" />
+                <ScalarProperty Name="Benutzer" ColumnName="Benutzer" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ISB_BIA_Informationssegmente_Attribute">
+            <EntityTypeMapping TypeName="DataModel.ISB_BIA_Informationssegmente_Attribute">
+              <MappingFragment StoreEntitySet="ISB_BIA_Informationssegmente_Attribute">
+                <ScalarProperty Name="Attribut_Id" ColumnName="Attribut_Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Info" ColumnName="Info" />
+                <ScalarProperty Name="SZ_1" ColumnName="SZ_1" />
+                <ScalarProperty Name="SZ_2" ColumnName="SZ_2" />
+                <ScalarProperty Name="SZ_3" ColumnName="SZ_3" />
+                <ScalarProperty Name="SZ_4" ColumnName="SZ_4" />
+                <ScalarProperty Name="SZ_5" ColumnName="SZ_5" />
+                <ScalarProperty Name="SZ_6" ColumnName="SZ_6" />
+                <ScalarProperty Name="Datum" ColumnName="Datum" />
+                <ScalarProperty Name="Benutzer" ColumnName="Benutzer" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ISB_BIA_Lock">
+            <EntityTypeMapping TypeName="DataModel.ISB_BIA_Lock">
+              <MappingFragment StoreEntitySet="ISB_BIA_Lock">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Table_Flag" ColumnName="Table_Flag" />
+                <ScalarProperty Name="Object_Id" ColumnName="Object_Id" />
+                <ScalarProperty Name="Datum" ColumnName="Datum" />
+                <ScalarProperty Name="BenutzerNnVn" ColumnName="BenutzerNnVn" />
+                <ScalarProperty Name="Benutzer" ColumnName="Benutzer" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ISB_BIA_Log">
+            <EntityTypeMapping TypeName="DataModel.ISB_BIA_Log">
+              <MappingFragment StoreEntitySet="ISB_BIA_Log">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Action" ColumnName="Action" />
+                <ScalarProperty Name="Tabelle" ColumnName="Tabelle" />
+                <ScalarProperty Name="Details" ColumnName="Details" />
+                <ScalarProperty Name="Id_1" ColumnName="Id_1" />
+                <ScalarProperty Name="Id_2" ColumnName="Id_2" />
+                <ScalarProperty Name="Datum" ColumnName="Datum" />
+                <ScalarProperty Name="Benutzer" ColumnName="Benutzer" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ISB_BIA_OEs">
+            <EntityTypeMapping TypeName="DataModel.ISB_BIA_OEs">
+              <MappingFragment StoreEntitySet="ISB_BIA_OEs">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="OE_Name" ColumnName="OE_Name" />
+                <ScalarProperty Name="OE_Nummer" ColumnName="OE_Nummer" />
+                <ScalarProperty Name="Datum" ColumnName="Datum" />
+                <ScalarProperty Name="Benutzer" ColumnName="Benutzer" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ISB_BIA_Prozesse">
+            <EntityTypeMapping TypeName="DataModel.ISB_BIA_Prozesse">
+              <MappingFragment StoreEntitySet="ISB_BIA_Prozesse">
+                <ScalarProperty Name="Prozess_Id" ColumnName="Prozess_Id" />
+                <ScalarProperty Name="OE_Filter" ColumnName="OE_Filter" />
+                <ScalarProperty Name="Prozess" ColumnName="Prozess" />
+                <ScalarProperty Name="Sub_Prozess" ColumnName="Sub_Prozess" />
+                <ScalarProperty Name="Prozessverantwortlicher" ColumnName="Prozessverantwortlicher" />
+                <ScalarProperty Name="Kritischer_Prozess" ColumnName="Kritischer_Prozess" />
+                <ScalarProperty Name="Kritikalität_des_Prozesses" ColumnName="Kritikalität_des_Prozesses" />
+                <ScalarProperty Name="Reifegrad_des_Prozesses" ColumnName="Reifegrad_des_Prozesses" />
+                <ScalarProperty Name="Regulatorisch" ColumnName="Regulatorisch" />
+                <ScalarProperty Name="Reputatorisch" ColumnName="Reputatorisch" />
+                <ScalarProperty Name="Finanziell" ColumnName="Finanziell" />
+                <ScalarProperty Name="SZ_1" ColumnName="SZ_1" />
+                <ScalarProperty Name="SZ_2" ColumnName="SZ_2" />
+                <ScalarProperty Name="SZ_3" ColumnName="SZ_3" />
+                <ScalarProperty Name="SZ_4" ColumnName="SZ_4" />
+                <ScalarProperty Name="SZ_5" ColumnName="SZ_5" />
+                <ScalarProperty Name="SZ_6" ColumnName="SZ_6" />
+                <ScalarProperty Name="Vorgelagerte_Prozesse" ColumnName="Vorgelagerte_Prozesse" />
+                <ScalarProperty Name="Nachgelagerte_Prozesse" ColumnName="Nachgelagerte_Prozesse" />
+                <ScalarProperty Name="Servicezeit_Helpdesk" ColumnName="Servicezeit_Helpdesk" />
+                <ScalarProperty Name="RPO_Datenverlustzeit_Recovery_Point_Objective" ColumnName="RPO_Datenverlustzeit_Recovery_Point_Objective" />
+                <ScalarProperty Name="RTO_Wiederanlaufzeit_Recovery_Time_Objective" ColumnName="RTO_Wiederanlaufzeit_Recovery_Time_Objective" />
+                <ScalarProperty Name="RTO_Wiederanlaufzeit_Recovery_Time_Objective_Notfall" ColumnName="RTO_Wiederanlaufzeit_Recovery_Time_Objective_Notfall" />
+                <ScalarProperty Name="Relevantes_IS_1" ColumnName="Relevantes_IS_1" />
+                <ScalarProperty Name="Relevantes_IS_2" ColumnName="Relevantes_IS_2" />
+                <ScalarProperty Name="Relevantes_IS_3" ColumnName="Relevantes_IS_3" />
+                <ScalarProperty Name="Relevantes_IS_4" ColumnName="Relevantes_IS_4" />
+                <ScalarProperty Name="Relevantes_IS_5" ColumnName="Relevantes_IS_5" />
+                <ScalarProperty Name="Aktiv" ColumnName="Aktiv" />
+                <ScalarProperty Name="Datum" ColumnName="Datum" />
+                <ScalarProperty Name="Benutzer" ColumnName="Benutzer" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ISB_BIA_Prozesse_Applikationen">
+            <EntityTypeMapping TypeName="DataModel.ISB_BIA_Prozesse_Applikationen">
+              <MappingFragment StoreEntitySet="ISB_BIA_Prozesse_Applikationen">
+                <ScalarProperty Name="Prozess_Id" ColumnName="Prozess_Id" />
+                <ScalarProperty Name="Datum_Prozess" ColumnName="Datum_Prozess" />
+                <ScalarProperty Name="Applikation_Id" ColumnName="Applikation_Id" />
+                <ScalarProperty Name="Datum_Applikation" ColumnName="Datum_Applikation" />
+                <ScalarProperty Name="Relation" ColumnName="Relation" />
+                <ScalarProperty Name="Datum" ColumnName="Datum" />
+                <ScalarProperty Name="Benutzer" ColumnName="Benutzer" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ISB_BIA_Settings">
+            <EntityTypeMapping TypeName="DataModel.ISB_BIA_Settings">
+              <MappingFragment StoreEntitySet="ISB_BIA_Settings">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="SZ_1_Name" ColumnName="SZ_1_Name" />
+                <ScalarProperty Name="SZ_2_Name" ColumnName="SZ_2_Name" />
+                <ScalarProperty Name="SZ_3_Name" ColumnName="SZ_3_Name" />
+                <ScalarProperty Name="SZ_4_Name" ColumnName="SZ_4_Name" />
+                <ScalarProperty Name="SZ_5_Name" ColumnName="SZ_5_Name" />
+                <ScalarProperty Name="SZ_6_Name" ColumnName="SZ_6_Name" />
+                <ScalarProperty Name="Neue_Schutzziele_aktiviert" ColumnName="Neue_Schutzziele_aktiviert" />
+                <ScalarProperty Name="BIA_abgeschlossen" ColumnName="BIA_abgeschlossen" />
+                <ScalarProperty Name="SBA_abgeschlossen" ColumnName="SBA_abgeschlossen" />
+                <ScalarProperty Name="Delta_abgeschlossen" ColumnName="Delta_abgeschlossen" />
+                <ScalarProperty Name="Attribut9_aktiviert" ColumnName="Attribut9_aktiviert" />
+                <ScalarProperty Name="Attribut10_aktiviert" ColumnName="Attribut10_aktiviert" />
+                <ScalarProperty Name="Multi_Save" ColumnName="Multi_Save" />
+                <ScalarProperty Name="Datum" ColumnName="Datum" />
+                <ScalarProperty Name="Benutzer" ColumnName="Benutzer" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Kein" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

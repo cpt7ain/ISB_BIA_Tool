@@ -1,7 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
-using ISB_BIA_IMPORT1.LinqDataContext;
+using ISB_BIA_IMPORT1.LinqEntityContext;
 using ISB_BIA_IMPORT1.Services;
 using System.Collections.ObjectModel;
 
@@ -160,10 +160,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         public string Instruction { get; set; }
 
         #region Services
-        IMyNavigationService _myNavi;
-        IMyDialogService _myDia;
-        IMyExportService _myExport;
-        IMyDataService _myData;
+        private readonly IMyNavigationService _myNavi;
+        private readonly IMyDialogService _myDia;
+        private readonly IMyExportService _myExport;
+        private readonly IMyDataService _myData;
         #endregion
         /// <summary>
         /// Konstruktor
@@ -190,9 +190,17 @@ namespace ISB_BIA_IMPORT1.ViewModel
             else
             {
                 //Message Registrierung zur Bestimmung des Ansichtsmodus
-                Messenger.Default.Register<ProcAppListMode>(this, a => { ApplicationViewMode = a; });
+                MessengerInstance.Register<NotificationMessage<ProcAppListMode>>(this, a =>
+                {
+                    if(!(a.Sender is IMyNavigationService)) return;
+                    ApplicationViewMode = a.Content;
+                });
                 //Message Registrierung für Refreshaufforderung nach bearbeiten einer Applikation
-                Messenger.Default.Register<string>(this, MessageToken.RefreshData, a => { Refresh(); });
+                MessengerInstance.Register<NotificationMessage<string>>(this, MessageToken.RefreshData, s =>
+                {
+                    if (!(s.Sender is IMyNavigationService)) return;
+                    Refresh();
+                });
                 Refresh();
             }
 
@@ -218,7 +226,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         override public void Cleanup()
         {
-            Messenger.Default.Unregister(this);
             SimpleIoc.Default.Unregister(this);
             base.Cleanup();
         }

@@ -2,7 +2,7 @@
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.Model;
-using ISB_BIA_IMPORT1.LinqDataContext;
+using ISB_BIA_IMPORT1.LinqEntityContext;
 using ISB_BIA_IMPORT1.Services;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -129,9 +129,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
         }
 
         #region Services
-        IMyNavigationService _myNavi;
-        IMyDialogService _myDia;
-        IMyDataService _myData;
+        private readonly IMyNavigationService _myNavi;
+        private readonly IMyDialogService _myDia;
+        private readonly IMyDataService _myData;
         #endregion
 
         /// <summary>
@@ -157,15 +157,19 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 //Abrufen der Attributnamen
                 AttributeNameList = _myData.GetAttributeNamesAndInfoForIS();
                 //Message Registrierung für Bearbeitungsmodus
-                Messenger.Default.Register<int>(this, ISISAttributeMode.Edit, id => {
+                MessengerInstance.Register<NotificationMessage<int>>(this, ISISAttributeMode.Edit, idMessage =>
+                {
+                    if (!(idMessage.Sender is IMyNavigationService)) return;
                     Mode = ISISAttributeMode.Edit;
-                    CurrentSegment = _myData.GetSegmentModelFromDB(id);
-                    OldSegment = _myData.GetSegmentModelFromDB(id);
+                    CurrentSegment = _myData.GetSegmentModelFromDB(idMessage.Content);
+                    OldSegment = _myData.GetSegmentModelFromDB(idMessage.Content);
                 });
                 //Message Registrierung für Ansichtssmodus
-                Messenger.Default.Register<int>(this, ISISAttributeMode.View, id => {
+                MessengerInstance.Register<NotificationMessage<int>>(this, ISISAttributeMode.View, idMessage => 
+                {
+                    if (!(idMessage.Sender is IMyNavigationService)) return;
                     Mode = ISISAttributeMode.View;
-                    CurrentSegment = _myData.GetSegmentModelFromDB(id);
+                    CurrentSegment = _myData.GetSegmentModelFromDB(idMessage.Content);
                 });
                 //Abrfen der Einstellungen
                 Settings = _myData.GetSettings();
@@ -177,7 +181,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         override public void Cleanup()
         {
-            Messenger.Default.Unregister(this);
             SimpleIoc.Default.Unregister(this);
             base.Cleanup();
         }

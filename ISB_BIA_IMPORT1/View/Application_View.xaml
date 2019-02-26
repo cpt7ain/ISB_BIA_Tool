@@ -16,6 +16,7 @@
         <c:NumToAlphBinaryConverter x:Key="NumToAlphBinaryConverter"/>
         <c:BinaryToBrushConverter x:Key="BinaryToBrushConverter"/>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <c:ComparisonToVisConverter x:Key="ComparisonToVisConverter"/>
         <ControlTemplate x:Key="EllipseWithText" TargetType="{x:Type Button}">
             <Grid x:Name="MainGrid">
                 <Rectangle x:Name="MainRectangle" Fill="White" Stroke="Black" RadiusX="15" RadiusY="15"/>
@@ -100,20 +101,21 @@
                                 <ColumnDefinition Width="10*"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="5*"/>
+                                <RowDefinition Height="40"/>
                                 <RowDefinition Height="75*"/>
                                 <RowDefinition Height="75*"/>
                                 <RowDefinition Height="75*"/>
                                 <RowDefinition Height="5*"/>
                             </Grid.RowDefinitions>
+                            <Button Command="{Binding ResetValues}" Grid.ColumnSpan="2" Content="Maske zurücksetzen" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Visibility="{Binding Mode, Converter={StaticResource ComparisonToVisConverter}, ConverterParameter={x:Static vm:ProcAppMode.Change}}"/>
                             <Label Content="Anwendung" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" FontWeight="Bold"/>
                             <TextBox Grid.Column="2" Height="60" Grid.Row="1" Grid.ColumnSpan="2" TextWrapping="Wrap" VerticalAlignment="Center" Text="{Binding CurrentApplication.IT_Anwendung_System}"/>
                             <Label Content="Kategorie" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0" Grid.Row="2" FontWeight="Bold"/>
                             <ComboBox SelectedItem="{Binding IT_Betriebsart}" ItemsSource="{Binding IT_BetriebsartList}" Grid.Column="2" Grid.Row="2" VerticalAlignment="Center" Visibility="{Binding IT_Betriebsart_Check, Converter={StaticResource convHid}}"/>
                             <TextBox Text="{Binding IT_Betriebsart_Text}" Grid.Column="2" Grid.Row="2" VerticalAlignment="Center" TextWrapping="Wrap" Visibility="{Binding IT_Betriebsart_Check, Converter={StaticResource convVis}}"/>
-                            <CheckBox Content="Hinzufügen" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2" IsChecked="{Binding IT_Betriebsart_Check, Mode=OneWayToSource}"/>
+                            <CheckBox Content="Hinzufügen" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="2" IsChecked="{Binding IT_Betriebsart_Check, Mode=OneWayToSource}"/>
                             <TextBlock Text="Wichtiges&#x0a;Anwendungssystem" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Grid.Row="3"/>
-                            <CheckBox IsChecked="{Binding CurrentApplication.Wichtiges_Anwendungssystem}" Content="Wichtig" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="3"/>
+                            <CheckBox IsChecked="{Binding CurrentApplication.Wichtiges_Anwendungssystem}" Content="Wichtig" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="3"/>
                         </Grid>
                     </TabItem>
                     <TabItem Header="Informationsverbund" IsEnabled="False">
@@ -126,30 +128,31 @@
                                 <ColumnDefinition Width="10*"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="4*"/>
+                                <RowDefinition Height="40"/>
                                 <RowDefinition Height="60*"/>
                                 <RowDefinition Height="60*"/>
                                 <RowDefinition Height="60*"/>
                                 <RowDefinition Height="60*"/>
                                 <RowDefinition Height="4*"/>
                             </Grid.RowDefinitions>
+                            <Button Command="{Binding ResetValues}" Grid.ColumnSpan="2" Content="Maske zurücksetzen" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Visibility="{Binding Mode, Converter={StaticResource ComparisonToVisConverter}, ConverterParameter={x:Static vm:ProcAppMode.Change}}"/>
                             <Label Content="Rechenzentrum" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"/>
-                            <CheckBox Content="Hinzufügen" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" IsChecked="{Binding Rechenzentrum_Check, Mode=OneWayToSource}"/>
+                            <CheckBox Content="Hinzufügen" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="1" IsChecked="{Binding Rechenzentrum_Check, Mode=OneWayToSource}"/>
                             <ComboBox SelectedItem="{Binding Rechenzentrum}" ItemsSource="{Binding RechenzentrumList}" Grid.Column="2" Grid.Row="1" VerticalAlignment="Center" Visibility="{Binding Rechenzentrum_Check, Converter={StaticResource convHid}}"/>
                             <TextBox Text="{Binding Rechenzentrum_Text}" Grid.Column="2" Grid.Row="1" VerticalAlignment="Center" TextWrapping="Wrap" Visibility="{Binding Rechenzentrum_Check, Converter={StaticResource convVis}}"/>
 
                             <Label Content="Server" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2"/>
-                            <CheckBox Content="Hinzufügen" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2" IsChecked="{Binding Server_Check, Mode=OneWayToSource}"/>
+                            <CheckBox Content="Hinzufügen" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="2" IsChecked="{Binding Server_Check, Mode=OneWayToSource}"/>
                             <ComboBox SelectedItem="{Binding Server}" ItemsSource="{Binding ServerList}" Grid.Column="2" Grid.Row="2" VerticalAlignment="Center" Visibility="{Binding Server_Check, Converter={StaticResource convHid}}"/>
                             <TextBox Text="{Binding Server_Text}" Grid.Column="2" Grid.Row="2" VerticalAlignment="Center" TextWrapping="Wrap" Visibility="{Binding Server_Check, Converter={StaticResource convVis}}"/>
 
                             <Label Content="Virtuelle Maschine" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="3"/>
-                            <CheckBox Content="Hinzufügen"  Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="3" IsChecked="{Binding Virtuelle_Maschine_Check, Mode=OneWayToSource}"/>
+                            <CheckBox Content="Hinzufügen"  Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="3" IsChecked="{Binding Virtuelle_Maschine_Check, Mode=OneWayToSource}"/>
                             <ComboBox SelectedItem="{Binding Virtuelle_Maschine}" ItemsSource="{Binding Virtuelle_MaschineList}" Grid.Column="2" Grid.Row="3" VerticalAlignment="Center" Visibility="{Binding Virtuelle_Maschine_Check, Converter={StaticResource convHid}}"/>
                             <TextBox Text="{Binding Virtuelle_Maschine_Text}" Grid.Column="2" Grid.Row="3" VerticalAlignment="Center" TextWrapping="Wrap" Visibility="{Binding Virtuelle_Maschine_Check, Converter={StaticResource convVis}}"/>
 
                             <Label Content="Typ" Grid.Column="1"  HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="4"/>
-                            <CheckBox Content="Hinzufügen" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="4" IsChecked="{Binding Typ_Check, Mode=OneWayToSource}"/>
+                            <CheckBox Content="Hinzufügen" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="4" IsChecked="{Binding Typ_Check, Mode=OneWayToSource}"/>
                             <ComboBox SelectedItem="{Binding Typ}" ItemsSource="{Binding TypeList}" Grid.Column="2" Grid.Row="4" VerticalAlignment="Center" Visibility="{Binding Typ_Check, Converter={StaticResource convHid}}"/>
                             <TextBox Text="{Binding Typ_Text}" Grid.Column="2" Grid.Row="4" VerticalAlignment="Center" TextWrapping="Wrap" Visibility="{Binding Typ_Check, Converter={StaticResource convVis}}"/>
                         </Grid>
@@ -167,7 +170,7 @@
                                 <ColumnDefinition Width="10*"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="5*"/>
+                                <RowDefinition Height="40"/>
                                 <RowDefinition Height="25*"/>
                                 <RowDefinition Height="25*"/>
                                 <RowDefinition Height="25*"/>
@@ -177,6 +180,7 @@
                                 <RowDefinition Height="25*"/>
                                 <RowDefinition Height="5*"/>
                             </Grid.RowDefinitions>
+                            <Button Command="{Binding ResetValues}" Grid.ColumnSpan="2" Content="Maske zurücksetzen" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Visibility="{Binding Mode, Converter={StaticResource ComparisonToVisConverter}, ConverterParameter={x:Static vm:ProcAppMode.Change}}"/>
                             <Label Content="Schutzziel" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"/>
                             <Label Content="kein Schutz" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"/>
                             <Label Content="normal" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"/>

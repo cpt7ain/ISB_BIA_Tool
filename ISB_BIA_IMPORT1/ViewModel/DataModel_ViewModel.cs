@@ -1,6 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
-using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.Services;
 using Microsoft.Win32;
 using NPOI.SS.UserModel;
@@ -132,17 +131,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
         //Original & Arbeitsdatei der Quelldaten
         private string _originalFile;
         private string _workFile;
-        //SQL
-        private readonly string _sqlDropProc_App;
-        private readonly string _sqlDropProcesses;
-        private readonly string _sqlDropIS;
-        private readonly string _sqlDropISAttribut;
-        private readonly string _sqlDropSBA;
-        private readonly string _sqlDropDelta;
-        private readonly string _sqlDropLog;
-        private readonly string _sqlDropOEs;
-        private readonly string _sqlDropSettings;
-        private readonly string _sqlDropLock;
         #endregion
 
         /// <summary>
@@ -210,10 +198,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         }
 
         #region Services
-        IMyDataService _myData;
-        IMyNavigationService _myNavi;
-        IMyDialogService _myDia;
-        IMySharedResourceService _myShared;
+        private readonly IMyDataService _myData;
+        private readonly IMyNavigationService _myNavi;
+        private readonly IMyDialogService _myDia;
+        private readonly IMySharedResourceService _myShared;
         #endregion
 
         /// <summary>
@@ -234,18 +222,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             #endregion
             _originalFile = _myShared.InitialDirectory + @"\ISB_BIA-SBA.xlsx";
             _workFile = _myShared.InitialDirectory + @"\ISB_BIA-SBA_tmp.xlsx";
-            #region Tabellen Löschungs SQL Anweisungen
-            _sqlDropProc_App = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" + _myShared.Tbl_Proz_App + "') DROP Table " +_myShared.Tbl_Proz_App;
-            _sqlDropProcesses = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" +_myShared.Tbl_Prozesse + "') DROP Table " +_myShared.Tbl_Prozesse;
-            _sqlDropIS = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" +_myShared.Tbl_IS + "') DROP Table " +_myShared.Tbl_IS;
-            _sqlDropISAttribut = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" +_myShared.Tbl_IS_Attribute + "') DROP Table " +_myShared.Tbl_IS_Attribute;
-            _sqlDropSBA = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" +_myShared.Tbl_Applikationen + "') DROP Table " +_myShared.Tbl_Applikationen;
-            _sqlDropDelta = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" +_myShared.Tbl_Delta + "') DROP Table " +_myShared.Tbl_Delta;
-            _sqlDropLog = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" +_myShared.Tbl_Log + "') DROP Table " +_myShared.Tbl_Log;
-            _sqlDropOEs = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" +_myShared.Tbl_OEs + "') DROP Table " +_myShared.Tbl_OEs;
-            _sqlDropSettings = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" +_myShared.Tbl_Settings + "') DROP Table " +_myShared.Tbl_Settings;
-            _sqlDropLock = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" +_myShared.Tbl_Lock + "') DROP Table " +_myShared.Tbl_Lock;
-            #endregion
+
         }
 
 
@@ -331,220 +308,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
             }
             else
             {
-                #region SQL Strings für Erstellen der Tabellen mit Headern analog zu Excel (!Trotzdem nicht ändern, da im Code per Linq2SQL Klassenmember aufegrufen werden)
 
-                string sqlCreaProcApp =
-                    "    CREATE TABLE [dbo].[" + _myShared.Tbl_Proz_App + "] (" +
-                    "    [Id]          INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
-                    "    [Prozess] INT NOT NULL," +
-                    "    [Applikation] INT NOT NULL," +
-                    "    [Relation] INT NOT NULL," +
-                    "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
-                    "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
-                    "    UNIQUE(Prozess,Applikation,Datum)," +
-                    "); ";
-
-                //Tabellen erstellen, deren Spaltennamen den Spaltennamen des Quell-Excel-Sheets entsprechen
-                //Wenn Spaltennamen in Excel geändert werden und das Datenmodell erneuert werden soll, müssen Anpassungen
-                //im Code vorgenommen werden (Linq-to-SQL Modell erneuern, Variablenaufrufe im Code ändern)
-                string sqlCreaSBA =
-                    "CREATE TABLE[dbo].[" + _myShared.Tbl_Applikationen + "](" +
-                    "    [Id]                  INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
-                    "    [" + dt_Applications.Columns[0] + "] INT NOT NULL," +
-                    "    [" + dt_Applications.Columns[1] + "] NVARCHAR(350) NOT NULL," +
-                    "    [" + dt_Applications.Columns[2] + "] NVARCHAR(350) NOT NULL," +
-                    "    [" + dt_Applications.Columns[3] + "] NVARCHAR(350) NOT NULL," +
-                    "    [" + dt_Applications.Columns[4] + "] NVARCHAR(350) NOT NULL," +
-                    "    [" + dt_Applications.Columns[5] + "] NVARCHAR(350) NOT NULL," +
-                    "    [" + dt_Applications.Columns[6] + "] NVARCHAR(1000) NOT NULL," +
-                    "    [" + dt_Applications.Columns[7] + "] NVARCHAR(20) NOT NULL," +
-                    "    [" + dt_Applications.Columns[8] + "] INT NOT NULL," +
-                    "    [" + dt_Applications.Columns[9] + "] INT NOT NULL," +
-                    "    [" + dt_Applications.Columns[10] + "] INT NOT NULL," +
-                    "    [" + dt_Applications.Columns[11] + "] INT NOT NULL," +
-                    "    [" + dt_Applications.Columns[12] + "] INT NOT NULL," +
-                    "    [" + dt_Applications.Columns[13] + "] INT NOT NULL," +
-                    "    [Aktiv] INT NOT NULL DEFAULT(1)," +
-                    "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
-                    "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
-                    "    Unique (" + dt_Applications.Columns[0] + ",Datum)" +
-                    ");";
-
-                string sqlCreaProcesses =
-                    "CREATE TABLE[dbo].[" + _myShared.Tbl_Prozesse + "](" +
-                    "    [Id]                              INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
-                    "    [" + dt_Processes.Columns[0] + "] INT NOT NULL," +
-                    "    [" + dt_Processes.Columns[1] + "] NVARCHAR(350) NOT NULL," +
-                    "    [" + dt_Processes.Columns[2] + "] NVARCHAR(350) NOT NULL," +
-                    "    [" + dt_Processes.Columns[3] + "] NVARCHAR(350) NOT NULL," +
-                    "    [" + dt_Processes.Columns[4] + "] NVARCHAR(50) NOT NULL," +
-                    "    [" + dt_Processes.Columns[5] + "] NVARCHAR(50) NOT NULL," +
-                    "    [" + dt_Processes.Columns[6] + "] NVARCHAR(50) NOT NULL," +
-                    "    [" + dt_Processes.Columns[7] + "] NVARCHAR(50) NOT NULL," +
-                    "    [" + dt_Processes.Columns[8] + "] NVARCHAR(50) NOT NULL," +
-                    "    [" + dt_Processes.Columns[9] + "] NVARCHAR(50) NOT NULL," +
-                    "    [" + dt_Processes.Columns[10] + "] NVARCHAR(50) NOT NULL," +
-                    "    [" + dt_Processes.Columns[11] + "] INT NOT NULL," +
-                    "    [" + dt_Processes.Columns[12] + "] INT NOT NULL," +
-                    "    [" + dt_Processes.Columns[13] + "] INT NOT NULL," +
-                    "    [" + dt_Processes.Columns[14] + "] INT NOT NULL," +
-                    "    [" + dt_Processes.Columns[15] + "] INT NOT NULL," +
-                    "    [" + dt_Processes.Columns[16] + "] INT NOT NULL," +
-                    "    [" + dt_Processes.Columns[17] + "] NVARCHAR(350) NOT NULL," +
-                    "    [" + dt_Processes.Columns[18] + "] NVARCHAR(350) NOT NULL," +
-                    "    [" + dt_Processes.Columns[19] + "] NVARCHAR(350) NOT NULL," +
-                    "    [" + dt_Processes.Columns[20] + "] INT NOT NULL," +
-                    "    [" + dt_Processes.Columns[21] + "] INT NOT NULL," +
-                    "    [" + dt_Processes.Columns[22] + "] INT NOT NULL," +
-                    "    [" + dt_Processes.Columns[23] + "] NVARCHAR(50) NOT NULL," +
-                    "    [" + dt_Processes.Columns[24] + "] NVARCHAR(50) NOT NULL," +
-                    "    [" + dt_Processes.Columns[25] + "] NVARCHAR(50) NOT NULL," +
-                    "    [" + dt_Processes.Columns[26] + "] NVARCHAR(50) NOT NULL," +
-                    "    [" + dt_Processes.Columns[27] + "] NVARCHAR(50) NOT NULL," +
-                    "    [Aktiv] INT NOT NULL DEFAULT(1)," +
-                    "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59' ,120))," +
-                    "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
-                    "    Unique (" + dt_Processes.Columns[0] + ",Datum)" +
-                ");";
-
-                string sqlCreaIS =
-                    "CREATE TABLE[dbo].[" + _myShared.Tbl_IS + "](" +
-                    "    [Id]                  INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
-                    "    [" + dt_InformationSegments.Columns[0] + "] INT NOT NULL," +
-                    "    [" + dt_InformationSegments.Columns[1] + "] VARCHAR(50) NOT NULL," +
-                    "    [" + dt_InformationSegments.Columns[2] + "] VARCHAR(1000) NOT NULL," +
-                    "    [" + dt_InformationSegments.Columns[3] + "] VARCHAR(1000) NOT NULL," +
-                    "    [" + dt_InformationSegments.Columns[4] + "] VARCHAR(1000) NOT NULL," +
-                    "    [" + dt_InformationSegments.Columns[5] + "] VARCHAR(1000) NOT NULL," +
-                    "    [" + dt_InformationSegments.Columns[6] + "] VARCHAR(1000) NOT NULL," +
-                    "    [" + dt_InformationSegments.Columns[7] + "] VARCHAR(1000) NOT NULL," +
-                    "    [" + dt_InformationSegments.Columns[8] + "] VARCHAR(1000) NOT NULL," +
-                    "    [" + dt_InformationSegments.Columns[9] + "] VARCHAR(1000) NOT NULL," +
-                    "    [" + dt_InformationSegments.Columns[10] + "] VARCHAR(1000) NOT NULL," +
-                    "    [" + dt_InformationSegments.Columns[11] + "] VARCHAR(1000) NOT NULL," +
-                    "    [" + dt_InformationSegments.Columns[12] + "] VARCHAR(1000) NOT NULL," +
-                    "    [" + dt_InformationSegments.Columns[13] + "] VARCHAR(1000) NOT NULL," +
-                    "    [" + dt_InformationSegments.Columns[14] + "] VARCHAR(1000) NOT NULL," +
-                    "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
-                    "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
-                    "    Unique (" + dt_InformationSegments.Columns[0] + ", Id)" +
-                    ");";
-
-                string sqlCreaISAttribut =
-                    "CREATE TABLE[dbo].[" + _myShared.Tbl_IS_Attribute + "](" +
-                    "    [Id]                  INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
-                    "    [" + dt_InformationSegmentAttributes.Columns[0] + "] INT NOT NULL," +
-                    "    [" + dt_InformationSegmentAttributes.Columns[1] + "] VARCHAR(200) NOT NULL," +
-                    "    [" + dt_InformationSegmentAttributes.Columns[2] + "] VARCHAR(200) NOT NULL," +
-                    "    [" + dt_InformationSegmentAttributes.Columns[3] + "] INT NOT NULL," +
-                    "    [" + dt_InformationSegmentAttributes.Columns[4] + "] INT NOT NULL," +
-                    "    [" + dt_InformationSegmentAttributes.Columns[5] + "] INT NOT NULL," +
-                    "    [" + dt_InformationSegmentAttributes.Columns[6] + "] INT NOT NULL," +
-                    "    [" + dt_InformationSegmentAttributes.Columns[7] + "] INT NOT NULL," +
-                    "    [" + dt_InformationSegmentAttributes.Columns[8] + "] INT NOT NULL," +
-                    "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
-                    "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
-                    "    Unique (" + dt_InformationSegmentAttributes.Columns[0] + ", Id)" +
-                    ");";
-
-                string sqlCreaDelta =
-                    "CREATE TABLE[dbo].[" + _myShared.Tbl_Delta + "](" +
-                    "    [Id]                  INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
-                    "    [Prozess_Id] INT NOT NULL," +
-                    "    [Prozess] VARCHAR(350) NOT NULL," +
-                    "    [Sub_Prozess] VARCHAR(350) NOT NULL," +
-                    "    [Datum_Prozess] DATETIME NOT NULL," +
-                    "    [Applikation_Id] INT NOT NULL," +
-                    "    [Applikation] VARCHAR(350) NOT NULL," +
-                    "    [Datum_Applikation] DATETIME NOT NULL," +
-                    "    [SZ_1] INT NOT NULL," +
-                    "    [SZ_2] INT NOT NULL," +
-                    "    [SZ_3] INT NOT NULL," +
-                    "    [SZ_4] INT NOT NULL," +
-                    "    [SZ_5] INT NOT NULL," +
-                    "    [SZ_6] INT NOT NULL," +
-                    "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
-                    "    Unique (Prozess_Id, Applikation_Id)," +
-                    "    Foreign Key(Prozess_Id,Datum_Prozess) references [" + _myShared.Tbl_Prozesse + "](Prozess_Id,Datum)," +
-                    "    Foreign Key(Applikation_Id,Datum_Applikation) references [" + _myShared.Tbl_Applikationen + "](Applikation_Id,Datum)" +
-                    ");";
-
-                string sqlCreaLog =
-                    "CREATE TABLE[dbo].[" + _myShared.Tbl_Log + "] (" +
-                    "    [Id]                  INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
-                    "    [Action] VARCHAR(200) NOT NULL," +
-                    "    [Tabelle] VARCHAR(200) NOT NULL," +
-                    "    [Details] VARCHAR(1000) NOT NULL," +
-                    "    [Id_1] INT NOT NULL," +
-                    "    [Id_2] INT NOT NULL," +
-                    "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
-                    "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
-                    ");";
-
-                string sqlCreaOEs =
-                    "CREATE TABLE[dbo].[" + _myShared.Tbl_OEs + "] (" +
-                    "    [Id]                  INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
-                    "    [OE_Name] VARCHAR(200) NOT NULL," +
-                    "    [OE_Nummer] VARCHAR(200) NOT NULL," +
-                    "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
-                    "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
-                    "    Unique (OE_Name, OE_Nummer)" +
-                    ");";
-
-                string sqlCreaSettings =
-                    "CREATE TABLE[dbo].[" + _myShared.Tbl_Settings + "] (" +
-                    "    [Id]                  INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
-                    "    [SZ_1_Name] VARCHAR(100) NOT NULL," +
-                    "    [SZ_2_Name] VARCHAR(100) NOT NULL," +
-                    "    [SZ_3_Name] VARCHAR(100) NOT NULL," +
-                    "    [SZ_4_Name] VARCHAR(100) NOT NULL," +
-                    "    [SZ_5_Name] VARCHAR(100) NOT NULL," +
-                    "    [SZ_6_Name] VARCHAR(100) NOT NULL," +
-                    "    [Neue_Schutzziele_aktiviert] VARCHAR(10) NOT NULL," +
-                    "    [BIA_abgeschlossen] VARCHAR(10) NOT NULL," +
-                    "    [SBA_abgeschlossen] VARCHAR(10) NOT NULL," +
-                    "    [Delta_abgeschlossen] VARCHAR(10) NOT NULL," +
-                    "    [Attribut9_aktiviert] VARCHAR(10) NOT NULL," +
-                    "    [Attribut10_aktiviert] VARCHAR(10) NOT NULL," +
-                    "    [Multi_Save] VARCHAR(10) NOT NULL," +
-                    "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(19), '2018-12-31 23:59:59',120))," +
-                    "    [Benutzer] NVARCHAR(50) NOT NULL," +
-                    ");";
-
-                string sqlCreaLock =
-                    "CREATE TABLE[dbo].[" + _myShared.Tbl_Lock + "] (" +
-                    "    [Id]                  INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
-                    "    [Table_Flag] INT NOT NULL," +
-                    "    [Object_Id] INT NOT NULL," +
-                    "    [Datum] DATETIME NOT NULL," +
-                    "    [BenutzerNnVn] NVARCHAR(50) NOT NULL DEFAULT('')," +
-                    "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
-                    ");";
-                #endregion
-                List<string> sqlCommandList = new List<string>();
-                sqlCommandList.Add(_sqlDropLog);
-                sqlCommandList.Add(sqlCreaLog);
-                sqlCommandList.Add(_sqlDropDelta);
-                sqlCommandList.Add(_sqlDropProc_App);
-                sqlCommandList.Add(_sqlDropSBA);
-                sqlCommandList.Add(sqlCreaSBA);
-                sqlCommandList.Add(_sqlDropProcesses);
-                sqlCommandList.Add(sqlCreaProcesses);
-                sqlCommandList.Add(sqlCreaProcApp);
-                sqlCommandList.Add(sqlCreaDelta);
-                sqlCommandList.Add(_sqlDropIS);
-                sqlCommandList.Add(sqlCreaIS);
-                sqlCommandList.Add(_sqlDropISAttribut);
-                sqlCommandList.Add(sqlCreaISAttribut);
-                sqlCommandList.Add(_sqlDropOEs);
-                sqlCommandList.Add(sqlCreaOEs);
-                sqlCommandList.Add(_sqlDropSettings);
-                sqlCommandList.Add(sqlCreaSettings);
-                sqlCommandList.Add(_sqlDropLock);
-                sqlCommandList.Add(sqlCreaLock);
 
                 //Datenbank Operation durch Service übernommen
-                return _myData.CreateDataModel(sqlCommandList, dt_Processes, dt_Applications, dt_Relation, dt_InformationSegments, dt_InformationSegmentAttributes);               
+                return _myData.CreateDataModel(dt_Processes, dt_Applications, dt_Relation, dt_InformationSegments, dt_InformationSegmentAttributes);               
             }
         }
         #endregion
@@ -666,8 +433,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
             if (sheet != null)
             {
                 CellRangeAddress cellRange = CellRangeAddress.ValueOf(P_A_Matrix_Range);
-                dt.Columns.Add("Prozess");
-                dt.Columns.Add("Applikation");
+                dt.Columns.Add("Prozess_Id");
+                dt.Columns.Add("Applikation_Id");
                 dt.Columns.Add("Relation");
                 for (var i = cellRange.FirstRow; i <= cellRange.LastRow; i++)
                 {
@@ -811,7 +578,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         override public void Cleanup()
         {
-            Messenger.Default.Unregister(this);
             SimpleIoc.Default.Unregister(this);
             base.Cleanup();
         }

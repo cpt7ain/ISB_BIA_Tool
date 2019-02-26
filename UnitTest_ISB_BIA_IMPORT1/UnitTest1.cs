@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using GalaSoft.MvvmLight;
 using System.Collections.ObjectModel;
-using ISB_BIA_IMPORT1.LinqDataContext;
+using ISB_BIA_IMPORT1.LinqEntityContext;
 using System.Linq;
 using GalaSoft.MvvmLight.Messaging;
 using System.Collections.Generic;
@@ -32,6 +32,8 @@ namespace UnitTest_ISB_BIA_IMPORT1
         {
             MyDesignTimeDataService dsDataService = new MyDesignTimeDataService();
             ObservableCollection<ISB_BIA_Prozesse> resultProcesses = dsDataService.GetProcesses();
+            ObservableCollection<ISB_BIA_Prozesse> resultHistory = dsDataService.GetProcessHistory(1);
+
             ISB_BIA_Prozesse resultProcess = resultProcesses.FirstOrDefault();
             Process_Model resultPM = dsDataService.GetProcessModelFromDB(1);
 
@@ -84,7 +86,7 @@ namespace UnitTest_ISB_BIA_IMPORT1
             dataServiceMock.Setup(x => x.GetProcesses(It.IsAny<DateTime>())).Returns(resultProcesses);
             dataServiceMock.Setup(x => x.GetProcesses(null)).Returns(resultProcesses);
             dataServiceMock.Setup(x => x.GetProcessesByOE(It.IsAny<ObservableCollection<string>>())).Returns(resultProcesses);
-            dataServiceMock.Setup(x => x.GetProcessHistory(It.IsAny<int>())).Returns(resultProcesses);
+            dataServiceMock.Setup(x => x.GetProcessHistory(It.IsAny<int>())).Returns(resultHistory);
             dataServiceMock.Setup(x => x.GetProcessModelFromDB(It.IsAny<int>())).Returns(resultPM);
             dataServiceMock.Setup(x => x.GetProcessOwner()).Returns(dsDataService.GetProcessOwner());
             dataServiceMock.Setup(x => x.GetRechenzentrum()).Returns(dsDataService.GetRechenzentrum());
@@ -119,7 +121,7 @@ namespace UnitTest_ISB_BIA_IMPORT1
             dataServiceMock.Setup(x => x.InsertOEName(It.IsAny<string>())).Returns(dsDataService.GetDummyOEs().FirstOrDefault());
             dataServiceMock.Setup(x => x.InsertOENumber(It.IsAny<string>(), It.IsAny<ISB_BIA_OEs>())).Returns(resultOE);
             dataServiceMock.Setup(x => x.InsertSettings(It.IsAny<ISB_BIA_Settings>(), It.IsAny<ISB_BIA_Settings>())).Returns(true);
-            dataServiceMock.Setup(x => x.CreateDataModel(It.IsAny<List<string>>(), It.IsAny<DataTable>(), It.IsAny<DataTable>(), It.IsAny<DataTable>(), It.IsAny<DataTable>(), It.IsAny<DataTable>())).Returns(true);
+            dataServiceMock.Setup(x => x.CreateDataModel(It.IsAny<DataTable>(), It.IsAny<DataTable>(), It.IsAny<DataTable>(), It.IsAny<DataTable>(), It.IsAny<DataTable>())).Returns(true);
 
 
         }
@@ -296,7 +298,7 @@ namespace UnitTest_ISB_BIA_IMPORT1
             dataServiceMock.Verify(mock => mock.GetObjectLocked(It.IsAny<Table_Lock_Flags>(), It.IsAny<int>()), Times.Once);
             dataServiceMock.Verify(mock => mock.DeleteProcess(It.IsAny<ISB_BIA_Prozesse>()), Times.Once);
 
-            mvprocessview.SelectedItem = new ISB_BIA_Prozesse() { Id = 1, Aktiv = 0 };
+            mvprocessview.SelectedItem = new ISB_BIA_Prozesse() { Prozess_Id = 1, Aktiv = 0 };
             mvprocessview.DeleteProc.Execute(null);
             dataServiceMock.Verify(mock => mock.GetObjectLocked(It.IsAny<Table_Lock_Flags>(), It.IsAny<int>()), Times.Exactly(2));
             dataServiceMock.Verify(mock => mock.DeleteProcess(It.IsAny<ISB_BIA_Prozesse>()), Times.Exactly(1));
