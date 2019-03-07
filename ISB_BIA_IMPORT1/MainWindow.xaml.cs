@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight.Messaging;
+﻿using System.Diagnostics;
+using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.ViewModel;
 using System.Windows;
 

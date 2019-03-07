@@ -6,6 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
 using System.Security.Principal;
+using System.Windows.Input;
+using Microsoft.WindowsAPICodePack.ApplicationServices;
+using MS.WindowsAPICodePack.Internal;
 
 namespace ISB_BIA_IMPORT1.ViewModel
 {
@@ -77,10 +80,12 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         Veryhigh
     }
+    /// <summary>
+    /// Enum für die Nachrichten Tokens des MVVM-Light Messengers
+    /// </summary>
     public enum MessageToken
     {
         ChangeCurrentVM,
-        ChangedToCriticalNotification,
         ISAttributValidationError,
         WindowClosingRequest,
         RefreshData,
@@ -147,6 +152,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <param name="myDataService"></param>
         public Main_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMySharedResourceService mySharedResourceService, IMyDataService myDataService)
         {
+            Mouse.OverrideCursor = null;
+
             #region Services
             _myDia = myDialogService;
             _myNavi = myNavigationService;
@@ -228,8 +235,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
                         if (!groupMatchesUser && !_myShared.Admin) Environment.Exit(0);
                     }
 
-                    //Alle möglicherweise gesperrten Objekten aus unsauber beendeten früheren Sessions entfernen 
-                    _myData.UnlockAllObjectsForUser();
+                    //Alle möglicherweise gesperrten Objekten aus unsauber beendeten früheren Sessions entfernen
+                    _myData.UnlockAllObjectsForUserOnMachine();
 
                     //Direkt weiterleiten wenn nicht im Admin Modus
                     if (!_myShared.Admin)
@@ -361,31 +368,25 @@ namespace ISB_BIA_IMPORT1.ViewModel
 
         /// <summary>
         /// Methode um das Programm zu beenden. 
-        /// Entfernt alle Locks des Users.
+        /// Entfernt alle Locks des Users und löscht die Registrierung von der Application Recovery
         /// </summary>
         private void ShutDown()
         {
-            _myData.UnlockAllObjectsForUser();
+            _myData.UnlockAllObjectsForUserOnMachine();
+            UnregisterApplicationRecovery();
             Environment.Exit(0);
         }
-       
-        /*
-        MessengerInstance.Register<NotificationMessage>(this, NotifyUser);
-        MessengerInstance.Register<NotificationMessageAction<MessageBoxResult>>(this, (m) =>
+
+        /// <summary>
+        /// Methode um die Registrierung von der Application Recovery zu löschen
+        /// </summary>
+        private void UnregisterApplicationRecovery()
+        {
+            if (!CoreHelpers.RunningOnVista)
             {
-                if ((string)(m.Target) == "cancel")
-                {
-            MessageBoxButton btnMessageBox = MessageBoxButton.YesNo;
-            m.Execute(MessageBox.Show(m.Notification, "Bestätigen", btnMessageBox));
+                return;
+            }
+            ApplicationRestartRecoveryManager.UnregisterApplicationRecovery();
         }
-        });
-
-        }
-
-    private void NotifyUser(NotificationMessage msg)
-    {
-        MessageBox.Show(msg.Notification);
-    }
-    */
     }
 }

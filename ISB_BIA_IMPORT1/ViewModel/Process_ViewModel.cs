@@ -2,7 +2,7 @@
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.Model;
-using ISB_BIA_IMPORT1.LinqEntityContext;
+using ISB_BIA_IMPORT1.LINQ2SQL;
 using ISB_BIA_IMPORT1.Services;
 using System;
 using System.Collections;
@@ -840,6 +840,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 CurrentProcess.EvaluateErrors();
                 EvaluateErrors();
                 //Prozess & Relationen einfügen
+                ISB_BIA_Prozesse a = null;
+                string y = a.Benutzer;
                 if (_myData.InsertProcessAndRelations(CurrentProcess, Mode, NewApplications, RemoveApplications))
                 {
                     bool refreshMsg = (Mode == ProcAppMode.Change);
@@ -1200,10 +1202,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
             _myExport = myExportService;
             _myShared = mySharedResourceService;
             #endregion
-
             if (IsInDesignMode)
             {
                 CurrentProcess = _myData.GetProcessModelFromDB(1);
+                _oldCurrentProcess = CurrentProcess.Copy();
                 Prozessverantwortlicher = CurrentProcess.Prozessverantwortlicher;
                 Vorgelagerte_Prozesse = CurrentProcess.Vorgelagerte_Prozesse;
                 Nachgelagerte_Prozesse = CurrentProcess.Nachgelagerte_Prozesse;
@@ -1239,6 +1241,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 if (!(message.Sender is IMyNavigationService)) return;
                 Mode = ProcAppMode.New;
                 CurrentProcess = new Process_Model();
+                _oldCurrentProcess=new Process_Model();
             });
             //Messenger Registrierung für Benachrichtigung eines Kritischen Prozesses (kommt von Process_Model)
             //MessengerInstance.Register<string>(this, MessageToken.ChangedToCriticalNotification,p=> { _myDia.ShowInfo(Krit_Ntf); });

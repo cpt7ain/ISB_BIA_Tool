@@ -20,7 +20,6 @@ namespace ISB_BIA_IMPORT1.Model
         private string _sZ_4;
         private string _sZ_5;
         private string _sZ_6;
-        private bool _isValid;
         #endregion
 
         #region Propteries der Attribute (für DataBinding)

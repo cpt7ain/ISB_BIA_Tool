@@ -1,5 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
-using ISB_BIA_IMPORT1.LinqEntityContext;
+using ISB_BIA_IMPORT1.LINQ2SQL;
 using ISB_BIA_IMPORT1.ViewModel;
 using System;
 using System.Collections.ObjectModel;

@@ -1,5 +1,5 @@
 ﻿using ISB_BIA_IMPORT1.Model;
-using ISB_BIA_IMPORT1.LinqEntityContext;
+using ISB_BIA_IMPORT1.LINQ2SQL;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ISB_BIA_IMPORT1.ViewModel;
@@ -67,7 +67,7 @@ namespace ISB_BIA_IMPORT1.Services
         bool LockObject(Table_Lock_Flags table_Flag, int id);
 
         /// <summary>
-        /// Methode, um eine Applikation als "in Bearbeitung" zu markieren, damit kein konkurierender Zugriff stattfinden kann
+        /// Methode zum Entsperren eines "Objektes"
         /// </summary>
         /// <param name="table_Flag"> Indikator für die Tabelle des Objektes </param>
         /// <param name="id"> ID des Objektes, das gesperrt werden soll </param>
@@ -75,13 +75,14 @@ namespace ISB_BIA_IMPORT1.Services
         bool UnlockObject(Table_Lock_Flags table_Flag, int id);
 
         /// <summary>
-        /// Entsperrt alle Objekte, die durch den User gesperrt sind
+        /// Entsperrt alle Objekte, die durch den User auf derselben Maschine/Computer gesperrt sind
+        /// Wird verwendet um bei Applikationsstart und Beendigung die Locks zu entfernen
         /// </summary>
         /// <returns> true wenn Entsperren erfolgreich, false bei Fehler </returns>
-        bool UnlockAllObjectsForUser();
+        bool UnlockAllObjectsForUserOnMachine();
 
         /// <summary>
-        /// Entsperrt alle Objekte
+        /// Entsperrt alle Objekte (Option für Admin)
         /// </summary>
         /// <returns> true wenn Entsperren erfolgreich, false bei Fehler </returns>
         bool UnlockAllObjects();
@@ -260,6 +261,11 @@ namespace ISB_BIA_IMPORT1.Services
         /// <param name="newAttributeList"> Liste aller Attribute, deren Elemente einzeln auf Änderungen geprüft und entsprechend in die Datenbank geschrieben werden </param>
         /// <returns> Wahrheitswert ob einfügen erfolgreich () </returns>
         bool InsertISAtt(ObservableCollection<InformationSegmentAttribute_Model> newAttributeList);
+        /// <summary>
+        /// Ruft alle Segmente und Attribute (Inklusive Historischen Daten) ab um sie zu exportieren
+        /// </summary>
+        /// <returns> Liste aller Segmente & Attribute </returns>
+        Tuple<List<ISB_BIA_Informationssegmente>, List<ISB_BIA_Informationssegmente>, List<ISB_BIA_Informationssegmente_Attribute>, List<ISB_BIA_Informationssegmente_Attribute>> GetISAndISAttForExport();
         #endregion
 
         #region Application
@@ -501,5 +507,6 @@ namespace ISB_BIA_IMPORT1.Services
         /// <returns> Log-Liste </returns>
         ObservableCollection<ISB_BIA_Log> GetLog();
         #endregion
+    
     }
 }

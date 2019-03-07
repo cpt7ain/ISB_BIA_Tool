@@ -1,7 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
-using ISB_BIA_IMPORT1.LinqEntityContext;
+using ISB_BIA_IMPORT1.LINQ2SQL;
 using ISB_BIA_IMPORT1.Services;
 using System;
 using System.Collections.Generic;
@@ -133,11 +133,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 return _exportProcessList
                     ?? (_exportProcessList = new MyRelayCommand(() =>
                     {
-                        bool success = _myExport.AllActiveProcessesExport();
-                        if (success)
-                        {
-                            _myDia.ShowInfo("Export erfolgreich");
-                        }
+                        _myExport.AllActiveProcessesExport();
                     }));
             }
         }
@@ -151,10 +147,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 return _exportApplicationList
                     ?? (_exportApplicationList = new MyRelayCommand(() =>
                     {
-                        if (_myExport.AllActiveApplicationsExport())
-                        {
-                            _myDia.ShowInfo("Export erfolgreich");
-                        }
+                        _myExport.AllActiveApplicationsExport();
                     }));
             }
         }

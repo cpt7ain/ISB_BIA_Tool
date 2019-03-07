@@ -69,7 +69,6 @@
                     </ItemsControl>
                 </StackPanel>
             </ControlTemplate>
-
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -678,28 +677,34 @@
                         </AdornerDecorator>
                     </TabItem>
                 </TabControl>
-                <Border Grid.Row="4" Grid.ColumnSpan="5" Background="LightSteelBlue">
+                <Border Grid.Row="3" Grid.ColumnSpan="2" Grid.Column="0" Background="LightSteelBlue">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="300*"/>
                             <ColumnDefinition Width="300*"/>
                         </Grid.ColumnDefinitions>
-                        <Button Command="{Binding NextTab}" Content="Bestätigen und weiter >>" Grid.Column="1" Background="White">
-                            <Button.Triggers>
-                                <EventTrigger RoutedEvent="Button.Click">
-                                    <BeginStoryboard Storyboard="{StaticResource InactiveApplicationsSB}"/>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="IsEnabled">
-                                                <DiscreteBooleanKeyFrame KeyTime="00:00:00" Value="False" />
-                                                <DiscreteBooleanKeyFrame KeyTime="00:00:00.300" Value="True" />
-                                            </BooleanAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </EventTrigger>
-                            </Button.Triggers>
-                        </Button>
-                        <Button Command="{Binding SaveAndContinue}" Content="Speichern und schließen" Grid.Column="1" Background="LightGreen" Visibility="{Binding ButtonSaveVisibility}"/>
+                        <Grid Grid.ColumnSpan="2" Name="ButtonGrid">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50*"/>
+                                <ColumnDefinition Width="50*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Command="{Binding NextTab}" Grid.Column="1" Content="Bestätigen und weiter >>" Background="White">
+                                <Button.Triggers>
+                                    <EventTrigger RoutedEvent="Button.Click">
+                                        <BeginStoryboard Storyboard="{StaticResource InactiveApplicationsSB}"/>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="IsEnabled" Storyboard.TargetName="ButtonGrid">
+                                                    <DiscreteBooleanKeyFrame KeyTime="00:00:00" Value="False" />
+                                                    <DiscreteBooleanKeyFrame KeyTime="00:00:00.400" Value="True" />
+                                                </BooleanAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                </Button.Triggers>
+                            </Button>
+                            <Button Command="{Binding SaveAndContinue}" Grid.Column="1" Content="Speichern und schließen" Background="LightGreen" Visibility="{Binding ButtonSaveVisibility}"/>
+                        </Grid>
                         <Button Grid.Column="0" Command="{Binding PrevTab}" Content="&lt;&lt; Zurück" Background="White"/>
                     </Grid>
                 </Border>

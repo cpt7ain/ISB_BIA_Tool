@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using GalaSoft.MvvmLight;
 using System.Collections.ObjectModel;
-using ISB_BIA_IMPORT1.LinqEntityContext;
+using ISB_BIA_IMPORT1.LINQ2SQL;
 using System.Linq;
 using GalaSoft.MvvmLight.Messaging;
 using System.Collections.Generic;
@@ -103,7 +103,7 @@ namespace UnitTest_ISB_BIA_IMPORT1
             dataServiceMock.Setup(x => x.MapSegmentModelToDB(It.IsAny<InformationSegment_Model>())).Returns(dsDataService.MapSegmentModelToDB(resultSM));
             dataServiceMock.Setup(x => x.MapSettingsModelToDB(It.IsAny<Settings_Model>())).Returns(dsDataService.MapSettingsModelToDB(resultSetM));
             dataServiceMock.Setup(x => x.UnlockAllObjects()).Returns(dsDataService.UnlockAllObjects());
-            dataServiceMock.Setup(x => x.UnlockAllObjectsForUser()).Returns(dsDataService.UnlockAllObjectsForUser());
+            dataServiceMock.Setup(x => x.UnlockAllObjectsForUserOnMachine()).Returns(dsDataService.UnlockAllObjectsForUserOnMachine());
             dataServiceMock.Setup(x => x.UnlockObject(It.IsAny<Table_Lock_Flags>(), It.IsAny<int>())).Returns(dsDataService.UnlockObject(Table_Lock_Flags.Process, 1));
 
             dataServiceMock.Setup(x => x.DeleteProcess(It.IsAny<ISB_BIA_Prozesse>())).Returns(dsDataService.DeleteProcess(resultProcess));
@@ -186,13 +186,13 @@ namespace UnitTest_ISB_BIA_IMPORT1
         public void Test_Main_ViewModel()
         {
             bool received = false;
-            Messenger.Default.Register<ViewModelBase>(this, MessageToken.ChangeCurrentVM, s => { received = true; });
+            Messenger.Default.Register<NotificationMessage<ViewModelBase>>(this, MessageToken.ChangeCurrentVM, s => { received = true; });
 
             Main_ViewModel mvm = new Main_ViewModel(diaServiceMock.Object, naviServiceMock.Object, sharedServiceMock.Object, dataServiceMock.Object);
             Assert.IsFalse(received);
             Assert.IsTrue(mvm.CurrentViewModel == null);
             Assert.IsTrue(naviServiceMock.Object.VMHistory.Count == 1);
-            mvm.AdminSelectGroupCommand.Execute(null);
+            mvm.AdminSelectGroupCommand.Execute((int)UserGroups.Admin);
             //Assert that CurrentViewModel change message is received
             Assert.IsTrue(received);
             //Assert that CurrentViewModel was changed
@@ -229,7 +229,7 @@ namespace UnitTest_ISB_BIA_IMPORT1
         public void Test_Process_ViewModel_Change()
         {
             bool received = false;
-            Messenger.Default.Register<ViewModelBase>(this, MessageToken.ChangeCurrentVM, s => { received = true; });
+            Messenger.Default.Register<NotificationMessage<ViewModelBase>>(this, MessageToken.ChangeCurrentVM, s => { received = true; });
             ProcessView_ViewModel mvprocessview = new ProcessView_ViewModel(diaServiceMock.Object, naviServiceMock.Object, exportServiceMock.Object, dataServiceMock.Object, sharedServiceMock.Object, mailServiceMock.Object);
             SourceViewModel mvsource = new SourceViewModel();
             naviServiceMock.Object.VMHistory.Insert(0, mvprocessview);

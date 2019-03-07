@@ -1,6 +1,6 @@
 ﻿using ISB_BIA_IMPORT1.Model;
 using ISB_BIA_IMPORT1.ViewModel;
-using ISB_BIA_IMPORT1.LinqEntityContext;
+using ISB_BIA_IMPORT1.LINQ2SQL;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,6 +12,8 @@ namespace ISB_BIA_IMPORT1.Services
 {
     public class MyDesignTimeDataService : IMyDataService
     {
+        public ObservableCollection<ISB_BIA_Prozesse> ProcessDummyList;
+
         public MyDesignTimeDataService()
         {
             ProcessDummyList = GetDummyProcesses();
@@ -31,7 +33,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             
         }
-
+        
         #region Datensatz-Lock Operationen
         public string GetObjectLocked(Table_Lock_Flags table_Flag, int id)
         {
@@ -45,7 +47,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             return true;
         }
-        public bool UnlockAllObjectsForUser()
+        public bool UnlockAllObjectsForUserOnMachine()
         {
             return true;
         }
@@ -57,7 +59,6 @@ namespace ISB_BIA_IMPORT1.Services
         #endregion
 
         #region Process
-        public ObservableCollection<ISB_BIA_Prozesse> ProcessDummyList;
         public ObservableCollection<ISB_BIA_Prozesse> GetDummyProcesses()
         {
             Random r = new Random();
@@ -266,6 +267,12 @@ namespace ISB_BIA_IMPORT1.Services
                          };
             return new ObservableCollection<ISB_BIA_Applikationen>(people.ToList());
         }
+
+        public Tuple<List<ISB_BIA_Informationssegmente>, List<ISB_BIA_Informationssegmente>, List<ISB_BIA_Informationssegmente_Attribute>, List<ISB_BIA_Informationssegmente_Attribute>> GetISAndISAttForExport()
+        {
+            return null;
+        }
+
         public Application_Model GetApplicationModelFromDB(int id)
         {
             ISB_BIA_Applikationen linqApp = GetDummyApplications().FirstOrDefault();
@@ -736,5 +743,6 @@ namespace ISB_BIA_IMPORT1.Services
 
 
         #endregion
+        
     }
 }

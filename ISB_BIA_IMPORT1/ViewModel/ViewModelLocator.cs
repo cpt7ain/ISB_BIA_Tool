@@ -52,7 +52,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 SimpleIoc.Default.Register<IMyDialogService, MyDialogService>();
                 SimpleIoc.Default.Register<IMySharedResourceService, MySharedResourceService>();
                 SimpleIoc.Default.Register<IMyNavigationService, MyNavigationService>();
-                SimpleIoc.Default.Register<IMyDataService, MyDataService1>();
+                SimpleIoc.Default.Register<IMyDataService, MyDataService>();
                 SimpleIoc.Default.Register<IMyExportService, MyExportService>();
                 SimpleIoc.Default.Register<IMyMailNotificationService, MyMailNotificationService>();
                 #endregion

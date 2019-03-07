@@ -5,7 +5,7 @@ using System.Windows;
 using ISB_BIA_IMPORT1.ViewModel;
 using System.Windows.Controls;
 using System.Windows.Input;
-using ISB_BIA_IMPORT1.LinqEntityContext;
+using ISB_BIA_IMPORT1.LINQ2SQL;
 
 namespace ISB_BIA_IMPORT1.View
 {

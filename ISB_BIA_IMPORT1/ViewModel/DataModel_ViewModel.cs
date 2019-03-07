@@ -233,12 +233,12 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <returns></returns>
         private bool CheckForCreation()
         {
-            IWorkbook workbook;
             string rangePattern = "[A-Z]+[1-9]+:[A-Z]+[1-9]+";
             if (File.Exists(_originalFile))
             {
                 if (File.Exists(_workFile)) File.Delete(_workFile);
                 File.Copy(_originalFile, _workFile);
+                IWorkbook workbook;
                 using (FileStream stream = new FileStream(_workFile, FileMode.Open, FileAccess.Read))
                 {
                     workbook = new XSSFWorkbook(stream);

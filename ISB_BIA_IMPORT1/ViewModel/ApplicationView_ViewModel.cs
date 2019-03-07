@@ -1,7 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
-using ISB_BIA_IMPORT1.LinqEntityContext;
+using ISB_BIA_IMPORT1.LINQ2SQL;
 using ISB_BIA_IMPORT1.Services;
 using System.Collections.ObjectModel;
 
@@ -100,10 +100,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _exportApplicationList
                     ?? (_exportApplicationList = new MyRelayCommand(() =>
                     {
-                        if (_myExport.AllApplicationsExport())
-                        {
-                            _myDia.ShowMessage("Export erfolgreich");
-                        }
+                        _myExport.AllApplicationsExport();
                     }));
         }
         #endregion

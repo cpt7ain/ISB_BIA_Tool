@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using ISB_BIA_IMPORT1.LinqEntityContext;
+using ISB_BIA_IMPORT1.LINQ2SQL;
 
 namespace ISB_BIA_IMPORT1.Services
 {
@@ -22,6 +22,11 @@ namespace ISB_BIA_IMPORT1.Services
         }
 
         public bool ExportApplications(ObservableCollection<ISB_BIA_Applikationen> appList, string title, int id=0)
+        {
+            return true;
+        }
+
+        public bool ExportSegmentAndAttributeHistory()
         {
             return true;
         }

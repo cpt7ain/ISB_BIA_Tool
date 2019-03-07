@@ -1,4 +1,4 @@
-﻿using ISB_BIA_IMPORT1.LinqEntityContext;
+﻿using ISB_BIA_IMPORT1.LINQ2SQL;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -42,6 +42,11 @@ namespace ISB_BIA_IMPORT1.Services
         /// <param name="id"> ProzessID des Prozesses ("" wenn Prozessliste verschiedener Prozesse, ID beim Export einer Prozess-Historie </param>
         /// <returns> Erfolgreicher Export oder nicht </returns>
         bool ExportProcesses(ObservableCollection<ISB_BIA_Prozesse> procList, int id=0);
+        /// <summary>
+        /// Export der Segmente und Attribute nach Excel
+        /// </summary>
+        /// <returns></returns>
+        bool ExportSegmentAndAttributeHistory();
         /// <summary>
         /// Export der Deltaanalyse (nur Einträge mit Delta in mindestens einem Wert)
         /// </summary>

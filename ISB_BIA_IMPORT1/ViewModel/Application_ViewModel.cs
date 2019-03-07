@@ -2,7 +2,7 @@
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.Model;
-using ISB_BIA_IMPORT1.LinqEntityContext;
+using ISB_BIA_IMPORT1.LINQ2SQL;
 using ISB_BIA_IMPORT1.Services;
 using System;
 using System.Collections.ObjectModel;
@@ -605,6 +605,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     if (!(message.Sender is IMyNavigationService)) return;
                     Mode = ProcAppMode.New;
                     CurrentApplication = new Application_Model();
+                    _oldCurrentApplication = new Application_Model();
                 });
                 #endregion
                 #region Abrufen der Listendaten für die Dropdown-Felder

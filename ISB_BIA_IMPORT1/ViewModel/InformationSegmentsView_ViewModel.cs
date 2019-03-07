@@ -1,10 +1,11 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
-using ISB_BIA_IMPORT1.LinqEntityContext;
+using ISB_BIA_IMPORT1.LINQ2SQL;
 using ISB_BIA_IMPORT1.Services;
 using System.Collections.ObjectModel;
 using System.Windows;
+using ISB_BIA_IMPORT1.Model;
 
 namespace ISB_BIA_IMPORT1.ViewModel
 {
@@ -63,7 +64,16 @@ namespace ISB_BIA_IMPORT1.ViewModel
                         }
                     }));
         }
-
+        /// <summary>
+        /// Command zum Exportieren der Segment und Attributübersicht inklusive historischer Daten
+        /// </summary>
+        public MyRelayCommand ExportSegmentAndAttributes
+        {
+            get => new MyRelayCommand(() =>
+            {
+                _myExport.ExportSegmentAndAttributeHistory();
+            });
+        }
         /// <summary>
         /// Liste der angezeigten Informationssegmente
         /// </summary>
@@ -143,6 +153,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private readonly IMyNavigationService _myNavi;
         private readonly IMyDialogService _myDia;
         private readonly IMyDataService _myData;
+        private readonly IMyExportService _myExport;
         #endregion
 
         /// <summary>
@@ -151,12 +162,14 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <param name="myDialogService"></param>
         /// <param name="myNavigationService"></param>
         /// <param name="myDataService"></param>
-        public InformationSegmentsView_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyDataService myDataService)
+        /// <param name="myExportService"></param>
+        public InformationSegmentsView_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyDataService myDataService, IMyExportService myExportService)
         {
             #region Services
             _myDia = myDialogService;
             _myNavi = myNavigationService;
             _myData = myDataService;
+            _myExport = myExportService;
             #endregion
 
             if (IsInDesignMode)

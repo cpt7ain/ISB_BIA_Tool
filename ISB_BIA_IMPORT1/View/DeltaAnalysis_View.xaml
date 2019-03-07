@@ -43,8 +43,10 @@
                   Visibility="{Binding Mode, Converter={StaticResource NegateBooleanToVisibilityConverter}}">
             <ListView.View>
                 <GridView>
+                    <GridViewColumn Width="50" Header="Prozess Id" DisplayMemberBinding="{Binding Prozess_Id}" />
                     <GridViewColumn Width="200" Header="Prozess" DisplayMemberBinding="{Binding Prozess}" />
                     <GridViewColumn Width="110" Header="Sub-Prozess" DisplayMemberBinding="{Binding Sub_Prozess}" />
+                    <GridViewColumn Width="50" Header="Anwendung Id" DisplayMemberBinding="{Binding Applikation_Id}" />
                     <GridViewColumn Width="200" Header="Applikation" DisplayMemberBinding="{Binding Applikation}" />
                     <GridViewColumn Width="110" Header="{Binding Setting.SZ_1_Name}" DisplayMemberBinding="{Binding SZ_1}" />
                     <GridViewColumn Width="110" Header="{Binding Setting.SZ_2_Name}" DisplayMemberBinding="{Binding SZ_2}" />
@@ -64,8 +66,10 @@
                   CanUserAddRows="False"
                   Visibility="{Binding Mode, Converter={StaticResource BooleanToVisibilityConverter}}">
             <DataGrid.Columns>
+                <DataGridTextColumn Header="Prozess Id" Binding="{Binding Prozess_Id}" Width="50" CanUserSort="True"/>
                 <DataGridTextColumn Header="Prozessname" Binding="{Binding Prozess}" Width="200" CanUserSort="True"/>
                 <DataGridTextColumn Header="Sub-Prozess" Binding="{Binding Sub_Prozess}" Width="110" CanUserSort="True"/>
+                <DataGridTextColumn Header="Anwendung Id" Binding="{Binding Applikation_Id}" Width="50" CanUserSort="True"/>
                 <DataGridTextColumn Header="Anwendung" Binding="{Binding Applikation}" Width="200" CanUserSort="True"/>
                 <DataGridTemplateColumn Header="{Binding DataContext.Setting.SZ_1_Name, Source={x:Reference dummyElement}}" Width="110" SortMemberPath="SZ_1">
                     <DataGridTemplateColumn.CellTemplate>
