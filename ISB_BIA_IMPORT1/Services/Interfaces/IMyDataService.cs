@@ -7,7 +7,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System;
 
-namespace ISB_BIA_IMPORT1.Services
+namespace ISB_BIA_IMPORT1.Services.Interfaces
 {
     public enum Table_Lock_Flags
     {

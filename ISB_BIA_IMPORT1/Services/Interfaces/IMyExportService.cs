@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace ISB_BIA_IMPORT1.Services
+namespace ISB_BIA_IMPORT1.Services.Interfaces
 {
     /// <summary>
     /// Service zum Exportieren von formatierten Objektlisten nach Excel

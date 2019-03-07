@@ -1,5 +1,5 @@
 ﻿
-namespace ISB_BIA_IMPORT1.Services
+namespace ISB_BIA_IMPORT1.Services.Interfaces
 {
     /// <summary>
     /// Service zum Senden von Email Benachrichtigungen

@@ -1,6 +1,6 @@
 ﻿using ISB_BIA_IMPORT1.Model;
 
-namespace ISB_BIA_IMPORT1.Services
+namespace ISB_BIA_IMPORT1.Services.Interfaces
 {
     public enum Current_Environment
     {

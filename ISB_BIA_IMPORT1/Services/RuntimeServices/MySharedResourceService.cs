@@ -2,6 +2,7 @@
 using ISB_BIA_IMPORT1.Model;
 using System.Configuration;
 using System.IO;
+using ISB_BIA_IMPORT1.Services.Interfaces;
 
 namespace ISB_BIA_IMPORT1.Services
 {

@@ -2,7 +2,7 @@
 using System;
 using System.Windows.Input;
 
-namespace ISB_BIA_IMPORT1.ViewModel
+namespace ISB_BIA_IMPORT1.Helpers
 {
     /// <summary>
     /// Command-Klasse, erbt von <see cref="RelayCommand"/>. Ändert Cursor während der Execute-Funktion zu Cursor.Wait

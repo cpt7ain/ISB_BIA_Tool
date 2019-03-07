@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Data;
 using System.Data.SqlClient;
+using ISB_BIA_IMPORT1.Services.Interfaces;
 
 namespace ISB_BIA_IMPORT1.Services
 {

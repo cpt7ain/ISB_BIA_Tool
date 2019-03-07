@@ -12,30 +12,30 @@
     <StackPanel>
         <Menu FontSize="{Binding MyFontSize}">
             <MenuItem Header="Prozesse">
-                <MenuItem Header="Neuen Prozess anlegen" Icon="*" Command="{Binding NewProcess}"/>
-                <MenuItem Header="Prozesse anzeigen/ändern" Command="{Binding SetProcessView}" CommandParameter="{x:Static local:ProcAppListMode.Change}"/>
-                <MenuItem Header="Prozess löschen" Command="{Binding SetProcessView}" CommandParameter="{x:Static local:ProcAppListMode.Delete}"/>
+                <MenuItem Header="Neuen Prozess anlegen" Icon="*" Command="{Binding NavToNewProcess}"/>
+                <MenuItem Header="Prozesse anzeigen/ändern" Command="{Binding NavToProcessView}" CommandParameter="{x:Static local:ProcAppListMode.Change}"/>
+                <MenuItem Header="Prozess löschen" Command="{Binding NavToProcessView}" CommandParameter="{x:Static local:ProcAppListMode.Delete}"/>
             </MenuItem>
             <MenuItem Header="Schutzbedarfsanalyse" Visibility="{Binding SBAMenuVisible}">
-                <MenuItem Header="Anwendungen anzeigen/ändern" Command="{Binding SetSBAView}"/>
+                <MenuItem Header="Anwendungen anzeigen/ändern" Command="{Binding _NavToSBAView}"/>
             </MenuItem>
             <MenuItem Header="Anwendungen" Visibility="{Binding AppMenuVisible}">
-                <MenuItem Header="Neue Anwendung anlegen" Icon="*" Command="{Binding NewApplication}"/>
-                <MenuItem Header="Anwendungen anzeigen/ändern" Command="{Binding SetApplicationView}" CommandParameter="{x:Static local:ProcAppListMode.Change}"/>
-                <MenuItem Header="Anwendung löschen" Command="{Binding SetApplicationView}" CommandParameter="{x:Static local:ProcAppListMode.Delete}"/>
+                <MenuItem Header="Neue Anwendung anlegen" Icon="*" Command="{Binding NavToNewApplication}"/>
+                <MenuItem Header="Anwendungen anzeigen/ändern" Command="{Binding NavToApplicationView}" CommandParameter="{x:Static local:ProcAppListMode.Change}"/>
+                <MenuItem Header="Anwendung löschen" Command="{Binding NavToApplicationView}" CommandParameter="{x:Static local:ProcAppListMode.Delete}"/>
             </MenuItem>
             <MenuItem Header="_Informationssegmente">
-                <MenuItem Header="{Binding Instructions[1]}" Command="{Binding SetInformationsSegmentView}"/>
-                <MenuItem Header="{Binding Instructions[2]}" Command="{Binding SetInformationsSegmentsAttributes}"/>
+                <MenuItem Header="{Binding Instructions[1]}" Command="{Binding NavToInformationSegmentView}"/>
+                <MenuItem Header="{Binding Instructions[2]}" Command="{Binding NavToAttributesView}"/>
             </MenuItem>
             <MenuItem Header="Einstellungen" Visibility="{Binding SettingsMenuVisible}">
-                <MenuItem Header="Datenmodel aus Excel erstellen" Command="{Binding SetDataModel}"/>
-                <MenuItem Header="Log anzeigen" Command="{Binding SetLog}"/>
-                <MenuItem Header="OE ändern" Command="{Binding SetOESettings}"/>
-                <MenuItem Header="Weitere Einstellungen" Command="{Binding SetSettings}"/>
+                <MenuItem Header="Datenmodel aus Excel erstellen" Command="{Binding NavToDataModelSetting}"/>
+                <MenuItem Header="Log anzeigen" Command="{Binding NavToLogView}"/>
+                <MenuItem Header="OE ändern" Command="{Binding NavToOESettings}"/>
+                <MenuItem Header="Weitere Einstellungen" Command="{Binding NavToSettings}"/>
                 <MenuItem Header="Alle Datensatz-Locks entfernen" Command="{Binding RemoveLocks}"/>
             </MenuItem>
-            <MenuItem Header="Hilfe" Command="{Binding Info}" CommandParameter="Hilfe"/>
+            <MenuItem Header="Hilfe" Command="{Binding NavToInfoView}" CommandParameter="Hilfe"/>
             <MenuItem Header="Vergrößerte Schrift (an/aus)" Command="{Binding ChangeTextSize}" CommandParameter="{Binding IsChecked, RelativeSource={RelativeSource Self}}"/>
         </Menu>
         <Grid HorizontalAlignment="Center" MinWidth="1000">

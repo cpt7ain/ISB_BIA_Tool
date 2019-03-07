@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="ISB_BIA_IMPORT1.View.Application_View" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="4.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>View\Application_View.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.872" Collapsed="true" />
+  </Class>
+  <Class Name="ISB_BIA_IMPORT1.View.ApplicationView_View" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="5.5" Y="2.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAQAAAAAAAAQAAAAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>View\ApplicationView_View.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Left" Position="0.36" Collapsed="true" />
+  </Class>
+  <Class Name="ISB_BIA_IMPORT1.View.DataModel_View" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="7.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>View\DataModel_View.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.883" Collapsed="true" />
+  </Class>
+  <Class Name="ISB_BIA_IMPORT1.View.DeltaAnalysis_View" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="7.5" Y="2.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>View\DeltaAnalysis_View.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="1.115" Collapsed="true" />
+  </Class>
+  <Class Name="ISB_BIA_IMPORT1.View.DocumentView_View" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="0.75" Y="2.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>View\DocumentView_View.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.321" Collapsed="true" />
+  </Class>
+  <Class Name="ISB_BIA_IMPORT1.View.InformationSegment_View" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="2.5" Y="3.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>View\InformationSegment_View.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Right" Position="0.25" Collapsed="true" />
+  </Class>
+  <Class Name="ISB_BIA_IMPORT1.View.InformationSegmentsAttributes_View" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="0.75" Y="1.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>View\InformationSegmentsAttributes_View.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ISB_BIA_IMPORT1.View.InformationSegmentsView_View" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="6.75" Y="1.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>View\InformationSegmentsView_View.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ISB_BIA_IMPORT1.View.LogView_View" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="0.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>View\LogView_View.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.31" Collapsed="true" />
+  </Class>
+  <Class Name="ISB_BIA_IMPORT1.View.Menu_View" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="2.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>View\Menu_View.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Right" Position="0.316" Collapsed="true" />
+  </Class>
+  <Class Name="ISB_BIA_IMPORT1.View.OE_AssignmentView_View" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="7.25" Y="3.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>View\OE_AssignmentView_View.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="1.148" Collapsed="true" />
+  </Class>
+  <Class Name="ISB_BIA_IMPORT1.View.Process_View" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="5.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAAQAAEAAAAAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>View\Process_View.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.817" Collapsed="true" />
+  </Class>
+  <Class Name="ISB_BIA_IMPORT1.View.ProcessView_View" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="0.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAQAAAAAAAAQAAAAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>View\ProcessView_View.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.332" Collapsed="true" />
+  </Class>
+  <Class Name="ISB_BIA_IMPORT1.View.SBA_View_View" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="2.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAQAAAAAAAAQAAAAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>View\SBA_View_View.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Right" Position="0.1" Collapsed="true" />
+  </Class>
+  <Class Name="ISB_BIA_IMPORT1.View.Settings_View" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="6" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>View\Settings_View.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Left" Position="0.118" Collapsed="true" />
+  </Class>
+  <Class Name="System.Windows.Controls.UserControl" Collapsed="true">
+    <Position X="4.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="ISB_BIA_IMPORT1.View.MainWindow" Collapsed="true">
+    <Position X="2.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>View\MainWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="System.Windows.Window" Collapsed="true">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

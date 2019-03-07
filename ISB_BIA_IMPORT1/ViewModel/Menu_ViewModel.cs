@@ -11,6 +11,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Xps.Packaging;
+using ISB_BIA_IMPORT1.Helpers;
+using ISB_BIA_IMPORT1.Services.Interfaces;
 
 namespace ISB_BIA_IMPORT1.ViewModel
 {
@@ -20,19 +22,19 @@ namespace ISB_BIA_IMPORT1.ViewModel
     public class Menu_ViewModel : ViewModelBase
     {
         #region Backing Fields
-        private MyRelayCommand _newProcess;
-        private MyRelayCommand<ProcAppListMode> _setProcessView;
-        private MyRelayCommand _newApplication;
-        private MyRelayCommand<ProcAppListMode> _setApplicationView;
+        private MyRelayCommand _navToNewProcess;
+        private MyRelayCommand<ProcAppListMode> _navToProcessView;
+        private MyRelayCommand _navToNewApplication;
+        private MyRelayCommand<ProcAppListMode> _navToApplicationView;
         private MyRelayCommand _setSBAView;
-        private MyRelayCommand _setInformationsSegmentView;
-        private MyRelayCommand _setInformationsSegmentsAttributes;
-        private MyRelayCommand _setOESettings;
-        private MyRelayCommand _setSettings;
-        private MyRelayCommand _setDataModel;
-        private MyRelayCommand _setLog;
+        private MyRelayCommand _navToInformationSegmentView;
+        private MyRelayCommand _navToAttributesView;
+        private MyRelayCommand _navToOESettings;
+        private MyRelayCommand _navToSettings;
+        private MyRelayCommand _navToDataModelSetting;
+        private MyRelayCommand _navToLogView;
         private MyRelayCommand _removeLocks;
-        private MyRelayCommand<string> _info;
+        private MyRelayCommand<string> _navToInfoView;
         private Visibility _appMenuVisible;
         private Visibility _sBAMenuVisible;
         private Visibility _settingsMenuVisible;
@@ -52,10 +54,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Navigiert zum ProcessVM um einen neuen Prozess anzulegen
         /// </summary>
-        public MyRelayCommand NewProcess
+        public MyRelayCommand NavToNewProcess
         {
-            get => _newProcess
-                  ?? (_newProcess = new MyRelayCommand(() =>
+            get => _navToNewProcess
+                  ?? (_navToNewProcess = new MyRelayCommand(() =>
                   {
                       _myNavi.NavigateTo<Process_ViewModel>(0, ProcAppMode.New);
                   }));
@@ -64,10 +66,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Navigiert zum ProcessViewVM um einen vorhandenen Prozess zu bearbeiten oder zu löschen
         /// </summary>
-        public MyRelayCommand<ProcAppListMode> SetProcessView
+        public MyRelayCommand<ProcAppListMode> NavToProcessView
         {
-            get => _setProcessView
-                  ?? (_setProcessView = new MyRelayCommand<ProcAppListMode>((m) =>
+            get => _navToProcessView
+                  ?? (_navToProcessView = new MyRelayCommand<ProcAppListMode>((m) =>
                   {
                       _myNavi.NavigateTo<ProcessView_ViewModel>(m);
                   }));
@@ -76,10 +78,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Navigiert zum ApplicationVM um eine neue Anwendung anzulegen
         /// </summary>
-        public MyRelayCommand NewApplication
+        public MyRelayCommand NavToNewApplication
         {
-            get => _newApplication
-                  ?? (_newApplication = new MyRelayCommand(() =>
+            get => _navToNewApplication
+                  ?? (_navToNewApplication = new MyRelayCommand(() =>
                   {
                       _myNavi.NavigateTo<Application_ViewModel>(0, ProcAppMode.New);
                   }));
@@ -88,10 +90,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Navigiert zum ApplicationViewVM um eine vorhandenen Anwendung zu bearbeiten oder zu löschen
         /// </summary>
-        public MyRelayCommand<ProcAppListMode> SetApplicationView
+        public MyRelayCommand<ProcAppListMode> NavToApplicationView
         {
-            get => _setApplicationView
-                  ?? (_setApplicationView = new MyRelayCommand<ProcAppListMode>((mode) =>
+            get => _navToApplicationView
+                  ?? (_navToApplicationView = new MyRelayCommand<ProcAppListMode>((mode) =>
                   {
                       _myNavi.NavigateTo<ApplicationView_ViewModel>(mode);
                   }));
@@ -100,7 +102,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Navigiert zum ApplicationVM um eine vorhandenen Anwendung zu bearbeiten
         /// </summary>
-        public MyRelayCommand SetSBAView
+        public MyRelayCommand _NavToSBAView
         {
             get => _setSBAView
                   ?? (_setSBAView = new MyRelayCommand(() =>
@@ -112,10 +114,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Navigiert zum InformationSegmentViewVM um ein Informationssegment zu bearbeiten oder zu betrachten
         /// </summary>
-        public MyRelayCommand SetInformationsSegmentView
+        public MyRelayCommand NavToInformationSegmentView
         {
-            get => _setInformationsSegmentView
-                  ?? (_setInformationsSegmentView = new MyRelayCommand(() =>
+            get => _navToInformationSegmentView
+                  ?? (_navToInformationSegmentView = new MyRelayCommand(() =>
                   {
                       ISISAttributeMode m;
                       if (User.UserGroup == UserGroups.CISO)
@@ -130,10 +132,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// Navigiert zum InformationSegmentsAttributesVM um Attribute zu bearbeiten oder zu betrachten
         /// Im Berbeitungsmodus wird die Liste für andere Bearbeitungen zusätzlich gesperrt
         /// </summary>
-        public MyRelayCommand SetInformationsSegmentsAttributes
+        public MyRelayCommand NavToAttributesView
         {
-            get => _setInformationsSegmentsAttributes
-                  ?? (_setInformationsSegmentsAttributes = new MyRelayCommand(() =>
+            get => _navToAttributesView
+                  ?? (_navToAttributesView = new MyRelayCommand(() =>
                   {
                       ISISAttributeMode mode;
                       if (User.UserGroup == UserGroups.CISO)
@@ -161,10 +163,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Navigiert zum OE_AssignmentViewVM um OE's und OE-Gruppen zu verwalten und einander zuzuordnen, zu bearbeiten oder zu betrachten
         /// </summary>
-        public MyRelayCommand SetOESettings
+        public MyRelayCommand NavToOESettings
         {
-            get => _setOESettings
-                  ?? (_setOESettings = new MyRelayCommand(() =>
+            get => _navToOESettings
+                  ?? (_navToOESettings = new MyRelayCommand(() =>
                   {
                       string user = _myData.GetObjectLocked(Table_Lock_Flags.OEs, 0);
                       if (user == "")
@@ -182,10 +184,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Navigiert zum SettingsVM um Einstellungen der Anwendung zu ändern
         /// </summary>
-        public MyRelayCommand SetSettings
+        public MyRelayCommand NavToSettings
         {
-            get => _setSettings
-                  ?? (_setSettings = new MyRelayCommand(() =>
+            get => _navToSettings
+                  ?? (_navToSettings = new MyRelayCommand(() =>
                   {
                       string user = _myData.GetObjectLocked(Table_Lock_Flags.Settings, 0);
                       if (user == "")
@@ -203,10 +205,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Navigiert zum DataModelVM um das Datenmodell komplett neu zu erstellen (Funktion soll gesperrt werden)
         /// </summary>
-        public MyRelayCommand SetDataModel
+        public MyRelayCommand NavToDataModelSetting
         {
-            get => _setDataModel
-                  ?? (_setDataModel = new MyRelayCommand(() =>
+            get => _navToDataModelSetting
+                  ?? (_navToDataModelSetting = new MyRelayCommand(() =>
                   {
                       _myNavi.NavigateTo<DataModel_ViewModel>();
                   }));
@@ -215,10 +217,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Navigiert zum LogVM um das Anwendungslog zu betrachten oder zu exportieren 
         /// </summary>
-        public MyRelayCommand SetLog
+        public MyRelayCommand NavToLogView
         {
-            get => _setLog
-                  ?? (_setLog = new MyRelayCommand(() =>
+            get => _navToLogView
+                  ?? (_navToLogView = new MyRelayCommand(() =>
                   {
                       _myNavi.NavigateTo<LogView_ViewModel>();
                   }));
@@ -242,10 +244,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Navigiert zum InfoVM diverse externe Hilfe/Infodateien innerhalb der Anwendung zu betrachten 
         /// </summary>
-        public MyRelayCommand<string> Info
+        public MyRelayCommand<string> NavToInfoView
         {
-            get => _info
-                  ?? (_info = new MyRelayCommand<string>((name) =>
+            get => _navToInfoView
+                  ?? (_navToInfoView = new MyRelayCommand<string>((name) =>
                   {
                       try
                       {

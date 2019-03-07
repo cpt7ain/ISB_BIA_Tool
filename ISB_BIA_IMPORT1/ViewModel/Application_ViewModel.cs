@@ -10,6 +10,8 @@ using System.IO;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Xps.Packaging;
+using ISB_BIA_IMPORT1.Helpers;
+using ISB_BIA_IMPORT1.Services.Interfaces;
 
 namespace ISB_BIA_IMPORT1.ViewModel
 {

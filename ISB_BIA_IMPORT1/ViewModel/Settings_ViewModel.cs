@@ -3,6 +3,8 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Ioc;
 using ISB_BIA_IMPORT1.Model;
 using ISB_BIA_IMPORT1.Services;
+using ISB_BIA_IMPORT1.Helpers;
+using ISB_BIA_IMPORT1.Services.Interfaces;
 
 namespace ISB_BIA_IMPORT1.ViewModel
 {

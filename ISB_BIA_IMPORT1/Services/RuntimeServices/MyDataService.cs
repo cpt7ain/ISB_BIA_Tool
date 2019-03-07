@@ -8,6 +8,7 @@ using System.Linq;
 using System.Data.SqlClient;
 using System.Data;
 using System.Net;
+using ISB_BIA_IMPORT1.Services.Interfaces;
 
 namespace ISB_BIA_IMPORT1.Services
 {

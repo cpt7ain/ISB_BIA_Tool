@@ -3,8 +3,9 @@ using System.IO;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
-using ISB_BIA_IMPORT1.Services;
 using System.Windows.Documents;
+using ISB_BIA_IMPORT1.Helpers;
+using ISB_BIA_IMPORT1.Services.Interfaces;
 
 namespace ISB_BIA_IMPORT1.ViewModel
 {

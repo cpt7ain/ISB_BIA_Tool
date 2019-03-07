@@ -2,7 +2,7 @@
 using ISB_BIA_IMPORT1.ViewModel;
 using System.Collections.ObjectModel;
 
-namespace ISB_BIA_IMPORT1.Services
+namespace ISB_BIA_IMPORT1.Services.Interfaces
 {
     /// <summary>
     /// Service für die Navigation zwischen den Viewmodels. 

@@ -16,8 +16,10 @@ using CommonServiceLocator;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using ISB_BIA_IMPORT1.Services;
+using ISB_BIA_IMPORT1.Services.Interfaces;
+using ISB_BIA_IMPORT1.ViewModel;
 
-namespace ISB_BIA_IMPORT1.ViewModel
+namespace ISB_BIA_IMPORT1.Helpers
 {
     /// <summary>
     /// This class contains static references to all the view models in the

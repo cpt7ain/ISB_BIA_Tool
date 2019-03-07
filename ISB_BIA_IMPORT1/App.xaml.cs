@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Ioc;
 using ISB_BIA_IMPORT1.Services;
+using ISB_BIA_IMPORT1.Services.Interfaces;
 using Microsoft.Shell;
 using Microsoft.WindowsAPICodePack.ApplicationServices;
 using MS.WindowsAPICodePack.Internal;

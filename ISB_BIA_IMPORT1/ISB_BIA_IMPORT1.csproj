@@ -137,24 +137,24 @@
     <Compile Include="Model\Login_Model.cs" />
     <Compile Include="Model\Process_Model.cs" />
     <Compile Include="Model\Settings_Model.cs" />
-    <Compile Include="Services\IMyDataService.cs" />
-    <Compile Include="Services\IMyDialogService.cs" />
-    <Compile Include="Services\IMyExportService.cs" />
-    <Compile Include="Services\IMyMailNotificationService.cs" />
-    <Compile Include="Services\IMyNavigationService.cs" />
-    <Compile Include="Services\IMySharedResourceService.cs" />
-    <Compile Include="Services\MyDataService.cs" />
-    <Compile Include="Services\MyDesignTimeDataService.cs" />
-    <Compile Include="Services\MyDesignTimeDialogService.cs" />
-    <Compile Include="Services\MyDesignTimeExportService.cs" />
-    <Compile Include="Services\MyDesignTimeMailNotificationService.cs" />
-    <Compile Include="Services\MyDesignTimeNavigationService.cs" />
-    <Compile Include="Services\MyDesignTimeSharedResourceService.cs" />
-    <Compile Include="Services\MyDialogService.cs" />
-    <Compile Include="Services\MyExportService.cs" />
-    <Compile Include="Services\MyMailNotificationService.cs" />
-    <Compile Include="Services\MyNavigationService.cs" />
-    <Compile Include="Services\MySharedResourceService.cs" />
+    <Compile Include="Services\Interfaces\IMyDataService.cs" />
+    <Compile Include="Services\Interfaces\IMyDialogService.cs" />
+    <Compile Include="Services\Interfaces\IMyExportService.cs" />
+    <Compile Include="Services\Interfaces\IMyMailNotificationService.cs" />
+    <Compile Include="Services\Interfaces\IMyNavigationService.cs" />
+    <Compile Include="Services\Interfaces\IMySharedResourceService.cs" />
+    <Compile Include="Services\RuntimeServices\MyDataService.cs" />
+    <Compile Include="Services\DesignTimeServices\MyDesignTimeDataService.cs" />
+    <Compile Include="Services\DesignTimeServices\MyDesignTimeDialogService.cs" />
+    <Compile Include="Services\DesignTimeServices\MyDesignTimeExportService.cs" />
+    <Compile Include="Services\DesignTimeServices\MyDesignTimeMailNotificationService.cs" />
+    <Compile Include="Services\DesignTimeServices\MyDesignTimeNavigationService.cs" />
+    <Compile Include="Services\DesignTimeServices\MyDesignTimeSharedResourceService.cs" />
+    <Compile Include="Services\RuntimeServices\MyDialogService.cs" />
+    <Compile Include="Services\RuntimeServices\MyExportService.cs" />
+    <Compile Include="Services\RuntimeServices\MyMailNotificationService.cs" />
+    <Compile Include="Services\RuntimeServices\MyNavigationService.cs" />
+    <Compile Include="Services\RuntimeServices\MySharedResourceService.cs" />
     <Compile Include="ViewModel\ApplicationView_ViewModel.cs" />
     <Compile Include="ViewModel\Application_ViewModel.cs" />
     <Compile Include="ViewModel\DataModel_ViewModel.cs" />
@@ -166,13 +166,13 @@
     <Compile Include="ViewModel\LogView_ViewModel.cs" />
     <Compile Include="ViewModel\Main_ViewModel.cs" />
     <Compile Include="ViewModel\Menu_ViewModel.cs" />
-    <Compile Include="ViewModel\MyRelayCommand.cs" />
+    <Compile Include="Helpers\MyRelayCommand.cs" />
     <Compile Include="ViewModel\OE_AssignmentView_ViewModel.cs" />
     <Compile Include="ViewModel\ProcessView_ViewModel.cs" />
     <Compile Include="ViewModel\Process_ViewModel.cs" />
     <Compile Include="ViewModel\SBA_View_ViewModel.cs" />
     <Compile Include="ViewModel\Settings_ViewModel.cs" />
-    <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="Helpers\ViewModelLocator.cs" />
     <Compile Include="View\ApplicationView_View.xaml.cs">
       <DependentUpon>ApplicationView_View.xaml</DependentUpon>
     </Compile>
@@ -218,7 +218,7 @@
     <Compile Include="View\Settings_View.xaml.cs">
       <DependentUpon>Settings_View.xaml</DependentUpon>
     </Compile>
-    <Page Include="MainWindow.xaml">
+    <Page Include="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -226,7 +226,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -312,6 +312,7 @@
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagramV.cd" />
     <None Include="ClassDiagramVM.cd" />
     <None Include="LINQ2SQL\L2S.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>

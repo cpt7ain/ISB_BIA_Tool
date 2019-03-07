@@ -3,7 +3,7 @@ using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.ViewModel;
 using System.Windows;
 
-namespace ISB_BIA_IMPORT1
+namespace ISB_BIA_IMPORT1.View
 {
     /// <summary>
     /// Interaktionslogik für MainWindow.xaml
