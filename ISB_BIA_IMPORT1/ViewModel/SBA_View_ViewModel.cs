@@ -18,17 +18,17 @@ namespace ISB_BIA_IMPORT1.ViewModel
     public class SBA_View_ViewModel : ViewModelBase
     {
         #region Backing-Fields
-        private MyRelayCommand _navToApp;
-        private ObservableCollection<ISB_BIA_Applikationen> _selectedApplications;
-        private MyRelayCommand<object> _saveSelectedApplications;
-        private MyRelayCommand _exportProcessList;
-        private MyRelayCommand _exportApplicationList;
-        private ObservableCollection<ISB_BIA_Applikationen> _applicationList;
+        private MyRelayCommand _cmd_NavToApp;
+        private ObservableCollection<ISB_BIA_Applikationen> _list_SelectedApplications;
+        private MyRelayCommand<object> _cmd_SaveSelectedApplications;
+        private MyRelayCommand _cmd_ExportProcessList;
+        private MyRelayCommand _cmd_ExportApplicationList;
+        private ObservableCollection<ISB_BIA_Applikationen> _list_Applications;
         private object _selectedItem;
-        private int _nonEditCount;
-        private int _editCount;
-        private int _processCount;
-        private int _editProcessCount;
+        private int _count_NonEdit;
+        private int _count_Edit;
+        private int _count_AllProcesses;
+        private int _count_EditProcesses;
 
         #endregion
 
@@ -36,7 +36,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Command zum Zurückkehren zum vorherigen VM
         /// </summary>
-        public MyRelayCommand NavBack
+        public MyRelayCommand Cmd_NavBack
         {
             get
             {
@@ -50,19 +50,19 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Zu ausgewählter Applikation <see cref="SelectedItem"/> navigieren falls diese nicht gesperrt ist, und für andere User sperren
         /// </summary>
-        public MyRelayCommand NavToApp
+        public MyRelayCommand Cmd_NavToApp
         {
             get
             {
-                return _navToApp
-                    ?? (_navToApp = new MyRelayCommand(() =>
+                return _cmd_NavToApp
+                    ?? (_cmd_NavToApp = new MyRelayCommand(() =>
                     {
                         if (SelectedItem == null) return;
                         ISB_BIA_Applikationen applicationToChange = (ISB_BIA_Applikationen)SelectedItem;
-                        string user = _myData.GetObjectLocked(Table_Lock_Flags.Application, applicationToChange.Applikation_Id);
+                        string user = _myLock.Get_ObjectIsLocked(Table_Lock_Flags.Application, applicationToChange.Applikation_Id);
                         if (user == "")
                         {
-                            if (_myData.LockObject(Table_Lock_Flags.Application, applicationToChange.Applikation_Id))
+                            if (_myLock.Lock_Object(Table_Lock_Flags.Application, applicationToChange.Applikation_Id))
                                 _myNavi.NavigateTo<Application_ViewModel>(applicationToChange.Applikation_Id, ProcAppMode.Change);
                         }
                         else
@@ -77,29 +77,29 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Liste der ausgewählten Anwendungen für das Gruppenspeichern/>
         /// </summary>
-        public ObservableCollection<ISB_BIA_Applikationen> SelectedApplications
+        public ObservableCollection<ISB_BIA_Applikationen> List_SelectedApplications
         {
-            get => _selectedApplications;
-            set => Set(() => SelectedApplications, ref _selectedApplications, value);
+            get => _list_SelectedApplications;
+            set => Set(() => List_SelectedApplications, ref _list_SelectedApplications, value);
         }
         /// <summary>
         /// Command für die Gruppenspeicherung/>
         /// </summary>
-        public MyRelayCommand<object> SaveSelectedApplications
+        public MyRelayCommand<object> Cmd_SaveSelectedApplications
         {
-            get => _saveSelectedApplications
-                        ?? (_saveSelectedApplications = new MyRelayCommand<object>((list) =>
+            get => _cmd_SaveSelectedApplications
+                        ?? (_cmd_SaveSelectedApplications = new MyRelayCommand<object>((list) =>
                         {
                             System.Collections.IList items = (System.Collections.IList)list;
                             if(items.Count > 0)
                             {
                                 var collection = items.Cast<ISB_BIA_Applikationen>();
-                                SelectedApplications = new ObservableCollection<ISB_BIA_Applikationen>(collection);
+                                List_SelectedApplications = new ObservableCollection<ISB_BIA_Applikationen>(collection);
                                 List<ISB_BIA_Applikationen> lockedList = new List<ISB_BIA_Applikationen>();
                                 string al = "";
-                                foreach (ISB_BIA_Applikationen a in SelectedApplications)
+                                foreach (ISB_BIA_Applikationen a in List_SelectedApplications)
                                 {
-                                    string user = _myData.GetObjectLocked(Table_Lock_Flags.Application, a.Applikation_Id);
+                                    string user = _myLock.Get_ObjectIsLocked(Table_Lock_Flags.Application, a.Applikation_Id);
                                     if (user != "")
                                     {
                                         lockedList.Add(a);
@@ -108,7 +108,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                                 }
                                 if (lockedList.Count == 0)
                                 {
-                                    if (_myData.SaveAllApplications(SelectedApplications))
+                                    if (_myApp.Insert_AllApplications(List_SelectedApplications))
                                     {
                                         Refresh();
                                     }
@@ -123,43 +123,43 @@ namespace ISB_BIA_IMPORT1.ViewModel
                             {
                                 _myDia.ShowMessage("Bitte wählen Sie Anwendungen aus der Übersicht aus, die Sie ohne Änderungen aktualisieren möchten.");
                             }
-                        }, (list) => Setting.Multi_Save == "Ja"));
+                        }, (list) => Setting.Multi_Speichern == "Ja"));
         }
         /// <summary>
         /// Exportieren der Liste der angezeigten Prozesse nach Excel
         /// </summary>
-        public MyRelayCommand ExportProcessList
+        public MyRelayCommand Cmd_ExportProcessList
         {
             get
             {
-                return _exportProcessList
-                    ?? (_exportProcessList = new MyRelayCommand(() =>
+                return _cmd_ExportProcessList
+                    ?? (_cmd_ExportProcessList = new MyRelayCommand(() =>
                     {
-                        _myExport.AllActiveProcessesExport();
+                        _myExport.Proc_ExportActiveProcesses();
                     }));
             }
         }
         /// <summary>
         /// Exportieren der Liste aller aktiven Applikationen nach Excel
         /// </summary>
-        public MyRelayCommand ExportApplicationList
+        public MyRelayCommand Cmd_ExportApplicationList
         {
             get
             {
-                return _exportApplicationList
-                    ?? (_exportApplicationList = new MyRelayCommand(() =>
+                return _cmd_ExportApplicationList
+                    ?? (_cmd_ExportApplicationList = new MyRelayCommand(() =>
                     {
-                        _myExport.AllActiveApplicationsExport();
+                        _myExport.App_ExportActiveApplications();
                     }));
             }
         }
         /// <summary>
         /// Liste der angezeigten Applikationen
         /// </summary>
-        public ObservableCollection<ISB_BIA_Applikationen> ApplicationList
+        public ObservableCollection<ISB_BIA_Applikationen> List_Applications
         {
-            get => _applicationList;
-            set => Set(() => ApplicationList, ref _applicationList, value);
+            get => _list_Applications;
+            set => Set(() => List_Applications, ref _list_Applications, value);
 
         }
         /// <summary>
@@ -174,56 +174,49 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Anzahl nicht bearbeiteter Anwendungen
         /// </summary>
-        public int NonEditCount
+        public int Count_NonEdit
         {
-            get => _nonEditCount;
-            set => Set(() => NonEditCount, ref _nonEditCount, value);
+            get => _count_NonEdit;
+            set => Set(() => Count_NonEdit, ref _count_NonEdit, value);
 
         }
         /// <summary>
         /// Anzahl bearbeiteter Anwendungen
         /// </summary>
-        public int EditCount
+        public int Count_Edit
         {
-            get => _editCount;
-            set => Set(() => EditCount, ref _editCount, value);
+            get => _count_Edit;
+            set => Set(() => Count_Edit, ref _count_Edit, value);
 
-        }
-        /// <summary>
-        /// Anzahl aller angezeigten Anwendungen
-        /// </summary>
-        public int AllCount
-        {
-            get => _nonEditCount + _editCount;
         }
         /// <summary>
         /// Anzahl aller Prozesse der BIA
         /// </summary>
-        public int ProcessCount
+        public int Count_AllProcesses
         {
-            get => _processCount;
-            set => Set(()=>ProcessCount, ref _processCount, value);
+            get => _count_AllProcesses;
+            set => Set(()=>Count_AllProcesses, ref _count_AllProcesses, value);
 
         }
         /// <summary>
         /// Anzahl bearbeiteter Prozesse der BIA
         /// </summary>
-        public int EditProcessCount
+        public int Count_EditProcesses
         {
-            get => _editProcessCount;
-            set => Set(() => EditProcessCount, ref _editProcessCount, value);
+            get => _count_EditProcesses;
+            set => Set(() => Count_EditProcesses, ref _count_EditProcesses, value);
         }
         /// <summary>
         /// Anweisung
         /// </summary>
-        public string Instruction
+        public string Str_Instruction
         {
             get => "Doppelklick auf eine Applikation, den Sie bearbeiten möchten.";
         }
         /// <summary>
         /// Überschrift
         /// </summary>
-        public string Header
+        public string Str_Header
         {
             get => "Anwendungen bearbeiten";
         }
@@ -236,28 +229,37 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private readonly IMyNavigationService _myNavi;
         private readonly IMyDialogService _myDia;
         private readonly IMyExportService _myExport;
-        private readonly IMyDataService _myData;
+        private readonly IMyDataService_Application _myApp;
+        private readonly IMyDataService_Process _myProc;
+        private readonly IMyDataService_Setting _mySett;
+        private readonly IMyDataService_Lock _myLock;
+
         #endregion
 
         /// <summary>
         /// Konstruktor
         /// </summary>
-        /// <param name="myDialogService"></param>
-        /// <param name="myNavigationService"></param>
-        /// <param name="myExportService"></param>
-        /// <param name="myDataService"></param>
-        public SBA_View_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyExportService myExportService, IMyDataService myDataService)
+        /// <param name="myDia"></param>
+        /// <param name="myNavi"></param>
+        /// <param name="myExp"></param>
+        /// <param name="myApp"></param>
+        public SBA_View_ViewModel(IMyDialogService myDia, IMyNavigationService myNavi, 
+            IMyExportService myExp, IMyDataService_Application myApp,IMyDataService_Lock myLock, 
+            IMyDataService_Setting mySett , IMyDataService_Process myProc)
         {
-            _myNavi = myNavigationService;
-            _myDia = myDialogService;
-            _myExport = myExportService;
-            _myData = myDataService;
+            _myNavi = myNavi;
+            _myDia = myDia;
+            _mySett = mySett;
+            _myLock = myLock;
+            _myProc = myProc;
+            _myExport = myExp;
+            _myApp = myApp;
             MessengerInstance.Register<NotificationMessage<string>>(this, MessageToken.RefreshData, message =>
             {
                 if (!(message.Sender is IMyNavigationService)) return;
                 Refresh();
             });
-            Setting = _myData.GetSettings();
+            Setting = _mySett.Get_Settings();
             Refresh();
         }
 
@@ -266,19 +268,19 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         public void Refresh()
         {
-            ApplicationList = _myData.GetActiveApplications();
-            if (ApplicationList == null)
+            List_Applications = _myApp.Get_Applications_Active();
+            if (List_Applications == null)
             {
                 Cleanup();
                 _myNavi.NavigateBack();
                 _myDia.ShowError("Es konnten keine Applikationen abgerufen werden.");
             }
-            EditCount = ApplicationList.Where(x => x.Datum.Year == DateTime.Now.Year).ToList().Count;
-            NonEditCount = ApplicationList.Where(x => x.Datum.Year != DateTime.Now.Year).ToList().Count;
-            ObservableCollection<ISB_BIA_Prozesse> processes = _myData.GetActiveProcesses();
-            ProcessCount = processes.Count;
-            EditProcessCount = processes.Where(x => x.Datum.Year == DateTime.Now.Year).ToList().Count;
-            SelectedApplications = new ObservableCollection<ISB_BIA_Applikationen>();
+            Count_Edit = List_Applications.Where(x => x.Datum.Year == DateTime.Now.Year).ToList().Count;
+            Count_NonEdit = List_Applications.Where(x => x.Datum.Year != DateTime.Now.Year).ToList().Count;
+            ObservableCollection<ISB_BIA_Prozesse> processes = _myProc.Get_Processes_Active();
+            Count_AllProcesses = processes.Count;
+            Count_EditProcesses = processes.Where(x => x.Datum.Year == DateTime.Now.Year).ToList().Count;
+            List_SelectedApplications = new ObservableCollection<ISB_BIA_Applikationen>();
         }
 
         /// <summary>

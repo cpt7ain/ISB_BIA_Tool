@@ -16,17 +16,17 @@ namespace ISB_BIA_IMPORT1.ViewModel
     public class InformationSegmentsView_ViewModel : ViewModelBase
     {
         #region Backing Fields
-        private MyRelayCommand _navToIS;
-        private ObservableCollection<ISB_BIA_Informationssegmente> _iSList;
+        private MyRelayCommand _cmd_NavToIS;
+        private ObservableCollection<ISB_BIA_Informationssegmente> _list_InformationSegment;
         private ObservableCollection<string> _attributeColumnHeaderText;
         private object _selectedItem;
-        private ISISAttributeMode _iSMode;
+        private ISISAttributeMode _mode;
         #endregion
 
         /// <summary>
         /// Command zum Zurückkehren zum vorherigen VM
         /// </summary>
-        public MyRelayCommand NavBack
+        public MyRelayCommand Cmd_NavBack
         {
             get => new MyRelayCommand(() =>
             {
@@ -39,20 +39,20 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// Zu dem ausgewählten Informationssegment <see cref="SelectedItem"/> navigieren.
         /// Wenn EditMode dann Objekt zusätzlich sperren.
         /// </summary>
-        public MyRelayCommand NavToIS
+        public MyRelayCommand Cmd_NavToIS
         {
-            get => _navToIS
-                    ?? (_navToIS = new MyRelayCommand(() =>
+            get => _cmd_NavToIS
+                    ?? (_cmd_NavToIS = new MyRelayCommand(() =>
                     {
                         if (SelectedItem == null) return;
                         ISB_BIA_Informationssegmente iSToChange = (ISB_BIA_Informationssegmente)SelectedItem;
-                        if (ISMode == ISISAttributeMode.Edit)
+                        if (Mode == ISISAttributeMode.Edit)
                         {
-                            string user = _myData.GetObjectLocked(Table_Lock_Flags.Segment, iSToChange.Informationssegment_Id);
+                            string user = _myLock.Get_ObjectIsLocked(Table_Lock_Flags.Segment, iSToChange.Informationssegment_Id);
                             if (user == "")
                             {
-                                if (_myData.LockObject(Table_Lock_Flags.Segment, iSToChange.Informationssegment_Id))
-                                    _myNavi.NavigateTo<InformationSegment_ViewModel>(iSToChange.Informationssegment_Id, ISMode);
+                                if (_myLock.Lock_Object(Table_Lock_Flags.Segment, iSToChange.Informationssegment_Id))
+                                    _myNavi.NavigateTo<InformationSegment_ViewModel>(iSToChange.Informationssegment_Id, Mode);
                             }
                             else
                             {
@@ -61,27 +61,27 @@ namespace ISB_BIA_IMPORT1.ViewModel
                         }
                         else
                         {
-                            _myNavi.NavigateTo<InformationSegment_ViewModel>(iSToChange.Informationssegment_Id, ISMode);
+                            _myNavi.NavigateTo<InformationSegment_ViewModel>(iSToChange.Informationssegment_Id, Mode);
                         }
                     }));
         }
         /// <summary>
         /// Command zum Exportieren der Segment und Attributübersicht inklusive historischer Daten
         /// </summary>
-        public MyRelayCommand ExportSegmentAndAttributes
+        public MyRelayCommand Cmd_ExportSegmentAndAttributes
         {
             get => new MyRelayCommand(() =>
             {
-                _myExport.ExportSegmentAndAttributeHistory();
+                _myExp.IS_Attr_ExportSegmentAndAttributeHistory();
             });
         }
         /// <summary>
         /// Liste der angezeigten Informationssegmente
         /// </summary>
-        public ObservableCollection<ISB_BIA_Informationssegmente> ISList
+        public ObservableCollection<ISB_BIA_Informationssegmente> List_InformationSegment
         {
-            get => _iSList;
-            set => Set(() => ISList, ref _iSList, value);
+            get => _list_InformationSegment;
+            set => Set(() => List_InformationSegment, ref _list_InformationSegment, value);
         }
 
         /// <summary>
@@ -110,14 +110,14 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Sichtbarkeit von Attribut 9
         /// </summary>
-        public Visibility Attribute_9_Vis
+        public Visibility Vis_Attribut9
         {
             get => (Settings.Attribut9_aktiviert == "Ja") ? Visibility.Visible : Visibility.Collapsed;
         }
         /// <summary>
         /// Sichtbarkeit von Attribut 10
         /// </summary>
-        public Visibility Attribute_10_Vis
+        public Visibility Vis_Attribut10
         {
             get => (Settings.Attribut10_aktiviert == "Ja") ? Visibility.Visible : Visibility.Collapsed;
         }
@@ -126,21 +126,21 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Modus, welcher angezeigte Segmente sowie Anweisung bestimmt
         /// </summary>
-        public ISISAttributeMode ISMode
+        public ISISAttributeMode Mode
         {
-            get => _iSMode;
+            get => _mode;
             set
             {
-                Set(() => ISMode, ref _iSMode, value);
+                Set(() => Mode, ref _mode, value);
                 if (value == ISISAttributeMode.Edit)
                 {
-                    Instruction = "Doppelklick auf ein Segment, das Sie ändern oder betrachten möchten.";
-                    ISList = _myData.GetAllSegments();
+                    Str_Instruction = "Doppelklick auf ein Segment, das Sie ändern oder betrachten möchten.";
+                    List_InformationSegment = _myIS.Get_Segments_All();
                 }
                 else if (value == ISISAttributeMode.View)
                 {
-                    Instruction = "Doppelklick auf ein Segment, das Sie betrachten möchten.";
-                    ISList = _myData.GetEnabledSegments();
+                    Str_Instruction = "Doppelklick auf ein Segment, das Sie betrachten möchten.";
+                    List_InformationSegment = _myIS.Get_Segments_Enabled();
                 }
             }
         }
@@ -148,36 +148,42 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Anweisung
         /// </summary>
-        public string Instruction { get; set; }
+        public string Str_Instruction { get; set; }
 
         #region Services
         private readonly IMyNavigationService _myNavi;
         private readonly IMyDialogService _myDia;
-        private readonly IMyDataService _myData;
-        private readonly IMyExportService _myExport;
+        private readonly IMyDataService_IS_Attribute _myIS;
+        private readonly IMyDataService_Lock _myLock;
+        private readonly IMyExportService _myExp;
+        private readonly IMyDataService_Setting _mySett;
         #endregion
 
         /// <summary>
         /// Konstruktor
         /// </summary>
-        /// <param name="myDialogService"></param>
-        /// <param name="myNavigationService"></param>
-        /// <param name="myDataService"></param>
-        /// <param name="myExportService"></param>
-        public InformationSegmentsView_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyDataService myDataService, IMyExportService myExportService)
+        /// <param name="myDia"></param>
+        /// <param name="myNavi"></param>
+        /// <param name="myIS"></param>
+        /// <param name="myExp"></param>
+        public InformationSegmentsView_ViewModel(IMyDialogService myDia, IMyNavigationService myNavi, 
+            IMyDataService_IS_Attribute myIS, IMyExportService myExp, IMyDataService_Lock myLock,
+            IMyDataService_Setting mySett)
         {
             #region Services
-            _myDia = myDialogService;
-            _myNavi = myNavigationService;
-            _myData = myDataService;
-            _myExport = myExportService;
+            _myDia = myDia;
+            _myNavi = myNavi;
+            _myLock = myLock;
+            _mySett = mySett;
+            _myIS = myIS;
+            _myExp = myExp;
             #endregion
 
             if (IsInDesignMode)
             {
-                AttributeColumnHeaderText = _myData.GetAttributeNamesForHeader();
-                ISList = _myData.GetAllSegments();
-                Settings = _myData.GetSettings();
+                AttributeColumnHeaderText = _myIS.Get_List_AttributeNamesForHeader();
+                List_InformationSegment = _myIS.Get_Segments_All();
+                Settings = _mySett.Get_Settings();
             }
             else
             {
@@ -185,7 +191,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 MessengerInstance.Register<NotificationMessage<ISISAttributeMode>>(this, n =>
                 {
                     if (!(n.Sender is IMyNavigationService)) return;
-                    ISMode = n.Content;
+                    Mode = n.Content;
                 });
                 MessengerInstance.Register<NotificationMessage<string>>(this, MessageToken.RefreshData, s =>
                 {
@@ -193,9 +199,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     Refresh();
                 });
                 //Abrufen der Headernamen
-                AttributeColumnHeaderText = _myData.GetAttributeNamesForHeader();
+                AttributeColumnHeaderText = _myIS.Get_List_AttributeNamesForHeader();
                 //Einstellungen abrufen
-                Settings = _myData.GetSettings();
+                Settings = _mySett.Get_Settings();
             }
         }
 
@@ -204,13 +210,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         public void Refresh()
         {
-            if (ISMode == ISISAttributeMode.Edit)
+            if (Mode == ISISAttributeMode.Edit)
             {
-                ISList = _myData.GetAllSegments();
+                List_InformationSegment = _myIS.Get_Segments_All();
             }
-            else if (ISMode == ISISAttributeMode.View)
+            else if (Mode == ISISAttributeMode.View)
             {
-                ISList = _myData.GetEnabledSegments();
+                List_InformationSegment = _myIS.Get_Segments_Enabled();
             }
         }
 

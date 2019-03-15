@@ -24,7 +24,7 @@
         <Border>
             <Grid>
                 <Label Content="{Binding Header}" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                <Button Background="Wheat" Content="Zurück" Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Command="{Binding NavBack}"/>
+                <Button Background="Wheat" Content="Zurück" Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Command="{Binding Cmd_NavBack}"/>
             </Grid>
         </Border>
         <Border Grid.Row="1" Background="White" Margin="10" BorderBrush="Black" BorderThickness="1">
@@ -41,7 +41,7 @@
                 <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
                     <TextBox Name="SearchBox" Text="" HorizontalAlignment="Right" VerticalAlignment="Center" Width="300" KeyUp="SearchBox_KeyUp"/>
                     <Button Content="Suche" VerticalAlignment="Center" Click="SearchButton_Click" Margin ="0,0,10,0"/>
-                    <Button Content="Excel-Export" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Command="{Binding ExportApplicationList}"/>
+                    <Button Content="Excel-Export" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Command="{Binding Cmd_ExportApplicationList}"/>
                 </StackPanel>
                 <DataGrid 
                     Name="ApplicationDataGrid"
@@ -56,10 +56,10 @@
                   CanUserResizeRows="False" 
                   Grid.ColumnSpan="3" 
                   SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}"
-                  ItemsSource="{Binding ApplicationList, IsAsync=True}">
+                  ItemsSource="{Binding List_Application, IsAsync=True}">
                     <DataGrid.InputBindings>
-                        <MouseBinding Gesture="LeftDoubleClick" Command="{Binding RowDoubleClick}"/>
-                        <KeyBinding Key="Enter" Command="{Binding RowDoubleClick}"/>
+                        <MouseBinding Gesture="LeftDoubleClick" Command="{Binding Cmd_RowDoubleClick}"/>
+                        <KeyBinding Key="Enter" Command="{Binding Cmd_RowDoubleClick}"/>
                     </DataGrid.InputBindings>
                     <DataGrid.Columns>
                         <DataGridTextColumn Width="570" Header="Anwendung" Binding="{Binding IT_Anwendung_System}"/>

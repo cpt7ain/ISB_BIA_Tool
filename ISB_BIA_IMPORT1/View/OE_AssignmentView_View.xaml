@@ -34,7 +34,7 @@
         <Border Grid.ColumnSpan="7">
             <Grid>
                 <Label Content="OE Einstellungen" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                <Button Content="Zurück" HorizontalAlignment="Right" Background="Wheat"  Margin="0,0,10,0" VerticalAlignment="Center" Command="{Binding NavBack}"/>
+                <Button Content="Zurück" HorizontalAlignment="Right" Background="Wheat"  Margin="0,0,10,0" VerticalAlignment="Center" Command="{Binding Cmd_NavBack}"/>
             </Grid>
         </Border>
         <Border Grid.Column="1" Grid.Row="2" Grid.RowSpan="4" BorderBrush="Black" BorderThickness="2" Background="White">
@@ -51,27 +51,27 @@
                           Grid.Column="1"
                           VerticalGridLinesBrush="LightGray"
                           HorizontalGridLinesBrush="LightGray"
-                          ItemsSource="{Binding OENames}"
-                          SelectedItem="{Binding SelectedName}"
+                          ItemsSource="{Binding List_OENames}"
+                          SelectedItem="{Binding OE_SelectedName}"
                           AutoGenerateColumns="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="OE" Binding="{Binding OE_Name}" Width="240"/>
                         <DataGridTextColumn Header="Datum" Binding="{Binding Datum, StringFormat=\{0:dd.MM.yy\}}" Width="80"/>
                     </DataGrid.Columns>
                 </DataGrid>
-                <Border Background="White" Grid.Row="2" BorderThickness="1" Visibility="{Binding NameVis}" Margin="3,3,3,3" >
+                <Border Background="White" Grid.Row="2" BorderThickness="1" Visibility="{Binding Vis_NameBorder}" Margin="3,3,3,3" >
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="5*"/>
                             <RowDefinition Height="5*"/>
                             <RowDefinition Height="5*"/>
                         </Grid.RowDefinitions>
-                        <Button Content="Neue OE-Bezeichnung anlegen" VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding ActivateNameNew}"/>
-                        <Button Content="OE-Bezeichnung Bearbeiten" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding ActivateNameEdit}"/>
-                        <Button Content="OE-Bezeichnung Löschen" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding DeleteOENameCmd}"/>
+                        <Button Content="Neue OE-Bezeichnung anlegen" VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding Cmd_ActivateNameNew}"/>
+                        <Button Content="OE-Bezeichnung Bearbeiten" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding Cmd_ActivateNameEdit}"/>
+                        <Button Content="OE-Bezeichnung Löschen" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding Cmd_DeleteOENameCmd}"/>
                     </Grid>
                 </Border>
-                <Border Background="White" Grid.Row="2" BorderThickness="1" Visibility="{Binding NameEditBorderVis}" Margin="3,3,3,3">
+                <Border Background="White" Grid.Row="2" BorderThickness="1" Visibility="{Binding Vis_NameEditBorder}" Margin="3,3,3,3">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="5*"/>
@@ -82,13 +82,13 @@
                         </Grid.RowDefinitions>
                         <Label Content="Alte OE-Bezeichnung:" VerticalAlignment="Center" Grid.Column="1"/>
                         <Label Content="Neue OE-Bezeichnung:" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1"/>
-                        <TextBox Text="{Binding SelectedName.OE_Name}" Grid.Column="2" VerticalAlignment="Center" IsReadOnly="True" Grid.Row="1" Margin="10,0,10,0"/>
-                        <TextBox Text="{Binding EditNewName}" Grid.Column="2" VerticalAlignment="Center" Grid.Row="3" Margin="10,0,10,0"/>
-                        <Button Content="Speichern" Grid.Row="4" HorizontalAlignment="Left" Margin="30,0,0,0" VerticalAlignment="Center" Command="{Binding SaveNameEdit}"/>
-                        <Button Content="Abbrechen" Grid.Row="4" HorizontalAlignment="Right" Margin="0,0,30,0"  VerticalAlignment="Center" Command="{Binding CancelEdit}"/>
+                        <TextBox Text="{Binding OE_SelectedName.OE_Name}" Grid.Column="2" VerticalAlignment="Center" IsReadOnly="True" Grid.Row="1" Margin="10,0,10,0"/>
+                        <TextBox Text="{Binding Str_EditNewName}" Grid.Column="2" VerticalAlignment="Center" Grid.Row="3" Margin="10,0,10,0"/>
+                        <Button Content="Speichern" Grid.Row="4" HorizontalAlignment="Left" Margin="30,0,0,0" VerticalAlignment="Center" Command="{Binding Cmd_SaveNameEdit}"/>
+                        <Button Content="Abbrechen" Grid.Row="4" HorizontalAlignment="Right" Margin="0,0,30,0"  VerticalAlignment="Center" Command="{Binding Cmd_CancelEdit}"/>
                     </Grid>
                 </Border>
-                <Border Background="White" Grid.Row="2" BorderThickness="2" BorderBrush="Black" Visibility="{Binding NameNewBorderVis}">
+                <Border Background="White" Grid.Row="2" BorderThickness="2" BorderBrush="Black" Visibility="{Binding Vis_NameNewBorder}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="5*"/>
@@ -98,9 +98,9 @@
                             <RowDefinition Height="5*"/>
                         </Grid.RowDefinitions>
                         <Label Content="OE-Bezeichnung:" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1"/>
-                        <TextBox Text="{Binding NewName}" VerticalAlignment="Center" Grid.Row="2" Margin="10,0,10,0"/>
-                        <Button Content="Speichern" Grid.Row="4" HorizontalAlignment="Left" Margin="30,0,0,0" VerticalAlignment="Center" Command="{Binding SaveNameNew}"/>
-                        <Button Content="Abbrechen" Grid.Row="4" HorizontalAlignment="Right" Margin="0,0,30,0"  VerticalAlignment="Center" Command="{Binding CancelEdit}"/>
+                        <TextBox Text="{Binding Str_NewName}" VerticalAlignment="Center" Grid.Row="2" Margin="10,0,10,0"/>
+                        <Button Content="Speichern" Grid.Row="4" HorizontalAlignment="Left" Margin="30,0,0,0" VerticalAlignment="Center" Command="{Binding Cmd_SaveNameNew}"/>
+                        <Button Content="Abbrechen" Grid.Row="4" HorizontalAlignment="Right" Margin="0,0,30,0"  VerticalAlignment="Center" Command="{Binding Cmd_CancelEdit}"/>
                     </Grid>
                 </Border>
             </Grid>
@@ -119,25 +119,25 @@
                           Grid.Column="3"
                           VerticalGridLinesBrush="LightGray"
                           HorizontalGridLinesBrush="LightGray"
-                          ItemsSource="{Binding OELinks}"
-                          SelectedItem="{Binding SelectedLink}"
+                          ItemsSource="{Binding List_OELinks}"
+                          SelectedItem="{Binding OE_SelectedLink}"
                           AutoGenerateColumns="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="OE" Binding="{Binding OE_Name}" Width="220"/>
                         <DataGridTextColumn Header="OE-Nummer" Binding="{Binding OE_Nummer}" Width="100"/>
                     </DataGrid.Columns>
                 </DataGrid>
-                <Border Background="White" Grid.Row="2" BorderThickness="1" Visibility="{Binding LinkVis}" Margin="3,3,3,3">
+                <Border Background="White" Grid.Row="2" BorderThickness="1" Visibility="{Binding Vis_LinkBorder}" Margin="3,3,3,3">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="5*"/>
                             <RowDefinition Height="5*"/>
                         </Grid.RowDefinitions>
-                        <Button Content="OE Zuordnung erstellen" VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding ActivateLinkNew}"/>
-                        <Button Content="OE Zuordnung löschen" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding DeleteOELinkCmd}"/>
+                        <Button Content="OE Zuordnung erstellen" VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding Cmd_ActivateLinkNew}"/>
+                        <Button Content="OE Zuordnung löschen" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding Cmd_DeleteOELinkCmd}"/>
                     </Grid>
                 </Border>
-                <Border Background="White" Grid.Row="2" BorderThickness="2" BorderBrush="Black" Visibility="{Binding LinkNewBorderVis}">
+                <Border Background="White" Grid.Row="2" BorderThickness="2" BorderBrush="Black" Visibility="{Binding Vis_LinkNewBorder}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="5*"/>
@@ -148,10 +148,10 @@
                         </Grid.RowDefinitions>
                         <Label Content="OE-Bezeichnung:" VerticalAlignment="Center" Grid.Column="1"/>
                         <Label Content="OE-Kennung:" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1"/>
-                        <ComboBox VerticalAlignment="Center" Grid.Row="1" Margin="10,0,10,0" SelectedItem="{Binding SelectedNewLinkName}" ItemsSource="{Binding OENames}" DisplayMemberPath="OE_Name" SelectedIndex="0"/>
-                        <ComboBox VerticalAlignment="Center" Grid.Row="3" Margin="10,0,10,0" SelectedItem="{Binding SelectedNewLinkNumber}" ItemsSource="{Binding OENumbers}" DisplayMemberPath="OE_Nummer" SelectedIndex="0"/>
-                        <Button Content="Speichern" Grid.Row="4" HorizontalAlignment="Left" Margin="30,0,0,0" VerticalAlignment="Center" Command="{Binding SaveLinkNew}"/>
-                        <Button Content="Abbrechen" Grid.Row="4" HorizontalAlignment="Right" Margin="0,0,30,0"  VerticalAlignment="Center" Command="{Binding CancelEdit}"/>
+                        <ComboBox VerticalAlignment="Center" Grid.Row="1" Margin="10,0,10,0" SelectedItem="{Binding OE_SelectedNewLinkName}" ItemsSource="{Binding List_OENames}" DisplayMemberPath="OE_Name" SelectedIndex="0"/>
+                        <ComboBox VerticalAlignment="Center" Grid.Row="3" Margin="10,0,10,0" SelectedItem="{Binding OE_SelectedNewLinkNumber}" ItemsSource="{Binding List_OENumbers}" DisplayMemberPath="OE_Nummer" SelectedIndex="0"/>
+                        <Button Content="Speichern" Grid.Row="4" HorizontalAlignment="Left" Margin="30,0,0,0" VerticalAlignment="Center" Command="{Binding Cmd_SaveLinkNew}"/>
+                        <Button Content="Abbrechen" Grid.Row="4" HorizontalAlignment="Right" Margin="0,0,30,0"  VerticalAlignment="Center" Command="{Binding Cmd_CancelEdit}"/>
                     </Grid>
                 </Border>
             </Grid>
@@ -170,27 +170,27 @@
                           Grid.Column="5"
                           VerticalGridLinesBrush="LightGray"
                           HorizontalGridLinesBrush="LightGray"
-                          ItemsSource="{Binding OENumbers}"
-                          SelectedItem="{Binding SelectedNumber}"
+                          ItemsSource="{Binding List_OENumbers}"
+                          SelectedItem="{Binding OE_SelectedNumber}"
                           AutoGenerateColumns="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="OE-Nummer" Binding="{Binding OE_Nummer}" Width="240"/>
                         <DataGridTextColumn Header="Datum" Binding="{Binding Datum, StringFormat=\{0:dd.MM.yy\}}" Width="80"/>
                     </DataGrid.Columns>
                 </DataGrid>
-                <Border Background="White" Grid.Row="2" BorderThickness="1" Visibility="{Binding NumberVis}" Margin="3,3,3,3">
+                <Border Background="White" Grid.Row="2" BorderThickness="1" Visibility="{Binding Vis_NumberBorder}" Margin="3,3,3,3">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="5*"/>
                             <RowDefinition Height="5*"/>
                             <RowDefinition Height="5*"/>
                         </Grid.RowDefinitions>
-                        <Button Content="neue OE Kennung anlegen" VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding ActivateNumberNew}"/>
-                        <Button Content="OE Kennung bearbeiten" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding ActivateNumberEdit}"/>
-                        <Button Content="OE Kennung löschen" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding DeleteOENumberCmd}"/>
+                        <Button Content="neue OE Kennung anlegen" VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding Cmd_ActivateNumberNew}"/>
+                        <Button Content="OE Kennung bearbeiten" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding Cmd_ActivateNumberEdit}"/>
+                        <Button Content="OE Kennung löschen" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding Cmd_DeleteOENumberCmd}"/>
                     </Grid>
                 </Border>
-                <Border Background="White" Grid.Row="2" BorderThickness="1" Visibility="{Binding NumberNewBorderVis}" Margin="3,3,3,3">
+                <Border Background="White" Grid.Row="2" BorderThickness="1" Visibility="{Binding Vis_NumberNewBorder}" Margin="3,3,3,3">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="5*"/>
@@ -201,13 +201,13 @@
                         </Grid.RowDefinitions>
                         <Label Content="Neue OE-Kennung:" VerticalAlignment="Center" Grid.Column="1"/>
                         <Label Content="OE-Bezeichnung:" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1"/>
-                        <TextBox Text="{Binding NewNumber}" Grid.Column="2" VerticalAlignment="Center" Grid.Row="1" Margin="10,0,10,0"/>
-                        <ComboBox VerticalAlignment="Center" Grid.Row="3" Margin="10,0,10,0" SelectedItem="{Binding SelectedNewNumberName}" ItemsSource="{Binding OENames}" SelectedIndex="0" DisplayMemberPath="OE_Name"/>
-                        <Button Content="Speichern" Grid.Row="4" HorizontalAlignment="Left" Margin="30,0,0,0" VerticalAlignment="Center" Command="{Binding SaveNumberNew}"/>
-                        <Button Content="Abbrechen" Grid.Row="4" HorizontalAlignment="Right" Margin="0,0,30,0"  VerticalAlignment="Center" Command="{Binding CancelEdit}"/>
+                        <TextBox Text="{Binding Str_NewNumber}" Grid.Column="2" VerticalAlignment="Center" Grid.Row="1" Margin="10,0,10,0"/>
+                        <ComboBox VerticalAlignment="Center" Grid.Row="3" Margin="10,0,10,0" SelectedItem="{Binding OE_SelectedNewNumberName}" ItemsSource="{Binding List_OENames}" SelectedIndex="0" DisplayMemberPath="OE_Name"/>
+                        <Button Content="Speichern" Grid.Row="4" HorizontalAlignment="Left" Margin="30,0,0,0" VerticalAlignment="Center" Command="{Binding Cmd_SaveNumberNew}"/>
+                        <Button Content="Abbrechen" Grid.Row="4" HorizontalAlignment="Right" Margin="0,0,30,0"  VerticalAlignment="Center" Command="{Binding Cmd_CancelEdit}"/>
                     </Grid>
                 </Border>
-                <Border Background="White" Grid.Row="2" BorderThickness="2" BorderBrush="Black" Visibility="{Binding NumberEditBorderVis}">
+                <Border Background="White" Grid.Row="2" BorderThickness="2" BorderBrush="Black" Visibility="{Binding Vis_NumberEditBorder}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="5*"/>
@@ -218,10 +218,10 @@
                         </Grid.RowDefinitions>
                         <Label Content="Alte OE-Kennung:" VerticalAlignment="Center" Grid.Column="1"/>
                         <Label Content="Neue OE-Kennung:" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1"/>
-                        <TextBox Text="{Binding SelectedNumber.OE_Nummer}" Margin="10,0,10,0" VerticalAlignment="Center" Grid.Row="1" IsReadOnly="True"/>
-                        <TextBox Text="{Binding EditNewNumber}" VerticalAlignment="Center" Grid.Row="3" Margin="10,0,10,0"/>
-                        <Button Content="Speichern" Grid.Row="4" HorizontalAlignment="Left" Margin="30,0,0,0" VerticalAlignment="Center" Command="{Binding SaveNumberEdit}"/>
-                        <Button Content="Abbrechen" Grid.Row="4" HorizontalAlignment="Right" Margin="0,0,30,0"  VerticalAlignment="Center" Command="{Binding CancelEdit}"/>
+                        <TextBox Text="{Binding OE_SelectedNumber.OE_Nummer}" Margin="10,0,10,0" VerticalAlignment="Center" Grid.Row="1" IsReadOnly="True"/>
+                        <TextBox Text="{Binding Str_EditNewNumber}" VerticalAlignment="Center" Grid.Row="3" Margin="10,0,10,0"/>
+                        <Button Content="Speichern" Grid.Row="4" HorizontalAlignment="Left" Margin="30,0,0,0" VerticalAlignment="Center" Command="{Binding Cmd_SaveNumberEdit}"/>
+                        <Button Content="Abbrechen" Grid.Row="4" HorizontalAlignment="Right" Margin="0,0,30,0"  VerticalAlignment="Center" Command="{Binding Cmd_CancelEdit}"/>
                     </Grid>
                 </Border>
             </Grid>

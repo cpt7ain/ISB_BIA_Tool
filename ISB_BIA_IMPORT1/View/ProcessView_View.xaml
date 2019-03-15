@@ -23,8 +23,8 @@
         </Grid.RowDefinitions>
         <Border Grid.ColumnSpan="3">
             <Grid>
-                <Label Content="{Binding Header}" FontWeight="Bold" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
-                <Button Content="Zurück" Background="Wheat" Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Command="{Binding NavBack}"/>
+                <Label Content="{Binding Str_Header}" FontWeight="Bold" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
+                <Button Content="Zurück" Background="Wheat" Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Command="{Binding Cmd_NavBack}"/>
             </Grid>
         </Border>
         <Border Grid.Row="1" Margin="10" Background="White" BorderBrush="Black" BorderThickness="1">
@@ -42,11 +42,11 @@
                     <RowDefinition Height="40"/>
                     <RowDefinition Height="40"/>
                 </Grid.RowDefinitions>
-                <TextBlock Margin="10,0,0,0" Text="{Binding Instruction}" Grid.Row="0" Grid.ColumnSpan="2" VerticalAlignment="Center" TextWrapping="WrapWithOverflow"/>
+                <TextBlock Margin="10,0,0,0" Text="{Binding Str_Instruction}" Grid.Row="0" Grid.ColumnSpan="2" VerticalAlignment="Center" TextWrapping="WrapWithOverflow"/>
                 <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
                     <TextBox Name="SearchBox" Text="" HorizontalAlignment="Right" VerticalAlignment="Center" Width="300" KeyUp="SearchBox_KeyUp"/>
                     <Button Content="Suche" VerticalAlignment="Center" Click="SearchButton_Click" Margin ="0,0,10,0"/>
-                    <Button Content="Excel-Export" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10,0,10,0" Command="{Binding ExportProcessList}" Visibility="{Binding ButtonVis}"/>
+                    <Button Content="Excel-Export" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10,0,10,0" Command="{Binding Cmd_ExportProcessList}" Visibility="{Binding Vis_ButtonMultiSave}"/>
                 </StackPanel>
                 <DataGrid 
                   Name="ProcessDataGrid"
@@ -60,10 +60,10 @@
                   CanUserResizeRows="False" 
                   Grid.ColumnSpan="3" Grid.Column="0"
                   SelectedItem="{Binding SelectedItem}"         
-                  ItemsSource="{Binding ProcessList, IsAsync=True}">
+                  ItemsSource="{Binding List_Processes, IsAsync=True}">
                     <DataGrid.InputBindings>
-                        <MouseBinding Gesture="LeftDoubleClick" Command="{Binding RowDoubleClick}"/>
-                        <KeyBinding Key="Enter" Command="{Binding RowDoubleClick}"/>
+                        <MouseBinding Gesture="LeftDoubleClick" Command="{Binding Cmd_RowDoubleClick}"/>
+                        <KeyBinding Key="Enter" Command="{Binding Cmd_RowDoubleClick}"/>
                     </DataGrid.InputBindings>
                     <DataGrid.RowHeaderTemplate>
                         <DataTemplate>
@@ -88,17 +88,17 @@
                         </Style>
                     </DataGrid.RowStyle>
                 </DataGrid>
-                <Button CommandParameter="{Binding ElementName=ProcessDataGrid, Path=SelectedItems}" Command="{Binding SaveSelectedProcesses}" Visibility="{Binding ButtonVis}" Grid.Row="2" Content="Ausgewählte Prozesse speichern" Grid.RowSpan="2" Margin="10,20,2,20"/>
+                <Button CommandParameter="{Binding ElementName=ProcessDataGrid, Path=SelectedItems}" Command="{Binding Cmd_SaveSelectedProcesses}" Visibility="{Binding Vis_ButtonMultiSave}" Grid.Row="2" Content="Ausgewählte Prozesse speichern" Grid.RowSpan="2" Margin="10,20,2,20"/>
                 <Rectangle Fill="White" Width="50" HorizontalAlignment="Left" Margin="20,10,0,10" Grid.Row="2" Stroke="Black" Grid.Column="1"/>
                 <Label Content="Noch nicht bearbeiteter Prozess" Grid.Row="2" Margin="80,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
                 <Label Content="Anzahl: " Grid.Row="2" Grid.Column="2" VerticalAlignment="Center"/>
-                <Label Content="{Binding NonEditCount}" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" Margin="80,0,0,0"/>
+                <Label Content="{Binding Count_NonEdit}" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" Margin="80,0,0,0"/>
                 <Rectangle Fill="LightGreen" Width="50" HorizontalAlignment="Left" Margin="20,10,0,10" Grid.Row="3" Stroke="Black" Grid.Column="1"/>
                 <Label Content="Bearbeiteter Prozess" Grid.Row="3" Margin="80,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
                 <Label Content="Anzahl:" Grid.Row="3" Grid.Column="2" VerticalAlignment="Center"/>
-                <Label Content="{Binding EditCount}" Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" Margin="80,0,0,0"/>
+                <Label Content="{Binding Count_Edit}" Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" Margin="80,0,0,0"/>
                 <Label Content="Gesamt: " Grid.Row="4" Grid.Column="2" VerticalAlignment="Center"/>
-                <Label Content="{Binding ProcessList.Count}" Grid.Row="4" Grid.Column="2" VerticalAlignment="Center" Margin="80,0,0,0"/>
+                <Label Content="{Binding List_Processes.Count}" Grid.Row="4" Grid.Column="2" VerticalAlignment="Center" Margin="80,0,0,0"/>
             </Grid>
         </Border>
 

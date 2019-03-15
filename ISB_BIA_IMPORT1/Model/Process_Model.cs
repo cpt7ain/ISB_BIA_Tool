@@ -96,7 +96,7 @@ namespace ISB_BIA_IMPORT1.Model
             set
             {
                 Set(() => OE_Filter, ref _oE_Filter, value);
-                if (!string.IsNullOrWhiteSpace(_oE_Filter))
+                if (!String.IsNullOrWhiteSpace(_oE_Filter))
                     RemoveError(nameof(OE_Filter));
             }
         }
@@ -110,7 +110,7 @@ namespace ISB_BIA_IMPORT1.Model
             set
             {
                 Set(() => Prozess, ref _prozess, value);
-                if (!string.IsNullOrWhiteSpace(_prozess))
+                if (!String.IsNullOrWhiteSpace(_prozess))
                     RemoveError(nameof(Prozess));
             }
         }
@@ -163,7 +163,7 @@ namespace ISB_BIA_IMPORT1.Model
                 {
                     Kritischer_Prozess = "Nein";
                 }
-                if (!string.IsNullOrWhiteSpace(_kritikalität_des_Prozesses))
+                if (!String.IsNullOrWhiteSpace(_kritikalität_des_Prozesses))
                     RemoveError(nameof(Kritikalität_des_Prozesses));
             }
         }
@@ -177,7 +177,7 @@ namespace ISB_BIA_IMPORT1.Model
             set
             {
                 Set(() => Reifegrad_des_Prozesses, ref _reifegrad_des_Prozesses, value);
-                if (!string.IsNullOrWhiteSpace(_reifegrad_des_Prozesses))
+                if (!String.IsNullOrWhiteSpace(_reifegrad_des_Prozesses))
                     RemoveError(nameof(Reifegrad_des_Prozesses));
             }
         }
@@ -329,7 +329,7 @@ namespace ISB_BIA_IMPORT1.Model
             set
             {
                 Set(() => Servicezeit_Helpdesk, ref _servicezeit_Helpdesk, value);
-                if (!string.IsNullOrWhiteSpace(_servicezeit_Helpdesk))
+                if (!String.IsNullOrWhiteSpace(_servicezeit_Helpdesk))
                     RemoveError(nameof(Servicezeit_Helpdesk));
             } 
         }
@@ -393,7 +393,7 @@ namespace ISB_BIA_IMPORT1.Model
             set
             {
                 Set(() => Prozessverantwortlicher, ref _prozessverantwortlicher, value);
-                if (!string.IsNullOrWhiteSpace(_prozessverantwortlicher))
+                if (!String.IsNullOrWhiteSpace(_prozessverantwortlicher))
                     RemoveError(nameof(Prozessverantwortlicher));
             }
         }

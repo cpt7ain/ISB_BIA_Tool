@@ -21,16 +21,16 @@ namespace ISB_BIA_IMPORT1.ViewModel
     public class ProcessView_ViewModel : ViewModelBase
     {
         #region Backing-Fields
-        private MyRelayCommand _navToProcess;
-        private MyRelayCommand _deleteProc;
-        private ObservableCollection<ISB_BIA_Prozesse> _selectedProcesses;
-        private MyRelayCommand<object> _saveSelectedProcesses;
-        private MyRelayCommand _exportProcessList;
-        private ObservableCollection<ISB_BIA_Prozesse> _processList;
-        private int _nonEditCount;
-        private int _editCount;
+        private MyRelayCommand _cmd_NavToProcess;
+        private MyRelayCommand _cmd_DeleteProc;
+        private ObservableCollection<ISB_BIA_Prozesse> _list_SelectedProcesses;
+        private MyRelayCommand<object> _cmd_SaveSelectedProcesses;
+        private MyRelayCommand _cmd_ExportProcessList;
+        private ObservableCollection<ISB_BIA_Prozesse> _list_Processes;
+        private int _count_NonEdit;
+        private int _count_Edit;
         private object _selectedItem;
-        private ProcAppListMode _processViewMode;
+        private ProcAppListMode _mode;
         private ISB_BIA_Settings _setting;
 
         #endregion
@@ -38,7 +38,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Command zum Zurückkehren zum vorherigen VM
         /// </summary>
-        public MyRelayCommand NavBack
+        public MyRelayCommand Cmd_NavBack
         {
             get => new MyRelayCommand(() =>
                 {
@@ -49,41 +49,41 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Zu ausgewähltem Prozess <see cref="SelectedItem"/> navigieren falls dieser nicht gesperrt ist, und für andere User sperren
         /// </summary>
-        public MyRelayCommand NavToProcess
+        public MyRelayCommand Cmd_NavToProcess
         {
-            get => _navToProcess
-                    ?? (_navToProcess = new MyRelayCommand(() =>
+            get => _cmd_NavToProcess
+                    ?? (_cmd_NavToProcess = new MyRelayCommand(() =>
                     {
                         if (SelectedItem == null) return;
                         ISB_BIA_Prozesse processToChange = (ISB_BIA_Prozesse)SelectedItem;
-                        string isLockedBy = _myData.GetObjectLocked(Table_Lock_Flags.Process, processToChange.Prozess_Id);
+                        string isLockedBy = _myLock.Get_ObjectIsLocked(Table_Lock_Flags.Process, processToChange.Prozess_Id);
                         if (isLockedBy == "")
                         {
-                            if(_myData.LockObject(Table_Lock_Flags.Process, processToChange.Prozess_Id))
+                            if(_myLock.Lock_Object(Table_Lock_Flags.Process, processToChange.Prozess_Id))
                             _myNavi.NavigateTo<Process_ViewModel>(processToChange.Prozess_Id, ProcAppMode.Change);
                         }
                         else
                         {
                             _myDia.ShowWarning("Dieser Prozess wird momentan durch einen anderen User bearbeitet und kann daher nicht geöffnet werden.\n\nBelegender Benutzer: "+isLockedBy+"\n\nSollte der User den Prozess nicht geöffnet haben, wenden Sie sich bitte an die IT.");
                         }
-                    }, () => ProcessViewMode == ProcAppListMode.Change));
+                    }, () => Mode == ProcAppListMode.Change));
         }
         /// <summary>
         /// Prozess löschen, falls nicht bereits gelöscht (inaktiv)
         /// </summary>
-        public MyRelayCommand DeleteProc
+        public MyRelayCommand Cmd_DeleteProc
         {
-            get => _deleteProc
-                    ?? (_deleteProc = new MyRelayCommand(() =>
+            get => _cmd_DeleteProc
+                    ?? (_cmd_DeleteProc = new MyRelayCommand(() =>
                     {
                         if (SelectedItem == null) return;
                         ISB_BIA_Prozesse processToDelete = (ISB_BIA_Prozesse)SelectedItem;
-                        string isLockedBy = _myData.GetObjectLocked(Table_Lock_Flags.Process, processToDelete.Prozess_Id);
+                        string isLockedBy = _myLock.Get_ObjectIsLocked(Table_Lock_Flags.Process, processToDelete.Prozess_Id);
                         if (isLockedBy == "")
                         {
                             if (processToDelete.Aktiv != 0)
                             {
-                                ISB_BIA_Prozesse newProcessToDelete = _myData.DeleteProcess(processToDelete);
+                                ISB_BIA_Prozesse newProcessToDelete = _myData.Delete_Process(processToDelete);
                                 if (newProcessToDelete != null)
                                 {
                                     Refresh();
@@ -99,42 +99,42 @@ namespace ISB_BIA_IMPORT1.ViewModel
                             _myDia.ShowWarning("Dieser Prozess wird momentan durch einen anderen User bearbeitet und kann daher nicht gelöscht werden.\n\nBelegender Benutzer: " + isLockedBy + "\n\nSollte der User den Prozess nicht geöffnet haben, wenden Sie sich bitte an die IT.");
                         }
 
-                    }, () => ProcessViewMode == ProcAppListMode.Delete));
+                    }, () => Mode == ProcAppListMode.Delete));
         }
         /// <summary>
-        /// Command welches je nach Modus <see cref="ProcessViewMode"/> definiert wird
+        /// Command welches je nach Modus <see cref="Mode"/> definiert wird
         /// </summary>
-        public MyRelayCommand RowDoubleClick { get; set; }
+        public MyRelayCommand Cmd_RowDoubleClick { get; set; }
         /// <summary>
         /// Liste der ausgewählten Prozesse für das Gruppenspeichern/>
         /// </summary>
-        public ObservableCollection<ISB_BIA_Prozesse> SelectedProcesses
+        public ObservableCollection<ISB_BIA_Prozesse> List_SelectedProcesses
         {
-            get => _selectedProcesses;
-            set => Set(()=>SelectedProcesses, ref _selectedProcesses, value);
+            get => _list_SelectedProcesses;
+            set => Set(()=>List_SelectedProcesses, ref _list_SelectedProcesses, value);
         }
         /// <summary>
         /// Command für die Gruppenspeicherung/>
         /// </summary>
-        public MyRelayCommand<object> SaveSelectedProcesses
+        public MyRelayCommand<object> Cmd_SaveSelectedProcesses
         {
             get
             {
                 if (!IsInDesignMode)
                 {
-                     return _saveSelectedProcesses
-                        ?? (_saveSelectedProcesses = new MyRelayCommand<object>((list) =>
+                     return _cmd_SaveSelectedProcesses
+                        ?? (_cmd_SaveSelectedProcesses = new MyRelayCommand<object>((list) =>
                         {
                             System.Collections.IList items = (System.Collections.IList)list;
                             if(items.Count > 0)
                             {
                                 var collection = items.Cast<ISB_BIA_Prozesse>();
-                                SelectedProcesses = new ObservableCollection<ISB_BIA_Prozesse>(collection);
+                                List_SelectedProcesses = new ObservableCollection<ISB_BIA_Prozesse>(collection);
                                 List<ISB_BIA_Prozesse> lockedList = new List<ISB_BIA_Prozesse>();
                                 string pl = "";
-                                foreach (ISB_BIA_Prozesse p in SelectedProcesses)
+                                foreach (ISB_BIA_Prozesse p in List_SelectedProcesses)
                                 {
-                                    string user = _myData.GetObjectLocked(Table_Lock_Flags.Process, p.Prozess_Id);
+                                    string user = _myLock.Get_ObjectIsLocked(Table_Lock_Flags.Process, p.Prozess_Id);
                                     if (user != "")
                                     {
                                         lockedList.Add(p);
@@ -143,7 +143,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                                 }
                                 if (lockedList.Count == 0)
                                 {
-                                    if (_myData.SaveAllProcesses(SelectedProcesses))
+                                    if (_myData.Insert_Processes_All(List_SelectedProcesses))
                                     {
                                         Refresh();
                                     }
@@ -159,7 +159,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                                 _myDia.ShowMessage("Bitte wählen Sie Prozesse aus der Übersicht aus, die Sie ohne Änderungen aktualisieren möchten.");
                             }
 
-                        }, (list) => Setting.Multi_Save == "Ja"));
+                        }, (list) => Setting.Multi_Speichern == "Ja"));
                 }
                 else
                 {
@@ -170,37 +170,37 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Exportieren der Liste der angezeigten Prozesse nach Excel
         /// </summary>
-        public MyRelayCommand ExportProcessList
+        public MyRelayCommand Cmd_ExportProcessList
         {
-            get => _exportProcessList
-                    ?? (_exportProcessList = new MyRelayCommand(() =>
+            get => _cmd_ExportProcessList
+                    ?? (_cmd_ExportProcessList = new MyRelayCommand(() =>
                     {
-                        _myExport.ExportProcesses(ProcessList);
-                    }, () => ProcessViewMode == ProcAppListMode.Change));
+                        _myExport.Proc_ExportProcesses(List_Processes);
+                    }, () => Mode == ProcAppListMode.Change));
         }
         /// <summary>
         /// Die Angezeigte Prozessliste
         /// </summary>
-        public ObservableCollection<ISB_BIA_Prozesse> ProcessList
+        public ObservableCollection<ISB_BIA_Prozesse> List_Processes
         {
-            get => _processList;
-            set => Set(() => ProcessList, ref _processList,value);
+            get => _list_Processes;
+            set => Set(() => List_Processes, ref _list_Processes,value);
         }
         /// <summary>
         /// Anzahl nicht bearbeiteter Prozesse
         /// </summary>
-        public int NonEditCount
+        public int Count_NonEdit
         {
-            get => _nonEditCount;
-            set => Set(() => NonEditCount, ref _nonEditCount, value);   
+            get => _count_NonEdit;
+            set => Set(() => Count_NonEdit, ref _count_NonEdit, value);   
         }
         /// <summary>
         /// Anzahl bearbeiteter Prozesse
         /// </summary>
-        public int EditCount
+        public int Count_Edit
         {
-            get => _editCount;
-            set => Set(() => EditCount, ref _editCount, value);
+            get => _count_Edit;
+            set => Set(() => Count_Edit, ref _count_Edit, value);
         }
 
         /// <summary>
@@ -216,29 +216,29 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Modus, welcher Funktionen und Darstellungen /Anweisungen bestimmt
         /// </summary>
-        public ProcAppListMode ProcessViewMode
+        public ProcAppListMode Mode
         {
-            get => _processViewMode;
+            get => _mode;
             set
             {
                 if (value == ProcAppListMode.Change)
                 {
-                    SelectionMode = (Setting.Multi_Save == "Ja")? DataGridSelectionMode.Extended:DataGridSelectionMode.Single;
-                    ButtonVis = Visibility.Visible;
-                    Instruction = "Doppelklick auf einen Prozess, den Sie ändern möchten, oder Prozesse anhaken, welche ohne Änderungen gespeichert werden sollen.";
-                    Header = "Prozesse bearbeiten";
-                    RowDoubleClick = NavToProcess;
+                    SelectionMode = (Setting.Multi_Speichern == "Ja")? DataGridSelectionMode.Extended:DataGridSelectionMode.Single;
+                    Vis_ButtonMultiSave = Visibility.Visible;
+                    Str_Instruction = "Doppelklick auf einen Prozess, den Sie ändern möchten, oder Prozesse anhaken, welche ohne Änderungen gespeichert werden sollen.";
+                    Str_Header = "Prozesse bearbeiten";
+                    Cmd_RowDoubleClick = Cmd_NavToProcess;
                 }
                 else if (value == ProcAppListMode.Delete)
                 {
                     SelectionMode = DataGridSelectionMode.Single;
-                    ButtonVis = Visibility.Collapsed;
-                    Instruction = "Doppelklick auf einen Prozess, den Sie löschen möchten";
-                    Header = "Prozesse löschen";
-                    RowDoubleClick = DeleteProc;
+                    Vis_ButtonMultiSave = Visibility.Collapsed;
+                    Str_Instruction = "Doppelklick auf einen Prozess, den Sie löschen möchten";
+                    Str_Header = "Prozesse löschen";
+                    Cmd_RowDoubleClick = Cmd_DeleteProc;
 
                 }
-                Set(() => ProcessViewMode, ref _processViewMode, value);
+                Set(() => Mode, ref _mode, value);
             }
         }
         /// <summary>
@@ -248,15 +248,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Sichtbarkeit des Multi-Save und Export Buttons je nach Bearbeitungsmodus
         /// </summary>
-        public Visibility ButtonVis { get; set; }
+        public Visibility Vis_ButtonMultiSave { get; set; }
         /// <summary>
         /// Anweisung
         /// </summary>
-        public string Instruction { get; set; }
+        public string Str_Instruction { get; set; }
         /// <summary>
         /// Überschrift
         /// </summary>
-        public string Header { get; set; }
+        public string Str_Header { get; set; }
         #endregion
 
         /// <summary>
@@ -272,52 +272,57 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private readonly IMyNavigationService _myNavi;
         private readonly IMyDialogService _myDia;
         private readonly IMyExportService _myExport;
-        private readonly IMyDataService _myData;
+        private readonly IMyDataService_Process _myData;
         private readonly IMySharedResourceService _myShared;
+        private readonly IMyDataService_Lock _myLock;
+        private readonly IMyDataService_Setting _mySett;
+
         #endregion
 
         /// <summary>
         /// Konstruktor
         /// </summary>
-        /// <param name="myDialogService"></param>
-        /// <param name="myNavigationService"></param>
-        /// <param name="myExportService"></param>
-        /// <param name="myDataService"></param>
-        /// <param name="mySharedResourceService"></param>
-        public ProcessView_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService,
-            IMyExportService myExportService, IMyDataService myDataService,
-            IMySharedResourceService mySharedResourceService, IMyMailNotificationService @object)
+        /// <param name="myDia"></param>
+        /// <param name="myNavi"></param>
+        /// <param name="myExp"></param>
+        /// <param name="myProc"></param>
+        /// <param name="myShared"></param>
+        public ProcessView_ViewModel(IMyDialogService myDia, IMyNavigationService myNavi,
+            IMyExportService myExp, IMyDataService_Process myProc, IMyDataService_Lock myLock,
+            IMyDataService_Setting mySett,IMySharedResourceService myShared)
         {
             #region Services
-            _myDia = myDialogService;
-            _myNavi = myNavigationService;
-            _myExport = myExportService;
-            _myData = myDataService;
-            _myShared = mySharedResourceService;
+            _myDia = myDia;
+            _myNavi = myNavi;
+            _myExport = myExp;
+            _myData = myProc;
+            _myLock = myLock;
+            _mySett = mySett;
+            _myShared = myShared;
             #endregion
 
             if (IsInDesignMode)
             {
-                ProcessList = _myData.GetProcesses();
-                EditCount = ProcessList.Where(x => x.Datum.Year == DateTime.Now.Year).ToList().Count;
-                NonEditCount = ProcessList.Where(x => x.Datum.Year != DateTime.Now.Year).ToList().Count;
+                List_Processes = _myData.Get_Processes_All();
+                Count_Edit = List_Processes.Where(x => x.Datum.Year == DateTime.Now.Year).ToList().Count;
+                Count_NonEdit = List_Processes.Where(x => x.Datum.Year != DateTime.Now.Year).ToList().Count;
                 
-                Header = "TestHeader";
-                Instruction = "TestInstruction";
+                Str_Header = "TestHeader";
+                Str_Instruction = "TestInstruction";
             }
             else
             {
                 MessengerInstance.Register<NotificationMessage<ProcAppListMode>>(this, message =>
                 {
                     if (!(message.Sender is IMyNavigationService)) return;
-                    ProcessViewMode = message.Content;
+                    Mode = message.Content;
                 });
                 MessengerInstance.Register<NotificationMessage<string>>(this, MessageToken.RefreshData, message =>
                 {
                     if (!(message.Sender is IMyNavigationService)) return;
                     Refresh();
                 });
-                Setting = _myData.GetSettings();
+                Setting = _mySett.Get_Settings();
                 //Laden der Daten
                 Refresh();
             }
@@ -328,24 +333,24 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         public void Refresh()
         {
-            ObservableCollection<string> relevantOEsList = _myData.GetOEsForUser(_myShared.User.OE);
+            ObservableCollection<string> relevantOEsList = _myData.Get_List_OEsForUser(_myShared.User.OE);
             if(_myShared.User.UserGroup == UserGroups.Admin || _myShared.User.UserGroup == UserGroups.CISO)
             {
-                ProcessList = _myData.GetProcesses();
+                List_Processes = _myData.Get_Processes_All();
             }
             else
             {
-                ProcessList = _myData.GetProcessesByOE(relevantOEsList);
+                List_Processes = _myData.Get_Processes_ByOE(relevantOEsList);
             }
-            if (ProcessList == null || relevantOEsList == null)
+            if (List_Processes == null || relevantOEsList == null)
             {
                 Cleanup();
                 _myNavi.NavigateBack();
                 _myDia.ShowError("Es ist ein Fehler beim Laden der Daten aufgetreten");
             }
-            EditCount = ProcessList.Where(x => x.Datum.Year == DateTime.Now.Year).ToList().Count;
-            NonEditCount = ProcessList.Where(x => x.Datum.Year != DateTime.Now.Year).ToList().Count;
-            SelectedProcesses = new ObservableCollection<ISB_BIA_Prozesse>();
+            Count_Edit = List_Processes.Where(x => x.Datum.Year == DateTime.Now.Year).ToList().Count;
+            Count_NonEdit = List_Processes.Where(x => x.Datum.Year != DateTime.Now.Year).ToList().Count;
+            List_SelectedProcesses = new ObservableCollection<ISB_BIA_Prozesse>();
         }
 
         /// <summary>

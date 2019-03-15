@@ -36,7 +36,7 @@ namespace ISB_BIA_IMPORT1.Services
             ConstructionMode = (ConfigurationManager.AppSettings["MODE_Construction"] == "true") ? true : false;
             if(ConfigurationManager.AppSettings["Current_Environment"] == "local")
             {
-                Current_Environment = Current_Environment.Local_Test;
+                CurrentEnvironment = Current_Environment.Local_Test;
                 try
                 {
                     ConnectionString = ConfigurationManager.ConnectionStrings["LOCAL_TEST_DataConnectionString"].ConnectionString;
@@ -48,13 +48,13 @@ namespace ISB_BIA_IMPORT1.Services
             }
             else if(ConfigurationManager.AppSettings["Current_Environment"] == "test")
             {
-                Current_Environment = Current_Environment.Test;
+                CurrentEnvironment = Current_Environment.Test;
                 ConnectionString = ConfigurationManager.ConnectionStrings["TEST_DataConnectionString"].ConnectionString;
 
             }
             else if (ConfigurationManager.AppSettings["Current_Environment"] == "prod")
             {
-                Current_Environment = Current_Environment.Prod;
+                CurrentEnvironment = Current_Environment.Prod;
                 ConnectionString = ConfigurationManager.ConnectionStrings["PROD_DataConnectionString"].ConnectionString;
             }
             else
@@ -86,10 +86,10 @@ namespace ISB_BIA_IMPORT1.Services
             set => Set(() => ConstructionMode, ref _constructionMode, value);
         }
 
-        public Current_Environment Current_Environment
+        public Current_Environment CurrentEnvironment
         {
             get => _current_Environment;
-            set => Set(()=> Current_Environment, ref _current_Environment, value);
+            set => Set(()=> CurrentEnvironment, ref _current_Environment, value);
         }
 
         public bool Admin

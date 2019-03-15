@@ -7,14 +7,14 @@
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:command="http://www.galasoft.ch/mvvmlight"
         mc:Ignorable="d"
-        Title="{Binding WindowTitle}" 
+        Title="{Binding Str_WindowTitle}" 
         Height="700" 
         MinHeight="700"
         Width="1200"
         MinWidth="1200"
         Name="MainW"
         Background="LightSteelBlue"
-        FontSize="{Binding MyFontSize}"
+        FontSize="{Binding GlobalFontSize}"
         DataContext="{Binding Source={StaticResource Locator}, Path=Main}" 
         Closing="Window_Closing">
     <Grid>
@@ -24,6 +24,6 @@
             <Button Content="SBA/IT User" CommandParameter="3" Command="{Binding AdminSelectGroupCommand}"/>
             <Button Content="Normaler User" CommandParameter="0" Command="{Binding AdminSelectGroupCommand}"/>
         </StackPanel>
-        <UserControl Content="{Binding CurrentViewModel}"/>
+        <UserControl Content="{Binding ViewModelCurrent}"/>
     </Grid>
 </Window>

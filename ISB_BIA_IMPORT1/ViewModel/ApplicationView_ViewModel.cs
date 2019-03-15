@@ -15,10 +15,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
     public class ApplicationView_ViewModel: ViewModelBase
     {
         #region Backing-Fields
-        private MyRelayCommand _navToApp;
-        private MyRelayCommand _deleteApp;
-        private MyRelayCommand _exportApplicationList;
-        private ObservableCollection<ISB_BIA_Applikationen> _applicationList;
+        private MyRelayCommand _cmd_NavToApp;
+        private MyRelayCommand _cmd_DeleteApp;
+        private MyRelayCommand _cmd_ExportApplicationList;
+        private ObservableCollection<ISB_BIA_Applikationen> _list_Application;
         private object _selectedItem;
         private ProcAppListMode _applicationViewMode;
         #endregion
@@ -27,23 +27,23 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Command welches je nach Modus <see cref="ApplicationViewMode"/> definiert wird
         /// </summary>
-        public MyRelayCommand RowDoubleClick { get; set; }
+        public MyRelayCommand Cmd_RowDoubleClick { get; set; }
         /// <summary>
         /// Applikation löschen, falls nicht bereits gelöscht (inaktiv)
         /// </summary>
-        public MyRelayCommand DeleteApp
+        public MyRelayCommand Cmd_DeleteApp
         {
-            get => _deleteApp
-                    ?? (_deleteApp = new MyRelayCommand(() =>
+            get => _cmd_DeleteApp
+                    ?? (_cmd_DeleteApp = new MyRelayCommand(() =>
                     {
                         if (SelectedItem == null) return;
                         ISB_BIA_Applikationen applicationToDelete = (ISB_BIA_Applikationen)SelectedItem;
-                        string isLockedBy = _myData.GetObjectLocked(Table_Lock_Flags.Process, applicationToDelete.Applikation_Id);
+                        string isLockedBy = _myLock.Get_ObjectIsLocked(Table_Lock_Flags.Process, applicationToDelete.Applikation_Id);
                         if (isLockedBy == "")
                         {
                             if (applicationToDelete.Aktiv != 0)
                             {
-                                ISB_BIA_Applikationen newApplicationToDelete = _myData.DeleteApplication(applicationToDelete);
+                                ISB_BIA_Applikationen newApplicationToDelete = _myApp.Delete_Application(applicationToDelete);
                                 if (newApplicationToDelete != null)
                                 {
                                     Refresh();
@@ -64,17 +64,17 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Zu ausgewählter Applikation <see cref="SelectedItem"/> navigieren falls diese nicht gesperrt ist, und für andere User sperren
         /// </summary>
-        public MyRelayCommand NavToApp
+        public MyRelayCommand Cmd_NavToApp
         {
-            get => _navToApp
-                    ?? (_navToApp = new MyRelayCommand(() =>
+            get => _cmd_NavToApp
+                    ?? (_cmd_NavToApp = new MyRelayCommand(() =>
                     {
                         if (SelectedItem == null) return;
                         ISB_BIA_Applikationen applicationToChange = (ISB_BIA_Applikationen)SelectedItem;
-                        string user = _myData.GetObjectLocked(Table_Lock_Flags.Application, applicationToChange.Applikation_Id);
+                        string user = _myLock.Get_ObjectIsLocked(Table_Lock_Flags.Application, applicationToChange.Applikation_Id);
                         if (user == "")
                         {
-                            if (_myData.LockObject(Table_Lock_Flags.Application, applicationToChange.Applikation_Id))
+                            if (_myLock.Lock_Object(Table_Lock_Flags.Application, applicationToChange.Applikation_Id))
                                 _myNavi.NavigateTo<Application_ViewModel>(applicationToChange.Applikation_Id, ProcAppMode.Change);
                         }
                         else
@@ -86,7 +86,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Zurück Navigieren (Vorgang abbbrechen)
         /// </summary>
-        public MyRelayCommand NavBack
+        public MyRelayCommand Cmd_NavBack
         {
             get => new MyRelayCommand(() =>
             {
@@ -97,12 +97,12 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Command zum Exportieren der Applikationsliste nach Excel
         /// </summary>
-        public MyRelayCommand ExportApplicationList
+        public MyRelayCommand Cmd_ExportApplicationList
         {
-            get => _exportApplicationList
-                    ?? (_exportApplicationList = new MyRelayCommand(() =>
+            get => _cmd_ExportApplicationList
+                    ?? (_cmd_ExportApplicationList = new MyRelayCommand(() =>
                     {
-                        _myExport.AllApplicationsExport();
+                        _myExport.App_ExportAllApplications();
                     }));
         }
         #endregion
@@ -110,10 +110,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Liste aller anzuzeigenden Applikationen
         /// </summary>
-        public ObservableCollection<ISB_BIA_Applikationen> ApplicationList
+        public ObservableCollection<ISB_BIA_Applikationen> List_Application
         {
-            get => _applicationList;
-            set => Set(() => ApplicationList, ref _applicationList, value);
+            get => _list_Application;
+            set => Set(() => List_Application, ref _list_Application, value);
         }
 
         /// <summary>
@@ -139,13 +139,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 {
                     Header = "Anwendungen bearbeiten";
                     Instruction = "Doppelklick auf eine Anwendung, die Sie ändern möchten.";
-                    RowDoubleClick = NavToApp;
+                    Cmd_RowDoubleClick = Cmd_NavToApp;
                 }
                 else if (value == ProcAppListMode.Delete)
                 {
                     Header = "Anwendungen löschen";
                     Instruction = "Doppelklick auf eine Anwendung, die Sie löschen möchten.";
-                    RowDoubleClick = DeleteApp;
+                    Cmd_RowDoubleClick = Cmd_DeleteApp;
                 }
             }
         }
@@ -162,27 +162,30 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private readonly IMyNavigationService _myNavi;
         private readonly IMyDialogService _myDia;
         private readonly IMyExportService _myExport;
-        private readonly IMyDataService _myData;
+        private readonly IMyDataService_Application _myApp;
+        private readonly IMyDataService_Lock _myLock;
         #endregion
         /// <summary>
         /// Konstruktor
         /// </summary>
-        /// <param name="myDialogService"></param>
-        /// <param name="myNavigationService"></param>
-        /// <param name="myExportService"></param>
-        /// <param name="myDataService"></param>
-        public ApplicationView_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyExportService myExportService, IMyDataService myDataService)
+        /// <param name="myDia"></param>
+        /// <param name="myNavi"></param>
+        /// <param name="myExp"></param>
+        /// <param name="myApp"></param>
+        public ApplicationView_ViewModel(IMyDialogService myDia, IMyNavigationService myNavi, 
+            IMyExportService myExp, IMyDataService_Application myApp, IMyDataService_Lock myLock)
         {
             #region Services
-            _myDia = myDialogService;
-            _myNavi = myNavigationService;
-            _myExport = myExportService;
-            _myData = myDataService;
+            _myDia = myDia;
+            _myLock = myLock;
+            _myNavi = myNavi;
+            _myExport = myExp;
+            _myApp = myApp;
             #endregion
 
             if (IsInDesignMode)
             {
-                ApplicationList = _myData.GetApplications();
+                List_Application = _myApp.Get_Applications_All();
                 Header = "TestHeader";
                 Instruction = "TestInstruction";
             }
@@ -210,8 +213,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         public void Refresh()
         {
-            ApplicationList = _myData.GetApplications();
-            if (ApplicationList == null)
+            List_Application = _myApp.Get_Applications_All();
+            if (List_Application == null)
             {
                 Cleanup();
                 _myNavi.NavigateBack();

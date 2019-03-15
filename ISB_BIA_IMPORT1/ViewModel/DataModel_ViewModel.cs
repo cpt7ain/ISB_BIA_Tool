@@ -20,132 +20,131 @@ namespace ISB_BIA_IMPORT1.ViewModel
     public class DataModel_ViewModel : ViewModelBase
     {
         #region Backing-Fields
-        private MyRelayCommand _chooseFile;
-        private MyRelayCommand _save;
+        private MyRelayCommand _cmd_ChooseFile;
+        private MyRelayCommand _cmd_Save;
         //Hier die Daten angeben, welche für den DatenImport benötigt werden (Name des Excel-Sheets, Zellenrange)
-        private string _p_Sheet = "3 - BIA";
-        private string _a_Sheet = "4 - SBA";
-        private string _p_Range = "B6:AC776";
-        private string _a_Range = "B6:O402";
-        private string _p_A_Matrix_Sheet = "3 - BIA";
-        private string _p_A_Matrix_Range = "AD7:PI776";
-        private string _i_Range = "B8:P43";
-        private string _i_Sheet = "Informationssegmente";
-        private string _i_A_Range = "Y8:AG18";
-        private string _i_A_Sheet = "Informationssegmente";
+        private string _str_Sheet_Process = "3 - BIA";
+        private string _str_Sheet_App = "4 - SBA";
+        private string _str_Range_Process = "B6:AC776";
+        private string _str_Range_App = "B6:O402";
+        private string _str_Sheet_Process_App_Matrix = "3 - BIA";
+        private string _str_Range_Process_App_Matrix = "AD7:PI776";
+        private string _str_Range_InformationSegment = "B8:P43";
+        private string _str_Sheet_InformationSegment = "Informationssegmente";
+        private string _str_Range_Attribute = "Y8:AG18";
+        private string _str_Sheet_Attribute = "Informationssegmente";
+        #endregion
+
+        #region Strings der Dateien und SQL-Drop Befehle (abhängig von den Daten in myShared im Konstruktor erzeugt)
+        //Original & Arbeitsdatei der Quelldaten
+        private string _str_OriginalFile;
+        private string _str_WorkFile;
         #endregion
 
         #region Sheet-Namen und Sheet-Ranges zum definieren der einzulesenden Datenbereiche
         /// <summary>
         /// Name des Sheets mit der Prozessliste
         /// </summary>
-        public string P_Sheet
+        public string Str_Sheet_Process
         {
-            get => _p_Sheet;
-            set => Set(() => P_Sheet, ref _p_Sheet, value);
+            get => _str_Sheet_Process;
+            set => Set(() => Str_Sheet_Process, ref _str_Sheet_Process, value);
         }
         /// <summary>
         /// Bereich der Prozessdaten auf dem Sheet
         /// </summary>
-        public string P_Range
+        public string Str_Range_Process
         {
-            get => _p_Range;
-            set => Set(() => P_Range, ref _p_Range, value);
+            get => _str_Range_Process;
+            set => Set(() => Str_Range_Process, ref _str_Range_Process, value);
 
         }
         /// <summary>
         /// Name des Sheets mit der Anwendungsliste
         /// </summary>
-        public string A_Sheet
+        public string Str_Sheet_App
         {
-            get => _a_Sheet;
-            set => Set(() => A_Sheet, ref _a_Sheet, value);
+            get => _str_Sheet_App;
+            set => Set(() => Str_Sheet_App, ref _str_Sheet_App, value);
 
         }
         /// <summary>
         /// Bereich der Anwendungsdaten auf dem Sheet
         /// </summary>
-        public string A_Range
+        public string Str_Range_App
         {
-            get => _a_Range;
-            set => Set(() => A_Range, ref _a_Range, value);
+            get => _str_Range_App;
+            set => Set(() => Str_Range_App, ref _str_Range_App, value);
 
         }
         /// <summary>
         /// Name des Sheets mit der Prozess-Anwendungs-Matrix
         /// </summary>
-        public string P_A_Matrix_Sheet
+        public string Str_Sheet_Process_App_Matrix
         {
-            get => _p_A_Matrix_Sheet;
-            set => Set(() => P_A_Matrix_Sheet, ref _p_A_Matrix_Sheet, value);
+            get => _str_Sheet_Process_App_Matrix;
+            set => Set(() => Str_Sheet_Process_App_Matrix, ref _str_Sheet_Process_App_Matrix, value);
 
         }
         /// <summary>
         /// Bereich der Prozess-Anwendungsdaten auf dem Sheet
         /// </summary>
-        public string P_A_Matrix_Range
+        public string Str_Range_Process_App_Matrix
         {
-            get => _p_A_Matrix_Range;
-            set => Set(() => P_A_Matrix_Range, ref _p_A_Matrix_Range, value);
+            get => _str_Range_Process_App_Matrix;
+            set => Set(() => Str_Range_Process_App_Matrix, ref _str_Range_Process_App_Matrix, value);
 
         }
         /// <summary>
         /// Name des Sheets mit den Informationssegmenten
         /// </summary>
-        public string I_Sheet
+        public string Str_Sheet_InformationSegment
         {
-            get => _i_Sheet;
-            set => Set(() => I_Sheet, ref _i_Sheet, value);
+            get => _str_Sheet_InformationSegment;
+            set => Set(() => Str_Sheet_InformationSegment, ref _str_Sheet_InformationSegment, value);
 
         }
         /// <summary>
         /// Bereich der Informationssegmentdaten auf dem Sheet
         /// </summary>
-        public string I_Range
+        public string Str_Range_InformationSegment
         {
-            get => _i_Range;
-            set => Set(() => I_Range, ref _i_Range, value);
+            get => _str_Range_InformationSegment;
+            set => Set(() => Str_Range_InformationSegment, ref _str_Range_InformationSegment, value);
 
         }
         /// <summary>
         /// Name des Sheets mit den Informationssegment-Attribut-Daten
         /// </summary>
-        public string I_A_Sheet
+        public string Str_Sheet_Attribute
         {
-            get => _i_A_Sheet;
-            set => Set(() => I_A_Sheet, ref _i_A_Sheet, value);
+            get => _str_Sheet_Attribute;
+            set => Set(() => Str_Sheet_Attribute, ref _str_Sheet_Attribute, value);
 
         }
         /// <summary>
         /// Bereich der Informationssegment-Attribut-Daten auf dem Sheet
         /// </summary>
-        public string I_A_Range
+        public string Str_Range_Attribute
         {
-            get => _i_A_Range;
-            set => Set(() => I_A_Range, ref _i_A_Range, value);
+            get => _str_Range_Attribute;
+            set => Set(() => Str_Range_Attribute, ref _str_Range_Attribute, value);
 
         }
-        #endregion
-
-
-        #region Strings der Dateien und SQL-Drop Befehle (abhängig von den Daten in myShared im Konstruktor erzeugt)
-        //Original & Arbeitsdatei der Quelldaten
-        private string _originalFile;
-        private string _workFile;
         #endregion
 
         /// <summary>
         /// Dateipfad für Quelldatei
         /// </summary>
-        public string Source { get; set; }
+        public string Str_SourceFile { get; set; }
 
         /// <summary>
         /// Quelldatei Auswählen
         /// </summary>
-        public MyRelayCommand ChooseFile
+        public MyRelayCommand Cmd_ChooseFile
         {
-            get => _chooseFile
-                  ?? (_chooseFile = new MyRelayCommand(() =>
+            get => _cmd_ChooseFile
+                  ?? (_cmd_ChooseFile = new MyRelayCommand(() =>
                   {
                       OpenFileDialog openFileDialog = new OpenFileDialog
                       {
@@ -158,8 +157,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
 
                       if (result == true)
                       {
-                          _originalFile = openFileDialog.FileName;
-                          _workFile = openFileDialog.InitialDirectory + @"\ISB_BIA-SBA_tmp.xlsx";
+                          _str_OriginalFile = openFileDialog.FileName;
+                          _str_WorkFile = openFileDialog.InitialDirectory + @"\ISB_BIA-SBA_tmp.xlsx";
                       }
                   }));
         }
@@ -167,10 +166,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Erneuerung des Datenmodells Ausführen und schliessen
         /// </summary>
-        public MyRelayCommand Save
+        public MyRelayCommand Cmd_Save
         {
-            get => _save
-                  ?? (_save = new MyRelayCommand(() =>
+            get => _cmd_Save
+                  ?? (_cmd_Save = new MyRelayCommand(() =>
                   {
                       if (CheckForCreation())
                       {
@@ -183,7 +182,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Command zum Zurückkehren zum vorherigen VM
         /// </summary>
-        public MyRelayCommand NavBack
+        public MyRelayCommand Cmd_NavBack
         {
             get
             {
@@ -199,7 +198,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         }
 
         #region Services
-        private readonly IMyDataService _myData;
+        private readonly IMyDataService_DataModel _myDM;
         private readonly IMyNavigationService _myNavi;
         private readonly IMyDialogService _myDia;
         private readonly IMySharedResourceService _myShared;
@@ -208,24 +207,22 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Konstruktor
         /// </summary>
-        /// <param name="myDataService"></param>
+        /// <param name="myDM"></param>
         /// <param name="myDialogService"></param>
         /// <param name="myNavigationService"></param>
         /// <param name="mySharedResourceService"></param>
-        public DataModel_ViewModel(IMyDataService myDataService,IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMySharedResourceService mySharedResourceService)
+        public DataModel_ViewModel(IMyDataService_DataModel myDM,IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMySharedResourceService mySharedResourceService)
         {
             #region Services
-            _myData = myDataService;
+            _myDM = myDM;
             _myNavi = myNavigationService;
             _myDia = myDialogService;
             _myShared = mySharedResourceService;
-            Source = _myShared.Source;
+            Str_SourceFile = _myShared.Source;
             #endregion
-            _originalFile = _myShared.InitialDirectory + @"\ISB_BIA-SBA.xlsx";
-            _workFile = _myShared.InitialDirectory + @"\ISB_BIA-SBA_tmp.xlsx";
-
+            _str_OriginalFile = _myShared.InitialDirectory + @"\ISB_BIA-SBA.xlsx";
+            _str_WorkFile = _myShared.InitialDirectory + @"\ISB_BIA-SBA_tmp.xlsx";
         }
-
 
         #region Datenmodell erstellen
         /// <summary>
@@ -235,31 +232,31 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private bool CheckForCreation()
         {
             string rangePattern = "[A-Z]+[1-9]+:[A-Z]+[1-9]+";
-            if (File.Exists(_originalFile))
+            if (File.Exists(_str_OriginalFile))
             {
-                if (File.Exists(_workFile)) File.Delete(_workFile);
-                File.Copy(_originalFile, _workFile);
+                if (File.Exists(_str_WorkFile)) File.Delete(_str_WorkFile);
+                File.Copy(_str_OriginalFile, _str_WorkFile);
                 IWorkbook workbook;
-                using (FileStream stream = new FileStream(_workFile, FileMode.Open, FileAccess.Read))
+                using (FileStream stream = new FileStream(_str_WorkFile, FileMode.Open, FileAccess.Read))
                 {
                     workbook = new XSSFWorkbook(stream);
                 }
-                if (workbook.GetSheet(P_Sheet) != null &&
-                   workbook.GetSheet(A_Sheet) != null &&
-                   workbook.GetSheet(I_Sheet) != null &&
-                   workbook.GetSheet(I_A_Sheet) != null &&
-                   workbook.GetSheet(P_A_Matrix_Sheet) != null &&
-                   Regex.IsMatch(P_Range, rangePattern) &&
-                   Regex.IsMatch(A_Range, rangePattern) &&
-                   Regex.IsMatch(I_Range, rangePattern) &&
-                   Regex.IsMatch(I_A_Range, rangePattern) &&
-                   Regex.IsMatch(P_A_Matrix_Range, rangePattern))
+                if (workbook.GetSheet(Str_Sheet_Process) != null &&
+                   workbook.GetSheet(Str_Sheet_App) != null &&
+                   workbook.GetSheet(Str_Sheet_InformationSegment) != null &&
+                   workbook.GetSheet(Str_Sheet_Attribute) != null &&
+                   workbook.GetSheet(Str_Sheet_Process_App_Matrix) != null &&
+                   Regex.IsMatch(Str_Range_Process, rangePattern) &&
+                   Regex.IsMatch(Str_Range_App, rangePattern) &&
+                   Regex.IsMatch(Str_Range_InformationSegment, rangePattern) &&
+                   Regex.IsMatch(Str_Range_Attribute, rangePattern) &&
+                   Regex.IsMatch(Str_Range_Process_App_Matrix, rangePattern))
                 {
                     try
                     {
                         if (GetDataForDatamodel(workbook))
                         {
-                            if (File.Exists(_workFile)) File.Delete(_workFile);
+                            if (File.Exists(_str_WorkFile)) File.Delete(_str_WorkFile);
                             return true;
                         }
                         else
@@ -275,7 +272,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 }
                 else
                 {
-                    if (File.Exists(_workFile)) File.Delete(_workFile);
+                    if (File.Exists(_str_WorkFile)) File.Delete(_str_WorkFile);
                     _myDia.ShowInfo("Bitte überprüfen Sie Ihre Eingaben!");
                     return false;
                 }
@@ -312,7 +309,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
 
 
                 //Datenbank Operation durch Service übernommen
-                return _myData.CreateDataModel(dt_Processes, dt_Applications, dt_Relation, dt_InformationSegments, dt_InformationSegmentAttributes);               
+                return _myDM.Create(dt_Processes, dt_Applications, dt_Relation, dt_InformationSegments, dt_InformationSegmentAttributes);               
             }
         }
         #endregion
@@ -325,11 +322,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <returns> Datatable, der die gelesenen Daten enthält </returns>
         private DataTable GetProcessDataFromXLSX(IWorkbook workbook)
         {
-            ISheet sheet = workbook.GetSheet(P_Sheet);
+            ISheet sheet = workbook.GetSheet(Str_Sheet_Process);
             if (sheet != null)
             {
                 DataTable dt = new DataTable(sheet.SheetName);
-                CellRangeAddress cellRange = CellRangeAddress.ValueOf(P_Range);
+                CellRangeAddress cellRange = CellRangeAddress.ValueOf(Str_Range_Process);
                 for (var i = cellRange.FirstRow; i <= cellRange.LastRow; i++)
                 {
                     var row = sheet.GetRow(i);
@@ -365,7 +362,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             }
             else
             {
-                _myDia.ShowWarning("Excel-Quelldatei hat nicht das passende Format!\n(Prozesse)\nVoraussetzungen:\nSheet-Name: '" + P_Sheet + "'\nRange: '" + P_Range + "'");
+                _myDia.ShowWarning("Excel-Quelldatei hat nicht das passende Format!\n(Prozesse)\nVoraussetzungen:\nSheet-Name: '" + Str_Sheet_Process + "'\nRange: '" + Str_Range_Process + "'");
                 return null;
             }
         }
@@ -377,11 +374,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <returns> Datatable, der die gelesenen Daten enthält </returns>
         private DataTable GetApplicationDataFromXLSX(IWorkbook workbook)
         {
-            ISheet sheet = workbook.GetSheet(A_Sheet);
+            ISheet sheet = workbook.GetSheet(Str_Sheet_App);
             if (sheet != null)
             {
                 DataTable dt = new DataTable(sheet.SheetName);
-                CellRangeAddress cellRange = CellRangeAddress.ValueOf(A_Range);
+                CellRangeAddress cellRange = CellRangeAddress.ValueOf(Str_Range_App);
                 for (var i = cellRange.FirstRow; i <= cellRange.LastRow; i++)
                 {
                     var row = sheet.GetRow(i);
@@ -417,7 +414,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             }
             else
             {
-                _myDia.ShowWarning("Excel-Quelldatei hat nicht das passende Format!\n(Applikationen)\nVoraussetzungen:\nSheet-Name: '" + A_Sheet + "'\nRange: '" + A_Range + "'");
+                _myDia.ShowWarning("Excel-Quelldatei hat nicht das passende Format!\n(Applikationen)\nVoraussetzungen:\nSheet-Name: '" + Str_Sheet_App + "'\nRange: '" + Str_Range_App + "'");
                 return null;
             }
         }
@@ -430,10 +427,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private DataTable FillSQLRelationFromXLSX(IWorkbook workbook)
         {
             DataTable dt = new DataTable();
-            ISheet sheet = workbook.GetSheet(P_A_Matrix_Sheet);
+            ISheet sheet = workbook.GetSheet(Str_Sheet_Process_App_Matrix);
             if (sheet != null)
             {
-                CellRangeAddress cellRange = CellRangeAddress.ValueOf(P_A_Matrix_Range);
+                CellRangeAddress cellRange = CellRangeAddress.ValueOf(Str_Range_Process_App_Matrix);
                 dt.Columns.Add("Prozess_Id");
                 dt.Columns.Add("Applikation_Id");
                 dt.Columns.Add("Relation");
@@ -464,7 +461,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             }
             else
             {
-                _myDia.ShowWarning("Excel-Quelldatei hat nicht das passende Format!\n(Matrix)\nVoraussetzungen:\nSheet-Name: '" + P_Sheet + "'\nRange: '" + P_A_Matrix_Range + "'");
+                _myDia.ShowWarning("Excel-Quelldatei hat nicht das passende Format!\n(Matrix)\nVoraussetzungen:\nSheet-Name: '" + Str_Sheet_Process + "'\nRange: '" + Str_Range_Process_App_Matrix + "'");
                 return null;
             }
         }
@@ -476,11 +473,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <returns> Datatable, der die gelesenen Daten enthält </returns>
         private DataTable GetInformationSegmentDataFromXLSX(IWorkbook workbook)
         {
-            ISheet sheet = workbook.GetSheet(I_Sheet);
+            ISheet sheet = workbook.GetSheet(Str_Sheet_InformationSegment);
             if (sheet != null)
             {
                 DataTable dt = new DataTable(sheet.SheetName);
-                CellRangeAddress cellRange = CellRangeAddress.ValueOf(I_Range);
+                CellRangeAddress cellRange = CellRangeAddress.ValueOf(Str_Range_InformationSegment);
                 for (var i = cellRange.FirstRow; i <= cellRange.LastRow; i++)
                 {
                     var row = sheet.GetRow(i);
@@ -516,7 +513,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             }
             else
             {
-                _myDia.ShowWarning("Excel-Quelldatei hat nicht das passende Format!\n(Informationssegmente)\nVoraussetzungen:\nSheet-Name: '" + I_Sheet + "'\nRange: '" + I_Range + "'");
+                _myDia.ShowWarning("Excel-Quelldatei hat nicht das passende Format!\n(Informationssegmente)\nVoraussetzungen:\nSheet-Name: '" + Str_Sheet_InformationSegment + "'\nRange: '" + Str_Range_InformationSegment + "'");
                 return null;
             }
         }
@@ -528,11 +525,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <returns> Datatable, der die gelesenen Daten enthält </returns>
         private DataTable GetInformationSegmentAttributDataFromXLSX(IWorkbook workbook)
         {
-            ISheet sheet = workbook.GetSheet(I_A_Sheet);
+            ISheet sheet = workbook.GetSheet(Str_Sheet_Attribute);
             if (sheet != null)
             {
                 DataTable dt = new DataTable(sheet.SheetName);
-                CellRangeAddress cellRange = CellRangeAddress.ValueOf(I_A_Range);
+                CellRangeAddress cellRange = CellRangeAddress.ValueOf(Str_Range_Attribute);
                 for (var i = cellRange.FirstRow; i <= cellRange.LastRow; i++)
                 {
                     var row = sheet.GetRow(i);
@@ -568,7 +565,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             }
             else
             {
-                _myDia.ShowWarning("Excel-Quelldatei hat nicht das passende Format!\n(Informationssegment-Attribute)\nVoraussetzungen:\nSheet-Name: '" + I_A_Sheet + "'\nRange: '" + I_A_Range + "'");
+                _myDia.ShowWarning("Excel-Quelldatei hat nicht das passende Format!\n(Informationssegment-Attribute)\nVoraussetzungen:\nSheet-Name: '" + Str_Sheet_Attribute + "'\nRange: '" + Str_Range_Attribute + "'");
                 return null;
             }
         }

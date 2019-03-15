@@ -32,52 +32,52 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private int _sZ_4_Max = 0;
         private int _sZ_5_Max = 0;
         private int _sZ_6_Max = 0;
-        private Process_Model _currentProcess;
+        private Process_Model _processCurrent;
         private Process_Model _oldCurrentProcess;
 
-        private string _prozessverantwortlicher = "";
-        private string _prozessverantwortlicher_Text = "";
-        private bool _prozessverantwortlicher_Check;
-        private string _vorgelagerte_Prozesse = "";
-        private string _vorgelagerte_Prozesse_Text = "";
-        private bool _vorgelagerte_Prozesse_Check;
-        private string _nachgelagerte_Prozesse = "";
-        private string _nachgelagerte_Prozesse_Text = "";
-        private bool _nachgelagerte_Prozesse_Check;
-        private ObservableCollection<string> _oEList;
-        private ObservableCollection<string> _processOwnerList;
-        private ObservableCollection<string> _critList;
-        private ObservableCollection<string> _maturityList;
-        private ObservableCollection<string> _preProcessList;
-        private ObservableCollection<string> _postProcessList;
-        private ObservableCollection<int> _rTOList;
-        private Dictionary<string, string> _iSList;
-        private KeyValuePair<string, string> _relevantes_IS_1;
-        private KeyValuePair<string, string> _relevantes_IS_2;
-        private KeyValuePair<string, string> _relevantes_IS_3;
-        private KeyValuePair<string, string> _relevantes_IS_4;
-        private KeyValuePair<string, string> _relevantes_IS_5;
-        private ObservableCollection<ISB_BIA_Applikationen> _removeApplications;
-        private ObservableCollection<ISB_BIA_Applikationen> _newApplications;
+        private string _proc_Prozessverantwortlicher = "";
+        private string _proc_ProzessverantwortlicherText = "";
+        private bool _proc_ProzessverantwortlicherCheck;
+        private string _proc_Vorgelagerte_Prozesse = "";
+        private string _proc_Vorgelagerte_Prozesse_Text = "";
+        private bool _proc_Vorgelagerte_Prozesse_Check;
+        private string _proc_Nachgelagerte_Prozesse = "";
+        private string _proc_Nachgelagerte_Prozesse_Text = "";
+        private bool _proc_Nachgelagerte_Prozesse_Check;
+        private ObservableCollection<string> _list_OE;
+        private ObservableCollection<string> _list_ProcessOwner;
+        private ObservableCollection<string> _list_Crit;
+        private ObservableCollection<string> _list_Maturity;
+        private ObservableCollection<string> _list_PreProcess;
+        private ObservableCollection<string> _list_PostProcess;
+        private ObservableCollection<int> _list_RTO;
+        private Dictionary<string, string> _list_IS;
+        private KeyValuePair<string, string> _proc_Relevantes_IS_1;
+        private KeyValuePair<string, string> _proc_Relevantes_IS_2;
+        private KeyValuePair<string, string> _proc_Relevantes_IS_3;
+        private KeyValuePair<string, string> _proc_Relevantes_IS_4;
+        private KeyValuePair<string, string> _proc_Relevantes_IS_5;
+        private ObservableCollection<ISB_BIA_Applikationen> _proc_List_RemoveApplications;
+        private ObservableCollection<ISB_BIA_Applikationen> _proc_List_NewApplications;
         private ISB_BIA_Applikationen _selectedSourceItem;
-        private ObservableCollection<ISB_BIA_Applikationen> _allApplications;
+        private ObservableCollection<ISB_BIA_Applikationen> _list_AllApplications;
         private ISB_BIA_Applikationen _selectedTargetItem;
-        private ObservableCollection<string> _applicationCategories;
+        private ObservableCollection<string> _list_ApplicationCategories;
         private static string _selectedFilterItem;
-        private CollectionView _view;
+        private CollectionView _filterView;
         private int _currentTab;
-        private Visibility _buttonSaveVisibility;
-        private MyRelayCommand _nextTab;
-        private MyRelayCommand _prevTab;
-        private MyRelayCommand<object> _addApplication;
-        private MyRelayCommand<object> _removeApplication;
-        private MyRelayCommand _navToISViewChild;
-        private MyRelayCommand<string> _navToIS;
-        private MyRelayCommand _exportProcessHistory;
-        private MyRelayCommand<string> _info;
+        private Visibility _vis_ButtonSave;
+        private MyRelayCommand _cmd_NextTab;
+        private MyRelayCommand _cmd_PrevTab;
+        private MyRelayCommand<object> _cmd_AddApplication;
+        private MyRelayCommand<object> _cmd_RemoveApplication;
+        private MyRelayCommand _cmd_NavToISViewChild;
+        private MyRelayCommand<string> _cmd_NavToIS;
+        private MyRelayCommand _cmd_ExportProcessHistory;
+        private MyRelayCommand<string> _cmd_Info;
         private ProcAppMode _mode;
-        private MyRelayCommand<string> _showMsg;
-        private MyRelayCommand _resetValues;
+        private MyRelayCommand<string> _cmd_ShowMsg;
+        private MyRelayCommand _cmd_ResetValues;
         #endregion
 
         #region Mindesteinstufungswerte der Schutzziele
@@ -139,10 +139,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Aktueller Prozess
         /// </summary>
-        public Process_Model CurrentProcess
+        public Process_Model ProcessCurrent
         {
-            get => _currentProcess;
-            set => Set(() => CurrentProcess, ref _currentProcess, value);
+            get => _processCurrent;
+            set => Set(() => ProcessCurrent, ref _processCurrent, value);
         }
 
         // Eigenschaften, welche gebraucht werden um Korrekte Übernahme der vom User gewollten Werte zu sichern,
@@ -152,273 +152,273 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Prozesvernatwortlicher (DropDown)
         /// </summary>
-        public string Prozessverantwortlicher
+        public string Proc_Prozessverantwortlicher
         {
-            get => _prozessverantwortlicher;
+            get => _proc_Prozessverantwortlicher;
             set
             {
-                Set(() => Prozessverantwortlicher, ref _prozessverantwortlicher, value);
+                Set(() => Proc_Prozessverantwortlicher, ref _proc_Prozessverantwortlicher, value);
 
-                if (Prozessverantwortlicher_Check)
-                    CurrentProcess.Prozessverantwortlicher = Prozessverantwortlicher_Text;
+                if (Proc_ProzessverantwortlicherCheck)
+                    ProcessCurrent.Prozessverantwortlicher = Proc_Prozessverantwortlicher_Text;
                 else
-                    CurrentProcess.Prozessverantwortlicher = Prozessverantwortlicher;
-                if (!string.IsNullOrWhiteSpace(_prozessverantwortlicher))
-                    RemoveError(nameof(Prozessverantwortlicher));
+                    ProcessCurrent.Prozessverantwortlicher = Proc_Prozessverantwortlicher;
+                if (!string.IsNullOrWhiteSpace(_proc_Prozessverantwortlicher))
+                    RemoveError(nameof(Proc_Prozessverantwortlicher));
             }
         }
         /// <summary>
         /// Prozessvernatwortlicher (TextBox)
         /// </summary>
-        public string Prozessverantwortlicher_Text
+        public string Proc_Prozessverantwortlicher_Text
         {
-            get => _prozessverantwortlicher_Text;
+            get => _proc_ProzessverantwortlicherText;
             set
             {
-                Set(() => Prozessverantwortlicher_Text, ref _prozessverantwortlicher_Text, value);
-                if (Prozessverantwortlicher_Check)
-                    CurrentProcess.Prozessverantwortlicher = Prozessverantwortlicher_Text;
+                Set(() => Proc_Prozessverantwortlicher_Text, ref _proc_ProzessverantwortlicherText, value);
+                if (Proc_ProzessverantwortlicherCheck)
+                    ProcessCurrent.Prozessverantwortlicher = Proc_Prozessverantwortlicher_Text;
                 else
-                    CurrentProcess.Prozessverantwortlicher = Prozessverantwortlicher;
-                if (!string.IsNullOrWhiteSpace(_prozessverantwortlicher_Text))
-                    RemoveError(nameof(Prozessverantwortlicher_Text));
+                    ProcessCurrent.Prozessverantwortlicher = Proc_Prozessverantwortlicher;
+                if (!string.IsNullOrWhiteSpace(_proc_ProzessverantwortlicherText))
+                    RemoveError(nameof(Proc_Prozessverantwortlicher_Text));
             }
         }
         /// <summary>
         /// Prozessverantwortlicher (CheckBox Switch))
         /// </summary>
-        public bool Prozessverantwortlicher_Check
+        public bool Proc_ProzessverantwortlicherCheck
         {
-            get => _prozessverantwortlicher_Check;
+            get => _proc_ProzessverantwortlicherCheck;
             set
             {
-                Set(() => Prozessverantwortlicher_Check, ref _prozessverantwortlicher_Check, value);
+                Set(() => Proc_ProzessverantwortlicherCheck, ref _proc_ProzessverantwortlicherCheck, value);
                 if (value)
-                    CurrentProcess.Prozessverantwortlicher = Prozessverantwortlicher_Text;
+                    ProcessCurrent.Prozessverantwortlicher = Proc_Prozessverantwortlicher_Text;
                 else
-                    CurrentProcess.Prozessverantwortlicher = Prozessverantwortlicher;
+                    ProcessCurrent.Prozessverantwortlicher = Proc_Prozessverantwortlicher;
             }
         }
         /// <summary>
         /// Vorgelagerte Prozesse (DropDown)
         /// </summary>
-        public string Vorgelagerte_Prozesse
+        public string Proc_Vorgelagerte_Prozesse
         {
-            get => _vorgelagerte_Prozesse;
+            get => _proc_Vorgelagerte_Prozesse;
             set
             {
-                Set(() => Vorgelagerte_Prozesse, ref _vorgelagerte_Prozesse, value);
-                if (Vorgelagerte_Prozesse_Check)
-                    CurrentProcess.Vorgelagerte_Prozesse = Vorgelagerte_Prozesse_Text;
+                Set(() => Proc_Vorgelagerte_Prozesse, ref _proc_Vorgelagerte_Prozesse, value);
+                if (Proc_Vorgelagerte_Prozesse_Check)
+                    ProcessCurrent.Vorgelagerte_Prozesse = Proc_Vorgelagerte_Prozesse_Text;
                 else
-                    CurrentProcess.Vorgelagerte_Prozesse = Vorgelagerte_Prozesse;
+                    ProcessCurrent.Vorgelagerte_Prozesse = Proc_Vorgelagerte_Prozesse;
             }
         }
         /// <summary>
         /// Vorgelagerte Prozesse (TextBox)
         /// </summary>
-        public string Vorgelagerte_Prozesse_Text
+        public string Proc_Vorgelagerte_Prozesse_Text
         {
-            get => _vorgelagerte_Prozesse_Text;
+            get => _proc_Vorgelagerte_Prozesse_Text;
             set
             {
-                Set(() => Vorgelagerte_Prozesse_Text, ref _vorgelagerte_Prozesse_Text, value);
-                if (Vorgelagerte_Prozesse_Check)
-                    CurrentProcess.Vorgelagerte_Prozesse = Vorgelagerte_Prozesse_Text;
+                Set(() => Proc_Vorgelagerte_Prozesse_Text, ref _proc_Vorgelagerte_Prozesse_Text, value);
+                if (Proc_Vorgelagerte_Prozesse_Check)
+                    ProcessCurrent.Vorgelagerte_Prozesse = Proc_Vorgelagerte_Prozesse_Text;
                 else
-                    CurrentProcess.Vorgelagerte_Prozesse = Vorgelagerte_Prozesse;
+                    ProcessCurrent.Vorgelagerte_Prozesse = Proc_Vorgelagerte_Prozesse;
 
             }
         }
         /// <summary>
         /// Vorgelagerte Prozesse (CheckBox Switch)
         /// </summary>
-        public bool Vorgelagerte_Prozesse_Check
+        public bool Proc_Vorgelagerte_Prozesse_Check
         {
-            get => _vorgelagerte_Prozesse_Check;
+            get => _proc_Vorgelagerte_Prozesse_Check;
             set
             {
-                Set(() => Vorgelagerte_Prozesse_Check, ref _vorgelagerte_Prozesse_Check, value);
+                Set(() => Proc_Vorgelagerte_Prozesse_Check, ref _proc_Vorgelagerte_Prozesse_Check, value);
                 if (value)
-                    CurrentProcess.Vorgelagerte_Prozesse = Vorgelagerte_Prozesse_Text;
+                    ProcessCurrent.Vorgelagerte_Prozesse = Proc_Vorgelagerte_Prozesse_Text;
                 else
-                    CurrentProcess.Vorgelagerte_Prozesse = Vorgelagerte_Prozesse;
+                    ProcessCurrent.Vorgelagerte_Prozesse = Proc_Vorgelagerte_Prozesse;
 
             }
         }
         /// <summary>
         /// Nachgelagerte Prozesse (DropDown)
         /// </summary>
-        public string Nachgelagerte_Prozesse
+        public string Proc_Nachgelagerte_Prozesse
         {
-            get => _nachgelagerte_Prozesse;
+            get => _proc_Nachgelagerte_Prozesse;
             set
             {
-                Set(() => Nachgelagerte_Prozesse, ref _nachgelagerte_Prozesse, value);
-                if (Nachgelagerte_Prozesse_Check)
-                    CurrentProcess.Nachgelagerte_Prozesse = Nachgelagerte_Prozesse_Text;
+                Set(() => Proc_Nachgelagerte_Prozesse, ref _proc_Nachgelagerte_Prozesse, value);
+                if (Proc_Nachgelagerte_Prozesse_Check)
+                    ProcessCurrent.Nachgelagerte_Prozesse = Proc_Nachgelagerte_Prozesse_Text;
                 else
-                    CurrentProcess.Nachgelagerte_Prozesse = Nachgelagerte_Prozesse;
+                    ProcessCurrent.Nachgelagerte_Prozesse = Proc_Nachgelagerte_Prozesse;
 
             }
         }
         /// <summary>
         /// Nachgelagerte Prozesse (TextBox)
         /// </summary>
-        public string Nachgelagerte_Prozesse_Text
+        public string Proc_Nachgelagerte_Prozesse_Text
         {
-            get => _nachgelagerte_Prozesse_Text;
+            get => _proc_Nachgelagerte_Prozesse_Text;
             set
             {
-                Set(() => Nachgelagerte_Prozesse_Text, ref _nachgelagerte_Prozesse_Text, value);
-                if (Nachgelagerte_Prozesse_Check)
-                    CurrentProcess.Nachgelagerte_Prozesse = Nachgelagerte_Prozesse_Text;
+                Set(() => Proc_Nachgelagerte_Prozesse_Text, ref _proc_Nachgelagerte_Prozesse_Text, value);
+                if (Proc_Nachgelagerte_Prozesse_Check)
+                    ProcessCurrent.Nachgelagerte_Prozesse = Proc_Nachgelagerte_Prozesse_Text;
                 else
-                    CurrentProcess.Nachgelagerte_Prozesse = Nachgelagerte_Prozesse;
+                    ProcessCurrent.Nachgelagerte_Prozesse = Proc_Nachgelagerte_Prozesse;
             }
         }
         /// <summary>
         /// Nachgelagerte Prozesse (CheckBox Switch)
         /// </summary>
-        public bool Nachgelagerte_Prozesse_Check
+        public bool Proc_Nachgelagerte_Prozesse_Check
         {
-            get => _nachgelagerte_Prozesse_Check;
+            get => _proc_Nachgelagerte_Prozesse_Check;
             set
             {
-                Set(() => Nachgelagerte_Prozesse_Check, ref _nachgelagerte_Prozesse_Check, value);
-                if (value && CurrentProcess != null)
-                    CurrentProcess.Nachgelagerte_Prozesse = Nachgelagerte_Prozesse_Text;
-                else if (!value && CurrentProcess != null)
-                    CurrentProcess.Nachgelagerte_Prozesse = Nachgelagerte_Prozesse;
+                Set(() => Proc_Nachgelagerte_Prozesse_Check, ref _proc_Nachgelagerte_Prozesse_Check, value);
+                if (value && ProcessCurrent != null)
+                    ProcessCurrent.Nachgelagerte_Prozesse = Proc_Nachgelagerte_Prozesse_Text;
+                else if (!value && ProcessCurrent != null)
+                    ProcessCurrent.Nachgelagerte_Prozesse = Proc_Nachgelagerte_Prozesse;
             }
         }
         /// <summary>
         /// Dictionary Eintrag aus der Informationssegemnt-Liste, welcher zur Anzeige und Zurdnung (SegmentName und Beschreibung) des 1. IS benötigt werden
         /// </summary>
-        public KeyValuePair<string, string> Relevantes_IS_1
+        public KeyValuePair<string, string> Proc_Relevantes_IS_1
         {
             get
             {
-                _relevantes_IS_1 = ISList.Where(x => x.Key == CurrentProcess.Relevantes_IS_1).FirstOrDefault();
-                return _relevantes_IS_1;
+                _proc_Relevantes_IS_1 = List_IS.Where(x => x.Key == ProcessCurrent.Relevantes_IS_1).FirstOrDefault();
+                return _proc_Relevantes_IS_1;
             } 
             set
             {
-                CurrentProcess.Relevantes_IS_1 = ISList.Where(x => x.Key == value.Key).Select(y => y.Key).FirstOrDefault();
-                Set(() => Relevantes_IS_1, ref _relevantes_IS_1, value);
-                CheckMinValues(CurrentProcess);
+                ProcessCurrent.Relevantes_IS_1 = List_IS.Where(x => x.Key == value.Key).Select(y => y.Key).FirstOrDefault();
+                Set(() => Proc_Relevantes_IS_1, ref _proc_Relevantes_IS_1, value);
+                CheckMinValues(ProcessCurrent);
                 if (Mode == ProcAppMode.New)
                 {
-                    CurrentProcess.SZ_1 = (SZ_Values)SZ_1_Max;
-                    CurrentProcess.SZ_2 = (SZ_Values)SZ_2_Max;
-                    CurrentProcess.SZ_3 = (SZ_Values)SZ_3_Max;
-                    CurrentProcess.SZ_4 = (SZ_Values)SZ_4_Max;
-                    CurrentProcess.SZ_5 = (SZ_Values)SZ_5_Max;
-                    CurrentProcess.SZ_6 = (SZ_Values)SZ_6_Max;
+                    ProcessCurrent.SZ_1 = (SZ_Values)SZ_1_Max;
+                    ProcessCurrent.SZ_2 = (SZ_Values)SZ_2_Max;
+                    ProcessCurrent.SZ_3 = (SZ_Values)SZ_3_Max;
+                    ProcessCurrent.SZ_4 = (SZ_Values)SZ_4_Max;
+                    ProcessCurrent.SZ_5 = (SZ_Values)SZ_5_Max;
+                    ProcessCurrent.SZ_6 = (SZ_Values)SZ_6_Max;
                 }
             }
         }
         /// <summary>
         /// Dictionary Eintrag aus der Informationssegemnt-Liste, welcher zur Anzeige und Zurdnung (SegmentName und Beschreibung) des 2. IS benötigt werden
         /// </summary>
-        public KeyValuePair<string, string> Relevantes_IS_2
+        public KeyValuePair<string, string> Proc_Relevantes_IS_2
         {
             get
             {
-                _relevantes_IS_2 = ISList.Where(x => x.Key == _currentProcess.Relevantes_IS_2).FirstOrDefault();
-                return _relevantes_IS_2;
+                _proc_Relevantes_IS_2 = List_IS.Where(x => x.Key == _processCurrent.Relevantes_IS_2).FirstOrDefault();
+                return _proc_Relevantes_IS_2;
             } 
             set
             {
-                CurrentProcess.Relevantes_IS_2 = ISList.Where(x => x.Key == value.Key).Select(y => y.Key).FirstOrDefault();
-                Set(() => Relevantes_IS_2, ref _relevantes_IS_2, value);
-                CheckMinValues(CurrentProcess);
+                ProcessCurrent.Relevantes_IS_2 = List_IS.Where(x => x.Key == value.Key).Select(y => y.Key).FirstOrDefault();
+                Set(() => Proc_Relevantes_IS_2, ref _proc_Relevantes_IS_2, value);
+                CheckMinValues(ProcessCurrent);
                 if (Mode == ProcAppMode.New)
                 {
-                    CurrentProcess.SZ_1 = (SZ_Values)SZ_1_Max;
-                    CurrentProcess.SZ_2 = (SZ_Values)SZ_2_Max;
-                    CurrentProcess.SZ_3 = (SZ_Values)SZ_3_Max;
-                    CurrentProcess.SZ_4 = (SZ_Values)SZ_4_Max;
-                    CurrentProcess.SZ_5 = (SZ_Values)SZ_5_Max;
-                    CurrentProcess.SZ_6 = (SZ_Values)SZ_6_Max;
+                    ProcessCurrent.SZ_1 = (SZ_Values)SZ_1_Max;
+                    ProcessCurrent.SZ_2 = (SZ_Values)SZ_2_Max;
+                    ProcessCurrent.SZ_3 = (SZ_Values)SZ_3_Max;
+                    ProcessCurrent.SZ_4 = (SZ_Values)SZ_4_Max;
+                    ProcessCurrent.SZ_5 = (SZ_Values)SZ_5_Max;
+                    ProcessCurrent.SZ_6 = (SZ_Values)SZ_6_Max;
                 }
             }
         }
         /// <summary>
         /// Dictionary Eintrag aus der Informationssegemnt-Liste, welcher zur Anzeige und Zurdnung (SegmentName und Beschreibung) des 3. IS benötigt werden
         /// </summary>
-        public KeyValuePair<string, string> Relevantes_IS_3
+        public KeyValuePair<string, string> Proc_Relevantes_IS_3
         {
             get
             {
-                _relevantes_IS_3 = ISList.Where(x => x.Key == _currentProcess.Relevantes_IS_3).FirstOrDefault();
-                return _relevantes_IS_3;
+                _proc_Relevantes_IS_3 = List_IS.Where(x => x.Key == _processCurrent.Relevantes_IS_3).FirstOrDefault();
+                return _proc_Relevantes_IS_3;
             }
             set
             {
-                CurrentProcess.Relevantes_IS_3 = ISList.Where(x => x.Key == value.Key).Select(y => y.Key).FirstOrDefault();
-                Set(() => Relevantes_IS_3, ref _relevantes_IS_3, value);
-                CheckMinValues(CurrentProcess);
+                ProcessCurrent.Relevantes_IS_3 = List_IS.Where(x => x.Key == value.Key).Select(y => y.Key).FirstOrDefault();
+                Set(() => Proc_Relevantes_IS_3, ref _proc_Relevantes_IS_3, value);
+                CheckMinValues(ProcessCurrent);
                 if (Mode == ProcAppMode.New)
                 {
-                    CurrentProcess.SZ_1 = (SZ_Values)SZ_1_Max;
-                    CurrentProcess.SZ_2 = (SZ_Values)SZ_2_Max;
-                    CurrentProcess.SZ_3 = (SZ_Values)SZ_3_Max;
-                    CurrentProcess.SZ_4 = (SZ_Values)SZ_4_Max;
-                    CurrentProcess.SZ_5 = (SZ_Values)SZ_5_Max;
-                    CurrentProcess.SZ_6 = (SZ_Values)SZ_6_Max;
+                    ProcessCurrent.SZ_1 = (SZ_Values)SZ_1_Max;
+                    ProcessCurrent.SZ_2 = (SZ_Values)SZ_2_Max;
+                    ProcessCurrent.SZ_3 = (SZ_Values)SZ_3_Max;
+                    ProcessCurrent.SZ_4 = (SZ_Values)SZ_4_Max;
+                    ProcessCurrent.SZ_5 = (SZ_Values)SZ_5_Max;
+                    ProcessCurrent.SZ_6 = (SZ_Values)SZ_6_Max;
                 }
             }
         }
         /// <summary>
         /// Dictionary Eintrag aus der Informationssegemnt-Liste, welcher zur Anzeige und Zurdnung (SegmentName und Beschreibung) des 4. IS benötigt werden
         /// </summary>
-        public KeyValuePair<string, string> Relevantes_IS_4
+        public KeyValuePair<string, string> Proc_Relevantes_IS_4
         {
             get
             {
-                _relevantes_IS_4 = ISList.Where(x => x.Key == _currentProcess.Relevantes_IS_4).FirstOrDefault();
-                return _relevantes_IS_4;
+                _proc_Relevantes_IS_4 = List_IS.Where(x => x.Key == _processCurrent.Relevantes_IS_4).FirstOrDefault();
+                return _proc_Relevantes_IS_4;
             }
             set
             {
-                CurrentProcess.Relevantes_IS_4 = ISList.Where(x => x.Key == value.Key).Select(y => y.Key).FirstOrDefault();
-                Set(() => Relevantes_IS_4, ref _relevantes_IS_4, value);
-                CheckMinValues(CurrentProcess);
+                ProcessCurrent.Relevantes_IS_4 = List_IS.Where(x => x.Key == value.Key).Select(y => y.Key).FirstOrDefault();
+                Set(() => Proc_Relevantes_IS_4, ref _proc_Relevantes_IS_4, value);
+                CheckMinValues(ProcessCurrent);
                 if (Mode == ProcAppMode.New)
                 {
-                    CurrentProcess.SZ_1 = (SZ_Values)SZ_1_Max;
-                    CurrentProcess.SZ_2 = (SZ_Values)SZ_2_Max;
-                    CurrentProcess.SZ_3 = (SZ_Values)SZ_3_Max;
-                    CurrentProcess.SZ_4 = (SZ_Values)SZ_4_Max;
-                    CurrentProcess.SZ_5 = (SZ_Values)SZ_5_Max;
-                    CurrentProcess.SZ_6 = (SZ_Values)SZ_6_Max;
+                    ProcessCurrent.SZ_1 = (SZ_Values)SZ_1_Max;
+                    ProcessCurrent.SZ_2 = (SZ_Values)SZ_2_Max;
+                    ProcessCurrent.SZ_3 = (SZ_Values)SZ_3_Max;
+                    ProcessCurrent.SZ_4 = (SZ_Values)SZ_4_Max;
+                    ProcessCurrent.SZ_5 = (SZ_Values)SZ_5_Max;
+                    ProcessCurrent.SZ_6 = (SZ_Values)SZ_6_Max;
                 }
             }
         }
         /// <summary>
         /// Dictionary Eintrag aus der Informationssegemnt-Liste, welcher zur Anzeige und Zurdnung (SegmentName und Beschreibung) des 5. IS benötigt werden
         /// </summary>
-        public KeyValuePair<string, string> Relevantes_IS_5
+        public KeyValuePair<string, string> Proc_Relevantes_IS_5
         {
             get
             {
-                _relevantes_IS_5 = ISList.Where(x => x.Key == _currentProcess.Relevantes_IS_5).FirstOrDefault();
-                return _relevantes_IS_5;
+                _proc_Relevantes_IS_5 = List_IS.Where(x => x.Key == _processCurrent.Relevantes_IS_5).FirstOrDefault();
+                return _proc_Relevantes_IS_5;
             }
             set
             {
-                CurrentProcess.Relevantes_IS_5 = ISList.Where(x => x.Key == value.Key).Select(y => y.Key).FirstOrDefault();
-                Set(() => Relevantes_IS_5, ref _relevantes_IS_5, value);
-                CheckMinValues(CurrentProcess);
+                ProcessCurrent.Relevantes_IS_5 = List_IS.Where(x => x.Key == value.Key).Select(y => y.Key).FirstOrDefault();
+                Set(() => Proc_Relevantes_IS_5, ref _proc_Relevantes_IS_5, value);
+                CheckMinValues(ProcessCurrent);
                 if (Mode == ProcAppMode.New)
                 {
-                    CurrentProcess.SZ_1 = (SZ_Values)SZ_1_Max;
-                    CurrentProcess.SZ_2 = (SZ_Values)SZ_2_Max;
-                    CurrentProcess.SZ_3 = (SZ_Values)SZ_3_Max;
-                    CurrentProcess.SZ_4 = (SZ_Values)SZ_4_Max;
-                    CurrentProcess.SZ_5 = (SZ_Values)SZ_5_Max;
-                    CurrentProcess.SZ_6 = (SZ_Values)SZ_6_Max;
+                    ProcessCurrent.SZ_1 = (SZ_Values)SZ_1_Max;
+                    ProcessCurrent.SZ_2 = (SZ_Values)SZ_2_Max;
+                    ProcessCurrent.SZ_3 = (SZ_Values)SZ_3_Max;
+                    ProcessCurrent.SZ_4 = (SZ_Values)SZ_4_Max;
+                    ProcessCurrent.SZ_5 = (SZ_Values)SZ_5_Max;
+                    ProcessCurrent.SZ_6 = (SZ_Values)SZ_6_Max;
                 }
             }
         }
@@ -428,66 +428,66 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Liste aller OE-Gruppen
         /// </summary>
-        public ObservableCollection<string> OEList
+        public ObservableCollection<string> List_OE
         {
-            get => _oEList;
-            set => Set(() => OEList, ref _oEList, value);
+            get => _list_OE;
+            set => Set(() => List_OE, ref _list_OE, value);
         }
         /// <summary>
         /// Liste aller Prozesseigentümer
         /// </summary>
-        public ObservableCollection<string> ProcessOwnerList
+        public ObservableCollection<string> List_ProcessOwner
         {
-            get => _processOwnerList;
-            set => Set(() => ProcessOwnerList, ref _processOwnerList, value);
+            get => _list_ProcessOwner;
+            set => Set(() => List_ProcessOwner, ref _list_ProcessOwner, value);
         }
         /// <summary>
         /// Liste der Kritikalitätsstufen
         /// </summary>
-        public ObservableCollection<string> CritList
+        public ObservableCollection<string> List_Crit
         {
-            get => _critList;
-            set => Set(() => CritList, ref _critList,value);
+            get => _list_Crit;
+            set => Set(() => List_Crit, ref _list_Crit,value);
         }
         /// <summary>
         /// Liste der Prozessreifegrade
         /// </summary>
-        public ObservableCollection<string> MaturityList
+        public ObservableCollection<string> List_Maturity
         {
-            get => _maturityList;
-            set => Set(() => MaturityList, ref _maturityList, value);
+            get => _list_Maturity;
+            set => Set(() => List_Maturity, ref _list_Maturity, value);
         }
         /// <summary>
         /// Liste der Vorgelagerten Prozesse
         /// </summary>
-        public ObservableCollection<string> PreProcessList
+        public ObservableCollection<string> List_PreProcess
         {
-            get => _preProcessList;
-            set => Set(() => PreProcessList, ref _preProcessList, value);
+            get => _list_PreProcess;
+            set => Set(() => List_PreProcess, ref _list_PreProcess, value);
         }
         /// <summary>
         /// Liste der Nachgelagerten Prozesse
         /// </summary>
-        public ObservableCollection<string> PostProcessList
+        public ObservableCollection<string> List_PostProcess
         {
-            get => _postProcessList;
-            set => Set(() => PostProcessList, ref _postProcessList, value);
+            get => _list_PostProcess;
+            set => Set(() => List_PostProcess, ref _list_PostProcess, value);
         }
         /// <summary>
         /// Liste der Zeiten für das RTO
         /// </summary>
-        public ObservableCollection<int> RTOList
+        public ObservableCollection<int> List_RTO
         {
-            get => _rTOList;
-            set => Set(() => RTOList, ref _rTOList, value);
+            get => _list_RTO;
+            set => Set(() => List_RTO, ref _list_RTO, value);
         }
         /// <summary>
         /// Disctionary der Informationssegmente (SegmentName, Beschreibung)
         /// </summary>
-        public Dictionary<string, string> ISList
+        public Dictionary<string, string> List_IS
         {
-            get => _iSList;
-            set => Set(() => ISList, ref _iSList, value);
+            get => _list_IS;
+            set => Set(() => List_IS, ref _list_IS, value);
         }
         #endregion
 
@@ -495,18 +495,18 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Liste der Applikation, für welche mit diesem Prozess ein Eintrag mit Relation=0 erzeugt werden soll
         /// </summary>
-        public ObservableCollection<ISB_BIA_Applikationen> RemoveApplications
+        public ObservableCollection<ISB_BIA_Applikationen> Proc_List_RemoveApplications
         {
-            get => _removeApplications;
-            set => Set(() => RemoveApplications, ref _removeApplications, value);
+            get => _proc_List_RemoveApplications;
+            set => Set(() => Proc_List_RemoveApplications, ref _proc_List_RemoveApplications, value);
         }
         /// <summary>
         /// Liste der Applikation, für welche mit diesem Prozess ein Eintrag mit Relation=1 erzeugt werden soll
         /// </summary>
-        public ObservableCollection<ISB_BIA_Applikationen> NewApplications
+        public ObservableCollection<ISB_BIA_Applikationen> Proc_List_NewApplications
         {
-            get => _newApplications;
-            set => Set(() => NewApplications, ref _newApplications, value);
+            get => _proc_List_NewApplications;
+            set => Set(() => Proc_List_NewApplications, ref _proc_List_NewApplications, value);
         }    
         /// <summary>
         /// Ausgewähltes Item der Quell-Applikationsliste
@@ -519,10 +519,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Liste aller Applikationen
         /// </summary>
-        public ObservableCollection<ISB_BIA_Applikationen> AllApplications
+        public ObservableCollection<ISB_BIA_Applikationen> List_AllApplications
         {
-            get => _allApplications;
-            set => Set(() => AllApplications, ref _allApplications, value);
+            get => _list_AllApplications;
+            set => Set(() => List_AllApplications, ref _list_AllApplications, value);
 
         }
         /// <summary>
@@ -536,10 +536,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Liste der Applikationskategorien für die Filterung
         /// </summary>
-        public ObservableCollection<string> ApplicationCategories
+        public ObservableCollection<string> List_ApplicationCategories
         {
-            get => _applicationCategories;
-            set => Set(() => ApplicationCategories, ref _applicationCategories, value);
+            get => _list_ApplicationCategories;
+            set => Set(() => List_ApplicationCategories, ref _list_ApplicationCategories, value);
         }
         /// <summary>
         /// Ausgewähltes Filter Item aus der Liste der Applikationskategorien
@@ -550,16 +550,16 @@ namespace ISB_BIA_IMPORT1.ViewModel
             set
             {
                 Set(() => SelectedFilterItem, ref _selectedFilterItem, value);
-                View.Refresh();
+                FilterView.Refresh();
             }
         }
         /// <summary>
         /// CollectionView für die Filterung
         /// </summary>
-        public CollectionView View
+        public CollectionView FilterView
         {
-            get => _view;
-            set => Set(() => View, ref _view, value);
+            get => _filterView;
+            set => Set(() => FilterView, ref _filterView, value);
         }
         /// <summary>
         /// Definition des Filters für die Applikationsliste (Filtern auf Kategorien der Anwendungenen)
@@ -584,13 +584,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Sichtbarkeit der Notifikation, ob einem Prozess momentan inaktive Anwendungen zugeordnet sind (Wenn eine Anwendung auf inaktiv gesetzt wurd, ohne sie vorher von allen Prozessen zu entfernen)
         /// </summary>
-        public Visibility DeletedApplicationsNotification
+        public Visibility Vis_DeletedApplicationsNotification
         {
             get
             {
                 //Prüfen ob dem Prozess momentan Anwendungen zugeordnet sind, welche durch den IT-Betrieb deaktiviert/entfernt wurden
                 int inactive = 0;
-                foreach (ISB_BIA_Applikationen pa in CurrentProcess.ApplicationList)
+                foreach (ISB_BIA_Applikationen pa in ProcessCurrent.ApplicationList)
                 {
                     if (pa.Aktiv == 0) inactive = 1;
                 }
@@ -612,27 +612,25 @@ namespace ISB_BIA_IMPORT1.ViewModel
             set
             {
                 Set(() => CurrentTab, ref _currentTab, value);
-                ButtonSaveVisibility = (_currentTab == 6) ? Visibility.Visible : Visibility.Hidden;
+                Vis_ButtonSave = (_currentTab == 6) ? Visibility.Visible : Visibility.Hidden;
             }
         }
         /// <summary>
         /// Sichtbarkeit des Speicherbuttons (nur wenn letzter Tab aktiv)
         /// </summary>
-        public Visibility ButtonSaveVisibility
+        public Visibility Vis_ButtonSave
         {
-            get => _buttonSaveVisibility;
-            set => Set(() => ButtonSaveVisibility, ref _buttonSaveVisibility, value);
+            get => _vis_ButtonSave;
+            set => Set(() => Vis_ButtonSave, ref _vis_ButtonSave, value);
 
         }
-
-        public DateTime T { get; set; }
         /// <summary>
         /// Zum nächsten Tab navigieren
         /// </summary>
-        public MyRelayCommand NextTab
+        public MyRelayCommand Cmd_NextTab
         {
-            get => _nextTab
-                    ?? (_nextTab = new MyRelayCommand(() =>
+            get => _cmd_NextTab
+                    ?? (_cmd_NextTab = new MyRelayCommand(() =>
                     {
                         CurrentTab += 1;
                     }, () => { return CurrentTab != 6; }));
@@ -640,10 +638,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Zum vorherigen Tab navigieren
         /// </summary>
-        public MyRelayCommand PrevTab
+        public MyRelayCommand Cmd_PrevTab
         {
-            get => _prevTab
-                    ?? (_prevTab = new MyRelayCommand(() =>
+            get => _cmd_PrevTab
+                    ?? (_cmd_PrevTab = new MyRelayCommand(() =>
                     {
                         CurrentTab -= 1;
                     }, () => { return CurrentTab != 0; }));
@@ -651,10 +649,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Anwendung zur Liste verknüpfter Anwendungen hinzufügen
         /// </summary>
-        public MyRelayCommand<object> AddApplication
+        public MyRelayCommand<object> Cmd_AddApplication
         {
-            get => _addApplication
-                  ?? (_addApplication = new MyRelayCommand<object>((list) =>
+            get => _cmd_AddApplication
+                  ?? (_cmd_AddApplication = new MyRelayCommand<object>((list) =>
                   {
                       IList items = (IList)list;
                       if (items.Count > 0)
@@ -664,7 +662,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                           if (collection.Count() == 1)
                           {
                               //Prüfen ob Anwendung bereits in Zielliste
-                              bool contained = CurrentProcess.ApplicationList.Count(x => x.Applikation_Id == SelectedSourceItem.Applikation_Id)==1;
+                              bool contained = ProcessCurrent.ApplicationList.Count(x => x.Applikation_Id == SelectedSourceItem.Applikation_Id)==1;
                               if (contained)
                               {
                                   _myDia.ShowInfo("Anwendung bereits zugewiesen");
@@ -674,7 +672,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                               else
                               {
                                   //Einfügen
-                                  CurrentProcess.ApplicationList.Insert(0, SelectedSourceItem);                                 
+                                  ProcessCurrent.ApplicationList.Insert(0, SelectedSourceItem);                                 
                                   _myDia.ShowMessage(SelectedSourceItem.IT_Anwendung_System + " wurde hinzugefügt.");
                                   SelectedTargetItem = SelectedSourceItem;
                               }
@@ -686,17 +684,17 @@ namespace ISB_BIA_IMPORT1.ViewModel
                               List<ISB_BIA_Applikationen> selectedList = new List<ISB_BIA_Applikationen>(collection);
                               //Liste der Anwendungen die bereits zugewiesen
                               List<ISB_BIA_Applikationen> listRedundant = new List<ISB_BIA_Applikationen>(selectedList.Where(x =>
-                                  CurrentProcess.ApplicationList.Select(v => v.Applikation_Id).ToList().Contains(x.Applikation_Id)).ToList());
+                                  ProcessCurrent.ApplicationList.Select(v => v.Applikation_Id).ToList().Contains(x.Applikation_Id)).ToList());
                               //Liste der Anwendung die noch nicht zugewiesen
                               List<ISB_BIA_Applikationen> listAdd = new List<ISB_BIA_Applikationen>(selectedList.Where(x=>
-                                  !CurrentProcess.ApplicationList.Select(v => v.Applikation_Id).ToList().Contains(x.Applikation_Id)).ToList());
+                                  !ProcessCurrent.ApplicationList.Select(v => v.Applikation_Id).ToList().Contains(x.Applikation_Id)).ToList());
                               //Alle gültigen Anwendungen in Zielliste einfügen
                               if (listAdd.Count > 0)
                               {
                                   foreach (var item in listAdd)
                                   {
                                       //Einfügen
-                                      CurrentProcess.ApplicationList.Insert(0, item);
+                                      ProcessCurrent.ApplicationList.Insert(0, item);
                                       SelectedTargetItem = listAdd.FirstOrDefault();
                                   }
                                   #region Benachrichtigung über hinzugefügte Anwendungen
@@ -741,10 +739,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Anwendung von Liste verknüpfter Anwendungen entfernen
         /// </summary>
-        public MyRelayCommand<object> RemoveApplication
+        public MyRelayCommand<object> Cmd_RemoveApplication
         {
-            get => _removeApplication
-                  ?? (_removeApplication = new MyRelayCommand<object>((list) =>
+            get => _cmd_RemoveApplication
+                  ?? (_cmd_RemoveApplication = new MyRelayCommand<object>((list) =>
                   {
                       IList items = (IList)list;
                       if (items.Count > 0)
@@ -755,7 +753,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                           {
                               //Entfernen
                               ISB_BIA_Applikationen tmp = SelectedTargetItem;
-                              CurrentProcess.ApplicationList.Remove(SelectedTargetItem);
+                              ProcessCurrent.ApplicationList.Remove(SelectedTargetItem);
                               _myDia.ShowMessage(tmp.IT_Anwendung_System + " wurde entfernt.");
                           }
                           //Wenn mehrere Applikationen entfernt werden
@@ -767,12 +765,12 @@ namespace ISB_BIA_IMPORT1.ViewModel
                               foreach (ISB_BIA_Applikationen item in selectedList)
                               {
                                   //Entfernen
-                                  CurrentProcess.ApplicationList.Remove(item);
+                                  ProcessCurrent.ApplicationList.Remove(item);
                                   a = a + "\n" + item.IT_Anwendung_System;
                               }
                               _myDia.ShowMessage(a);
                           }
-                          RaisePropertyChanged(() => DeletedApplicationsNotification);
+                          RaisePropertyChanged(() => Vis_DeletedApplicationsNotification);
                       }
                       else
                           _myDia.ShowInfo("Bitte zu löschende Anwendung auswählen");
@@ -781,7 +779,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Command zum Zurückkehren zum vorherigen VM
         /// </summary>
-        public MyRelayCommand NavBack
+        public MyRelayCommand Cmd_NavBack
         {
             get => new MyRelayCommand(() =>
                 {
@@ -789,17 +787,17 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     {
                         Cleanup();
                         _myNavi.NavigateBack(true);
-                        _myData.UnlockObject(Table_Lock_Flags.Process, CurrentProcess.Prozess_Id);
+                        _myLock.Unlock_Object(Table_Lock_Flags.Process, ProcessCurrent.Prozess_Id);
                     }
                 });
         }
         /// <summary>
         /// Zum <see cref="InformationSegmentsView_ViewModel"/> navigieren
         /// </summary>
-        public MyRelayCommand NavToISViewChild
+        public MyRelayCommand Cmd_NavToISViewChild
         {
-            get => _navToISViewChild
-                  ?? (_navToISViewChild = new MyRelayCommand(() =>
+            get => _cmd_NavToISViewChild
+                  ?? (_cmd_NavToISViewChild = new MyRelayCommand(() =>
                   {
                       _myNavi.NavigateTo<InformationSegmentsView_ViewModel>(ISISAttributeMode.View);
                   }));
@@ -807,12 +805,12 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Zum <see cref="InformationSegment_ViewModel"/> des ausgewählten Segments navigieren
         /// </summary>
-        public MyRelayCommand<string> NavToIS
+        public MyRelayCommand<string> Cmd_NavToIS
         {
-            get => _navToIS
-                  ?? (_navToIS = new MyRelayCommand<string>((msg) =>
+            get => _cmd_NavToIS
+                  ?? (_cmd_NavToIS = new MyRelayCommand<string>((msg) =>
                   {
-                      ISB_BIA_Informationssegmente seg = _myData.GetISByISName(msg);
+                      ISB_BIA_Informationssegmente seg = _myProc.Get_IS_ByName(msg);
                       if (seg != null)
                       {
                           _myNavi.NavigateTo<InformationSegment_ViewModel>(seg.Informationssegment_Id, ISISAttributeMode.View);
@@ -826,51 +824,49 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Speichern der Prozess- und Relationsdaten und zum vorherigen VM navigieren
         /// </summary>
-        public MyRelayCommand SaveAndContinue
+        public MyRelayCommand Cmd_SaveAndContinue
         {
             get => new MyRelayCommand(() =>
             {
                 //Liste der aktuellen Zuordnung durchgehen und zur Addliste hinzufügen, welche in alter Liste noch nicht vorhanden waren
-                NewApplications = new ObservableCollection<ISB_BIA_Applikationen>(
-                    CurrentProcess.ApplicationList.Where(x => 
+                Proc_List_NewApplications = new ObservableCollection<ISB_BIA_Applikationen>(
+                    ProcessCurrent.ApplicationList.Where(x => 
                         !_oldCurrentProcess.ApplicationList.Select(c => c.Applikation_Id).ToList().Contains(x.Applikation_Id)).ToList());
                 //Liste der Ausgangszuordnung durchgehen und zur Removeliste hinzufügen, welche in aktueller Liste nicht mehr vorhanden
-                RemoveApplications = new ObservableCollection<ISB_BIA_Applikationen>(
+                Proc_List_RemoveApplications = new ObservableCollection<ISB_BIA_Applikationen>(
                     _oldCurrentProcess.ApplicationList.Where(x =>
-                        !CurrentProcess.ApplicationList.Select(c => c.Applikation_Id).ToList().Contains(x.Applikation_Id)).ToList());
+                        !ProcessCurrent.ApplicationList.Select(c => c.Applikation_Id).ToList().Contains(x.Applikation_Id)).ToList());
                 //Prozessdaten auf Fehler prüfen
-                CurrentProcess.EvaluateErrors();
+                ProcessCurrent.EvaluateErrors();
                 EvaluateErrors();
                 //Prozess & Relationen einfügen
-                ISB_BIA_Prozesse a = null;
-                string y = a.Benutzer;
-                if (_myData.InsertProcessAndRelations(CurrentProcess, Mode, NewApplications, RemoveApplications))
+                if (_myProc.Insert_ProcessAndRelations(ProcessCurrent, Mode, Proc_List_NewApplications, Proc_List_RemoveApplications))
                 {
                     bool refreshMsg = (Mode == ProcAppMode.Change);
                     Cleanup();
                     _myNavi.NavigateBack(refreshMsg);
-                    _myData.UnlockObject(Table_Lock_Flags.Process, CurrentProcess.Prozess_Id);
+                    _myLock.Unlock_Object(Table_Lock_Flags.Process, ProcessCurrent.Prozess_Id);
                 }
             });
         }
         /// <summary>
         /// Prozesshistorie nach Excel exportieren
         /// </summary>
-        public MyRelayCommand ExportProcessHistory
+        public MyRelayCommand Cmd_ExportProcessHistory
         {
-            get => _exportProcessHistory
-                    ?? (_exportProcessHistory = new MyRelayCommand(() =>
+            get => _cmd_ExportProcessHistory
+                    ?? (_cmd_ExportProcessHistory = new MyRelayCommand(() =>
                     {
-                        _myExport.ExportProcesses(_myData.GetProcessHistory(CurrentProcess.Prozess_Id), CurrentProcess.Prozess_Id);
+                        _myExp.Proc_ExportProcesses(_myProc.Get_History_Process(ProcessCurrent.Prozess_Id), ProcessCurrent.Prozess_Id);
                     },()=>Mode == ProcAppMode.Change));
         }
         /// <summary>
         /// Zum Infofenster navigieren und jeweilige Info anzeigen (Parameter in XAML angegeben)
         /// </summary>
-        public MyRelayCommand<string> Info
+        public MyRelayCommand<string> Cmd_Info
         {
-            get => _info
-                    ?? (_info = new MyRelayCommand<string>((name) =>
+            get => _cmd_Info
+                    ?? (_cmd_Info = new MyRelayCommand<string>((name) =>
                     {
                         try
                         {
@@ -896,10 +892,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Anzeigen defnierter Nachrichten (Parameter in XAML definiert)
         /// </summary>
-        public MyRelayCommand<string> ShowMsg
+        public MyRelayCommand<string> Cmd_ShowMsg
         {
-            get => _showMsg
-                  ?? (_showMsg = new MyRelayCommand<string>((msg) =>
+            get => _cmd_ShowMsg
+                  ?? (_cmd_ShowMsg = new MyRelayCommand<string>((msg) =>
                   {
                       _myDia.ShowMessage(msg);
                   }));
@@ -907,59 +903,59 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Zurücksetzen der Daten der aktuellen Maske (Nur bei Prozessbearbeitung, nicht Neuanlage)
         /// </summary>
-        public MyRelayCommand ResetValues
+        public MyRelayCommand Cmd_ResetValues
         {
-            get => _resetValues
-                   ?? (_resetValues = new MyRelayCommand(() =>
+            get => _cmd_ResetValues
+                   ?? (_cmd_ResetValues = new MyRelayCommand(() =>
                    {
                        switch (CurrentTab)
                        {
                            case 0:
-                               CurrentProcess.Prozess = _oldCurrentProcess.Prozess;
-                               CurrentProcess.Sub_Prozess = _oldCurrentProcess.Sub_Prozess;
-                               CurrentProcess.OE_Filter = _oldCurrentProcess.OE_Filter;
-                               Prozessverantwortlicher = _oldCurrentProcess.Prozessverantwortlicher;
-                               Prozessverantwortlicher_Text = "";
-                               CurrentProcess.Reifegrad_des_Prozesses = _oldCurrentProcess.Reifegrad_des_Prozesses;
+                               ProcessCurrent.Prozess = _oldCurrentProcess.Prozess;
+                               ProcessCurrent.Sub_Prozess = _oldCurrentProcess.Sub_Prozess;
+                               ProcessCurrent.OE_Filter = _oldCurrentProcess.OE_Filter;
+                               Proc_Prozessverantwortlicher = _oldCurrentProcess.Prozessverantwortlicher;
+                               Proc_Prozessverantwortlicher_Text = "";
+                               ProcessCurrent.Reifegrad_des_Prozesses = _oldCurrentProcess.Reifegrad_des_Prozesses;
                                break;
                            case 1:
-                               Vorgelagerte_Prozesse = _oldCurrentProcess.Vorgelagerte_Prozesse;
-                               Vorgelagerte_Prozesse_Text = "";
-                               Nachgelagerte_Prozesse = _oldCurrentProcess.Nachgelagerte_Prozesse;
-                               Nachgelagerte_Prozesse_Text = "";
+                               Proc_Vorgelagerte_Prozesse = _oldCurrentProcess.Vorgelagerte_Prozesse;
+                               Proc_Vorgelagerte_Prozesse_Text = "";
+                               Proc_Nachgelagerte_Prozesse = _oldCurrentProcess.Nachgelagerte_Prozesse;
+                               Proc_Nachgelagerte_Prozesse_Text = "";
                                break;
                            case 2:
-                               Relevantes_IS_1 = ISList.Where(x => x.Key == _oldCurrentProcess.Relevantes_IS_1).FirstOrDefault();
-                               Relevantes_IS_2 = ISList.Where(x => x.Key == _oldCurrentProcess.Relevantes_IS_2).FirstOrDefault();
-                               Relevantes_IS_3 = ISList.Where(x => x.Key == _oldCurrentProcess.Relevantes_IS_3).FirstOrDefault();
-                               Relevantes_IS_4 = ISList.Where(x => x.Key == _oldCurrentProcess.Relevantes_IS_4).FirstOrDefault();
-                               Relevantes_IS_5 = ISList.Where(x => x.Key == _oldCurrentProcess.Relevantes_IS_5).FirstOrDefault();
+                               Proc_Relevantes_IS_1 = List_IS.Where(x => x.Key == _oldCurrentProcess.Relevantes_IS_1).FirstOrDefault();
+                               Proc_Relevantes_IS_2 = List_IS.Where(x => x.Key == _oldCurrentProcess.Relevantes_IS_2).FirstOrDefault();
+                               Proc_Relevantes_IS_3 = List_IS.Where(x => x.Key == _oldCurrentProcess.Relevantes_IS_3).FirstOrDefault();
+                               Proc_Relevantes_IS_4 = List_IS.Where(x => x.Key == _oldCurrentProcess.Relevantes_IS_4).FirstOrDefault();
+                               Proc_Relevantes_IS_5 = List_IS.Where(x => x.Key == _oldCurrentProcess.Relevantes_IS_5).FirstOrDefault();
                                break;
                            case 3:
-                               CurrentProcess.SZ_1 = _oldCurrentProcess.SZ_1;
-                               CurrentProcess.SZ_2 = _oldCurrentProcess.SZ_2;
-                               CurrentProcess.SZ_3 = _oldCurrentProcess.SZ_3;
-                               CurrentProcess.SZ_4 = _oldCurrentProcess.SZ_4;
-                               CurrentProcess.SZ_5 = _oldCurrentProcess.SZ_5;
-                               CurrentProcess.SZ_6 = _oldCurrentProcess.SZ_6;
+                               ProcessCurrent.SZ_1 = _oldCurrentProcess.SZ_1;
+                               ProcessCurrent.SZ_2 = _oldCurrentProcess.SZ_2;
+                               ProcessCurrent.SZ_3 = _oldCurrentProcess.SZ_3;
+                               ProcessCurrent.SZ_4 = _oldCurrentProcess.SZ_4;
+                               ProcessCurrent.SZ_5 = _oldCurrentProcess.SZ_5;
+                               ProcessCurrent.SZ_6 = _oldCurrentProcess.SZ_6;
                                break;
                            case 4:
-                               CurrentProcess.Servicezeit_Helpdesk = _oldCurrentProcess.Servicezeit_Helpdesk;
-                               CurrentProcess.RPO_Datenverlustzeit_Recovery_Point_Objective = _oldCurrentProcess.RPO_Datenverlustzeit_Recovery_Point_Objective;
-                               CurrentProcess.RTO_Wiederanlaufzeit_Recovery_Time_Objective = _oldCurrentProcess.RTO_Wiederanlaufzeit_Recovery_Time_Objective;
-                               CurrentProcess.RTO_Wiederanlaufzeit_Recovery_Time_Objective_Notfall = _oldCurrentProcess.RTO_Wiederanlaufzeit_Recovery_Time_Objective_Notfall;
+                               ProcessCurrent.Servicezeit_Helpdesk = _oldCurrentProcess.Servicezeit_Helpdesk;
+                               ProcessCurrent.RPO_Datenverlustzeit_Recovery_Point_Objective = _oldCurrentProcess.RPO_Datenverlustzeit_Recovery_Point_Objective;
+                               ProcessCurrent.RTO_Wiederanlaufzeit_Recovery_Time_Objective = _oldCurrentProcess.RTO_Wiederanlaufzeit_Recovery_Time_Objective;
+                               ProcessCurrent.RTO_Wiederanlaufzeit_Recovery_Time_Objective_Notfall = _oldCurrentProcess.RTO_Wiederanlaufzeit_Recovery_Time_Objective_Notfall;
                                break;
                            case 5:
-                               CurrentProcess.Kritikalität_des_Prozesses = _oldCurrentProcess.Kritikalität_des_Prozesses;
-                               CurrentProcess.Regulatorisch = _oldCurrentProcess.Regulatorisch;
-                               CurrentProcess.Reputatorisch = _oldCurrentProcess.Reputatorisch;
-                               CurrentProcess.Finanziell = _oldCurrentProcess.Finanziell;
+                               ProcessCurrent.Kritikalität_des_Prozesses = _oldCurrentProcess.Kritikalität_des_Prozesses;
+                               ProcessCurrent.Regulatorisch = _oldCurrentProcess.Regulatorisch;
+                               ProcessCurrent.Reputatorisch = _oldCurrentProcess.Reputatorisch;
+                               ProcessCurrent.Finanziell = _oldCurrentProcess.Finanziell;
                                break;
                            case 6:
-                               CurrentProcess.ApplicationList = new ObservableCollection<ISB_BIA_Applikationen>(_oldCurrentProcess.ApplicationList);
-                               NewApplications = new ObservableCollection<ISB_BIA_Applikationen>();
-                               RemoveApplications = new ObservableCollection<ISB_BIA_Applikationen>();
-                               RaisePropertyChanged(()=>DeletedApplicationsNotification);
+                               ProcessCurrent.ApplicationList = new ObservableCollection<ISB_BIA_Applikationen>(_oldCurrentProcess.ApplicationList);
+                               Proc_List_NewApplications = new ObservableCollection<ISB_BIA_Applikationen>();
+                               Proc_List_RemoveApplications = new ObservableCollection<ISB_BIA_Applikationen>();
+                               RaisePropertyChanged(()=>Vis_DeletedApplicationsNotification);
                                break;
                        }
                    }));
@@ -970,21 +966,21 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Platzhalter Prozessverantwortlicher
         /// </summary>
-        public string Ph_Responsible
+        public string Str_Ph_Responsible
         {
             get => "Bsp.: Fr. Vorname Nachname / Hr. Vorname Nachname";
         }
         /// <summary>
         /// Platzhalter Servicezeiten
         /// </summary>
-        public string Ph_Times
+        public string Str_Ph_Times
         {
             get => "Bsp.: Mo-Do: 08-12 / 14-16 Uhr, Fr: 08-14 Uhr";
         }
         /// <summary>
         /// Nachricht bei Kritischer Einstufung des Prozesses
         /// </summary>
-        public string Krit_Msg
+        public string Str_Msg_Krit
         {
             get => "Ein Prozess wird als 'Kritischer Prozess' eingestuft wenn mindestens eine der folgenden Bedingungen zutrifft:"
                  + "\n- mindestens 3 der Schutzziele werden als mindestens 'Hoch' eingestuft oder mindestens 2 als 'Sehr Hoch'"
@@ -1003,14 +999,14 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Regulatorisch Info
         /// </summary>
-        public string Reg_Msg
+        public string Str_Msg_Reg
         {
             get => "Rechtliche und aufsichtsrechtliche Vorgaben werden nicht eingehalten.\nAus einer Nichteinhaltung können aufsichtsrechtliche Konsequenzen für die Bank und somit ein Schaden entstehen.";
         }
         /// <summary>
         /// Reputatorisch info
         /// </summary>
-        public string Rep_Msg
+        public string Str_Msg_Rep
         {
             get => "Durch den Verlust einer der Grundwerte Vertraulichkeit, Verfügbarkeit, Integrität oder Authentizität der verarbeiteten Informationen in einer IT-Anwendung können verschiedenartige negative Innen- oder Außenwirkungen entstehen:" +
                         "\n- Ansehensverlust des Unternehmens" +
@@ -1023,7 +1019,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Finanziell Info
         /// </summary>
-        public string Fin_Msg
+        public string Str_Msg_Fin
         {
             get => "Unmittelbare oder mittelbare Schäden können durch den Verlust der Vertraulichkeit schutzbedürftiger Daten, die Veränderung von Daten, mangelnde Verbindlichkeit einer Transaktion oder den Ausfall einer IT-Anwendung entstehen."+
                         "\nBeispiele dafür sind:"+
@@ -1036,35 +1032,35 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Informationssegment Info
         /// </summary>
-        public string IS_Msg
+        public string Str_Msg_IS
         {
             get => "Bitte wählen Sie bis zu fünf Informationssegmente aus, die Ihren Prozess betreffen.\nEin Informationssegment beschreibt dabei eine Kategorie von Informationen die für unterschiedliche Geschäftsprozesse Relevanz haben, wie z.B. Kundenstammdaten oder Rechtsdaten.\nWeitere Informationen zu dem ausgewählten Informationssegment erhalten Sie über den jeweiligen Infobutton rechts daneben.";
         }
         /// <summary>
         /// Recovery Point Objective Info
         /// </summary>
-        public string RPO_Msg
+        public string Str_Msg_RPO
         {
             get => "Datenverlustzeit – Recovery Point Objective (RPO)\nDefinierter Zeitraum der zwischen zwei Backups liegen darf, um den Normalbetrieb im Notfall oder bei einer Störung sicherzustellen.\nDer RPO berechnet sich rückwärts vom Zeitpunkt des Absturzes (aufgrund der Backup-Zyklen max. 24 Stunden).";
         }
         /// <summary>
         /// Recovery Time Objective Info
         /// </summary>
-        public string RTO_Msg
+        public string Str_Msg_RTO
         {
             get => "Wiederanlaufzeit Regelbetrieb – Recovery Time Objective (RTO)\nDauer für die Wiederaufnahme eines Bankprozesses nach einer Störung oder eines Notfalls im Regelbetrieb (in 1, 5, 10, 20 Tagen).";
         }
         /// <summary>
         /// Recovery Time Objective Notfall Info
         /// </summary>
-        public string RTON_Msg
+        public string Str_Msg_RTON
         {
             get => "Wiederanlaufzeit (Notfall, Störung) – Recovery Time Objective (RTO)\nDauer für die Wiederaufnahme eines Bankprozesses nach einer Störung oder eines Notfalls im Notfall/Störfall (in 1, 5, 10, 20 Tagen).";
         }
         /// <summary>
         /// Prozessverantwortlicher Info
         /// </summary>
-        public string Responsible_Msg
+        public string Str_Msg_Responsible
         {
             get => "Die Neuerhebung oder Neuweinwertung erfolgt in der Regel durch den Prozesseigentümer oder einen Vertreter. Der Prozesseigentümer hat entsprechende Verpflichtungen wahrzunehmen. Diese sind u.a.:"+
                         "\n- Aufnahme des Bankprozesses in die Business Impact Analyse"+
@@ -1077,56 +1073,56 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Vorgelagerte Prozesse Info
         /// </summary>
-        public string PreProc_Msg
+        public string Str_Msg_PreProc
         {
             get => "Die Prozesse, die Ihrem Prozess Startdaten liefern oder ersatzweise die OE's / externe Stellen, die die Vorarbeit zu diesem Prozess leisten.";
         }
         /// <summary>
         /// Nachgelagerte Prozesse Info
         /// </summary>
-        public string PostProc_Msg
+        public string Str_Msg_PostProc
         {
             get => "Die Prozesse, die aus Prozess Ergebnisse erhalten oder ersatzweise die OE's / externe Stellen, die die Ergebnisse Ihres Prozesses weiterverarbeiten.";
         }
         /// <summary>
         /// Prozessname Info
         /// </summary>
-        public string PName_Msg
+        public string Str_Msg_ProcessName
         {
             get => "Der Name des Prozesses";
         }
         /// <summary>
         /// Sub-Prozessname Info
         /// </summary>
-        public string SName_Msg
+        public string Str_Msg_SubProcessName
         {
             get => "Der Name des Sub-Prozesses (optional falls Sub-Prozess vorhanden)";
         }
         /// <summary>
         /// OE-Info
         /// </summary>
-        public string OE_Msg
+        public string Str_Msg_OE
         {
             get => "Die für den Prozess verantwortliche OE";
         }
         /// <summary>
         /// Servicezeiten Info
         /// </summary>
-        public string ServiceTimes_Msg
+        public string Str_Msg_ServiceTimes
         {
             get => "Die zur Sicherstellung des Prozessablaufs optimale Servicezeit";
         }
         /// <summary>
         /// Applikations-Prozess Zuordnung Info
         /// </summary>
-        public string AppToProc_Msg
+        public string Str_Msg_AppToProc
         {
             get => "Wählen Sie ein oder mehrere Anwendungen aus der Übersicht aller Anwendungen (links) aus und klicken Sie den Button \"hinzufügen\", um die jeweilige Anwendung mit dem Prozess zu verknüpfen.\nAnalog wählen Sie eine Anwendung aus der Liste der bereits verknüpften Anwendungen (rechts) und klicken Sie \"entfernen\", um die jeweilige Verknüpfung zu entfernen.";
         }
         /// <summary>
         /// Zuordnung inativer Applikationenen Benachrichtigung
         /// </summary>
-        public string InactiveApp_Msg
+        public string Str_Msg_InactiveApps
         {
             get => "Diesem Prozess sind inaktive Anwendungen zugeordnet. " +
                 "\nDas bedeutet, dass die in der Liste rot markierten Anwendungen vom IT-Betrieb als inaktiv markiert wurden, da sie nicht mehr genutzt werden oder nicht mehr zur Verfügung stehen. " +
@@ -1139,15 +1135,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Überschrift
         /// </summary>
-        public string Header { get; set; }
+        public string Str_Header { get; set; }
         /// <summary>
         /// Bestimmt, ob neue Schutzziele angezeigt werden oder nicht (abhängig von Einstellungen)
         /// </summary>
-        public bool SchutzzielVisible { get; set; }
-        /// <summary>
-        /// Schriftgröße für Kritischer Prozess Label
-        /// </summary>
-        public int FontSize { get; set; }
+        public bool Vis_NewSecurityGoals { get; set; }
         /// <summary>
         /// Modus (Neuanlage, Bearbeitung) bestimmt Überschrift etc. 
         /// </summary>
@@ -1160,11 +1152,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 CurrentTab = 0;
                 if (value == ProcAppMode.Change)
                 {
-                    Header = "Prozess bearbeiten";
+                    Str_Header = "Prozess bearbeiten";
                 }
                 else if (value == ProcAppMode.New)
                 {
-                    Header = "Neuen Prozess anlegen";
+                    Str_Header = "Neuen Prozess anlegen";
                 }
             }
         }
@@ -1173,7 +1165,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Liste aller Attribute
         /// </summary>
-        readonly ObservableCollection<ISB_BIA_Informationssegmente_Attribute> _allAttributesList;
+        readonly ObservableCollection<ISB_BIA_Informationssegmente_Attribute> _list_AllAttributes;
         /// <summary>
         /// Aktuelle Anwendungseinstellungen
         /// </summary>
@@ -1182,35 +1174,48 @@ namespace ISB_BIA_IMPORT1.ViewModel
         #region Services
         private readonly IMyNavigationService _myNavi;
         private readonly IMyDialogService _myDia;
-        private readonly IMyDataService _myData;
-        private readonly IMyExportService _myExport;
+        private readonly IMyDataService_Process _myProc;
+        private readonly IMyDataService_Lock _myLock;
+        private readonly IMyDataService_Setting _mySett;
+        private readonly IMyDataService_Application _myApp;
+        private readonly IMyDataService_IS_Attribute _myIS;
+        private readonly IMyExportService _myExp;
         private readonly IMySharedResourceService _myShared;
         #endregion
 
         /// <summary>
         /// Konstruktor
         /// </summary>
-        /// <param name="myDialogService"></param>
-        /// <param name="myNavigationService"></param>
-        /// <param name="myDataService"></param>
-        /// <param name="myExportService"></param>
-        /// <param name="mySharedResourceService"></param>
-        public Process_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyDataService myDataService, IMyExportService myExportService, IMySharedResourceService mySharedResourceService)
+        /// <param name="myDia"></param>
+        /// <param name="myNavi"></param>
+        /// <param name="myProc"></param>
+        /// <param name="myLock"></param>
+        /// <param name="myExp"></param>
+        /// <param name="myShared"></param>
+        public Process_ViewModel(IMyDialogService myDia, IMyNavigationService myNavi, 
+            IMyDataService_Process myProc, IMyDataService_Setting mySett, IMyDataService_IS_Attribute myIS,
+            IMyDataService_Application myApp, IMyDataService_Lock myLock, 
+            IMyExportService myExp, IMySharedResourceService myShared)
         {
             #region Services
-            _myDia = myDialogService;
-            _myNavi = myNavigationService;
-            _myData = myDataService;
-            _myExport = myExportService;
-            _myShared = mySharedResourceService;
+            _myDia = myDia;
+            _myNavi = myNavi;
+            _myProc = myProc;
+            _myLock = myLock;
+            _myIS = myIS;
+            _myApp = myApp;
+            _myExp = myExp;
+            _mySett = mySett;
+            _myShared = myShared;
             #endregion
+
             if (IsInDesignMode)
             {
-                CurrentProcess = _myData.GetProcessModelFromDB(1);
-                _oldCurrentProcess = CurrentProcess.Copy();
-                Prozessverantwortlicher = CurrentProcess.Prozessverantwortlicher;
-                Vorgelagerte_Prozesse = CurrentProcess.Vorgelagerte_Prozesse;
-                Nachgelagerte_Prozesse = CurrentProcess.Nachgelagerte_Prozesse;
+                ProcessCurrent = _myProc.Get_ModelFromDB(1);
+                _oldCurrentProcess = ProcessCurrent.Copy();
+                Proc_Prozessverantwortlicher = ProcessCurrent.Prozessverantwortlicher;
+                Proc_Vorgelagerte_Prozesse = ProcessCurrent.Vorgelagerte_Prozesse;
+                Proc_Nachgelagerte_Prozesse = ProcessCurrent.Nachgelagerte_Prozesse;
             }
 
             //Messenger Registrierung für Prozessbearbeitungsmodus
@@ -1218,9 +1223,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
             {
                 if (!(message.Sender is IMyNavigationService)) return;
                 Mode = ProcAppMode.Change;
-                CurrentProcess = _myData.GetProcessModelFromDB(message.Content);
+                ProcessCurrent = _myProc.Get_ModelFromDB(message.Content);
                 //Wenn Daten Fehlerhaft dann zurückkehren
-                if (CurrentProcess == null)
+                if (ProcessCurrent == null)
                 {
                     _myDia.ShowError("Fehler beim Laden der Daten.");
                     Cleanup();
@@ -1228,13 +1233,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 }
                 else
                 {
-                    _oldCurrentProcess = CurrentProcess.Copy();
+                    _oldCurrentProcess = ProcessCurrent.Copy();
                     //Setzen der Properties der Textfelder der Control-abhängigen Infos 
-                    Prozessverantwortlicher = CurrentProcess.Prozessverantwortlicher;
-                    Vorgelagerte_Prozesse = CurrentProcess.Vorgelagerte_Prozesse;
-                    Nachgelagerte_Prozesse = CurrentProcess.Nachgelagerte_Prozesse;
+                    Proc_Prozessverantwortlicher = ProcessCurrent.Prozessverantwortlicher;
+                    Proc_Vorgelagerte_Prozesse = ProcessCurrent.Vorgelagerte_Prozesse;
+                    Proc_Nachgelagerte_Prozesse = ProcessCurrent.Nachgelagerte_Prozesse;
                     //Berechnen der Mindesteinstufung
-                    CheckMinValues(CurrentProcess);
+                    CheckMinValues(ProcessCurrent);
                 }
             });
             //Messenger Registrierung für Prozesserstellungsmodus
@@ -1242,41 +1247,41 @@ namespace ISB_BIA_IMPORT1.ViewModel
             {
                 if (!(message.Sender is IMyNavigationService)) return;
                 Mode = ProcAppMode.New;
-                CurrentProcess = new Process_Model();
+                ProcessCurrent = new Process_Model();
                 _oldCurrentProcess=new Process_Model();
             });
             //Messenger Registrierung für Benachrichtigung eines Kritischen Prozesses (kommt von Process_Model)
             //MessengerInstance.Register<string>(this, MessageToken.ChangedToCriticalNotification,p=> { _myDia.ShowInfo(Krit_Ntf); });
             
             #region Listen und Daten für Prozess-Anwendungszuordnung
-            AllApplications = new ObservableCollection<ISB_BIA_Applikationen>(_myData.GetActiveApplications().OrderBy(c=>c.IT_Anwendung_System));
-            ApplicationCategories = _myData.GetApplicationCategories();
+            List_AllApplications = new ObservableCollection<ISB_BIA_Applikationen>(_myApp.Get_Applications_Active().OrderBy(c=>c.IT_Anwendung_System));
+            List_ApplicationCategories = _myProc.Get_List_AppCategories();
             #endregion
 
             #region Filter für Anwendungsliste definieren
-            View = (CollectionView)CollectionViewSource.GetDefaultView(AllApplications);
-            View.Filter = ApplicationFilter;
-            SelectedFilterItem = ApplicationCategories.FirstOrDefault();
+            FilterView = (CollectionView)CollectionViewSource.GetDefaultView(List_AllApplications);
+            FilterView.Filter = ApplicationFilter;
+            SelectedFilterItem = List_ApplicationCategories.FirstOrDefault();
             #endregion
 
             #region Füllen der Dropdownlisten
-            ProcessOwnerList = _myData.GetProcessOwner();
-            OEList = (_myShared.User.UserGroup == UserGroups.Admin || _myShared.User.UserGroup == UserGroups.CISO)?_myData.GetOEs():_myData.GetOEsForUser(_myShared.User.OE);
-            MaturityList = new ObservableCollection<string>(new List<string>() { "1 - Initial", "2 - Wiederholbar", "3 - Definiert", "4 - Gemanagt", "5 - Optimiert" });
-            CritList = new ObservableCollection<string>(new List<string>() { "Normal", "Mittel", "Hoch", "Sehr hoch" });
-            RTOList = new ObservableCollection<int>(new List<int>() { 1, 5, 10, 20 });
-            PreProcessList = _myData.GetPreProcesses();
-            PostProcessList = _myData.GetPostProcesses();
-            ISList = _myData.GetISList();
+            List_ProcessOwner = _myProc.Get_List_ProcessOwner();
+            List_OE = (_myShared.User.UserGroup == UserGroups.Admin || _myShared.User.UserGroup == UserGroups.CISO)?_myProc.Get_List_OEs_All():_myProc.Get_List_OEsForUser(_myShared.User.OE);
+            List_Maturity = new ObservableCollection<string>(new List<string>() { "1 - Initial", "2 - Wiederholbar", "3 - Definiert", "4 - Gemanagt", "5 - Optimiert" });
+            List_Crit = new ObservableCollection<string>(new List<string>() { "Normal", "Mittel", "Hoch", "Sehr hoch" });
+            List_RTO = new ObservableCollection<int>(new List<int>() { 1, 5, 10, 20 });
+            List_PreProcess = _myProc.Get_List_PreProcesses();
+            List_PostProcess = _myProc.Get_List_PostProcesses();
+            List_IS = _myProc.Get_List_ISDictionary();
             #endregion
 
             #region Einstellungen abrufen
-            Setting = _myData.GetSettings();
-            SchutzzielVisible = (Setting.Neue_Schutzziele_aktiviert == "Ja");
+            Setting = _mySett.Get_Settings();
+            Vis_NewSecurityGoals = (Setting.Neue_Schutzziele_aktiviert == "Ja");
             #endregion
 
             #region Informationssegmente und Attribute abrufen
-            _allAttributesList = _myData.GetAttributes();
+            _list_AllAttributes = _myIS.Get_Attributes();
             #endregion
         }
 
@@ -1289,7 +1294,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             try
             {
 
-                List<ISB_BIA_Informationssegmente> queryIS = _myData.Get5SegmentsForCalculation(process);
+                List<ISB_BIA_Informationssegmente> queryIS = _myProc.Get_Segments_5ForCalculation(process);
                 //Liste zur speicherung der zutreffenden Attribute
                 List<int> list = new List<int>();
 
@@ -1317,12 +1322,12 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 //=> Maximalwert der Schutzziele über alle Attribute berechnen
                 if (list.Count != 0)
                 {
-                    SZ_1_Max = _allAttributesList.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_1);
-                    SZ_2_Max = _allAttributesList.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_2);
-                    SZ_3_Max = _allAttributesList.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_3);
-                    SZ_4_Max = _allAttributesList.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_4);
-                    SZ_5_Max = _allAttributesList.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_5);
-                    SZ_6_Max = _allAttributesList.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_6);
+                    SZ_1_Max = _list_AllAttributes.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_1);
+                    SZ_2_Max = _list_AllAttributes.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_2);
+                    SZ_3_Max = _list_AllAttributes.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_3);
+                    SZ_4_Max = _list_AllAttributes.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_4);
+                    SZ_5_Max = _list_AllAttributes.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_5);
+                    SZ_6_Max = _list_AllAttributes.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_6);
                 }
                 else
                 {
@@ -1361,10 +1366,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         private void EvaluateErrors()
         {
-            if (string.IsNullOrEmpty(_prozessverantwortlicher))
-                AddError(nameof(Prozessverantwortlicher), "Pflichtfeld");
-            if (string.IsNullOrEmpty(_prozessverantwortlicher_Text))
-                AddError(nameof(Prozessverantwortlicher_Text), "Pflichtfeld");
+            if (string.IsNullOrEmpty(_proc_Prozessverantwortlicher))
+                AddError(nameof(Proc_Prozessverantwortlicher), "Pflichtfeld");
+            if (string.IsNullOrEmpty(_proc_ProzessverantwortlicherText))
+                AddError(nameof(Proc_Prozessverantwortlicher_Text), "Pflichtfeld");
         }
 
         /// <summary>
@@ -1415,7 +1420,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Indikator ob Fehler vorhanden
         /// </summary>
-        public bool HasErrors => CurrentProcess._errors.Count > 0;
+        public bool HasErrors => ProcessCurrent._errors.Count > 0;
 
         /// <summary>
         /// Event für Änderungsbenachrichtigung bzgl. Fehler

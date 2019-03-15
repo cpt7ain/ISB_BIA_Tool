@@ -13,45 +13,54 @@ namespace ISB_BIA_IMPORT1.Services
 {
     class MyExportService : IMyExportService
     {
-        readonly IMyDialogService _myDia;
-        readonly IMyDataService _myData;
-        readonly IMySharedResourceService _myShared;
+        private readonly IMyDialogService _myDia;
+        private readonly IMyDataService_Setting _mySett;
+        private readonly IMySharedResourceService _myShared;
+        private readonly IMyDataService_IS_Attribute _myIS;
+        private readonly IMyDataService_Application _myApp;
+        private readonly IMyDataService_Process _myProc;
+
 
         ISB_BIA_Settings Setting { get; set; }
         ObservableCollection<ISB_BIA_Informationssegmente> ISList { get; set; }
 
-        public MyExportService(IMyDialogService myDia, IMyDataService myDataService, IMySharedResourceService mySharedResourceService)
+        public MyExportService(IMyDialogService myDia, IMyDataService_Setting mySett, 
+            IMyDataService_Application myApp, IMyDataService_Process myProc,
+            IMyDataService_IS_Attribute myIS, IMySharedResourceService mySharedResourceService)
         {
             this._myDia = myDia;
-            this._myData = myDataService;
+            this._mySett = mySett;
+            this._myIS = myIS;
+            this._myApp = myApp;
+            this._myProc = myProc;
             this._myShared = mySharedResourceService;
-            if (!_myShared.ConstructionMode) Setting = _myData.GetSettings();
-            if (!_myShared.ConstructionMode) ISList = _myData.GetEnabledSegments();
+            if (!_myShared.ConstructionMode) Setting = _mySett.Get_Settings();
+            if (!_myShared.ConstructionMode) ISList = _myIS.Get_Segments_Enabled();
         }
 
-        public bool AllApplicationsExport()
+        public bool App_ExportAllApplications()
         {
             //Alle Applikationen abrufen
             ObservableCollection<ISB_BIA_Applikationen> queryApplications;
-            queryApplications = _myData.GetApplications();
+            queryApplications = _myApp.Get_Applications_All();
             if (queryApplications != null)
-                return ExportApplications(queryApplications);
+                return App_ExportApplications(queryApplications);
             else
                 return false;
         }
 
-        public bool AllActiveApplicationsExport()
+        public bool App_ExportActiveApplications()
         {
             //Alle Applikationen abrufen
             ObservableCollection<ISB_BIA_Applikationen> queryApplications;
-            queryApplications = _myData.GetActiveApplications();
+            queryApplications = _myApp.Get_Applications_Active();
             if (queryApplications != null)
-                return ExportApplications(queryApplications, "SBA_");
+                return App_ExportApplications(queryApplications, "SBA_");
             else
                 return false;
         }
 
-        public bool ExportApplications(ObservableCollection<ISB_BIA_Applikationen> apps, string title="", int id=0)
+        public bool App_ExportApplications(ObservableCollection<ISB_BIA_Applikationen> apps, string title="", int id=0)
         {
             //SaveFileDialog öffnen mit default Ordner "Dokumente"
             string a = (id == 0) ? "": id.ToString();
@@ -124,7 +133,7 @@ namespace ISB_BIA_IMPORT1.Services
 
                     if (id != 0)
                     {
-                        ObservableCollection<ISB_BIA_Delta_Analyse> historyList = _myData.GetProcessApplicationHistoryForApplication(id);
+                        ObservableCollection<ISB_BIA_Delta_Analyse> historyList = _myApp.Get_History_ProcAppRelations(id);
 
                         var sheet1 = workbook.CreateSheet("Prozess-Applikation Historie");
                         var headerRow1 = sheet1.CreateRow(0);
@@ -197,17 +206,17 @@ namespace ISB_BIA_IMPORT1.Services
             }
         }
 
-        public bool AllActiveProcessesExport()
+        public bool Proc_ExportActiveProcesses()
         {
             ObservableCollection<ISB_BIA_Prozesse> ps;
-            ps = _myData.GetActiveProcesses();
+            ps = _myProc.Get_Processes_Active();
             if (ps != null)
-                return ExportProcesses(ps);
+                return Proc_ExportProcesses(ps);
             else
                 return false;
         }
 
-        public bool ExportProcesses(ObservableCollection<ISB_BIA_Prozesse> procs, int id=0)
+        public bool Proc_ExportProcesses(ObservableCollection<ISB_BIA_Prozesse> procs, int id=0)
         {
             SaveFileDialog sfd = new SaveFileDialog()
             {
@@ -310,7 +319,7 @@ namespace ISB_BIA_IMPORT1.Services
 
                     if (id!=0)
                     {
-                        ObservableCollection<ISB_BIA_Delta_Analyse> historyList = _myData.GetProcessApplicationHistoryForProcess(id);
+                        ObservableCollection<ISB_BIA_Delta_Analyse> historyList = _myProc.Get_History_ProcAppRelations(id);
 
                         sheet = workbook.CreateSheet("Prozess-Applikation Historie");
                         row = sheet.CreateRow(0);
@@ -383,9 +392,9 @@ namespace ISB_BIA_IMPORT1.Services
             }
         }
 
-        public bool ExportSegmentAndAttributeHistory()
+        public bool IS_Attr_ExportSegmentAndAttributeHistory()
         {
-            Tuple<List<ISB_BIA_Informationssegmente>, List<ISB_BIA_Informationssegmente>, List<ISB_BIA_Informationssegmente_Attribute>, List<ISB_BIA_Informationssegmente_Attribute>> tuple =_myData.GetISAndISAttForExport();
+            Tuple<List<ISB_BIA_Informationssegmente>, List<ISB_BIA_Informationssegmente>, List<ISB_BIA_Informationssegmente_Attribute>, List<ISB_BIA_Informationssegmente_Attribute>> tuple =_myIS.Get_ISAndISAttForExport();
             if (tuple != null)
             {
                 SaveFileDialog sfd = new SaveFileDialog()
@@ -541,7 +550,7 @@ namespace ISB_BIA_IMPORT1.Services
             return false;
         }
 
-        public bool ExportDeltaAnalysis(ObservableCollection<ISB_BIA_Delta_Analyse> DeltaList)
+        public bool Delta_ExportDeltaAnalysis(ObservableCollection<ISB_BIA_Delta_Analyse> DeltaList)
         {
             SaveFileDialog sfd = new SaveFileDialog()
             {
@@ -640,7 +649,7 @@ namespace ISB_BIA_IMPORT1.Services
             }
         }
 
-        public bool ExportLog(ObservableCollection<ISB_BIA_Log> Log)
+        public bool Log_ExportLog(ObservableCollection<ISB_BIA_Log> Log)
         {
             SaveFileDialog sfd = new SaveFileDialog()
             {
@@ -676,7 +685,7 @@ namespace ISB_BIA_IMPORT1.Services
                         var cell = row.CreateCell(0);
                         cell.SetCellValue(Log[i].Id);
                         cell = row.CreateCell(1);
-                        cell.SetCellValue(Log[i].Action);
+                        cell.SetCellValue(Log[i].Aktion);
                         cell = row.CreateCell(2);
                         cell.SetCellValue(Log[i].Tabelle);
                         cell = row.CreateCell(3);
@@ -723,7 +732,7 @@ namespace ISB_BIA_IMPORT1.Services
             return false;
         }
 
-        public bool ExportSettings(List<ISB_BIA_Settings> Log)
+        public bool Set_ExportSettings(List<ISB_BIA_Settings> Log)
         {
             SaveFileDialog sfd = new SaveFileDialog()
             {
@@ -783,7 +792,7 @@ namespace ISB_BIA_IMPORT1.Services
                         cell = row.CreateCell(12);
                         cell.SetCellValue(Log[i].Attribut10_aktiviert);
                         cell = row.CreateCell(13);
-                        cell.SetCellValue(Log[i].Multi_Save);
+                        cell.SetCellValue(Log[i].Multi_Speichern);
                         cell = row.CreateCell(14);
                         cell.SetCellValue(Log[i].Datum.ToString());
                         cell = row.CreateCell(15);

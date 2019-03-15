@@ -14,32 +14,32 @@ namespace ISB_BIA_IMPORT1.ViewModel
     public class Settings_ViewModel : ViewModelBase
     {
         #region Backing-Fields
-        private Settings_Model _oldSettings;
-        private Settings_Model _newSettings;
+        private Settings_Model _settingsOld;
+        private Settings_Model _settingsNew;
 
         #endregion
         /// <summary>
         /// Ausgangseinstellungen
         /// </summary>
-        public Settings_Model OldSettings
+        public Settings_Model SettingsOld
         {
-            get => _oldSettings;
-            set => Set(() => OldSettings, ref _oldSettings, value);
+            get => _settingsOld;
+            set => Set(() => SettingsOld, ref _settingsOld, value);
         }
 
         /// <summary>
         /// Aktuelle Einstellungen zum ändern
         /// </summary>
-        public Settings_Model NewSettings
+        public Settings_Model SettingsNew
         {
-            get => _newSettings;
-            set => Set(() => NewSettings, ref _newSettings, value);
+            get => _settingsNew;
+            set => Set(() => SettingsNew, ref _settingsNew, value);
         }
 
         /// <summary>
         /// Command zum Zurückkehren zum vorherigen VM
         /// </summary>
-        public MyRelayCommand NavBack
+        public MyRelayCommand Cmd_NavBack
         {
             get => new MyRelayCommand(() =>
             {
@@ -47,23 +47,23 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 {
                     Cleanup();
                     _myNavi.NavigateBack();
-                    _myData.UnlockObject(Table_Lock_Flags.Settings, 0);
+                    _myLock.Unlock_Object(Table_Lock_Flags.Settings, 0);
                 }
             });
         }
 
         /// <summary>
-        /// Command zum Speichern der <see cref="NewSettings"/>
+        /// Command zum Speichern der <see cref="SettingsNew"/>
         /// </summary>
-        public MyRelayCommand Save
+        public MyRelayCommand Cmd_Save
         {
             get => new MyRelayCommand(() =>
             {
-                if (_myData.InsertSettings(_myData.MapSettingsModelToDB(NewSettings), _myData.MapSettingsModelToDB(OldSettings)))
+                if (_mySett.Insert_Settings(_mySett.Map_ModelToDB(SettingsNew), _mySett.Map_ModelToDB(SettingsOld)))
                 {
                     Cleanup();
                     _myNavi.NavigateBack();
-                    _myData.UnlockObject(Table_Lock_Flags.Settings, 0);
+                    _myLock.Unlock_Object(Table_Lock_Flags.Settings, 0);
                 }
             });
         }
@@ -71,18 +71,19 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Command zum Exportieren der Einstellungshistorie
         /// </summary>
-        public MyRelayCommand Export
+        public MyRelayCommand Cmd_ExportSettingsHistory
         {
             get => new MyRelayCommand(() =>
             {
-                _myExport.ExportSettings(_myData.GetSettingsHistory());
+                _myExport.Set_ExportSettings(_mySett.Get_History_Settings());
             });
         }
 
         #region Services
         private readonly IMyNavigationService _myNavi;
         private readonly IMyDialogService _myDia;
-        private readonly IMyDataService _myData;
+        private readonly IMyDataService_Setting _mySett;
+        private readonly IMyDataService_Lock _myLock;
         private readonly IMyExportService _myExport;
         #endregion
 
@@ -91,16 +92,18 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         /// <param name="myDialogService"></param>
         /// <param name="myNavigationService"></param>
-        /// <param name="myDataService"></param>
+        /// <param name="mySett"></param>
         /// <param name="myExportService"></param>
-        public Settings_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyDataService myDataService, IMyExportService myExportService)
+        public Settings_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, 
+            IMyDataService_Setting mySett, IMyDataService_Lock myLock, IMyExportService myExportService)
         {
             _myDia = myDialogService;
             _myNavi = myNavigationService;
-            _myData = myDataService;
+            _mySett = mySett;
+            _myLock = myLock;
             _myExport = myExportService;
-            OldSettings = _myData.GetSettingsModelFromDB();
-            NewSettings = _myData.GetSettingsModelFromDB();
+            SettingsOld = _mySett.Get_ModelFromDB();
+            SettingsNew = _mySett.Get_ModelFromDB();
             EventToCommand a = new EventToCommand();
         }
 

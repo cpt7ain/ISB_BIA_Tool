@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.DirectoryServices;
 using System.Windows;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Ioc;
+using ISB_BIA_IMPORT1.Helpers;
 using ISB_BIA_IMPORT1.Services;
 using ISB_BIA_IMPORT1.Services.Interfaces;
+using ISB_BIA_IMPORT1.View;
+using ISB_BIA_IMPORT1.ViewModel;
 using Microsoft.Shell;
 using Microsoft.WindowsAPICodePack.ApplicationServices;
 using MS.WindowsAPICodePack.Internal;
@@ -36,7 +40,7 @@ namespace ISB_BIA_IMPORT1
                 // Allow single instance code to perform cleanup operations
                 SingleInstance<App>.Cleanup();
             }
-            Mouse.OverrideCursor = null;
+            Mouse.OverrideCursor = null;           
         }
 
         /// <summary>
@@ -84,10 +88,10 @@ namespace ISB_BIA_IMPORT1
             {
                 ApplicationRestartRecoveryManager.ApplicationRecoveryInProgress();
                 //Entsperrt alle vom User gesperrten Objekte falls die Anwendung crashed
-                IMyDataService myData = SimpleIoc.Default.GetInstance<IMyDataService>();
-                myData.UnlockAllObjectsForUserOnMachine();
-                IMyDialogService myDialog = SimpleIoc.Default.GetInstance<IMyDialogService>();
-                myDialog.ShowError("Die Anwendung wurde aus einem unbekannten Grund beendet");
+                var myLock = SimpleIoc.Default.GetInstance<IMyDataService_Lock>();
+                myLock.Unlock_AllObjectsForUserOnMachine();
+                var myDia = SimpleIoc.Default.GetInstance<IMyDialogService>();
+                myDia.ShowError("Die Anwendung wurde aus einem unbekannten Grund beendet");
                 ApplicationRestartRecoveryManager.ApplicationRecoveryFinished(true);
             }
             catch

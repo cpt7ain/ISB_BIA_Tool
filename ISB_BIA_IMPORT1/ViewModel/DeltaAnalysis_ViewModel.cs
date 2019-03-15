@@ -19,42 +19,42 @@ namespace ISB_BIA_IMPORT1.ViewModel
     public class DeltaAnalysis_ViewModel : ViewModelBase
     {
         #region Backing-Fields
-        private ObservableCollection<ISB_BIA_Delta_Analyse> _list;
-        private ObservableCollection<ISB_BIA_Delta_Analyse> _deltaList;
+        private ObservableCollection<ISB_BIA_Delta_Analyse> _list_Complete;
+        private ObservableCollection<ISB_BIA_Delta_Analyse> _list_Delta;
         private bool _mode;
-        private string _instruction;
-        private MyRelayCommand _exportDeltaList;
-        private CollectionView _view;
-        private static string _filterText;
+        private string _str_Instruction;
+        private MyRelayCommand _cmd_ExportDeltaList;
+        private CollectionView _filterView;
+        private static string _str_FilterText;
         #endregion
 
         /// <summary>
         /// Delta-Analysis-Liste (komplett) ->ListView
-        /// Erzeugt im Setter zursätzlich die gefilterte Liste <see cref="DeltaList"/>
+        /// Erzeugt im Setter zursätzlich die gefilterte Liste <see cref="List_Delta"/>
         /// </summary>
-        public ObservableCollection<ISB_BIA_Delta_Analyse> List
+        public ObservableCollection<ISB_BIA_Delta_Analyse> List_Complete
         {
-            get => _list;
+            get => _list_Complete;
             set
             {
-                Set(() =>  List, ref _list, value);
-                DeltaList = FilterForDeltaList(value);
+                Set(() =>  List_Complete, ref _list_Complete, value);
+                List_Delta = FilterForDeltaList(value);
             }
         }
 
         /// <summary>
         /// elta-Analysis-Liste (nur delta) ->DataGrid
         /// </summary>
-        public ObservableCollection<ISB_BIA_Delta_Analyse> DeltaList
+        public ObservableCollection<ISB_BIA_Delta_Analyse> List_Delta
         {
-            get => _deltaList;
-            set => Set(() => DeltaList, ref _deltaList, value);
+            get => _list_Delta;
+            set => Set(() => List_Delta, ref _list_Delta, value);
         }
 
         /// <summary>
         /// Command zum Zurückkehren zum vorherigen VM
         /// </summary>
-        public MyRelayCommand NavBack
+        public MyRelayCommand Cmd_NavBack
         {
             get => new MyRelayCommand(() =>
                 {
@@ -72,29 +72,29 @@ namespace ISB_BIA_IMPORT1.ViewModel
             set
             {
                 Set(() =>  Mode, ref _mode, value);
-                if (!value) Instruction = "Ansicht ändern (=> nur Delta-Einträge anzeigen)";
-                else Instruction = "Ansicht ändern (=> alle Einträge anzeigen)";           
+                if (!value) Str_Instruction = "Ansicht ändern (=> nur Delta-Einträge anzeigen)";
+                else Str_Instruction = "Ansicht ändern (=> alle Einträge anzeigen)";           
             }
         }
 
         /// <summary>
         /// Beschriftung der Checkbox, welche den Ansichtsmodus bestimmt
         /// </summary>
-        public string Instruction
+        public string Str_Instruction
         {
-            get => _instruction;
-            set => Set(() => Instruction, ref _instruction, value);
+            get => _str_Instruction;
+            set => Set(() => Str_Instruction, ref _str_Instruction, value);
         }
 
         #region Einstellungen zur Darstellung der Spalten der neuen Schutzziele
         /// <summary>
         /// Sichtbarkeit der neuen Schutzziele im Datagrid
         /// </summary>
-        public Visibility NewSecurityGoals { get; set; }
+        public Visibility Vis_NewSecurityGoals { get; set; }
         /// <summary>
         /// Sichtbarkeit der neuen Schutzziele im ListView
         /// </summary>
-        public int NewSecurityGoalsWidth { get; set; }
+        public int Width_NewSecurityGoals { get; set; }
         /// <summary>
         /// Aktuelle Anwendungseinstellungen
         /// </summary>
@@ -104,41 +104,42 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Exportieren der Delta-Analysis-Liste (nur delta) nach Excel
         /// </summary>
-        public MyRelayCommand ExportDeltaList
+        public MyRelayCommand Cmd_ExportDeltaList
         {
-            get => _exportDeltaList
-                  ?? (_exportDeltaList = new MyRelayCommand(() =>
+            get => _cmd_ExportDeltaList
+                  ?? (_cmd_ExportDeltaList = new MyRelayCommand(() =>
                   {
-                      _myExport.ExportDeltaAnalysis(DeltaList);
+                      _myExport.Delta_ExportDeltaAnalysis(List_Delta);
                   }));          
         }
 
         /// <summary>
         /// Ansicht für das Sortieren und Filtern der Delta-Liste
         /// </summary>
-        public CollectionView View
+        public CollectionView FilterView
         {
-            get => _view;
-            set => Set(() => View, ref _view, value);
+            get => _filterView;
+            set => Set(() => FilterView, ref _filterView, value);
         }
 
         /// <summary>
         /// Text, nach dem die Delta-Liste gefiltert werden soll
         /// </summary>
-        public string FilterText
+        public string Str_FilterText
         {
-            get => _filterText;
+            get => _str_FilterText;
             set
             {
-                Set(() =>  FilterText, ref _filterText, value);
-                View.Refresh();
+                Set(() =>  Str_FilterText, ref _str_FilterText, value);
+                FilterView.Refresh();
             }
         }
 
         #region Services
         private readonly IMyNavigationService _myNavi;
         private readonly IMyExportService _myExport;
-        private readonly IMyDataService _myData;
+        private readonly IMyDataService_Delta _myDelta;
+        private readonly IMyDataService_Setting _mySett;
         #endregion
 
         /// <summary>
@@ -146,47 +147,49 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         /// <param name="myNavigationService"></param>
         /// <param name="myExportService"></param>
-        /// <param name="myDataService"></param>
-        public DeltaAnalysis_ViewModel(IMyNavigationService myNavigationService, IMyExportService myExportService, IMyDataService myDataService)
+        /// <param name="myDelta"></param>
+        public DeltaAnalysis_ViewModel(IMyNavigationService myNavigationService, IMyExportService myExportService, 
+            IMyDataService_Delta myDelta, IMyDataService_Setting mySett)
         {
             #region Services
             _myNavi = myNavigationService;
             _myExport = myExportService;
-            _myData = myDataService;
+            _myDelta = myDelta;
+            _mySett = mySett;
             #endregion
 
             if (IsInDesignMode)
             {
-                Setting = _myData.GetSettings();
-                List = _myData.GetDeltaAnalysis();
-                DeltaList = new ObservableCollection<ISB_BIA_Delta_Analyse>(List);
+                Setting = _mySett.Get_Settings();
+                List_Complete = _myDelta.Get_DeltaAnalysis();
+                List_Delta = new ObservableCollection<ISB_BIA_Delta_Analyse>(List_Complete);
                 //DeltaList = _myData.GetDeltaAnalysis();
-                View = (CollectionView)CollectionViewSource.GetDefaultView(List);
-                View.Filter = DeltaFilter;
-                NewSecurityGoalsWidth = (Setting.Neue_Schutzziele_aktiviert == "Ja") ? 110 : 0;
-                NewSecurityGoals = (Setting.Neue_Schutzziele_aktiviert == "Ja") ? Visibility.Visible : Visibility.Collapsed;
+                FilterView = (CollectionView)CollectionViewSource.GetDefaultView(List_Complete);
+                FilterView.Filter = DeltaFilter;
+                Width_NewSecurityGoals = (Setting.Neue_Schutzziele_aktiviert == "Ja") ? 110 : 0;
+                Vis_NewSecurityGoals = (Setting.Neue_Schutzziele_aktiviert == "Ja") ? Visibility.Visible : Visibility.Collapsed;
             }
             else
             {
                 //Starten mit Datagrid-Ansicht
                 Mode = true;
                 #region Delta-Analyse Abrufen
-                List = new ObservableCollection<ISB_BIA_Delta_Analyse>();
-                DeltaList = new ObservableCollection<ISB_BIA_Delta_Analyse>();
+                List_Complete = new ObservableCollection<ISB_BIA_Delta_Analyse>();
+                List_Delta = new ObservableCollection<ISB_BIA_Delta_Analyse>();
                 #endregion
                 #region Registrierung für Messages um DeltaAnalyse zu erhalten
                 MessengerInstance.Register<NotificationMessage<ObservableCollection<ISB_BIA_Delta_Analyse>>>(this, a => 
                 {
                     if (!(a.Sender is Menu_ViewModel)) return;
-                    List = a.Content;
-                    View = (CollectionView)CollectionViewSource.GetDefaultView(List);
-                    View.Filter = DeltaFilter;
+                    List_Complete = a.Content;
+                    FilterView = (CollectionView)CollectionViewSource.GetDefaultView(List_Complete);
+                    FilterView.Filter = DeltaFilter;
                 });
                 #endregion
                 #region Einstellungen abrufen
-                Setting = _myData.GetSettings();
-                NewSecurityGoalsWidth = (Setting.Neue_Schutzziele_aktiviert == "Ja") ? 110 : 0;
-                NewSecurityGoals = (Setting.Neue_Schutzziele_aktiviert == "Ja") ? Visibility.Visible : Visibility.Collapsed;
+                Setting = _mySett.Get_Settings();
+                Width_NewSecurityGoals = (Setting.Neue_Schutzziele_aktiviert == "Ja") ? 110 : 0;
+                Vis_NewSecurityGoals = (Setting.Neue_Schutzziele_aktiviert == "Ja") ? Visibility.Visible : Visibility.Collapsed;
                 #endregion
             }
         }
@@ -211,26 +214,26 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <returns> Wahrheitswert, ob Item gefiltert wird oder nicht </returns>
         public static bool DeltaFilter(object item)
         {
-            if (String.IsNullOrEmpty(_filterText))
+            if (String.IsNullOrEmpty(_str_FilterText))
                 return true;
             else
             {
                 ISB_BIA_Delta_Analyse deltaItem = (ISB_BIA_Delta_Analyse)item;
                 return (
-                    (deltaItem.Prozess.IndexOf(_filterText, StringComparison.OrdinalIgnoreCase) >= 0)
-                 || (deltaItem.Applikation.IndexOf(_filterText, StringComparison.OrdinalIgnoreCase) >= 0)
-                 || (deltaItem.Applikation_Id.ToString().IndexOf(_filterText, StringComparison.OrdinalIgnoreCase) >= 0)
-                 || (deltaItem.Prozess_Id.ToString().IndexOf(_filterText, StringComparison.OrdinalIgnoreCase) >= 0)
-                 || (deltaItem.Sub_Prozess.IndexOf(_filterText, StringComparison.OrdinalIgnoreCase) >= 0)
-                 || (deltaItem.Datum.ToString().IndexOf(_filterText, StringComparison.OrdinalIgnoreCase) >= 0)
-                 || (deltaItem.Datum_Prozess.ToString().IndexOf(_filterText, StringComparison.OrdinalIgnoreCase) >= 0)
-                 || (deltaItem.Datum_Applikation.ToString().IndexOf(_filterText, StringComparison.OrdinalIgnoreCase) >= 0)
-                 || (deltaItem.SZ_1.ToString().IndexOf(_filterText, StringComparison.OrdinalIgnoreCase) >= 0)
-                 || (deltaItem.SZ_2.ToString().IndexOf(_filterText, StringComparison.OrdinalIgnoreCase) >= 0)
-                 || (deltaItem.SZ_3.ToString().IndexOf(_filterText, StringComparison.OrdinalIgnoreCase) >= 0)
-                 || (deltaItem.SZ_4.ToString().IndexOf(_filterText, StringComparison.OrdinalIgnoreCase) >= 0)
-                 || (deltaItem.SZ_5.ToString().IndexOf(_filterText, StringComparison.OrdinalIgnoreCase) >= 0)
-                 || (deltaItem.SZ_6.ToString().IndexOf(_filterText, StringComparison.OrdinalIgnoreCase) >= 0)
+                    (deltaItem.Prozess.IndexOf(_str_FilterText, StringComparison.OrdinalIgnoreCase) >= 0)
+                 || (deltaItem.Applikation.IndexOf(_str_FilterText, StringComparison.OrdinalIgnoreCase) >= 0)
+                 || (deltaItem.Applikation_Id.ToString().IndexOf(_str_FilterText, StringComparison.OrdinalIgnoreCase) >= 0)
+                 || (deltaItem.Prozess_Id.ToString().IndexOf(_str_FilterText, StringComparison.OrdinalIgnoreCase) >= 0)
+                 || (deltaItem.Sub_Prozess.IndexOf(_str_FilterText, StringComparison.OrdinalIgnoreCase) >= 0)
+                 || (deltaItem.Datum.ToString().IndexOf(_str_FilterText, StringComparison.OrdinalIgnoreCase) >= 0)
+                 || (deltaItem.Datum_Prozess.ToString().IndexOf(_str_FilterText, StringComparison.OrdinalIgnoreCase) >= 0)
+                 || (deltaItem.Datum_Applikation.ToString().IndexOf(_str_FilterText, StringComparison.OrdinalIgnoreCase) >= 0)
+                 || (deltaItem.SZ_1.ToString().IndexOf(_str_FilterText, StringComparison.OrdinalIgnoreCase) >= 0)
+                 || (deltaItem.SZ_2.ToString().IndexOf(_str_FilterText, StringComparison.OrdinalIgnoreCase) >= 0)
+                 || (deltaItem.SZ_3.ToString().IndexOf(_str_FilterText, StringComparison.OrdinalIgnoreCase) >= 0)
+                 || (deltaItem.SZ_4.ToString().IndexOf(_str_FilterText, StringComparison.OrdinalIgnoreCase) >= 0)
+                 || (deltaItem.SZ_5.ToString().IndexOf(_str_FilterText, StringComparison.OrdinalIgnoreCase) >= 0)
+                 || (deltaItem.SZ_6.ToString().IndexOf(_str_FilterText, StringComparison.OrdinalIgnoreCase) >= 0)
                  );
             }
         }

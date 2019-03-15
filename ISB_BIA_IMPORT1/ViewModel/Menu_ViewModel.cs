@@ -22,42 +22,42 @@ namespace ISB_BIA_IMPORT1.ViewModel
     public class Menu_ViewModel : ViewModelBase
     {
         #region Backing Fields
-        private MyRelayCommand _navToNewProcess;
-        private MyRelayCommand<ProcAppListMode> _navToProcessView;
-        private MyRelayCommand _navToNewApplication;
-        private MyRelayCommand<ProcAppListMode> _navToApplicationView;
-        private MyRelayCommand _setSBAView;
-        private MyRelayCommand _navToInformationSegmentView;
-        private MyRelayCommand _navToAttributesView;
-        private MyRelayCommand _navToOESettings;
-        private MyRelayCommand _navToSettings;
-        private MyRelayCommand _navToDataModelSetting;
-        private MyRelayCommand _navToLogView;
-        private MyRelayCommand _removeLocks;
-        private MyRelayCommand<string> _navToInfoView;
-        private Visibility _appMenuVisible;
-        private Visibility _sBAMenuVisible;
-        private Visibility _settingsMenuVisible;
-        private Visibility _deltaBorderVisible;
-        private Visibility _processBorderVisible;
+        private MyRelayCommand _cmd_NavToNewProcess;
+        private MyRelayCommand<ProcAppListMode> _cmd_NavToProcessView;
+        private MyRelayCommand _cmd_NavToNewApplication;
+        private MyRelayCommand<ProcAppListMode> _cmd_NavToApplicationView;
+        private MyRelayCommand _cmd_NavToSBAView;
+        private MyRelayCommand _cmd_NavToInformationSegmentView;
+        private MyRelayCommand _cmd_NavToAttributesView;
+        private MyRelayCommand _cmd_NavToOESettings;
+        private MyRelayCommand _cmd_NavToSettings;
+        private MyRelayCommand _cmd_NavToDataModelSetting;
+        private MyRelayCommand _cmd_NavToLogView;
+        private MyRelayCommand _cmd_RemoveLocks;
+        private MyRelayCommand<string> _cmd_NavToInfoView;
+        private Visibility _vis_AppMenu;
+        private Visibility _vis_SBaMenu;
+        private Visibility _vis_SettingsMenu;
+        private Visibility _vis_DeltaBorder;
+        private Visibility _vis_ProcessBorder;
         private DateTime _pickerDate;
-        private MyRelayCommand _navToDeltaDate;
-        private MyRelayCommand _navToLastDelta;
-        private MyRelayCommand _exportProcessList;
-        private int _myFontSize = 14;
-        private int _processCount;
-        private int _editProcessCount;
-        private MyRelayCommand _changeTextSize;
+        private MyRelayCommand _cmd_NavToDeltaDate;
+        private MyRelayCommand _cmd_NavToLastDelta;
+        private MyRelayCommand _cmd_ExportProcessList;
+        private int _globalFontSize = 14;
+        private int _count_AllProcesses;
+        private int _count_EditProcesses;
+        private MyRelayCommand _cmd_ChangeTextSize;
         #endregion
 
         #region Nav-Commands
         /// <summary>
         /// Navigiert zum ProcessVM um einen neuen Prozess anzulegen
         /// </summary>
-        public MyRelayCommand NavToNewProcess
+        public MyRelayCommand Cmd_NavToNewProcess
         {
-            get => _navToNewProcess
-                  ?? (_navToNewProcess = new MyRelayCommand(() =>
+            get => _cmd_NavToNewProcess
+                  ?? (_cmd_NavToNewProcess = new MyRelayCommand(() =>
                   {
                       _myNavi.NavigateTo<Process_ViewModel>(0, ProcAppMode.New);
                   }));
@@ -66,10 +66,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Navigiert zum ProcessViewVM um einen vorhandenen Prozess zu bearbeiten oder zu löschen
         /// </summary>
-        public MyRelayCommand<ProcAppListMode> NavToProcessView
+        public MyRelayCommand<ProcAppListMode> Cmd_NavToProcessView
         {
-            get => _navToProcessView
-                  ?? (_navToProcessView = new MyRelayCommand<ProcAppListMode>((m) =>
+            get => _cmd_NavToProcessView
+                  ?? (_cmd_NavToProcessView = new MyRelayCommand<ProcAppListMode>((m) =>
                   {
                       _myNavi.NavigateTo<ProcessView_ViewModel>(m);
                   }));
@@ -78,10 +78,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Navigiert zum ApplicationVM um eine neue Anwendung anzulegen
         /// </summary>
-        public MyRelayCommand NavToNewApplication
+        public MyRelayCommand Cmd_NavToNewApplication
         {
-            get => _navToNewApplication
-                  ?? (_navToNewApplication = new MyRelayCommand(() =>
+            get => _cmd_NavToNewApplication
+                  ?? (_cmd_NavToNewApplication = new MyRelayCommand(() =>
                   {
                       _myNavi.NavigateTo<Application_ViewModel>(0, ProcAppMode.New);
                   }));
@@ -90,10 +90,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Navigiert zum ApplicationViewVM um eine vorhandenen Anwendung zu bearbeiten oder zu löschen
         /// </summary>
-        public MyRelayCommand<ProcAppListMode> NavToApplicationView
+        public MyRelayCommand<ProcAppListMode> Cmd_NavToApplicationView
         {
-            get => _navToApplicationView
-                  ?? (_navToApplicationView = new MyRelayCommand<ProcAppListMode>((mode) =>
+            get => _cmd_NavToApplicationView
+                  ?? (_cmd_NavToApplicationView = new MyRelayCommand<ProcAppListMode>((mode) =>
                   {
                       _myNavi.NavigateTo<ApplicationView_ViewModel>(mode);
                   }));
@@ -102,10 +102,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Navigiert zum ApplicationVM um eine vorhandenen Anwendung zu bearbeiten
         /// </summary>
-        public MyRelayCommand _NavToSBAView
+        public MyRelayCommand Cmd_NavToSBAView
         {
-            get => _setSBAView
-                  ?? (_setSBAView = new MyRelayCommand(() =>
+            get => _cmd_NavToSBAView
+                  ?? (_cmd_NavToSBAView = new MyRelayCommand(() =>
                   {
                       _myNavi.NavigateTo<SBA_View_ViewModel>();
                   }));
@@ -114,10 +114,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Navigiert zum InformationSegmentViewVM um ein Informationssegment zu bearbeiten oder zu betrachten
         /// </summary>
-        public MyRelayCommand NavToInformationSegmentView
+        public MyRelayCommand Cmd_NavToInformationSegmentView
         {
-            get => _navToInformationSegmentView
-                  ?? (_navToInformationSegmentView = new MyRelayCommand(() =>
+            get => _cmd_NavToInformationSegmentView
+                  ?? (_cmd_NavToInformationSegmentView = new MyRelayCommand(() =>
                   {
                       ISISAttributeMode m;
                       if (User.UserGroup == UserGroups.CISO)
@@ -132,19 +132,19 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// Navigiert zum InformationSegmentsAttributesVM um Attribute zu bearbeiten oder zu betrachten
         /// Im Berbeitungsmodus wird die Liste für andere Bearbeitungen zusätzlich gesperrt
         /// </summary>
-        public MyRelayCommand NavToAttributesView
+        public MyRelayCommand Cmd_NavToAttributesView
         {
-            get => _navToAttributesView
-                  ?? (_navToAttributesView = new MyRelayCommand(() =>
+            get => _cmd_NavToAttributesView
+                  ?? (_cmd_NavToAttributesView = new MyRelayCommand(() =>
                   {
                       ISISAttributeMode mode;
                       if (User.UserGroup == UserGroups.CISO)
                       {
                           mode = ISISAttributeMode.Edit;
-                          string user = _myData.GetObjectLocked(Table_Lock_Flags.Attributes, 0);
+                          string user = _myLock.Get_ObjectIsLocked(Table_Lock_Flags.Attributes, 0);
                           if (user == "")
                           {
-                              if (_myData.LockObject(Table_Lock_Flags.Attributes, 0))
+                              if (_myLock.Lock_Object(Table_Lock_Flags.Attributes, 0))
                                   _myNavi.NavigateTo<InformationSegmentsAttributes_ViewModel>(mode);
                           }
                           else
@@ -163,15 +163,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Navigiert zum OE_AssignmentViewVM um OE's und OE-Gruppen zu verwalten und einander zuzuordnen, zu bearbeiten oder zu betrachten
         /// </summary>
-        public MyRelayCommand NavToOESettings
+        public MyRelayCommand Cmd_NavToOESettings
         {
-            get => _navToOESettings
-                  ?? (_navToOESettings = new MyRelayCommand(() =>
+            get => _cmd_NavToOESettings
+                  ?? (_cmd_NavToOESettings = new MyRelayCommand(() =>
                   {
-                      string user = _myData.GetObjectLocked(Table_Lock_Flags.OEs, 0);
+                      string user = _myLock.Get_ObjectIsLocked(Table_Lock_Flags.OEs, 0);
                       if (user == "")
                       {
-                          if (_myData.LockObject(Table_Lock_Flags.OEs, 0))
+                          if (_myLock.Lock_Object(Table_Lock_Flags.OEs, 0))
                               _myNavi.NavigateTo<OE_AssignmentView_ViewModel>();
                       }
                       else
@@ -184,15 +184,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Navigiert zum SettingsVM um Einstellungen der Anwendung zu ändern
         /// </summary>
-        public MyRelayCommand NavToSettings
+        public MyRelayCommand Cmd_NavToSettings
         {
-            get => _navToSettings
-                  ?? (_navToSettings = new MyRelayCommand(() =>
+            get => _cmd_NavToSettings
+                  ?? (_cmd_NavToSettings = new MyRelayCommand(() =>
                   {
-                      string user = _myData.GetObjectLocked(Table_Lock_Flags.Settings, 0);
+                      string user = _myLock.Get_ObjectIsLocked(Table_Lock_Flags.Settings, 0);
                       if (user == "")
                       {
-                          if (_myData.LockObject(Table_Lock_Flags.Settings, 0))
+                          if (_myLock.Lock_Object(Table_Lock_Flags.Settings, 0))
                               _myNavi.NavigateTo<Settings_ViewModel>();
                       }
                       else
@@ -205,10 +205,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Navigiert zum DataModelVM um das Datenmodell komplett neu zu erstellen (Funktion soll gesperrt werden)
         /// </summary>
-        public MyRelayCommand NavToDataModelSetting
+        public MyRelayCommand Cmd_NavToDataModelSetting
         {
-            get => _navToDataModelSetting
-                  ?? (_navToDataModelSetting = new MyRelayCommand(() =>
+            get => _cmd_NavToDataModelSetting
+                  ?? (_cmd_NavToDataModelSetting = new MyRelayCommand(() =>
                   {
                       _myNavi.NavigateTo<DataModel_ViewModel>();
                   }));
@@ -217,10 +217,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Navigiert zum LogVM um das Anwendungslog zu betrachten oder zu exportieren 
         /// </summary>
-        public MyRelayCommand NavToLogView
+        public MyRelayCommand Cmd_NavToLogView
         {
-            get => _navToLogView
-                  ?? (_navToLogView = new MyRelayCommand(() =>
+            get => _cmd_NavToLogView
+                  ?? (_cmd_NavToLogView = new MyRelayCommand(() =>
                   {
                       _myNavi.NavigateTo<LogView_ViewModel>();
                   }));
@@ -229,14 +229,14 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Command, um alle bestehenden Locks aus der DB zu entfernen (Im Fehlerfall, falls Locks nicht korrekt entfernt wurden)
         /// </summary>
-        public MyRelayCommand RemoveLocks
+        public MyRelayCommand Cmd_RemoveLocks
         {
-            get => _removeLocks
-                  ?? (_removeLocks = new MyRelayCommand(() =>
+            get => _cmd_RemoveLocks
+                  ?? (_cmd_RemoveLocks = new MyRelayCommand(() =>
                   {
                       if (_myDia.ShowQuestion("Möchten Sie wirklich alle Datensatz-Locks entfernen?\nBitte stellen Sie sicher, dass kein User Datensätze geöfnnet hat, da es sonst zu einer gleichzeitigen Bearbeitung der Datensätze kommen kann.", "Locks entfernen"))
                       {
-                          _myData.UnlockAllObjects();
+                          _myLock.Unlock_AllObjects();
                       }
                   }));
         }
@@ -244,10 +244,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Navigiert zum InfoVM diverse externe Hilfe/Infodateien innerhalb der Anwendung zu betrachten 
         /// </summary>
-        public MyRelayCommand<string> NavToInfoView
+        public MyRelayCommand<string> Cmd_NavToInfoView
         {
-            get => _navToInfoView
-                  ?? (_navToInfoView = new MyRelayCommand<string>((name) =>
+            get => _cmd_NavToInfoView
+                  ?? (_cmd_NavToInfoView = new MyRelayCommand<string>((name) =>
                   {
                       try
                       {
@@ -284,46 +284,46 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Sichtbarkeit des Anwedungsreiters im Menü
         /// </summary>
-        public Visibility AppMenuVisible
+        public Visibility Vis_AppMenu
         {
-            get=> _appMenuVisible;
-            set => Set(()=> AppMenuVisible, ref _appMenuVisible, value);
+            get=> _vis_AppMenu;
+            set => Set(()=> Vis_AppMenu, ref _vis_AppMenu, value);
         }
 
         /// <summary>
         /// Sichtbarkeit des Schutzbedarfsanalysereiters im Menü
         /// </summary>
-        public Visibility SBAMenuVisible
+        public Visibility Vis_SBAMenu
         {
-            get => _sBAMenuVisible;
-            set => Set(() => SBAMenuVisible, ref _sBAMenuVisible, value);
+            get => _vis_SBaMenu;
+            set => Set(() => Vis_SBAMenu, ref _vis_SBaMenu, value);
         }
 
         /// <summary>
         /// Sichtbarkeit des Einstellungsreiters im Menü
         /// </summary>
-        public Visibility SettingsMenuVisible
+        public Visibility Vis_SettingsMenu
         {
-            get => _settingsMenuVisible;
-            set => Set(() => SettingsMenuVisible, ref _settingsMenuVisible, value);
+            get => _vis_SettingsMenu;
+            set => Set(() => Vis_SettingsMenu, ref _vis_SettingsMenu, value);
         }
 
         /// <summary>
         /// Sichtbarkeit des Deltaanalysebereichs
         /// </summary>
-        public Visibility DeltaBorderVisible
+        public Visibility Vis_DeltaBorder
         {
-            get => _deltaBorderVisible;
-            set => Set(() => DeltaBorderVisible, ref _deltaBorderVisible, value);
+            get => _vis_DeltaBorder;
+            set => Set(() => Vis_DeltaBorder, ref _vis_DeltaBorder, value);
         }
 
         /// <summary>
         /// Sichtbarkeit des BIA-Prozessbereichs
         /// </summary>
-        public Visibility ProcessBorderVisible
+        public Visibility Vis_ProcessBorder
         {
-            get => _processBorderVisible;
-            set => Set(() => ProcessBorderVisible, ref _processBorderVisible, value);
+            get => _vis_ProcessBorder;
+            set => Set(() => Vis_ProcessBorder, ref _vis_ProcessBorder, value);
         }
 
         /// <summary>
@@ -338,12 +338,12 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Navigiert zum DeltaAnalysisVM um eine Deltaanalyse für das gegebene Datum zu erstellen und zu betrachten
         /// </summary>
-        public MyRelayCommand NavToDeltaDate
+        public MyRelayCommand Cmd_NavToDeltaDate
         {
-            get => _navToDeltaDate
-                  ?? (_navToDeltaDate = new MyRelayCommand(() =>
+            get => _cmd_NavToDeltaDate
+                  ?? (_cmd_NavToDeltaDate = new MyRelayCommand(() =>
                   {
-                      ObservableCollection<ISB_BIA_Delta_Analyse> list = _myData.InitiateDeltaAnalysis(PickerDate);
+                      ObservableCollection<ISB_BIA_Delta_Analyse> list = _myDelta.Initiate_DeltaAnalysis(PickerDate);
                       if (list != null)
                       {
                           _myNavi.NavigateTo<DeltaAnalysis_ViewModel>();
@@ -355,12 +355,12 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Navigiert zum DeltaAnalysisVM um die letzte gespeicherte Deltaanalyse zu betrachten
         /// </summary>
-        public MyRelayCommand NavToLastDelta
+        public MyRelayCommand Cmd_NavToLastDelta
         {
-            get => _navToLastDelta
-                  ?? (_navToLastDelta = new MyRelayCommand(() =>
+            get => _cmd_NavToLastDelta
+                  ?? (_cmd_NavToLastDelta = new MyRelayCommand(() =>
                   {
-                      ObservableCollection<ISB_BIA_Delta_Analyse> list = _myData.GetDeltaAnalysis();
+                      ObservableCollection<ISB_BIA_Delta_Analyse> list = _myDelta.Get_DeltaAnalysis();
                       if (list != null && list.Count > 0)
                       {
                           _myNavi.NavigateTo<DeltaAnalysis_ViewModel>();
@@ -376,12 +376,12 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Exportieren der Liste aller Prozesse nach Excel
         /// </summary>
-        public MyRelayCommand ExportProcessList
+        public MyRelayCommand Cmd_ExportProcessList
         {
-            get => _exportProcessList
-                    ?? (_exportProcessList = new MyRelayCommand(() =>
+            get => _cmd_ExportProcessList
+                    ?? (_cmd_ExportProcessList = new MyRelayCommand(() =>
                     {
-                        bool success = _myExport.AllActiveProcessesExport();
+                        bool success = _myExport.Proc_ExportActiveProcesses();
                         if (success)
                         {
                             _myDia.ShowInfo("Export erfolgreich");
@@ -392,41 +392,41 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Ändern der allgemeinen Schriftgröße
         /// </summary>
-        public MyRelayCommand ChangeTextSize
+        public MyRelayCommand Cmd_ChangeTextSize
         {
-            get => _changeTextSize
-                    ?? (_changeTextSize = new MyRelayCommand(() =>
+            get => _cmd_ChangeTextSize
+                    ?? (_cmd_ChangeTextSize = new MyRelayCommand(() =>
                     {
-                        MyFontSize = (MyFontSize == 14) ? 18 : 14;
-                        MessengerInstance.Send(new NotificationMessage<int>(this,MyFontSize,null), MessageToken.ChangeTextSize);
+                        GlobalFontSize = (GlobalFontSize == 14) ? 18 : 14;
+                        MessengerInstance.Send(new NotificationMessage<int>(this,GlobalFontSize,null), MessageToken.ChangeTextSize);
                     }));
         }
 
         /// <summary>
         /// allgemeine Schriftgröße (für Menü)
         /// </summary>
-        public int MyFontSize
+        public int GlobalFontSize
         {
-            get => _myFontSize;
-            set => Set(() => MyFontSize, ref _myFontSize, value);
+            get => _globalFontSize;
+            set => Set(() => GlobalFontSize, ref _globalFontSize, value);
         }
 
         /// <summary>
         /// Anzahl aller Prozesse
         /// </summary>
-        public int ProcessCount
+        public int Count_AllProcesses
         {
-            get => _processCount;
-            set => Set(() => ProcessCount, ref _processCount, value);
+            get => _count_AllProcesses;
+            set => Set(() => Count_AllProcesses, ref _count_AllProcesses, value);
         }
 
         /// <summary>
         /// Anzahl aller bearbeiteten Prozesse
         /// </summary>
-        public int EditProcessCount
+        public int Count_EditProcesses
         {
-            get => _editProcessCount;
-            set => Set(() => EditProcessCount, ref _editProcessCount, value);
+            get => _count_EditProcesses;
+            set => Set(() => Count_EditProcesses, ref _count_EditProcesses, value);
         }
 
         /// <summary>
@@ -446,8 +446,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private readonly IMyNavigationService _myNavi;
         private readonly IMyDialogService _myDia;
         private readonly IMyExportService _myExport;
-        private readonly IMyDataService _myData;
+        private readonly IMyDataService_Process _myProc;
+        private readonly IMyDataService_Delta _myDelta;
         private readonly IMySharedResourceService _myShared;
+        private readonly IMyDataService_Lock _myLock;
         #endregion
 
         /// <summary>
@@ -456,15 +458,19 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <param name="myDialogService"></param>
         /// <param name="myNavigationService"></param>
         /// <param name="myExportService"></param>
-        /// <param name="myDataService"></param>
+        /// <param name="myProc"></param>
         /// <param name="mySharedResourceService"></param>
-        public Menu_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyExportService myExportService, IMyDataService myDataService, IMySharedResourceService mySharedResourceService)
+        public Menu_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, 
+            IMyExportService myExportService, IMyDataService_Process myProc, IMyDataService_Delta myDelta,
+            IMySharedResourceService mySharedResourceService, IMyDataService_Lock myLock)
         {
             #region Services
             _myDia = myDialogService;
             _myNavi = myNavigationService;
             _myExport = myExportService;
-            _myData = myDataService;
+            _myDelta = myDelta;
+            _myLock = myLock;
+            _myProc = myProc;
             _myShared = mySharedResourceService;
             #endregion
 
@@ -474,19 +480,19 @@ namespace ISB_BIA_IMPORT1.ViewModel
             //Datenbankabfragen nicht ausführen wenn ConstructionMode (da Datenmodell evtl nicht auf neustem Stand)
             if (!_myShared.ConstructionMode)
             {
-                ObservableCollection<ISB_BIA_Prozesse> processes = _myData.GetActiveProcesses();
-                ProcessCount = processes.Count;
-                EditProcessCount = processes.Where(x => x.Datum.Year == DateTime.Now.Year).ToList().Count;
+                ObservableCollection<ISB_BIA_Prozesse> processes = _myProc.Get_Processes_Active();
+                Count_AllProcesses = processes.Count;
+                Count_EditProcesses = processes.Where(x => x.Datum.Year == DateTime.Now.Year).ToList().Count;
             }
             #endregion
 
             //Sichtbarkeiten und Anweisungen für den jeweiligen Usermodus definieren
             Instructions = new string[3];
-            AppMenuVisible = Visibility.Visible;
-            SBAMenuVisible = Visibility.Visible;
-            SettingsMenuVisible = Visibility.Visible;
-            ProcessBorderVisible = Visibility.Visible;
-            DeltaBorderVisible = Visibility.Visible;
+            Vis_AppMenu = Visibility.Visible;
+            Vis_SBAMenu = Visibility.Visible;
+            Vis_SettingsMenu = Visibility.Visible;
+            Vis_ProcessBorder = Visibility.Visible;
+            Vis_DeltaBorder = Visibility.Visible;
             Instructions[1] = "Informationssegmente anzeigen";
             Instructions[2] = "Informationssegment-Attribute anzeigen";
             switch (_myShared.User.UserGroup)
@@ -500,22 +506,20 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     Instructions[0] = "Bitte starten Sie im Sinne der Business Impact Analysis mit Ihrer Bearbeitung (Neuanlage, Löschen) von Prozessen über den Menüpunkt 'Prozesse' in der Menüleiste oben.\nBitte füllen Sie mindestens alle Felder mit fettgedrucktem Feldnamen aus, da diese als Pflichtfelder definiert sind.";
                     break;
                 case UserGroups.SBA_User:
-                    SettingsMenuVisible = Visibility.Collapsed;
+                    Vis_SettingsMenu = Visibility.Collapsed;
                     Instructions[0] = "Bitte starten Sie im Sinne der Schutzbedarfsanalyse mit Ihrer Bearbeitung (Neuanlage, Löschen) von Anwendungen über den Menüpunkt 'Schutzbedarfsanalyse' in der Menüleiste oben.\nBitte füllen Sie mindestens alle Felder mit fettgedrucktem Feldnamen aus, da diese als Pflichtfelder definiert sind.";
                     break;
                 case UserGroups.Normal_User:
-                    AppMenuVisible = Visibility.Collapsed;
-                    SBAMenuVisible = Visibility.Collapsed;
-                    SettingsMenuVisible = Visibility.Collapsed;
-                    ProcessBorderVisible = Visibility.Collapsed;
-                    DeltaBorderVisible = Visibility.Collapsed;
+                    Vis_AppMenu = Visibility.Collapsed;
+                    Vis_SBAMenu = Visibility.Collapsed;
+                    Vis_SettingsMenu = Visibility.Collapsed;
+                    Vis_ProcessBorder = Visibility.Collapsed;
+                    Vis_DeltaBorder = Visibility.Collapsed;
                     Instructions[0] = "Bitte starten Sie im Sinne der Business Impact Analysis mit Ihrer Bearbeitung (Neuanlage, Löschen) von Prozessen über den Menüpunkt 'Prozesse' in der Menüleiste oben.\nBitte füllen Sie mindestens alle Felder mit fettgedrucktem Feldnamen aus, da diese als Pflichtfelder definiert sind.";
                     break;
             }
             
         }
-
-
 
         /// <summary>
         /// Bereinigt das Viewmodel

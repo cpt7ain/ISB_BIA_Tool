@@ -11,17 +11,11 @@ namespace ISB_BIA_IMPORT1.Services
 {
     public class MyNavigationService : ObservableObject, IMyNavigationService
     {
-        public ObservableCollection<ViewModelBase> _vMHistory;
+        public ObservableCollection<ViewModelBase> VMHistory { get; set; }
 
         public MyNavigationService()
         {
-            _vMHistory = new ObservableCollection<ViewModelBase>();
-        }
-
-        public ObservableCollection<ViewModelBase> VMHistory
-        {
-            get => _vMHistory;
-            set => Set(()=>VMHistory, ref _vMHistory, value);
+            VMHistory = new ObservableCollection<ViewModelBase>();
         }
 
         public void NavigateBack(bool refresh = false)

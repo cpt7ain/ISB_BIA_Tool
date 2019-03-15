@@ -42,8 +42,18 @@ namespace ISB_BIA_IMPORT1.Helpers
                 SimpleIoc.Default.Register<IMyDialogService, MyDesignTimeDialogService>();
                 SimpleIoc.Default.Register<IMySharedResourceService, MyDesignTimeSharedResourceService>();
                 SimpleIoc.Default.Register<IMyNavigationService, MyDesignTimeNavigationService>();
-                //SimpleIoc.Default.Register<IMyDataService, MyDesignTimeDataService>();
-                SimpleIoc.Default.Register<IMyExportService, MyDesignTimeExportService>();
+
+                SimpleIoc.Default.Register<IMyDataService_Lock, MyDesignTimeDataService_Lock>();
+                SimpleIoc.Default.Register<IMyDataService_Setting, MyDesignTimeDataService_Setting>();
+                SimpleIoc.Default.Register<IMyDataService_DataModel, MyDesignTimeDataService_DataModel>();
+                SimpleIoc.Default.Register<IMyDataService_Log, MyDesignTimeDataService_Log>();
+                SimpleIoc.Default.Register<IMyDataService_IS_Attribute, MyDesignTimeDataService_IS_Attribute>();
+                SimpleIoc.Default.Register<IMyDataService_Process, MyDesignTimeDataService_Process>();
+                SimpleIoc.Default.Register<IMyDataService_Application, MyDesignTimeDataService_Application>();
+                SimpleIoc.Default.Register<IMyDataService_Delta, MyDesignTimeDataService_Delta>();
+                SimpleIoc.Default.Register<IMyDataService_OE, MyDataService_OE>();
+
+                SimpleIoc.Default.Register<IMyDataService_OE, MyDataService_OE>(); SimpleIoc.Default.Register<IMyExportService, MyDesignTimeExportService>();
                 SimpleIoc.Default.Register<IMyMailNotificationService, MyDesignTimeMailNotificationService>();
                 #endregion
             }
@@ -54,7 +64,17 @@ namespace ISB_BIA_IMPORT1.Helpers
                 SimpleIoc.Default.Register<IMyDialogService, MyDialogService>();
                 SimpleIoc.Default.Register<IMySharedResourceService, MySharedResourceService>();
                 SimpleIoc.Default.Register<IMyNavigationService, MyNavigationService>();
-                SimpleIoc.Default.Register<IMyDataService, MyDataService>();
+
+                SimpleIoc.Default.Register<IMyDataService_Lock, MyDataService_Lock>();
+                SimpleIoc.Default.Register<IMyDataService_Setting, MyDataService_Setting>();
+                SimpleIoc.Default.Register<IMyDataService_DataModel, MyDataService_DataModel>();
+                SimpleIoc.Default.Register<IMyDataService_Log, MyDataService_Log>();
+                SimpleIoc.Default.Register<IMyDataService_IS_Attribute, MyDataService_IS_Attribute>();
+                SimpleIoc.Default.Register<IMyDataService_Process, MyDataService_Process>();
+                SimpleIoc.Default.Register<IMyDataService_Application, MyDataService_Application>();
+                SimpleIoc.Default.Register<IMyDataService_Delta, MyDataService_Delta>();
+                SimpleIoc.Default.Register<IMyDataService_OE, MyDataService_OE>();
+
                 SimpleIoc.Default.Register<IMyExportService, MyExportService>();
                 SimpleIoc.Default.Register<IMyMailNotificationService, MyMailNotificationService>();
                 #endregion

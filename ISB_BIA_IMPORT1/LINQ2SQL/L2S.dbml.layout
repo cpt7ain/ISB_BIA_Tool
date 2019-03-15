@@ -2,92 +2,92 @@
 <ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 15, 14" name="L2S">
   <DataContextMoniker Name="/L2SDataContext" />
   <nestedChildShapes>
-    <classShape Id="413f59ad-1b13-4e32-8243-19644a5a1da8" absoluteBounds="0.75, 2.25, 2, 4.0785139973958326">
+    <classShape Id="d1a5d44f-ba1b-47fb-b156-b8dc73c2f67b" absoluteBounds="0.75, 2.25, 2, 4.0785139973958326">
       <DataClassMoniker Name="/L2SDataContext/ISB_BIA_Applikationen" />
       <nestedChildShapes>
-        <elementListCompartment Id="32489407-dbda-4d05-bfdc-91b3ee2d2616" absoluteBounds="0.765, 2.71, 1.9700000000000002, 3.518513997395833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="1bea6f50-c5d6-46b1-a803-504f26f5aa54" absoluteBounds="0.765, 2.71, 1.9700000000000002, 3.518513997395833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="9897bbc0-0f95-4150-a2f1-e7c0179b8f78" absoluteBounds="6.75, 7.75, 2, 3.8862125651041666">
+    <classShape Id="4256f9dc-62cf-4d05-9c66-53fa6e57769f" absoluteBounds="6.75, 7.75, 2, 3.8862125651041666">
       <DataClassMoniker Name="/L2SDataContext/ISB_BIA_Settings" />
       <nestedChildShapes>
-        <elementListCompartment Id="4fcd2f21-a983-4892-9c13-2b5ff2fac21f" absoluteBounds="6.765, 8.21, 1.9700000000000002, 3.3262125651041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="e2420f38-7ee2-4f36-a611-52889ec7ceed" absoluteBounds="6.765, 8.21, 1.9700000000000002, 3.3262125651041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="d0499a8f-24f1-4ec5-8656-9297438a04d5" absoluteBounds="6.5, 2.625, 2, 3.5016097005208326">
+    <classShape Id="67148f98-b739-4543-8200-05a78c92e633" absoluteBounds="6.5, 2.625, 2, 3.5016097005208326">
       <DataClassMoniker Name="/L2SDataContext/ISB_BIA_Delta_Analyse" />
       <nestedChildShapes>
-        <elementListCompartment Id="30c0edcb-9ed3-495c-81fb-8cae77b286e0" absoluteBounds="6.515, 3.085, 1.9700000000000002, 2.941609700520833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="53d186d7-fd79-4c28-8839-83ba8000031b" absoluteBounds="6.515, 3.085, 1.9700000000000002, 2.941609700520833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="6779e718-4113-4feb-9b12-b7433e865080" absoluteBounds="9.75, 0.75, 2, 4.0785139973958326">
+    <classShape Id="d6eb0c0a-c003-4b61-8561-159c759b3f0f" absoluteBounds="9.75, 0.75, 2, 4.0785139973958326">
       <DataClassMoniker Name="/L2SDataContext/ISB_BIA_Informationssegmente" />
       <nestedChildShapes>
-        <elementListCompartment Id="87bbebfa-927c-4502-9860-c909f62d3a5f" absoluteBounds="9.765, 1.21, 1.9700000000000002, 3.518513997395833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="f62639fa-166b-49b4-a348-05dc528d43fb" absoluteBounds="9.765, 1.21, 1.9700000000000002, 3.518513997395833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="b17229ef-4633-4f16-b85f-0319b7fca68b" absoluteBounds="9.75, 5.75, 2, 2.9247054036458326">
+    <classShape Id="79ce2198-5e7e-4c7e-a129-71f17cbe6369" absoluteBounds="9.75, 5.75, 2, 2.9247054036458326">
       <DataClassMoniker Name="/L2SDataContext/ISB_BIA_Informationssegmente_Attribute" />
       <nestedChildShapes>
-        <elementListCompartment Id="c40fd867-21fd-40f5-acfa-5de8b1eed024" absoluteBounds="9.765, 6.21, 1.9700000000000002, 2.364705403645833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="e9b4a87b-2e89-43d0-9d1f-36ad9498ca66" absoluteBounds="9.765, 6.21, 1.9700000000000002, 2.364705403645833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="eacb8fc0-0035-4aed-8b1f-3f7d5156740a" absoluteBounds="9.75, 9.75, 2, 2.1554996744791666">
+    <classShape Id="5ac3dff5-f640-4a37-8140-542a282b55bd" absoluteBounds="9.75, 9.75, 2, 2.1554996744791666">
       <DataClassMoniker Name="/L2SDataContext/ISB_BIA_Lock" />
       <nestedChildShapes>
-        <elementListCompartment Id="75f66552-53fd-4f28-8fce-c0a6019900c8" absoluteBounds="9.765, 10.21, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="a6001481-de0f-4dab-b18b-cada1ebfe8f3" absoluteBounds="9.765, 10.21, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="58052113-5f60-450b-8662-7bc0c6296b89" absoluteBounds="12.75, 0.75, 2, 2.3478011067708335">
+    <classShape Id="f5e0ad19-adc6-48f7-ab5f-1372bf1e8af0" absoluteBounds="12.75, 0.75, 2, 2.3478011067708335">
       <DataClassMoniker Name="/L2SDataContext/ISB_BIA_Log" />
       <nestedChildShapes>
-        <elementListCompartment Id="65aa8ac1-0357-4fb1-9f75-22bd228819de" absoluteBounds="12.765, 1.21, 1.9700000000000002, 1.7878011067708335" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="7ebf5fe0-36ee-4281-9f37-d77d7f52b11d" absoluteBounds="12.765, 1.21, 1.9700000000000002, 1.7878011067708335" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="5b47b763-5c76-43b0-93f4-6a39243c2c8d" absoluteBounds="12.75, 4.75, 2, 1.7708968098958327">
+    <classShape Id="a66098a3-7922-4b2b-84bb-b57e6c9f7a1f" absoluteBounds="12.75, 4.75, 2, 1.7708968098958327">
       <DataClassMoniker Name="/L2SDataContext/ISB_BIA_OEs" />
       <nestedChildShapes>
-        <elementListCompartment Id="6759cf21-442d-44ba-910e-a3bf606bc68d" absoluteBounds="12.765, 5.21, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="f3f56a70-1a7f-4f5d-9425-f2597e0a2730" absoluteBounds="12.765, 5.21, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="d9d58e89-b2f7-48b8-991f-d8596cc3e162" absoluteBounds="3.75, 7, 2, 6.7707340494791666">
+    <classShape Id="46f80325-c0fa-4002-bc8c-727e49ba4574" absoluteBounds="3.75, 7, 2, 6.7707340494791666">
       <DataClassMoniker Name="/L2SDataContext/ISB_BIA_Prozesse" />
       <nestedChildShapes>
-        <elementListCompartment Id="a24286db-6910-4e13-87d3-18895d5d5335" absoluteBounds="3.765, 7.46, 1.9700000000000002, 6.2107340494791661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="dfbf68f4-692b-450e-95d4-d11768c6bfa3" absoluteBounds="3.765, 7.46, 1.9700000000000002, 6.2107340494791661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="b8d861e4-a0e7-4a51-a238-62971d8b82d2" absoluteBounds="3.5, 3.25, 2, 2.1554996744791666">
+    <classShape Id="e42c57ef-f48d-442b-8cf6-8e93ca8480f4" absoluteBounds="3.5, 3.25, 2, 2.1554996744791666">
       <DataClassMoniker Name="/L2SDataContext/ISB_BIA_Prozesse_Applikationen" />
       <nestedChildShapes>
-        <elementListCompartment Id="aa354e10-0ffa-45a4-b2b4-f528d611f36e" absoluteBounds="3.515, 3.71, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="03910852-4fe1-4b51-9e47-3ed8b7de933e" absoluteBounds="3.515, 3.71, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <associationConnector edgePoints="[(2.75 : 5.7973046875); (4.54166666666667 : 5.7973046875 : JumpStart); (4.70833333333333 : 5.7973046875 : JumpEnd); (5.57291666666667 : 5.7973046875 : JumpStart); (5.73958333333333 : 5.7973046875 : JumpEnd); (6.5 : 5.7973046875)]" fixedFrom="Algorithm" fixedTo="Algorithm">
       <AssociationMoniker Name="/L2SDataContext/ISB_BIA_Applikationen/ISB_BIA_Applikationen_ISB_BIA_Delta_Analyse" />
       <nodes>
-        <classShapeMoniker Id="413f59ad-1b13-4e32-8243-19644a5a1da8" />
-        <classShapeMoniker Id="d0499a8f-24f1-4ec5-8656-9297438a04d5" />
+        <classShapeMoniker Id="d1a5d44f-ba1b-47fb-b156-b8dc73c2f67b" />
+        <classShapeMoniker Id="67148f98-b739-4543-8200-05a78c92e633" />
       </nodes>
     </associationConnector>
     <associationConnector edgePoints="[(5.65625 : 7); (5.65625 : 2.90625); (6.5 : 2.90625)]" fixedFrom="Algorithm" fixedTo="Algorithm">
       <AssociationMoniker Name="/L2SDataContext/ISB_BIA_Prozesse/ISB_BIA_Prozesse_ISB_BIA_Delta_Analyse" />
       <nodes>
-        <classShapeMoniker Id="d9d58e89-b2f7-48b8-991f-d8596cc3e162" />
-        <classShapeMoniker Id="d0499a8f-24f1-4ec5-8656-9297438a04d5" />
+        <classShapeMoniker Id="46f80325-c0fa-4002-bc8c-727e49ba4574" />
+        <classShapeMoniker Id="67148f98-b739-4543-8200-05a78c92e633" />
       </nodes>
     </associationConnector>
     <associationConnector edgePoints="[(4.625 : 7); (4.625 : 5.40549967447917)]" fixedFrom="Algorithm" fixedTo="Algorithm">
       <AssociationMoniker Name="/L2SDataContext/ISB_BIA_Prozesse/ISB_BIA_Prozesse_ISB_BIA_Prozesse_Applikationen" />
       <nodes>
-        <classShapeMoniker Id="d9d58e89-b2f7-48b8-991f-d8596cc3e162" />
-        <classShapeMoniker Id="b8d861e4-a0e7-4a51-a238-62971d8b82d2" />
+        <classShapeMoniker Id="46f80325-c0fa-4002-bc8c-727e49ba4574" />
+        <classShapeMoniker Id="e42c57ef-f48d-442b-8cf6-8e93ca8480f4" />
       </nodes>
     </associationConnector>
     <associationConnector edgePoints="[(2.75 : 4.32774983723958); (3.5 : 4.32774983723958)]" fixedFrom="Algorithm" fixedTo="Algorithm">
       <AssociationMoniker Name="/L2SDataContext/ISB_BIA_Applikationen/ISB_BIA_Applikationen_ISB_BIA_Prozesse_Applikationen" />
       <nodes>
-        <classShapeMoniker Id="413f59ad-1b13-4e32-8243-19644a5a1da8" />
-        <classShapeMoniker Id="b8d861e4-a0e7-4a51-a238-62971d8b82d2" />
+        <classShapeMoniker Id="d1a5d44f-ba1b-47fb-b156-b8dc73c2f67b" />
+        <classShapeMoniker Id="e42c57ef-f48d-442b-8cf6-8e93ca8480f4" />
       </nodes>
     </associationConnector>
   </nestedChildShapes>

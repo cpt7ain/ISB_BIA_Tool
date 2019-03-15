@@ -22,7 +22,7 @@
             </Grid.RowDefinitions>
             <Border>
                 <Grid>
-                    <Button Content="Zurück" HorizontalAlignment="Right" Background="Wheat"  Margin="0,0,10,0" VerticalAlignment="Center" Command="{Binding NavBack}"/>
+                    <Button Content="Zurück" HorizontalAlignment="Right" Background="Wheat"  Margin="0,0,10,0" VerticalAlignment="Center" Command="{Binding Cmd_NavBack}"/>
                     <Label Margin="10,0,0,0" Content="Informationssegment-Attribute" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                 </Grid>
             </Border>
@@ -34,9 +34,9 @@
                     <RowDefinition Height="100*"/>
                     <RowDefinition Height="60"/>
                 </Grid.RowDefinitions>
-                <Label VerticalAlignment="Center" Content="{Binding Instruction}" Grid.ColumnSpan="2"/>
+                <Label VerticalAlignment="Center" Content="{Binding Str_Instruction}" Grid.ColumnSpan="2"/>
                 <DataGrid 
-                  ItemsSource="{Binding CurrentAttList}"
+                  ItemsSource="{Binding List_CurrentAttributes}"
                   SelectionMode="Single"
                   IsSynchronizedWithCurrentItem="True"
                   AutoGenerateColumns="False"
@@ -55,12 +55,12 @@
                         <DataGridTextColumn Header="{Binding DataContext.Setting.SZ_2_Name, Source={x:Reference dummyElement}}" Binding="{Binding SZ_2}" Width="Auto"/>
                         <DataGridTextColumn Header="{Binding DataContext.Setting.SZ_3_Name, Source={x:Reference dummyElement}}" Binding="{Binding SZ_3}" Width="Auto"/>
                         <DataGridTextColumn Header="{Binding DataContext.Setting.SZ_4_Name, Source={x:Reference dummyElement}}" Binding="{Binding SZ_4}" Width="Auto"/>
-                        <DataGridTextColumn Header="{Binding DataContext.Setting.SZ_5_Name, Source={x:Reference dummyElement}}" Binding="{Binding SZ_5}" Width="Auto" Visibility="{Binding DataContext.NewGoalsActivated, Source={x:Reference dummyElement}}"/>
-                        <DataGridTextColumn Header="{Binding DataContext.Setting.SZ_6_Name, Source={x:Reference dummyElement}}" Binding="{Binding SZ_6}" Width="Auto" Visibility="{Binding DataContext.NewGoalsActivated, Source={x:Reference dummyElement}}"/>
+                        <DataGridTextColumn Header="{Binding DataContext.Setting.SZ_5_Name, Source={x:Reference dummyElement}}" Binding="{Binding SZ_5}" Width="Auto" Visibility="{Binding DataContext.Vis_NewSecurityGoals, Source={x:Reference dummyElement}}"/>
+                        <DataGridTextColumn Header="{Binding DataContext.Setting.SZ_6_Name, Source={x:Reference dummyElement}}" Binding="{Binding SZ_6}" Width="Auto" Visibility="{Binding DataContext.Vis_NewSecurityGoals, Source={x:Reference dummyElement}}"/>
                     </DataGrid.Columns>
                 </DataGrid>
                 <Border Grid.Row="3" Background="White">
-                    <Button Command="{Binding Save}" Visibility="{Binding EditMode, Converter={StaticResource BoolToVisConverter}}" Content="Änderungen übernehmen und schließen" Height="30" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Button Command="{Binding Cmd_Save}" Visibility="{Binding EditMode, Converter={StaticResource BoolToVisConverter}}" Content="Änderungen übernehmen und schließen" Height="30" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </Border>
             </Grid>
         </Border>

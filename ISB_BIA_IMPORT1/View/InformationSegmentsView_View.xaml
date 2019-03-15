@@ -26,7 +26,7 @@
         <Border>
             <Grid>
                 <Label Content="Informationssegmente-Übersicht" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <Button Content="Zurück" HorizontalAlignment="Right" Background="Wheat"  Margin="0,0,10,0" VerticalAlignment="Center" Command="{Binding NavBack}"/>
+                <Button Content="Zurück" HorizontalAlignment="Right" Background="Wheat"  Margin="0,0,10,0" VerticalAlignment="Center" Command="{Binding Cmd_NavBack}"/>
             </Grid>
         </Border>
         <Border Grid.Row="1" Background="White" BorderThickness="1" BorderBrush="Black" Margin="10">
@@ -35,8 +35,8 @@
                     <RowDefinition Height="40"/>
                     <RowDefinition Height="100*"/>
                 </Grid.RowDefinitions>
-                <Label Content="{Binding Instruction}" Width="900" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="0"/>
-                <Button Grid.Row="0" Command="{Binding ExportSegmentAndAttributes}" HorizontalAlignment="Right" VerticalAlignment="Center" Content="Historie Excel-Export" Margin="0,0,10,0" Visibility="{Binding ISMode, Converter={StaticResource ComparisonToVisConverter}, ConverterParameter={x:Static vm:ISISAttributeMode.Edit}}"/>
+                <Label Content="{Binding Str_Instruction}" Width="900" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="0"/>
+                <Button Grid.Row="0" Command="{Binding Cmd_ExportSegmentAndAttributes}" HorizontalAlignment="Right" VerticalAlignment="Center" Content="Historie Excel-Export" Margin="0,0,10,0" Visibility="{Binding Mode, Converter={StaticResource ComparisonToVisConverter}, ConverterParameter={x:Static vm:ISISAttributeMode.Edit}}"/>
                 <FrameworkElement x:Name="dummyElement" Visibility="Collapsed" Grid.Row="0"/>
                 <DataGrid 
                     IsReadOnly="true" 
@@ -45,12 +45,12 @@
                     VerticalGridLinesBrush="LightGray"
                     HorizontalGridLinesBrush="LightGray"
                     SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}"
-                    ItemsSource="{Binding Path=ISList, IsAsync=True}"
+                    ItemsSource="{Binding Path=List_InformationSegment, IsAsync=True}"
                     AutoGenerateColumns="False"
                     Grid.Row="1">
                     <DataGrid.InputBindings>
-                        <MouseBinding Gesture="LeftDoubleClick" Command="{Binding NavToIS}"/>
-                        <KeyBinding Key="Enter" Command="{Binding NavToIS}"/>
+                        <MouseBinding Gesture="LeftDoubleClick" Command="{Binding Cmd_NavToIS}"/>
+                        <KeyBinding Key="Enter" Command="{Binding Cmd_NavToIS}"/>
                     </DataGrid.InputBindings>
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="50"/>
@@ -135,7 +135,7 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Width="80" Visibility="{Binding DataContext.Attribute_9_Vis, Source={x:Reference dummyElement}}">
+                        <DataGridTemplateColumn Width="80" Visibility="{Binding DataContext.Vis_Attribut9, Source={x:Reference dummyElement}}">
                             <DataGridTemplateColumn.Header>
                                 <TextBlock Text="{Binding DataContext.AttributeColumnHeaderText[8], Source={x:Reference dummyElement}}" TextWrapping="WrapWithOverflow"/>
                             </DataGridTemplateColumn.Header>
@@ -145,7 +145,7 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Width="80" Visibility="{Binding DataContext.Attribute_10_Vis, Source={x:Reference dummyElement}}">
+                        <DataGridTemplateColumn Width="80" Visibility="{Binding DataContext.Vis_Attribut10, Source={x:Reference dummyElement}}">
                             <DataGridTemplateColumn.Header>
                                 <TextBlock Text="{Binding DataContext.AttributeColumnHeaderText[9], Source={x:Reference dummyElement}}" TextWrapping="WrapWithOverflow"/>
                             </DataGridTemplateColumn.Header>

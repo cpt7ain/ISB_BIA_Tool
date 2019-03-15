@@ -17,9 +17,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
     {
         #region Backing Fields
         private ObservableCollection<ISB_BIA_Log> _logList;
-        private CollectionView _view;
-        private string _filterText;
-        private MyRelayCommand _exportLog;
+        private CollectionView _filterView;
+        private string _str_FilterText;
+        private MyRelayCommand _cmd_ExportLog;
         #endregion
 
         /// <summary>
@@ -34,29 +34,29 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// CollectionView für Suche in der Log-Liste
         /// </summary>
-        public CollectionView View
+        public CollectionView FilterView
         {
-            get => _view;
-            set => Set(() => View, ref _view, value);
+            get => _filterView;
+            set => Set(() => FilterView, ref _filterView, value);
         }
 
         /// <summary>
-        /// Text, nach dem im <see cref="View"/> gefiltert wird
+        /// Text, nach dem im <see cref="FilterView"/> gefiltert wird
         /// </summary>
-        public string FilterText
+        public string Str_FilterText
         {
-            get => _filterText;
+            get => _str_FilterText;
             set
             {
-                Set(() => FilterText, ref _filterText, value);
-                View.Refresh();
+                Set(() => Str_FilterText, ref _str_FilterText, value);
+                FilterView.Refresh();
             }
         }
 
         /// <summary>
         /// Command zum Zurückkehren zum vorherigen VM
         /// </summary>
-        public MyRelayCommand NavBack
+        public MyRelayCommand Cmd_NavBack
         {
             get => new MyRelayCommand(() =>
             {
@@ -68,19 +68,19 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Command zum Exportieren der Log-Liste nach Excel
         /// </summary>
-        public MyRelayCommand ExportLog
+        public MyRelayCommand Cmd_ExportLog
         {
-            get => _exportLog
-                  ?? (_exportLog = new MyRelayCommand(() =>
+            get => _cmd_ExportLog
+                  ?? (_cmd_ExportLog = new MyRelayCommand(() =>
                   {
-                      _myExport.ExportLog(LogList);
+                      _myExport.Log_ExportLog(LogList);
                   }));
         }
 
         #region Services
         private readonly IMyNavigationService _myNavi;
         private readonly IMyExportService _myExport;
-        private readonly IMyDataService _myData;
+        private readonly IMyDataService_Log _myLog;
         #endregion
 
         /// <summary>
@@ -88,35 +88,35 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         /// <param name="myNavigationService"> <see cref="IMyNavigationService"/> </param>
         /// <param name="myExportService"><see cref="IMyExportService"/> </param>
-        /// <param name="myDataService"><see cref="IMyDataService"/> </param>
-        public LogView_ViewModel(IMyNavigationService myNavigationService, IMyExportService myExportService, IMyDataService myDataService)
+        /// <param name="myLog"><see cref="IMyDataService"/> </param>
+        public LogView_ViewModel(IMyNavigationService myNavigationService, IMyExportService myExportService, IMyDataService_Log myLog)
         {
             #region Services
             _myNavi = myNavigationService;
             _myExport = myExportService;
-            _myData = myDataService;
+            _myLog = myLog;
             #endregion
             //Log abrufen
-            LogList = _myData.GetLog();
+            LogList = _myLog.Get_Log();
             //Definieren der Quelle für den CollectionView (=> Log Liste)
-            View = (CollectionView)CollectionViewSource.GetDefaultView(LogList);
+            FilterView = (CollectionView)CollectionViewSource.GetDefaultView(LogList);
             //Filter der CollectionView festlegen
-            View.Filter = item =>
+            FilterView.Filter = item =>
             {
-                if (String.IsNullOrEmpty(_filterText))
+                if (String.IsNullOrEmpty(_str_FilterText))
                     return true;
                 else
                 {
                     ISB_BIA_Log logItem = (ISB_BIA_Log)item;
-                    if (logItem.Action == null) logItem.Action = "";
+                    if (logItem.Aktion == null) logItem.Aktion = "";
                     if (logItem.Tabelle == null) logItem.Tabelle = "";
                     if (logItem.Details == null) logItem.Details = "";
                     return (
-                        (logItem.Action.IndexOf(_filterText, StringComparison.OrdinalIgnoreCase) >= 0)
-                     || (logItem.Tabelle.IndexOf(_filterText, StringComparison.OrdinalIgnoreCase) >= 0)
-                     || (logItem.Details.IndexOf(_filterText, StringComparison.OrdinalIgnoreCase) >= 0)
-                     || (logItem.Datum.ToString().IndexOf(_filterText, StringComparison.OrdinalIgnoreCase) >= 0)
-                     || (logItem.Benutzer.IndexOf(_filterText, StringComparison.OrdinalIgnoreCase) >= 0));
+                        (logItem.Aktion.IndexOf(_str_FilterText, StringComparison.OrdinalIgnoreCase) >= 0)
+                     || (logItem.Tabelle.IndexOf(_str_FilterText, StringComparison.OrdinalIgnoreCase) >= 0)
+                     || (logItem.Details.IndexOf(_str_FilterText, StringComparison.OrdinalIgnoreCase) >= 0)
+                     || (logItem.Datum.ToString().IndexOf(_str_FilterText, StringComparison.OrdinalIgnoreCase) >= 0)
+                     || (logItem.Benutzer.IndexOf(_str_FilterText, StringComparison.OrdinalIgnoreCase) >= 0));
                 }
             };
         }

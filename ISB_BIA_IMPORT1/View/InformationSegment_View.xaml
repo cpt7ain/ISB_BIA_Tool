@@ -26,7 +26,7 @@
         <Border Grid.Row="0" Grid.ColumnSpan="6">
             <Grid>
                 <Label Content="Informationssegment" FontWeight="Bold" Grid.ColumnSpan="2" Margin="10,0,0,0"  VerticalAlignment="Center"/>
-                <Button Content="Zurück" HorizontalAlignment="Right" Grid.Column="3" Background="Wheat" Margin="0,0,10,0" VerticalAlignment="Center" Command="{Binding NavBack}"/>
+                <Button Content="Zurück" HorizontalAlignment="Right" Grid.Column="3" Background="Wheat" Margin="0,0,10,0" VerticalAlignment="Center" Command="{Binding Cmd_NavBack}"/>
             </Grid>
         </Border>
 
@@ -48,15 +48,15 @@
                     <ColumnDefinition Width="20"/>
                 </Grid.ColumnDefinitions>
 
-                <Label Content="{Binding CurrentSegment.Name}" FontSize="20" VerticalAlignment="Center" Grid.Column="1"/>
-                <TextBox IsReadOnly="{Binding EditMode, Converter={StaticResource NegateBoolConverter}}" Text="{Binding CurrentSegment.Segment}" Margin="80,0,0,0" FontSize="20" TextWrapping="WrapWithOverflow" VerticalAlignment="Center" Grid.ColumnSpan="4"/>
+                <Label Content="{Binding SegmentCurrent.Name}" FontSize="20" VerticalAlignment="Center" Grid.Column="1"/>
+                <TextBox IsReadOnly="{Binding EditMode, Converter={StaticResource NegateBoolConverter}}" Text="{Binding SegmentCurrent.Segment}" Margin="80,0,0,0" FontSize="20" TextWrapping="WrapWithOverflow" VerticalAlignment="Center" Grid.ColumnSpan="4"/>
 
 
                 <Label Content="Beschreibung" FontWeight="Bold" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" VerticalAlignment="Center"/>
                 <Label Content="Mögliche Aspekte" FontWeight="Bold" Grid.Column="3" Grid.Row="1" Grid.ColumnSpan="3" VerticalAlignment="Center"/>
 
-                <TextBox IsReadOnly="{Binding EditMode, Converter={StaticResource NegateBoolConverter}}" MaxHeight="350" Grid.Row="2" Grid.Column="1" TextWrapping="Wrap" Text="{Binding CurrentSegment.Beschreibung}" ScrollViewer.VerticalScrollBarVisibility="Visible"/>
-                <TextBox IsReadOnly="{Binding EditMode, Converter={StaticResource NegateBoolConverter}}" MaxHeight="350" Grid.Row="2" Grid.Column="3" TextWrapping="Wrap" Text="{Binding CurrentSegment.Mögliche_Segmentinhalte}" ScrollViewer.VerticalScrollBarVisibility="Visible"/>
+                <TextBox IsReadOnly="{Binding EditMode, Converter={StaticResource NegateBoolConverter}}" MaxHeight="350" Grid.Row="2" Grid.Column="1" TextWrapping="Wrap" Text="{Binding SegmentCurrent.Beschreibung}" ScrollViewer.VerticalScrollBarVisibility="Visible"/>
+                <TextBox IsReadOnly="{Binding EditMode, Converter={StaticResource NegateBoolConverter}}" MaxHeight="350" Grid.Row="2" Grid.Column="3" TextWrapping="Wrap" Text="{Binding SegmentCurrent.Mögliche_Segmentinhalte}" ScrollViewer.VerticalScrollBarVisibility="Visible"/>
 
                 <Grid Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="3">
                     <Grid.RowDefinitions>
@@ -75,108 +75,108 @@
                     <Border Background="LightSteelBlue" BorderBrush="White" BorderThickness="1">
                         <TextBlock Text="  Zutreffende Attribute" VerticalAlignment="Center" FontWeight="Bold"/>
                     </Border>
-                    <Border Grid.Row="1" Background="{Binding CurrentSegment.Attribut1, Converter={StaticResource BoolToColorConverter}}" BorderBrush="White" BorderThickness="1" >
+                    <Border Grid.Row="1" Background="{Binding SegmentCurrent.Attribut1, Converter={StaticResource BoolToColorConverter}}" BorderBrush="White" BorderThickness="1" >
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="50"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <CheckBox IsEnabled="{Binding EditMode}" IsChecked="{Binding CurrentSegment.Attribut1}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="1" Text="{Binding AttributeNameList[0]}" VerticalAlignment="Center"/>
+                            <CheckBox IsEnabled="{Binding EditMode}" IsChecked="{Binding SegmentCurrent.Attribut1}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{Binding List_AttributeName[0]}" VerticalAlignment="Center"/>
                         </Grid>
                     </Border>
-                    <Border Grid.Row="2" Background="{Binding CurrentSegment.Attribut2, Converter={StaticResource BoolToColorConverter}}" BorderBrush="White" BorderThickness="1">
+                    <Border Grid.Row="2" Background="{Binding SegmentCurrent.Attribut2, Converter={StaticResource BoolToColorConverter}}" BorderBrush="White" BorderThickness="1">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="50"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <CheckBox IsEnabled="{Binding EditMode}" IsChecked="{Binding CurrentSegment.Attribut2}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="1" Text="{Binding AttributeNameList[1]}" VerticalAlignment="Center"/>
+                            <CheckBox IsEnabled="{Binding EditMode}" IsChecked="{Binding SegmentCurrent.Attribut2}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{Binding List_AttributeName[1]}" VerticalAlignment="Center"/>
                         </Grid>
                     </Border>
-                    <Border Grid.Row="3" Background="{Binding CurrentSegment.Attribut3, Converter={StaticResource BoolToColorConverter}}" BorderBrush="White" BorderThickness="1">
+                    <Border Grid.Row="3" Background="{Binding SegmentCurrent.Attribut3, Converter={StaticResource BoolToColorConverter}}" BorderBrush="White" BorderThickness="1">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="50"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <CheckBox IsEnabled="{Binding EditMode}" IsChecked="{Binding CurrentSegment.Attribut3}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="1" Text="{Binding AttributeNameList[2]}" VerticalAlignment="Center"/>
+                            <CheckBox IsEnabled="{Binding EditMode}" IsChecked="{Binding SegmentCurrent.Attribut3}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{Binding List_AttributeName[2]}" VerticalAlignment="Center"/>
                         </Grid>
                     </Border>
-                    <Border Grid.Row="4" Background="{Binding CurrentSegment.Attribut4, Converter={StaticResource BoolToColorConverter}}" BorderBrush="White" BorderThickness="1">
+                    <Border Grid.Row="4" Background="{Binding SegmentCurrent.Attribut4, Converter={StaticResource BoolToColorConverter}}" BorderBrush="White" BorderThickness="1">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="50"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <CheckBox IsChecked="{Binding CurrentSegment.Attribut4}" IsEnabled="{Binding EditMode}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="1" Text="{Binding AttributeNameList[3]}" VerticalAlignment="Center"/>
+                            <CheckBox IsChecked="{Binding SegmentCurrent.Attribut4}" IsEnabled="{Binding EditMode}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{Binding List_AttributeName[3]}" VerticalAlignment="Center"/>
                         </Grid>
                     </Border>
-                    <Border Grid.Row="5" Background="{Binding CurrentSegment.Attribut5, Converter={StaticResource BoolToColorConverter}}" BorderBrush="White" BorderThickness="1">
+                    <Border Grid.Row="5" Background="{Binding SegmentCurrent.Attribut5, Converter={StaticResource BoolToColorConverter}}" BorderBrush="White" BorderThickness="1">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="50"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <CheckBox IsEnabled="{Binding EditMode}" IsChecked="{Binding CurrentSegment.Attribut5}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="1" Text="{Binding AttributeNameList[4]}" VerticalAlignment="Center"/>
+                            <CheckBox IsEnabled="{Binding EditMode}" IsChecked="{Binding SegmentCurrent.Attribut5}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{Binding List_AttributeName[4]}" VerticalAlignment="Center"/>
                         </Grid>
                     </Border>
-                    <Border Grid.Row="6" Background="{Binding CurrentSegment.Attribut6, Converter={StaticResource BoolToColorConverter}}" BorderBrush="White" BorderThickness="1">
+                    <Border Grid.Row="6" Background="{Binding SegmentCurrent.Attribut6, Converter={StaticResource BoolToColorConverter}}" BorderBrush="White" BorderThickness="1">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="50"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <CheckBox IsEnabled="{Binding EditMode}" IsChecked="{Binding CurrentSegment.Attribut6}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="1" Text="{Binding AttributeNameList[5]}" VerticalAlignment="Center"/>
+                            <CheckBox IsEnabled="{Binding EditMode}" IsChecked="{Binding SegmentCurrent.Attribut6}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{Binding List_AttributeName[5]}" VerticalAlignment="Center"/>
                         </Grid>
                     </Border>
-                    <Border Grid.Row="7" Background="{Binding CurrentSegment.Attribut7, Converter={StaticResource BoolToColorConverter}}" BorderBrush="White" BorderThickness="1">
+                    <Border Grid.Row="7" Background="{Binding SegmentCurrent.Attribut7, Converter={StaticResource BoolToColorConverter}}" BorderBrush="White" BorderThickness="1">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="50"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <CheckBox IsEnabled="{Binding EditMode}" IsChecked="{Binding CurrentSegment.Attribut7}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="1" Text="{Binding AttributeNameList[6]}" VerticalAlignment="Center"/>
+                            <CheckBox IsEnabled="{Binding EditMode}" IsChecked="{Binding SegmentCurrent.Attribut7}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{Binding List_AttributeName[6]}" VerticalAlignment="Center"/>
                         </Grid>
                     </Border>
-                    <Border Grid.Row="8" Background="{Binding CurrentSegment.Attribut8, Converter={StaticResource BoolToColorConverter}}" BorderBrush="White" BorderThickness="1">
+                    <Border Grid.Row="8" Background="{Binding SegmentCurrent.Attribut8, Converter={StaticResource BoolToColorConverter}}" BorderBrush="White" BorderThickness="1">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="50"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <CheckBox IsEnabled="{Binding EditMode}" IsChecked="{Binding CurrentSegment.Attribut8}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="1" Text="{Binding AttributeNameList[7]}" VerticalAlignment="Center"/>
+                            <CheckBox IsEnabled="{Binding EditMode}" IsChecked="{Binding SegmentCurrent.Attribut8}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{Binding List_AttributeName[7]}" VerticalAlignment="Center"/>
                         </Grid>
                     </Border>
-                    <Border Visibility="{Binding EnableAttribut9}" Grid.Row="9" Background="{Binding CurrentSegment.Attribut9, Converter={StaticResource BoolToColorConverter}}" BorderBrush="White" BorderThickness="1">
+                    <Border Visibility="{Binding Vis_Attribut9}" Grid.Row="9" Background="{Binding SegmentCurrent.Attribut9, Converter={StaticResource BoolToColorConverter}}" BorderBrush="White" BorderThickness="1">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="50"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <CheckBox IsEnabled="{Binding EditMode}" IsChecked="{Binding CurrentSegment.Attribut9}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="1" Text="{Binding AttributeNameList[8]}" VerticalAlignment="Center"/>
+                            <CheckBox IsEnabled="{Binding EditMode}" IsChecked="{Binding SegmentCurrent.Attribut9}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{Binding List_AttributeName[8]}" VerticalAlignment="Center"/>
                         </Grid>
                     </Border>
-                    <Border Visibility="{Binding EnableAttribut10}" Grid.Row="10" Background="{Binding CurrentSegment.Attribut10, Converter={StaticResource BoolToColorConverter}}" BorderBrush="White" BorderThickness="1">
+                    <Border Visibility="{Binding Vis_Attribut10}" Grid.Row="10" Background="{Binding SegmentCurrent.Attribut10, Converter={StaticResource BoolToColorConverter}}" BorderBrush="White" BorderThickness="1">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="50"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <CheckBox IsEnabled="{Binding EditMode}" IsChecked="{Binding CurrentSegment.Attribut10}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="1" Text="{Binding AttributeNameList[9]}" VerticalAlignment="Center"/>
+                            <CheckBox IsEnabled="{Binding EditMode}" IsChecked="{Binding SegmentCurrent.Attribut10}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{Binding List_AttributeName[9]}" VerticalAlignment="Center"/>
                         </Grid>
                     </Border>
                 </Grid>
-                <Button Command="{Binding Save}" Visibility="{Binding EditMode, Converter={StaticResource BoolToVisConverter}}" Content="Speichern und Schließen" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <Button Command="{Binding Cmd_Save}" Visibility="{Binding EditMode, Converter={StaticResource BoolToVisConverter}}" Content="Speichern und Schließen" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Grid>
         </Border>
     </Grid>

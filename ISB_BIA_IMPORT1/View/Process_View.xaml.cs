@@ -24,7 +24,7 @@ namespace ISB_BIA_IMPORT1.View
         /// <summary>
         /// Benachrichtigung bei Kritischer Einstufung des Prozesses
         /// </summary>
-        public string Krit_Ntf
+        public string Crit_Ntf
         {
             get => "Dieser Prozess wird als kritisch eingestuft!\n"
                    + "\nEin Prozess wird als 'Kritischer Prozess' eingestuft wenn mindestens eine der folgenden Bedingungen zutrifft:"
@@ -41,14 +41,23 @@ namespace ISB_BIA_IMPORT1.View
                    + "\n- Auswirkung auf Folgeprozesse"
                    + "\n- ggf.Workaround bei Prozessstörung";
         }
-
-        private void Label_TargetUpdated(object sender, DataTransferEventArgs e)
+        /// <summary>
+        /// Wenn Kritischer-Prozess Label sich ändert => Meldung bringen
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CritLabel_TargetUpdated(object sender, DataTransferEventArgs e)
         {
             Label a=(Label) e.TargetObject;
             
-            if (a.Content.ToString() == "Ja") MessageBox.Show(Krit_Ntf, "Warnung", MessageBoxButton.OK, MessageBoxImage.Warning);
+            if (a.Content.ToString() == "Ja") MessageBox.Show(Crit_Ntf, "Warnung", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
+        /// <summary>
+        /// Durch <see cref="ButtonAddApplication_Click"/> ausgelöste Fokussierung des hinzugefügten Elements => Scroll zu dem Element
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TargetDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             DataGrid d = (DataGrid) sender;
@@ -59,7 +68,12 @@ namespace ISB_BIA_IMPORT1.View
             }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Click Event bei hinzufügen einer Anwendung zum Prozess
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ButtonAddApplication_Click(object sender, RoutedEventArgs e)
         {
             TargetDataGrid.Focus();
             if(TargetDataGrid.SelectedItem != null)

@@ -15,100 +15,100 @@ namespace ISB_BIA_IMPORT1.ViewModel
     public class OE_AssignmentView_ViewModel : ViewModelBase
     {
         #region Backing-Fields
-        private ObservableCollection<ISB_BIA_OEs> _oENames;
-        private ISB_BIA_OEs _selectedName;
-        private string _newName;
-        private string _editNewName;
-        private ObservableCollection<ISB_BIA_OEs> _oENumbers;
-        private ISB_BIA_OEs _selectedNumber;
-        private ISB_BIA_OEs _selectedNewNumberName;
-        private string _newNumber;
-        private string _editNewNumber;
-        private ObservableCollection<ISB_BIA_OEs> _oELinks;
-        private ISB_BIA_OEs _selectedLink;
-        private ISB_BIA_OEs _selectedNewLinkName;
-        private ISB_BIA_OEs _selectedNewLinkNumber;
-        private MyRelayCommand _cancelEdit;
-        private MyRelayCommand _activateNameNew;
-        private MyRelayCommand _saveNameNew;
-        private MyRelayCommand _activateNameEdit;
-        private MyRelayCommand _saveNameEdit;
-        private MyRelayCommand _activateLinkNew;
-        private MyRelayCommand _saveLinkNew;
-        private MyRelayCommand _activateNumberNew;
-        private MyRelayCommand _saveNumberNew;
-        private MyRelayCommand _activateNumberEdit;
-        private MyRelayCommand _saveNumberEdit;
-        private MyRelayCommand _deleteOENameCmd;
-        private MyRelayCommand _deleteOELinkCmd;
-        private MyRelayCommand _deleteOENumberCmd;
+        private ObservableCollection<ISB_BIA_OEs> _list_OENames;
+        private ISB_BIA_OEs _oE_SelectedName;
+        private string _str_NewName;
+        private string _str_EditNewName;
+        private ObservableCollection<ISB_BIA_OEs> _list_OENumbers;
+        private ISB_BIA_OEs _oE_SelectedNumber;
+        private ISB_BIA_OEs _oE_SelectedNewNumberName;
+        private string _str_NewNumber;
+        private string _str_EditNewNumber;
+        private ObservableCollection<ISB_BIA_OEs> _list_OELinks;
+        private ISB_BIA_OEs _oE_SelectedLink;
+        private ISB_BIA_OEs _oE_SelectedNewLinkName;
+        private ISB_BIA_OEs _oE_SelectedNewLinkNumber;
+        private MyRelayCommand _cmd_CancelEdit;
+        private MyRelayCommand _cmd_ActivateNameNew;
+        private MyRelayCommand _cmd_SaveNameNew;
+        private MyRelayCommand _cmd_ActivateNameEdit;
+        private MyRelayCommand _cmd_SaveNameEdit;
+        private MyRelayCommand _cmd_ActivateLinkNew;
+        private MyRelayCommand _cmd_SaveLinkNew;
+        private MyRelayCommand _cmd_ActivateNumberNew;
+        private MyRelayCommand _cmd_SaveNumberNew;
+        private MyRelayCommand _cmd_ActivateNumberEdit;
+        private MyRelayCommand _cmd_SaveNumberEdit;
+        private MyRelayCommand _cmd_DeleteOENameCmd;
+        private MyRelayCommand _cmd_DeleteOELinkCmd;
+        private MyRelayCommand _cmd_DeleteOENumberCmd;
         private bool _isFree = true;
-        private Visibility _nameVis;
-        private Visibility _nameEditBorderVis;
-        private Visibility _nameNewBorderVis;
-        private Visibility _linkVis;
-        private Visibility _linkNewBorderVis;
-        private Visibility _numberVis;
-        private Visibility _numberEditBorderVis;
-        private Visibility _numberNewBorderVis;
+        private Visibility _vis_NameBorder;
+        private Visibility _vis_NameEditBorder;
+        private Visibility _vis_NameNewBorder;
+        private Visibility _vis_LinkBorder;
+        private Visibility _vis_LinkNewBorder;
+        private Visibility _vis_NumberBorder;
+        private Visibility _vis_NumberEditBorder;
+        private Visibility _vis_NumberNewBorder;
         #endregion
 
         #region Properties zur Bindung an Controls (Listen => Dropdown, String => Textfelder)
         /// <summary>
         /// Liste der angelegten OE-Gruppen
         /// </summary>
-        public ObservableCollection<ISB_BIA_OEs> OENames
+        public ObservableCollection<ISB_BIA_OEs> List_OENames
         {
-            get => _oENames;
-            set => Set(() => OENames, ref _oENames, value);
+            get => _list_OENames;
+            set => Set(() => List_OENames, ref _list_OENames, value);
         }
         /// <summary>
         /// Liste der angelegten OE-Nummern
         /// </summary>
-        public ObservableCollection<ISB_BIA_OEs> OENumbers
+        public ObservableCollection<ISB_BIA_OEs> List_OENumbers
         {
-            get => _oENumbers;
-            set => Set(() => OENumbers, ref _oENumbers, value);
+            get => _list_OENumbers;
+            set => Set(() => List_OENumbers, ref _list_OENumbers, value);
         }
         /// <summary>
         /// Liste der angelegten OE-Relationen
         /// </summary>
-        public ObservableCollection<ISB_BIA_OEs> OELinks
+        public ObservableCollection<ISB_BIA_OEs> List_OELinks
         {
-            get => _oELinks;
-            set => Set(() => OELinks, ref _oELinks, value);
+            get => _list_OELinks;
+            set => Set(() => List_OELinks, ref _list_OELinks, value);
         }
         /// <summary>
         /// Name einer OE-Gruppe bei Neuanlgae
         /// </summary>
-        public string NewName
+        public string Str_NewName
         {
-            get => _newName;
-            set => Set(() => NewName, ref _newName, value);
+            get => _str_NewName;
+            set => Set(() => Str_NewName, ref _str_NewName, value);
         }
         /// <summary>
         /// Name einer OE-Gruppe bei Bearbeitung
         /// </summary>
-        public string EditNewName
+        public string Str_EditNewName
         {
-            get => _editNewName;
-            set => Set(() => EditNewName, ref _editNewName, value);
+            get => _str_EditNewName;
+            set => Set(() => Str_EditNewName, ref _str_EditNewName, value);
         }
         /// <summary>
         /// Nummer einer OE bei Neuanlage
         /// </summary>
-        public string NewNumber
+        public string Str_NewNumber
         {
-            get => _newNumber;
-            set => Set(() => NewNumber, ref _newNumber, value);
+            get => _str_NewNumber;
+            set => Set(() => Str_NewNumber, ref _str_NewNumber, value);
         }
         /// <summary>
         /// Nummer einer OE bei Bearbeitung
         /// </summary>
-        public string EditNewNumber
+        public string Str_EditNewNumber
         {
-            get => _editNewNumber;
-            set => Set(() => EditNewNumber, ref _editNewNumber, value);
+            get => _str_EditNewNumber;
+            set => Set(() => Str_EditNewNumber, ref _str_EditNewNumber, value);
         }
         #endregion
 
@@ -116,26 +116,26 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Ausgewählte OE-Gruppe für Bearbeitung oder Löschung
         /// </summary>
-        public ISB_BIA_OEs SelectedName
+        public ISB_BIA_OEs OE_SelectedName
         {
-            get => _selectedName;
-            set => Set(() => SelectedName, ref _selectedName, value);
+            get => _oE_SelectedName;
+            set => Set(() => OE_SelectedName, ref _oE_SelectedName, value);
         }
         /// <summary>
         /// Ausgewählte OE-Nummer für Bearbeitung oder Löschung
         /// </summary>
-        public ISB_BIA_OEs SelectedNumber
+        public ISB_BIA_OEs OE_SelectedNumber
         {
-            get => _selectedNumber;
-            set => Set(() => SelectedNumber, ref _selectedNumber, value);
+            get => _oE_SelectedNumber;
+            set => Set(() => OE_SelectedNumber, ref _oE_SelectedNumber, value);
         }
         /// <summary>
         /// Ausgewählte OE-Relation für Löschung
         /// </summary>
-        public ISB_BIA_OEs SelectedLink
+        public ISB_BIA_OEs OE_SelectedLink
         {
-            get => _selectedLink;
-            set => Set(() => SelectedLink, ref _selectedLink, value);
+            get => _oE_SelectedLink;
+            set => Set(() => OE_SelectedLink, ref _oE_SelectedLink, value);
         }
         #endregion
 
@@ -143,26 +143,26 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Ausgewählte OE-Gruppe für Erstellung einer neuen OE-Nummer
         /// </summary>
-        public ISB_BIA_OEs SelectedNewNumberName
+        public ISB_BIA_OEs OE_SelectedNewNumberName
         {
-            get => _selectedNewNumberName;
-            set => Set(() => SelectedNewNumberName, ref _selectedNewNumberName, value);
+            get => _oE_SelectedNewNumberName;
+            set => Set(() => OE_SelectedNewNumberName, ref _oE_SelectedNewNumberName, value);
         }
         /// <summary>
         /// Ausgewählte OE-Gruppe zur Erstellung einer Relation
         /// </summary>
-        public ISB_BIA_OEs SelectedNewLinkName
+        public ISB_BIA_OEs OE_SelectedNewLinkName
         {
-            get => _selectedNewLinkName;
-            set => Set(() => SelectedNewLinkName, ref _selectedNewLinkName, value);
+            get => _oE_SelectedNewLinkName;
+            set => Set(() => OE_SelectedNewLinkName, ref _oE_SelectedNewLinkName, value);
         }
         /// <summary>
         /// Ausgewählte OE-Nummer zu Erstellung einer Relation
         /// </summary>
-        public ISB_BIA_OEs SelectedNewLinkNumber
+        public ISB_BIA_OEs OE_SelectedNewLinkNumber
         {
-            get => _selectedNewLinkNumber;
-            set => Set(() => SelectedNewLinkNumber, ref _selectedNewLinkNumber, value);
+            get => _oE_SelectedNewLinkNumber;
+            set => Set(() => OE_SelectedNewLinkNumber, ref _oE_SelectedNewLinkNumber, value);
         }
         #endregion
 
@@ -170,42 +170,42 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Zum Ausgangszustnd der Ansicht zurückkehren
         /// </summary>
-        public MyRelayCommand CancelEdit
+        public MyRelayCommand Cmd_CancelEdit
         {
-            get => _cancelEdit
-                  ?? (_cancelEdit = new MyRelayCommand(() =>
+            get => _cmd_CancelEdit
+                  ?? (_cmd_CancelEdit = new MyRelayCommand(() =>
                   {
-                      CancelEditFunc();
+                      CancelEdit();
                   }));
         }
         /// <summary>
         /// Command zum Aktivieren der OE-Gruppen Erstellung
         /// </summary>
-        public MyRelayCommand ActivateNameNew
+        public MyRelayCommand Cmd_ActivateNameNew
         {
-            get => _activateNameNew
-                  ?? (_activateNameNew = new MyRelayCommand(() =>
+            get => _cmd_ActivateNameNew
+                  ?? (_cmd_ActivateNameNew = new MyRelayCommand(() =>
                   {
                       IsFree = false;
-                      NameNewBorderVis = Visibility.Visible;
-                      NameVis = Visibility.Collapsed;
-                      NameEditBorderVis = Visibility.Collapsed;
+                      Vis_NameNewBorder = Visibility.Visible;
+                      Vis_NameBorder = Visibility.Collapsed;
+                      Vis_NameEditBorder = Visibility.Collapsed;
                   }, () => IsFree));
         }
         /// <summary>
         /// Command zum Aktivieren der OE-Gruppen BEarbeitung
         /// </summary>
-        public MyRelayCommand ActivateNameEdit
+        public MyRelayCommand Cmd_ActivateNameEdit
         {
-            get => _activateNameEdit
-                  ?? (_activateNameEdit = new MyRelayCommand(() =>
+            get => _cmd_ActivateNameEdit
+                  ?? (_cmd_ActivateNameEdit = new MyRelayCommand(() =>
                   {
-                      if (SelectedName != null)
+                      if (OE_SelectedName != null)
                       {
                           IsFree = false;
-                          NameEditBorderVis = Visibility.Visible;
-                          NameVis = Visibility.Collapsed;
-                          NameNewBorderVis = Visibility.Collapsed;
+                          Vis_NameEditBorder = Visibility.Visible;
+                          Vis_NameBorder = Visibility.Collapsed;
+                          Vis_NameNewBorder = Visibility.Collapsed;
                       }
                       else
                       {
@@ -216,16 +216,16 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Command zum Aktivieren der OE-Relation Erstellung
         /// </summary>
-        public MyRelayCommand ActivateLinkNew
+        public MyRelayCommand Cmd_ActivateLinkNew
         {
-            get => _activateLinkNew
-                  ?? (_activateLinkNew = new MyRelayCommand(() =>
+            get => _cmd_ActivateLinkNew
+                  ?? (_cmd_ActivateLinkNew = new MyRelayCommand(() =>
                   {
-                      if (OENumbers.Count > 0)
+                      if (List_OENumbers.Count > 0)
                       {
                           IsFree = false;
-                          LinkNewBorderVis = Visibility.Visible;
-                          LinkVis = Visibility.Collapsed;
+                          Vis_LinkNewBorder = Visibility.Visible;
+                          Vis_LinkBorder = Visibility.Collapsed;
                       }
                       else
                       {
@@ -236,31 +236,31 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Command zum Aktivieren der OE-Nummern Erstellung
         /// </summary>
-        public MyRelayCommand ActivateNumberNew
+        public MyRelayCommand Cmd_ActivateNumberNew
         {
-            get => _activateNumberNew
-                  ?? (_activateNumberNew = new MyRelayCommand(() =>
+            get => _cmd_ActivateNumberNew
+                  ?? (_cmd_ActivateNumberNew = new MyRelayCommand(() =>
                   {
                       IsFree = false;
-                      NumberNewBorderVis = Visibility.Visible;
-                      NumberVis = Visibility.Collapsed;
-                      NumberEditBorderVis = Visibility.Collapsed;
+                      Vis_NumberNewBorder = Visibility.Visible;
+                      Vis_NumberBorder = Visibility.Collapsed;
+                      Vis_NumberEditBorder = Visibility.Collapsed;
                   }, () => IsFree));
         }
         /// <summary>
         /// Command zum Aktivieren der OE-Nummern Bearbeitung
         /// </summary>
-        public MyRelayCommand ActivateNumberEdit
+        public MyRelayCommand Cmd_ActivateNumberEdit
         {
-            get => _activateNumberEdit
-                  ?? (_activateNumberEdit = new MyRelayCommand(() =>
+            get => _cmd_ActivateNumberEdit
+                  ?? (_cmd_ActivateNumberEdit = new MyRelayCommand(() =>
                   {
-                      if (SelectedNumber != null)
+                      if (OE_SelectedNumber != null)
                       {
                           IsFree = false;
-                          NumberEditBorderVis = Visibility.Visible;
-                          NumberVis = Visibility.Collapsed;
-                          NumberNewBorderVis = Visibility.Collapsed;
+                          Vis_NumberEditBorder = Visibility.Visible;
+                          Vis_NumberBorder = Visibility.Collapsed;
+                          Vis_NumberNewBorder = Visibility.Collapsed;
                       }
                       else
                       {
@@ -274,108 +274,108 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Command zum Speichern einer neuen OE-Gruppe
         /// </summary>
-        public MyRelayCommand SaveNameNew
+        public MyRelayCommand Cmd_SaveNameNew
         {
-            get => _saveNameNew
-                  ?? (_saveNameNew = new MyRelayCommand(() =>
+            get => _cmd_SaveNameNew
+                  ?? (_cmd_SaveNameNew = new MyRelayCommand(() =>
                   {
-                      ISB_BIA_OEs result = _myData.InsertOEName(NewName);
+                      ISB_BIA_OEs result = _myOE.Insert_OEName_New(Str_NewName);
                       if (result != null)
                       {
-                          CancelEditFunc();
-                          OENames = _myData.GetOENames();
-                          OENumbers = _myData.GetOENumbers();
-                          OELinks = _myData.GetOELinks();
+                          CancelEdit();
+                          List_OENames = _myOE.Get_OENames();
+                          List_OENumbers = _myOE.Get_OENumbers();
+                          List_OELinks = _myOE.Get_OELinks();
                       }
                   }));
         }
         /// <summary>
         /// Command zum Speichern einer geänderten OE-Gruppe
         /// </summary>
-        public MyRelayCommand SaveNameEdit
+        public MyRelayCommand Cmd_SaveNameEdit
         {
-            get => _saveNameEdit
-                  ?? (_saveNameEdit = new MyRelayCommand(() =>
+            get => _cmd_SaveNameEdit
+                  ?? (_cmd_SaveNameEdit = new MyRelayCommand(() =>
                   {
-                      bool result = _myData.EditOEName(EditNewName, SelectedName.OE_Name);
+                      bool result = _myOE.Insert_OEName_Edit(Str_EditNewName, OE_SelectedName.OE_Name);
                       if (result)
                       {
-                          CancelEditFunc();
-                          OENames = _myData.GetOENames();
-                          OENumbers = _myData.GetOENumbers();
-                          OELinks = _myData.GetOELinks();
+                          CancelEdit();
+                          List_OENames = _myOE.Get_OENames();
+                          List_OENumbers = _myOE.Get_OENumbers();
+                          List_OELinks = _myOE.Get_OELinks();
                       }
                   }));
         }
         /// <summary>
         /// Command zum Speichern einer OE-Relation
         /// </summary>
-        public MyRelayCommand SaveLinkNew
+        public MyRelayCommand Cmd_SaveLinkNew
         {
-            get => _saveLinkNew
-                  ?? (_saveLinkNew = new MyRelayCommand(() =>
+            get => _cmd_SaveLinkNew
+                  ?? (_cmd_SaveLinkNew = new MyRelayCommand(() =>
                   {
-                      ISB_BIA_OEs result = _myData.InsertOELink(SelectedNewLinkName, SelectedNewLinkNumber);
+                      ISB_BIA_OEs result = _myOE.Insert_OELink(OE_SelectedNewLinkName, OE_SelectedNewLinkNumber);
                       if (result != null)
                       {
-                          CancelEditFunc();
-                          OENames = _myData.GetOENames();
-                          OENumbers = _myData.GetOENumbers();
-                          OELinks = _myData.GetOELinks();
+                          CancelEdit();
+                          List_OENames = _myOE.Get_OENames();
+                          List_OENumbers = _myOE.Get_OENumbers();
+                          List_OELinks = _myOE.Get_OELinks();
                       }
                   }));
         }
         /// <summary>
         /// Command zum Speichern einer neuen OE-Nummer
         /// </summary>
-        public MyRelayCommand SaveNumberNew
+        public MyRelayCommand Cmd_SaveNumberNew
         {
-            get => _saveNumberNew
-                  ?? (_saveNumberNew = new MyRelayCommand(() =>
+            get => _cmd_SaveNumberNew
+                  ?? (_cmd_SaveNumberNew = new MyRelayCommand(() =>
                   {
-                      ISB_BIA_OEs result = _myData.InsertOENumber(NewNumber, SelectedNewNumberName);
+                      ISB_BIA_OEs result = _myOE.Insert_OENumber_New(Str_NewNumber, OE_SelectedNewNumberName);
                       if (result != null)
                       {
-                          CancelEditFunc();
-                          OENames = _myData.GetOENames();
-                          OENumbers = _myData.GetOENumbers();
-                          OELinks = _myData.GetOELinks();
+                          CancelEdit();
+                          List_OENames = _myOE.Get_OENames();
+                          List_OENumbers = _myOE.Get_OENumbers();
+                          List_OELinks = _myOE.Get_OELinks();
                       }
                   }));
         }
         /// <summary>
         /// Command zum Speichern einer geänderten OE-Nummer
         /// </summary>
-        public MyRelayCommand SaveNumberEdit
+        public MyRelayCommand Cmd_SaveNumberEdit
         {
-            get => _saveNumberEdit
-                  ?? (_saveNumberEdit = new MyRelayCommand(() =>
+            get => _cmd_SaveNumberEdit
+                  ?? (_cmd_SaveNumberEdit = new MyRelayCommand(() =>
                   {
-                      bool result = _myData.EditOENumber(EditNewNumber, SelectedNumber.OE_Nummer);
+                      bool result = _myOE.Insert_OENumber_Edit(Str_EditNewNumber, OE_SelectedNumber.OE_Nummer);
                       if (result)
                       {
-                          CancelEditFunc();
-                          OENames = _myData.GetOENames();
-                          OENumbers = _myData.GetOENumbers();
-                          OELinks = _myData.GetOELinks();
+                          CancelEdit();
+                          List_OENames = _myOE.Get_OENames();
+                          List_OENumbers = _myOE.Get_OENumbers();
+                          List_OELinks = _myOE.Get_OELinks();
                       }
                   }));
         }
         /// <summary>
         /// Command zum Löschen einer OE-Gruppe
         /// </summary>
-        public MyRelayCommand DeleteOENameCmd
+        public MyRelayCommand Cmd_DeleteOENameCmd
         {
-            get => _deleteOENameCmd
-                  ?? (_deleteOENameCmd = new MyRelayCommand(() =>
+            get => _cmd_DeleteOENameCmd
+                  ?? (_cmd_DeleteOENameCmd = new MyRelayCommand(() =>
                   {
-                      if (SelectedName != null)
+                      if (OE_SelectedName != null)
                       {
-                          if (_myData.DeleteOEName(SelectedName.OE_Name))
+                          if (_myOE.Delete_OEName(OE_SelectedName.OE_Name))
                           {
-                              OENames = _myData.GetOENames();
-                              OENumbers = _myData.GetOENumbers();
-                              OELinks = _myData.GetOELinks();
+                              List_OENames = _myOE.Get_OENames();
+                              List_OENumbers = _myOE.Get_OENumbers();
+                              List_OELinks = _myOE.Get_OELinks();
                           }
                       }
                       else
@@ -387,18 +387,18 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Command zum Speichern einer OE-Relation
         /// </summary>
-        public MyRelayCommand DeleteOELinkCmd
+        public MyRelayCommand Cmd_DeleteOELinkCmd
         {
-            get => _deleteOELinkCmd
-                  ?? (_deleteOELinkCmd = new MyRelayCommand(() =>
+            get => _cmd_DeleteOELinkCmd
+                  ?? (_cmd_DeleteOELinkCmd = new MyRelayCommand(() =>
                   {
-                      if (SelectedLink != null)
+                      if (OE_SelectedLink != null)
                       {
-                          if (_myData.DeleteOELink(SelectedLink.OE_Name, SelectedLink.OE_Nummer))
+                          if (_myOE.Delete_OELink(OE_SelectedLink.OE_Name, OE_SelectedLink.OE_Nummer))
                           {
-                              OENames = _myData.GetOENames();
-                              OENumbers = _myData.GetOENumbers();
-                              OELinks = _myData.GetOELinks();
+                              List_OENames = _myOE.Get_OENames();
+                              List_OENumbers = _myOE.Get_OENumbers();
+                              List_OELinks = _myOE.Get_OELinks();
                           }
                       }
                       else
@@ -410,18 +410,18 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Command zum Löschen einer OE-Nummer
         /// </summary>
-        public MyRelayCommand DeleteOENumberCmd
+        public MyRelayCommand Cmd_DeleteOENumberCmd
         {
-            get => _deleteOENumberCmd
-                  ?? (_deleteOENumberCmd = new MyRelayCommand(() =>
+            get => _cmd_DeleteOENumberCmd
+                  ?? (_cmd_DeleteOENumberCmd = new MyRelayCommand(() =>
                   {
-                      if (SelectedNumber != null)
+                      if (OE_SelectedNumber != null)
                       {
-                          if (_myData.DeleteOENumber(SelectedNumber.OE_Nummer))
+                          if (_myOE.Delete_OENumber(OE_SelectedNumber.OE_Nummer))
                           {
-                              OENames = _myData.GetOENames();
-                              OENumbers = _myData.GetOENumbers();
-                              OELinks = _myData.GetOELinks();
+                              List_OENames = _myOE.Get_OENames();
+                              List_OENumbers = _myOE.Get_OENumbers();
+                              List_OELinks = _myOE.Get_OELinks();
                           }
                       }
                       else
@@ -444,86 +444,87 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Sichtbarkeit des OE-Gruppen Startfensters
         /// </summary>
-        public Visibility NameVis
+        public Visibility Vis_NameBorder
         {
-            get => _nameVis;
-            set => Set(() => NameVis, ref _nameVis, value);
+            get => _vis_NameBorder;
+            set => Set(() => Vis_NameBorder, ref _vis_NameBorder, value);
         }
         /// <summary>
         /// Sichtbarkeit des OE-Gruppen Bearbeitungsfensters
         /// </summary>
-        public Visibility NameEditBorderVis
+        public Visibility Vis_NameEditBorder
         {
-            get => _nameEditBorderVis;
-            set => Set(() => NameEditBorderVis, ref _nameEditBorderVis, value);
+            get => _vis_NameEditBorder;
+            set => Set(() => Vis_NameEditBorder, ref _vis_NameEditBorder, value);
         }
         /// <summary>
         /// Sichtbarkeit des OE-Gruppen Erstellungsfensters
         /// </summary>
-        public Visibility NameNewBorderVis
+        public Visibility Vis_NameNewBorder
         {
-            get => _nameNewBorderVis;
-            set => Set(() => NameNewBorderVis, ref _nameNewBorderVis, value);
+            get => _vis_NameNewBorder;
+            set => Set(() => Vis_NameNewBorder, ref _vis_NameNewBorder, value);
         }
         /// <summary>
         /// Sichtbarkeit des OE-Relation Startfensters
         /// </summary>
-        public Visibility LinkVis
+        public Visibility Vis_LinkBorder
         {
-            get => _linkVis;
-            set => Set(() => LinkVis, ref _linkVis, value);
+            get => _vis_LinkBorder;
+            set => Set(() => Vis_LinkBorder, ref _vis_LinkBorder, value);
         }
         /// <summary>
         /// Sichtbarkeit des OE Relation Erstellungsfensters
         /// </summary>
-        public Visibility LinkNewBorderVis
+        public Visibility Vis_LinkNewBorder
         {
-            get => _linkNewBorderVis;
-            set => Set(() => LinkNewBorderVis, ref _linkNewBorderVis, value);
+            get => _vis_LinkNewBorder;
+            set => Set(() => Vis_LinkNewBorder, ref _vis_LinkNewBorder, value);
         }
         /// <summary>
         /// Sichtbarkeit des OE-Nummern Startfensters
         /// </summary>
-        public Visibility NumberVis
+        public Visibility Vis_NumberBorder
         {
-            get => _numberVis;
-            set => Set(() => NumberVis, ref _numberVis, value);
+            get => _vis_NumberBorder;
+            set => Set(() => Vis_NumberBorder, ref _vis_NumberBorder, value);
         }
         /// <summary>
         /// Sichtbarkeit des OE-Nummern Bearbeitungsfensters
         /// </summary>
-        public Visibility NumberEditBorderVis
+        public Visibility Vis_NumberEditBorder
         {
-            get => _numberEditBorderVis;
-            set => Set(() => NumberEditBorderVis, ref _numberEditBorderVis, value);
+            get => _vis_NumberEditBorder;
+            set => Set(() => Vis_NumberEditBorder, ref _vis_NumberEditBorder, value);
         }
         /// <summary>
         /// Sichtbarkeit des OE-Nummern Erstellungsfensters
         /// </summary>
-        public Visibility NumberNewBorderVis
+        public Visibility Vis_NumberNewBorder
         {
-            get => _numberNewBorderVis;
-            set => Set(() => NumberNewBorderVis, ref _numberNewBorderVis, value);
+            get => _vis_NumberNewBorder;
+            set => Set(() => Vis_NumberNewBorder, ref _vis_NumberNewBorder, value);
         }
         #endregion
 
         /// <summary>
         /// Command zum Zurückkehren zum vorherigen VM
         /// </summary>
-        public MyRelayCommand NavBack
+        public MyRelayCommand Cmd_NavBack
         {
             get => new MyRelayCommand(() =>
                 {
                     Cleanup();
                     _myNavi.NavigateBack();
-                    _myData.UnlockObject(Table_Lock_Flags.OEs, 0);
+                    _myLock.Unlock_Object(Table_Lock_Flags.OEs, 0);
                 });
         }
 
         #region Services
         private readonly IMyNavigationService _myNavi;
         private readonly IMyDialogService _myDia;
-        private readonly IMyDataService _myData;
+        private readonly IMyDataService_OE _myOE;
+        private readonly IMyDataService_Lock _myLock;
         #endregion
 
         /// <summary>
@@ -531,46 +532,48 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// OE-Gruppen sind jene, die einem Prozess als "Verantwortliche OE" zugewiesen werden.
         /// Zur Steuerung der angezeigten Prozesse für einen user müssen somit den Gruppen die korrekten Nummern zugeordnet werden.
         /// </summary>
-        /// <param name="myDialogService"></param>
-        /// <param name="myNavigationService"></param>
-        /// <param name="myDataService"></param>
-        public OE_AssignmentView_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyDataService myDataService)
+        /// <param name="myDia"></param>
+        /// <param name="myNavi"></param>
+        /// <param name="myOE"></param>
+        public OE_AssignmentView_ViewModel(IMyDialogService myDia, IMyNavigationService myNavi, 
+            IMyDataService_OE myOE, IMyDataService_Lock myLock)
         {
-            _myDia = myDialogService;
-            _myNavi = myNavigationService;
-            _myData = myDataService;
+            _myDia = myDia;
+            _myLock = myLock;
+            _myNavi = myNavi;
+            _myOE = myOE;
 
-            OENames = _myData.GetOENames();
-            OENumbers = _myData.GetOENumbers();
-            OELinks = _myData.GetOELinks();
-            NameVis = Visibility.Visible;
-            NameNewBorderVis = Visibility.Collapsed;
-            NameEditBorderVis = Visibility.Collapsed;
+            List_OENames = _myOE.Get_OENames();
+            List_OENumbers = _myOE.Get_OENumbers();
+            List_OELinks = _myOE.Get_OELinks();
+            Vis_NameBorder = Visibility.Visible;
+            Vis_NameNewBorder = Visibility.Collapsed;
+            Vis_NameEditBorder = Visibility.Collapsed;
 
-            LinkVis = Visibility.Visible;
-            LinkNewBorderVis = Visibility.Collapsed;
+            Vis_LinkBorder = Visibility.Visible;
+            Vis_LinkNewBorder = Visibility.Collapsed;
 
-            NumberVis = Visibility.Visible;
-            NumberNewBorderVis = Visibility.Collapsed;
-            NumberEditBorderVis = Visibility.Collapsed;
+            Vis_NumberBorder = Visibility.Visible;
+            Vis_NumberNewBorder = Visibility.Collapsed;
+            Vis_NumberEditBorder = Visibility.Collapsed;
         }
 
         /// <summary>
         /// Bricht die Bearbeitung ab
         /// </summary>
-        public void CancelEditFunc()
+        public void CancelEdit()
         {
             IsFree = true;
-            NameVis = Visibility.Visible;
-            NameNewBorderVis = Visibility.Collapsed;
-            NameEditBorderVis = Visibility.Collapsed;
+            Vis_NameBorder = Visibility.Visible;
+            Vis_NameNewBorder = Visibility.Collapsed;
+            Vis_NameEditBorder = Visibility.Collapsed;
 
-            LinkVis = Visibility.Visible;
-            LinkNewBorderVis = Visibility.Collapsed;
+            Vis_LinkBorder = Visibility.Visible;
+            Vis_LinkNewBorder = Visibility.Collapsed;
 
-            NumberVis = Visibility.Visible;
-            NumberNewBorderVis = Visibility.Collapsed;
-            NumberEditBorderVis = Visibility.Collapsed;
+            Vis_NumberBorder = Visibility.Visible;
+            Vis_NumberNewBorder = Visibility.Collapsed;
+            Vis_NumberEditBorder = Visibility.Collapsed;
         }
 
         /// <summary>

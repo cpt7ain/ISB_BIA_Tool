@@ -7,47 +7,47 @@ namespace ISB_BIA_IMPORT1.Services
 {
     public class MyDesignTimeExportService : IMyExportService
     {
-        public bool AllActiveApplicationsExport()
+        public bool App_ExportActiveApplications()
         {
             return true;
         }
 
-        public bool AllActiveProcessesExport()
+        public bool Proc_ExportActiveProcesses()
         {
             return true;
         }
 
-        public bool AllApplicationsExport()
+        public bool App_ExportAllApplications()
         {
             return true;
         }
 
-        public bool ExportApplications(ObservableCollection<ISB_BIA_Applikationen> appList, string title, int id=0)
+        public bool App_ExportApplications(ObservableCollection<ISB_BIA_Applikationen> appList, string title, int id=0)
         {
             return true;
         }
 
-        public bool ExportSegmentAndAttributeHistory()
+        public bool IS_Attr_ExportSegmentAndAttributeHistory()
         {
             return true;
         }
 
-        public bool ExportDeltaAnalysis(ObservableCollection<ISB_BIA_Delta_Analyse> DeltaList)
+        public bool Delta_ExportDeltaAnalysis(ObservableCollection<ISB_BIA_Delta_Analyse> DeltaList)
         {
             return true;
         }
 
-        public bool ExportLog(ObservableCollection<ISB_BIA_Log> Log)
+        public bool Log_ExportLog(ObservableCollection<ISB_BIA_Log> Log)
         {
             return true;
         }
 
-        public bool ExportProcesses(ObservableCollection<ISB_BIA_Prozesse> procList, int id = 0)
+        public bool Proc_ExportProcesses(ObservableCollection<ISB_BIA_Prozesse> procList, int id = 0)
         {
             return true;
         }
 
-        public bool ExportSettings(List<ISB_BIA_Settings> Settings)
+        public bool Set_ExportSettings(List<ISB_BIA_Settings> Settings)
         {
             return true;
         }

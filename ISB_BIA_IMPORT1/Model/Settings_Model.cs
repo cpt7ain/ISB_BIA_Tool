@@ -21,7 +21,7 @@ namespace ISB_BIA_IMPORT1.Model
         private bool _delta_abgeschlossen;
         private bool _attribut9_aktiviert;
         private bool _attribut10_aktiviert;
-        private bool _multi_Save;
+        private bool _multi_Speichern;
         private DateTime _datum;
         private string _benutzer="";
         #endregion
@@ -125,10 +125,10 @@ namespace ISB_BIA_IMPORT1.Model
         /// <summary>
         /// Einstellung zum aktivieren der Speicherung mehrerer Objekte (Prozesse, Anwendung) in der Listenansicht
         /// </summary>
-        public bool Multi_Save
+        public bool Multi_Speichern
         {
-            get => _multi_Save;
-            set => Set(() => Multi_Save, ref _multi_Save, value);
+            get => _multi_Speichern;
+            set => Set(() => Multi_Speichern, ref _multi_Speichern, value);
         }
         /// <summary>
         /// Bearbeitungsdatum des Datensatzes

@@ -7,7 +7,7 @@ namespace ISB_BIA_IMPORT1.Services
     {
         public bool ConstructionMode { get; set; } = false;
 
-        public Current_Environment Current_Environment { get; set; } = Current_Environment.Local_Test;
+        public Current_Environment CurrentEnvironment { get; set; } = Current_Environment.Local_Test;
 
         public bool Admin { get; set; } = true;
 

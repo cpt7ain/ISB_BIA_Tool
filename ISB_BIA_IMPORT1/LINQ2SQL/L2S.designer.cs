@@ -707,7 +707,7 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
 		
 		private string _Attribut10_aktiviert;
 		
-		private string _Multi_Save;
+		private string _Multi_Speichern;
 		
 		private System.DateTime _Datum;
 		
@@ -743,8 +743,8 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
     partial void OnAttribut9_aktiviertChanged();
     partial void OnAttribut10_aktiviertChanging(string value);
     partial void OnAttribut10_aktiviertChanged();
-    partial void OnMulti_SaveChanging(string value);
-    partial void OnMulti_SaveChanged();
+    partial void OnMulti_SpeichernChanging(string value);
+    partial void OnMulti_SpeichernChanged();
     partial void OnDatumChanging(System.DateTime value);
     partial void OnDatumChanged();
     partial void OnBenutzerChanging(string value);
@@ -1016,22 +1016,22 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Multi_Save", DbType="VarChar(10) NOT NULL", CanBeNull=false)]
-		public string Multi_Save
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Multi_Speichern", DbType="VarChar(10) NOT NULL", CanBeNull=false)]
+		public string Multi_Speichern
 		{
 			get
 			{
-				return this._Multi_Save;
+				return this._Multi_Speichern;
 			}
 			set
 			{
-				if ((this._Multi_Save != value))
+				if ((this._Multi_Speichern != value))
 				{
-					this.OnMulti_SaveChanging(value);
+					this.OnMulti_SpeichernChanging(value);
 					this.SendPropertyChanging();
-					this._Multi_Save = value;
-					this.SendPropertyChanged("Multi_Save");
-					this.OnMulti_SaveChanged();
+					this._Multi_Speichern = value;
+					this.SendPropertyChanged("Multi_Speichern");
+					this.OnMulti_SpeichernChanged();
 				}
 			}
 		}
@@ -2321,9 +2321,9 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
 		
 		private int _Id;
 		
-		private int _Table_Flag;
+		private int _Tabellen_Kennzeichen;
 		
-		private int _Object_Id;
+		private int _Objekt_Id;
 		
 		private System.DateTime _Datum;
 		
@@ -2339,10 +2339,10 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
     partial void OnCreated();
     partial void OnIdChanging(int value);
     partial void OnIdChanged();
-    partial void OnTable_FlagChanging(int value);
-    partial void OnTable_FlagChanged();
-    partial void OnObject_IdChanging(int value);
-    partial void OnObject_IdChanged();
+    partial void OnTabellen_KennzeichenChanging(int value);
+    partial void OnTabellen_KennzeichenChanged();
+    partial void OnObjekt_IdChanging(int value);
+    partial void OnObjekt_IdChanged();
     partial void OnDatumChanging(System.DateTime value);
     partial void OnDatumChanged();
     partial void OnBenutzerNnVnChanging(string value);
@@ -2378,42 +2378,42 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Table_Flag", DbType="Int NOT NULL")]
-		public int Table_Flag
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Tabellen_Kennzeichen", DbType="Int NOT NULL")]
+		public int Tabellen_Kennzeichen
 		{
 			get
 			{
-				return this._Table_Flag;
+				return this._Tabellen_Kennzeichen;
 			}
 			set
 			{
-				if ((this._Table_Flag != value))
+				if ((this._Tabellen_Kennzeichen != value))
 				{
-					this.OnTable_FlagChanging(value);
+					this.OnTabellen_KennzeichenChanging(value);
 					this.SendPropertyChanging();
-					this._Table_Flag = value;
-					this.SendPropertyChanged("Table_Flag");
-					this.OnTable_FlagChanged();
+					this._Tabellen_Kennzeichen = value;
+					this.SendPropertyChanged("Tabellen_Kennzeichen");
+					this.OnTabellen_KennzeichenChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Object_Id", DbType="Int NOT NULL")]
-		public int Object_Id
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Objekt_Id", DbType="Int NOT NULL")]
+		public int Objekt_Id
 		{
 			get
 			{
-				return this._Object_Id;
+				return this._Objekt_Id;
 			}
 			set
 			{
-				if ((this._Object_Id != value))
+				if ((this._Objekt_Id != value))
 				{
-					this.OnObject_IdChanging(value);
+					this.OnObjekt_IdChanging(value);
 					this.SendPropertyChanging();
-					this._Object_Id = value;
-					this.SendPropertyChanged("Object_Id");
-					this.OnObject_IdChanged();
+					this._Objekt_Id = value;
+					this.SendPropertyChanged("Objekt_Id");
+					this.OnObjekt_IdChanged();
 				}
 			}
 		}
@@ -2527,7 +2527,7 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
 		
 		private int _Id;
 		
-		private string _Action;
+		private string _Aktion;
 		
 		private string _Tabelle;
 		
@@ -2547,8 +2547,8 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
     partial void OnCreated();
     partial void OnIdChanging(int value);
     partial void OnIdChanged();
-    partial void OnActionChanging(string value);
-    partial void OnActionChanged();
+    partial void OnAktionChanging(string value);
+    partial void OnAktionChanged();
     partial void OnTabelleChanging(string value);
     partial void OnTabelleChanged();
     partial void OnDetailsChanging(string value);
@@ -2588,22 +2588,22 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Action", DbType="VarChar(200) NOT NULL", CanBeNull=false)]
-		public string Action
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Aktion", DbType="VarChar(200) NOT NULL", CanBeNull=false)]
+		public string Aktion
 		{
 			get
 			{
-				return this._Action;
+				return this._Aktion;
 			}
 			set
 			{
-				if ((this._Action != value))
+				if ((this._Aktion != value))
 				{
-					this.OnActionChanging(value);
+					this.OnAktionChanging(value);
 					this.SendPropertyChanging();
-					this._Action = value;
-					this.SendPropertyChanged("Action");
-					this.OnActionChanged();
+					this._Aktion = value;
+					this.SendPropertyChanged("Aktion");
+					this.OnAktionChanged();
 				}
 			}
 		}

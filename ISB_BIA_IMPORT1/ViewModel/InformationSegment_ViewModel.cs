@@ -17,37 +17,37 @@ namespace ISB_BIA_IMPORT1.ViewModel
     public class InformationSegment_ViewModel : ViewModelBase
     {
         #region Backing-Fields
-        private ObservableCollection<string> _attributeNameList;
-        private InformationSegment_Model _currentSegment;
-        private InformationSegment_Model _oldSegment;
+        private ObservableCollection<string> _list_AttributeName;
+        private InformationSegment_Model _segmentCurrent;
+        private InformationSegment_Model _segmentOld;
         private ISISAttributeMode _mode;
         #endregion
 
         /// <summary>
         ///  Attribut-Namensliste zur Darstellung, welche Attribute auf das aktuelle Segment zutreffen
         /// </summary>
-        public ObservableCollection<string> AttributeNameList
+        public ObservableCollection<string> List_AttributeName
         {
-            get => _attributeNameList;
-            set => Set(() => AttributeNameList, ref _attributeNameList, value);
+            get => _list_AttributeName;
+            set => Set(() => List_AttributeName, ref _list_AttributeName, value);
         }
 
         /// <summary>
         /// Aktuelles Segment an dem Änderungen vorgenommen werden
         /// </summary>
-        public InformationSegment_Model CurrentSegment
+        public InformationSegment_Model SegmentCurrent
         {
-            get => _currentSegment;
-            set => Set(() => CurrentSegment, ref _currentSegment, value);
+            get => _segmentCurrent;
+            set => Set(() => SegmentCurrent, ref _segmentCurrent, value);
         }
 
         /// <summary>
         /// Altes Segment zum aufspüren von Änderungen
         /// </summary>
-        public InformationSegment_Model OldSegment
+        public InformationSegment_Model SegmentOld
         {
-            get => _oldSegment;
-            set => Set(() => OldSegment, ref _oldSegment, value);
+            get => _segmentOld;
+            set => Set(() => SegmentOld, ref _segmentOld, value);
         }
 
         #region Properties für Einstellungen bezüglich Bearbeitung durch Admin/CISO oder betrachten durch Normalen User
@@ -75,7 +75,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Sichtbarkeit von Attribut 9
         /// </summary>
-        public Visibility EnableAttribut9
+        public Visibility Vis_Attribut9
         {
             get => (Settings.Attribut9_aktiviert == "Ja") ? Visibility.Visible : Visibility.Collapsed;
         }
@@ -83,7 +83,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Sichtbarkeit von Attribut 10
         /// </summary>
-        public Visibility EnableAttribut10
+        public Visibility Vis_Attribut10
         {
             get => (Settings.Attribut10_aktiviert == "Ja") ? Visibility.Visible : Visibility.Collapsed;
         }
@@ -96,15 +96,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Command zum Speichern des Segments und zurückkehren zu Prozess oder Übersicht
         /// </summary>
-        public MyRelayCommand Save
+        public MyRelayCommand Cmd_Save
         {
             get => new MyRelayCommand(() =>
             {
-                if (_myData.InsertIS(CurrentSegment, OldSegment))
+                if (_myIS.Insert_Segment(SegmentCurrent, SegmentOld))
                 {
                     Cleanup();
                     _myNavi.NavigateBack(true);
-                    _myData.UnlockObject(Table_Lock_Flags.Segment, CurrentSegment.Informationssegment_Id);
+                    _myLock.Unlock_Object(Table_Lock_Flags.Segment, SegmentCurrent.Informationssegment_Id);
                 }
             });
         }
@@ -112,7 +112,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Command zum Zurückkehren zum vorherigen VM
         /// </summary>
-        public MyRelayCommand NavBack
+        public MyRelayCommand Cmd_NavBack
         {
             get => new MyRelayCommand(() =>
             {
@@ -125,7 +125,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 {
                     Cleanup();
                     _myNavi.NavigateBack();
-                    _myData.UnlockObject(Table_Lock_Flags.Segment, CurrentSegment.Informationssegment_Id);
+                    _myLock.Unlock_Object(Table_Lock_Flags.Segment, SegmentCurrent.Informationssegment_Id);
                 }
             });
         }
@@ -133,48 +133,54 @@ namespace ISB_BIA_IMPORT1.ViewModel
         #region Services
         private readonly IMyNavigationService _myNavi;
         private readonly IMyDialogService _myDia;
-        private readonly IMyDataService _myData;
+        private readonly IMyDataService_IS_Attribute _myIS;
+        private readonly IMyDataService_Lock _myLock;
+        private readonly IMyDataService_Setting _mySett;
+
         #endregion
 
         /// <summary>
         /// Konstruktor
         /// </summary>
-        /// <param name="myDialogService"></param>
-        /// <param name="myNavigationService"></param>
-        /// <param name="myDataService"></param>
-        public InformationSegment_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyDataService myDataService)
+        /// <param name="myDia"></param>
+        /// <param name="myNavi"></param>
+        /// <param name="myIS"></param>
+        public InformationSegment_ViewModel(IMyDialogService myDia, IMyNavigationService myNavi, 
+            IMyDataService_Setting mySett,IMyDataService_IS_Attribute myIS, IMyDataService_Lock myLock)
         {
             #region Services
-            _myDia = myDialogService;
-            _myNavi = myNavigationService;
-            _myData = myDataService;
+            _myDia = myDia;
+            _mySett = mySett;
+            _myNavi = myNavi;
+            _myIS = myIS;
+            _myLock = myLock;
             #endregion
             if (IsInDesignMode)
             {
-                CurrentSegment = _myData.GetSegmentModelFromDB(1);
-                AttributeNameList = _myData.GetAttributeNamesAndInfoForIS();
+                SegmentCurrent = _myIS.Get_SegmentModelFromDB(1);
+                List_AttributeName = _myIS.Get_List_AttributeNamesAndInfoForIS();
             }
             else
             {
                 //Abrufen der Attributnamen
-                AttributeNameList = _myData.GetAttributeNamesAndInfoForIS();
+                List_AttributeName = _myIS.Get_List_AttributeNamesAndInfoForIS();
                 //Message Registrierung für Bearbeitungsmodus
                 MessengerInstance.Register<NotificationMessage<int>>(this, ISISAttributeMode.Edit, idMessage =>
                 {
                     if (!(idMessage.Sender is IMyNavigationService)) return;
                     Mode = ISISAttributeMode.Edit;
-                    CurrentSegment = _myData.GetSegmentModelFromDB(idMessage.Content);
-                    OldSegment = _myData.GetSegmentModelFromDB(idMessage.Content);
+                    SegmentCurrent = _myIS.Get_SegmentModelFromDB(idMessage.Content);
+                    SegmentOld = _myIS.Get_SegmentModelFromDB(idMessage.Content);
                 });
                 //Message Registrierung für Ansichtssmodus
                 MessengerInstance.Register<NotificationMessage<int>>(this, ISISAttributeMode.View, idMessage => 
                 {
                     if (!(idMessage.Sender is IMyNavigationService)) return;
                     Mode = ISISAttributeMode.View;
-                    CurrentSegment = _myData.GetSegmentModelFromDB(idMessage.Content);
+                    SegmentCurrent = _myIS.Get_SegmentModelFromDB(idMessage.Content);
                 });
                 //Abrfen der Einstellungen
-                Settings = _myData.GetSettings();
+                Settings = _mySett.Get_Settings();
             }     
         }
 

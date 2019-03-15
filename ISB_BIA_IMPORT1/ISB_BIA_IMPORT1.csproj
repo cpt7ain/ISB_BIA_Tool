@@ -137,12 +137,39 @@
     <Compile Include="Model\Login_Model.cs" />
     <Compile Include="Model\Process_Model.cs" />
     <Compile Include="Model\Settings_Model.cs" />
+    <Compile Include="Services\DesignTimeServices\MyDesignTimeDataService_Application.cs" />
+    <Compile Include="Services\DesignTimeServices\MyDesignTimeDataService_DataModel.cs" />
+    <Compile Include="Services\DesignTimeServices\MyDesignTimeDataService_Delta.cs" />
+    <Compile Include="Services\DesignTimeServices\MyDesignTimeDataService_IS_Attribute.cs" />
+    <Compile Include="Services\DesignTimeServices\MyDesignTimeDataService_Lock.cs" />
+    <Compile Include="Services\DesignTimeServices\MyDesignTimeDataService_Log.cs" />
+    <Compile Include="Services\DesignTimeServices\MyDesignTimeDataService_OE.cs" />
+    <Compile Include="Services\DesignTimeServices\MyDesignTimeDataService_Process.cs" />
+    <Compile Include="Services\DesignTimeServices\MyDesignTimeDataService_Setting.cs" />
+    <Compile Include="Services\Interfaces\IMyDataService_Application.cs" />
+    <Compile Include="Services\Interfaces\IMyDataService_DataModel.cs" />
+    <Compile Include="Services\Interfaces\IMyDataService_Delta.cs" />
+    <Compile Include="Services\Interfaces\IMyDataService_OE.cs" />
+    <Compile Include="Services\Interfaces\IMyDataService_Process.cs" />
+    <Compile Include="Services\Interfaces\IMyDataService_IS_Attribute.cs" />
+    <Compile Include="Services\Interfaces\IMyDataService_Setting.cs" />
+    <Compile Include="Services\Interfaces\IMyDataService_Lock.cs" />
     <Compile Include="Services\Interfaces\IMyDataService.cs" />
     <Compile Include="Services\Interfaces\IMyDialogService.cs" />
     <Compile Include="Services\Interfaces\IMyExportService.cs" />
     <Compile Include="Services\Interfaces\IMyMailNotificationService.cs" />
     <Compile Include="Services\Interfaces\IMyNavigationService.cs" />
     <Compile Include="Services\Interfaces\IMySharedResourceService.cs" />
+    <Compile Include="Services\Interfaces\IMyDataService_Log.cs" />
+    <Compile Include="Services\RuntimeServices\MyDataService_Log.cs" />
+    <Compile Include="Services\RuntimeServices\MyDataService_DataModel.cs" />
+    <Compile Include="Services\RuntimeServices\MyDataService_Delta.cs" />
+    <Compile Include="Services\RuntimeServices\MyDataService_Lock.cs" />
+    <Compile Include="Services\RuntimeServices\MyDataService_Setting.cs" />
+    <Compile Include="Services\RuntimeServices\MyDataService_IS_Attribute.cs" />
+    <Compile Include="Services\RuntimeServices\MyDataService_OE.cs" />
+    <Compile Include="Services\RuntimeServices\MyDataService_Process.cs" />
+    <Compile Include="Services\RuntimeServices\MyDataService_Application.cs" />
     <Compile Include="Services\RuntimeServices\MyDataService.cs" />
     <Compile Include="Services\DesignTimeServices\MyDesignTimeDataService.cs" />
     <Compile Include="Services\DesignTimeServices\MyDesignTimeDialogService.cs" />
@@ -199,6 +226,9 @@
     </Compile>
     <Compile Include="View\LogView_View.xaml.cs">
       <DependentUpon>LogView_View.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Menu_View1.xaml.cs">
+      <DependentUpon>Menu_View1.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Menu_View.xaml.cs">
       <DependentUpon>Menu_View.xaml</DependentUpon>
@@ -266,6 +296,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="View\Menu_View1.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="View\Menu_View.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -311,9 +345,25 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="app.config" />
-    <None Include="ClassDiagram1.cd" />
-    <None Include="ClassDiagramV.cd" />
-    <None Include="ClassDiagramVM.cd" />
+    <None Include="CLD\ClassDiagram1.cd" />
+    <None Include="CLD\ClassDiagram2.cd" />
+    <None Include="CLD\ClassDiagramISB.cd" />
+    <None Include="CLD\CLMS.cd" />
+    <None Include="CLD\CLSS.cd" />
+    <None Include="CLD\CLDS.cd" />
+    <None Include="CLD\CLES.cd" />
+    <None Include="CLD\CLNS.cd" />
+    <None Include="CLD\CLDSApp.cd" />
+    <None Include="CLD\CLDSIS.cd" />
+    <None Include="CLD\CLDSSett.cd" />
+    <None Include="CLD\CLDSLock.cd" />
+    <None Include="CLD\CLDSLog.cd" />
+    <None Include="CLD\CLDSOE.cd" />
+    <None Include="CLD\CLDSDelta.cd" />
+    <None Include="CLD\CLDSDM.cd" />
+    <None Include="CLD\CLDSProc.cd" />
+    <None Include="CLD\ClassDiagramV.cd" />
+    <None Include="CLD\ClassDiagramVM.cd" />
     <None Include="LINQ2SQL\L2S.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>
       <LastGenOutput>L2S.designer.cs</LastGenOutput>
@@ -327,6 +377,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Services\Interfaces\CLDSApp.cd" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="Microsoft.Office.Core">

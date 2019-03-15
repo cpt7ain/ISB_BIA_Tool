@@ -21,7 +21,7 @@ namespace ISB_BIA_IMPORT1.Services.Interfaces
         /// <summary>
         /// Variable zum Testen der Anwendung außerhalb der Produktivumgebung (Deaktiviert ActiveDirectory-Check etc.)
         /// </summary>
-        Current_Environment Current_Environment { get; set; }
+        Current_Environment CurrentEnvironment { get; set; }
         /// <summary>
         /// Variable zum Testen der Anwendung als Admin in der Produktivumgebung 
         /// </summary>

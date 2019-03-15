@@ -21,46 +21,46 @@ namespace ISB_BIA_IMPORT1.ViewModel
     public class Application_ViewModel : ViewModelBase
     {
         #region Backing-Fields
-        private Application_Model _currentApplication;
+        private Application_Model _applicationCurrent;
         private Application_Model _oldCurrentApplication;
 
-        private string _rechenzentrum = "";
-        private string _rechenzentrum_Text = "";
-        private bool _rechenzentrum_Check;
-        private string _server = "";
-        private string _server_Text = "";
-        private bool _server_Check;
-        private string _virtuelle_Maschine = "";
-        private string _virtuelle_Maschine_Text = "";
-        private bool _virtuelle_Maschine_Check;
-        private string _typ = "";
-        private string _typ_Text = "";
-        private bool _typ_Check;
-        private string _iT_Betriebsart = "";
-        private string _iT_Betriebsart_Text = "";
-        private bool _iT_Betriebsart_Check;
-        private ObservableCollection<string> _rechenzentrumList;
-        private ObservableCollection<string> _serverList;
-        private ObservableCollection<string> _virtuelle_MaschineList;
-        private ObservableCollection<string> _typeList;
-        private ObservableCollection<string> _iT_BetriebsartList;
+        private string _app_Rechenzentrum = "";
+        private string _app_RechenzentrumText = "";
+        private bool _app_RechenzentrumCheck;
+        private string _app_Server = "";
+        private string _app_Server_Text = "";
+        private bool _app_Server_Check;
+        private string _app_Virtuelle_Maschine = "";
+        private string _app_Virtuelle_Maschine_Text = "";
+        private bool _app_Virtuelle_Maschine_Check;
+        private string _app_Typ = "";
+        private string _app_Typ_Text = "";
+        private bool _app_Typ_Check;
+        private string _app_IT_Betriebsart = "";
+        private string _app_IT_Betriebsart_Text = "";
+        private bool _app_IT_Betriebsart_Check;
+        private ObservableCollection<string> _list_Rechenzentrum;
+        private ObservableCollection<string> _list_Server;
+        private ObservableCollection<string> _list_Virtuelle_Maschine;
+        private ObservableCollection<string> _list_Typ;
+        private ObservableCollection<string> _list_IT_Betriebsart;
         private ProcAppMode _mode;
         private int _currentTab;
-        private MyRelayCommand _nextTab;
-        private MyRelayCommand _prevTab;
-        private Visibility _buttonSaveVisibility;
-        private MyRelayCommand _exportApplicationHistory;
-        private MyRelayCommand<string> _info;
-        private MyRelayCommand _resetValues;
+        private MyRelayCommand _cmd_NextTab;
+        private MyRelayCommand _cmd_PrevTab;
+        private Visibility _vis_SaveButton;
+        private MyRelayCommand _cmd_ExportApplicationHistory;
+        private MyRelayCommand<string> _cmd_Info;
+        private MyRelayCommand _cmd_ResetValues;
         #endregion
 
         /// <summary>
         /// Aktuell geöffnete Applikation
         /// </summary>
-        public Application_Model CurrentApplication
+        public Application_Model ApplicationCurrent
         {
-            get => _currentApplication;
-            set => Set(() => CurrentApplication, ref _currentApplication, value);
+            get => _applicationCurrent;
+            set => Set(() => ApplicationCurrent, ref _applicationCurrent, value);
         }
 
         // Eigenschaften, welche gebraucht werden um Korrekte Übernahme der vom User gewollten Werte zu sichern,
@@ -70,228 +70,228 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Rechenzentrum (DropDown)
         /// </summary>
-        public string Rechenzentrum
+        public string App_Rechenzentrum
         {
-            get => _rechenzentrum;
+            get => _app_Rechenzentrum;
             set
             {
-                Set(() => Rechenzentrum, ref _rechenzentrum, value);
-                if (Rechenzentrum_Check)
-                    CurrentApplication.Rechenzentrum = Rechenzentrum_Text;
+                Set(() => App_Rechenzentrum, ref _app_Rechenzentrum, value);
+                if (App_Rechenzentrum_Check)
+                    ApplicationCurrent.Rechenzentrum = App_Rechenzentrum_Text;
                 else
-                    CurrentApplication.Rechenzentrum = Rechenzentrum;
+                    ApplicationCurrent.Rechenzentrum = App_Rechenzentrum;
             }
         }
         /// <summary>
         /// Rechenzentrum (TextBox)
         /// </summary>
-        public string Rechenzentrum_Text
+        public string App_Rechenzentrum_Text
         {
-            get => _rechenzentrum_Text;
+            get => _app_RechenzentrumText;
             set
             {
-                Set(() => Rechenzentrum_Text, ref _rechenzentrum_Text, value);
-                if (Rechenzentrum_Check)
-                    CurrentApplication.Rechenzentrum = Rechenzentrum_Text;
+                Set(() => App_Rechenzentrum_Text, ref _app_RechenzentrumText, value);
+                if (App_Rechenzentrum_Check)
+                    ApplicationCurrent.Rechenzentrum = App_Rechenzentrum_Text;
                 else
-                    CurrentApplication.Rechenzentrum = Rechenzentrum;
+                    ApplicationCurrent.Rechenzentrum = App_Rechenzentrum;
             }
         }
         /// <summary>
         /// Rechenzentrum (CheckBox Switch))
         /// </summary>
-        public bool Rechenzentrum_Check
+        public bool App_Rechenzentrum_Check
         {
-            get => _rechenzentrum_Check;
+            get => _app_RechenzentrumCheck;
             set
             {
-                Set(() => Rechenzentrum_Check, ref _rechenzentrum_Check, value);
+                Set(() => App_Rechenzentrum_Check, ref _app_RechenzentrumCheck, value);
                 if (value)
-                    CurrentApplication.Rechenzentrum = Rechenzentrum_Text;
+                    ApplicationCurrent.Rechenzentrum = App_Rechenzentrum_Text;
                 else
-                    CurrentApplication.Rechenzentrum = Rechenzentrum;
+                    ApplicationCurrent.Rechenzentrum = App_Rechenzentrum;
             }
         }
         /// <summary>
         /// Server (DropDown)
         /// </summary>
-        public string Server
+        public string App_Server
         {
-            get => _server;
+            get => _app_Server;
             set
             {
-                Set(() => Server, ref _server, value);
-                if (Server_Check)
-                    CurrentApplication.Rechenzentrum = _server_Text;
+                Set(() => App_Server, ref _app_Server, value);
+                if (App_Server_Check)
+                    ApplicationCurrent.Rechenzentrum = _app_Server_Text;
                 else
-                    CurrentApplication.Rechenzentrum = Server;
+                    ApplicationCurrent.Rechenzentrum = App_Server;
             }
         }
         /// <summary>
         /// Server (TextBox)
         /// </summary>
-        public string Server_Text
+        public string App_Server_Text
         {
-            get => _server_Text;
+            get => _app_Server_Text;
             set
             {
-                Set(() => Server_Text, ref _server_Text, value);
-                if (Server_Check)
-                    CurrentApplication.Rechenzentrum = Server_Text;
+                Set(() => App_Server_Text, ref _app_Server_Text, value);
+                if (App_Server_Check)
+                    ApplicationCurrent.Rechenzentrum = App_Server_Text;
                 else
-                    CurrentApplication.Rechenzentrum = Server;
+                    ApplicationCurrent.Rechenzentrum = App_Server;
             }
         }
         /// <summary>
         /// Server (CheckBox Switch))
         /// </summary>
-        public bool Server_Check
+        public bool App_Server_Check
         {
-            get => _server_Check;
+            get => _app_Server_Check;
             set
             {
-                Set(() => Server_Check, ref _server_Check, value);
+                Set(() => App_Server_Check, ref _app_Server_Check, value);
                 if (value)
-                    CurrentApplication.Server = Rechenzentrum_Text;
+                    ApplicationCurrent.Server = App_Rechenzentrum_Text;
                 else
-                    CurrentApplication.Server = Rechenzentrum;
+                    ApplicationCurrent.Server = App_Rechenzentrum;
             }
         }
         /// <summary>
         /// Virtuelle_Maschine (DropDown)
         /// </summary>
-        public string Virtuelle_Maschine
+        public string App_Virtuelle_Maschine
         {
-            get => _virtuelle_Maschine;
+            get => _app_Virtuelle_Maschine;
             set
             {
-                Set(() => Virtuelle_Maschine, ref _virtuelle_Maschine, value);
-                if (Virtuelle_Maschine_Check)
-                    CurrentApplication.Virtuelle_Maschine = Virtuelle_Maschine_Text;
+                Set(() => App_Virtuelle_Maschine, ref _app_Virtuelle_Maschine, value);
+                if (App_Virtuelle_Maschine_Check)
+                    ApplicationCurrent.Virtuelle_Maschine = App_Virtuelle_Maschine_Text;
                 else
-                    CurrentApplication.Virtuelle_Maschine = Virtuelle_Maschine;
+                    ApplicationCurrent.Virtuelle_Maschine = App_Virtuelle_Maschine;
             }
         }
         /// <summary>
         /// Virtuelle_Maschine (TextBox)
         /// </summary>
-        public string Virtuelle_Maschine_Text
+        public string App_Virtuelle_Maschine_Text
         {
-            get => _virtuelle_Maschine_Text;
+            get => _app_Virtuelle_Maschine_Text;
             set
             {
-                Set(() => Virtuelle_Maschine_Text, ref _virtuelle_Maschine_Text, value);
-                if (Virtuelle_Maschine_Check)
-                    CurrentApplication.Virtuelle_Maschine = Virtuelle_Maschine_Text;
+                Set(() => App_Virtuelle_Maschine_Text, ref _app_Virtuelle_Maschine_Text, value);
+                if (App_Virtuelle_Maschine_Check)
+                    ApplicationCurrent.Virtuelle_Maschine = App_Virtuelle_Maschine_Text;
                 else
-                    CurrentApplication.Virtuelle_Maschine = Virtuelle_Maschine;
+                    ApplicationCurrent.Virtuelle_Maschine = App_Virtuelle_Maschine;
             }
         }
         /// <summary>
         /// Virtuelle_Maschine (CheckBox Switch))
         /// </summary>
-        public bool Virtuelle_Maschine_Check
+        public bool App_Virtuelle_Maschine_Check
         {
-            get => _virtuelle_Maschine_Check;
+            get => _app_Virtuelle_Maschine_Check;
             set
             {
-                Set(() => Virtuelle_Maschine_Check, ref _virtuelle_Maschine_Check, value);
+                Set(() => App_Virtuelle_Maschine_Check, ref _app_Virtuelle_Maschine_Check, value);
                 if (value)
-                    CurrentApplication.Virtuelle_Maschine = Virtuelle_Maschine_Text;
+                    ApplicationCurrent.Virtuelle_Maschine = App_Virtuelle_Maschine_Text;
                 else
-                    CurrentApplication.Virtuelle_Maschine = Virtuelle_Maschine;
+                    ApplicationCurrent.Virtuelle_Maschine = App_Virtuelle_Maschine;
             }
         }
         /// <summary>
         /// Typ (DropDown)
         /// </summary>
-        public string Typ
+        public string App_Typ
         {
-            get => _typ;
+            get => _app_Typ;
             set
             {
-                Set(() => Typ, ref _typ, value);
-                if (Typ_Check)
-                    CurrentApplication.Typ = Typ_Text;
+                Set(() => App_Typ, ref _app_Typ, value);
+                if (App_Typ_Check)
+                    ApplicationCurrent.Typ = App_Typ_Text;
                 else
-                    CurrentApplication.Typ = Typ;
+                    ApplicationCurrent.Typ = App_Typ;
             }
         }
         /// <summary>
         /// Typ (TextBox)
         /// </summary>
-        public string Typ_Text
+        public string App_Typ_Text
         {
-            get => _typ_Text;
+            get => _app_Typ_Text;
             set
             {
-                Set(() => Typ_Text, ref _typ_Text, value);
-                if (Typ_Check)
-                    CurrentApplication.Typ = Typ_Text;
+                Set(() => App_Typ_Text, ref _app_Typ_Text, value);
+                if (App_Typ_Check)
+                    ApplicationCurrent.Typ = App_Typ_Text;
                 else
-                    CurrentApplication.Typ = Typ;
+                    ApplicationCurrent.Typ = App_Typ;
             }
         }
         /// <summary>
         /// Typ (CheckBox Switch))
         /// </summary>
-        public bool Typ_Check
+        public bool App_Typ_Check
         {
-            get => _typ_Check;
+            get => _app_Typ_Check;
             set
             {
-                Set(() => Typ_Check, ref _typ_Check, value);
+                Set(() => App_Typ_Check, ref _app_Typ_Check, value);
                 if (value)
-                    CurrentApplication.Typ = Typ_Text;
+                    ApplicationCurrent.Typ = App_Typ_Text;
                 else
-                    CurrentApplication.Typ = Typ;
+                    ApplicationCurrent.Typ = App_Typ;
             }
         }
         /// <summary>
         /// IT_Betriebsart (DropDown)
         /// </summary>
-        public string IT_Betriebsart
+        public string App_IT_Betriebsart
         {
-            get => _iT_Betriebsart;
+            get => _app_IT_Betriebsart;
             set
             {
-                Set(() => IT_Betriebsart, ref _iT_Betriebsart, value);
-                if (IT_Betriebsart_Check)
-                    CurrentApplication.IT_Betriebsart = IT_Betriebsart_Text;
+                Set(() => App_IT_Betriebsart, ref _app_IT_Betriebsart, value);
+                if (App_IT_Betriebsart_Check)
+                    ApplicationCurrent.IT_Betriebsart = App_IT_Betriebsart_Text;
                 else
-                    CurrentApplication.IT_Betriebsart = IT_Betriebsart;
+                    ApplicationCurrent.IT_Betriebsart = App_IT_Betriebsart;
             }
         }
         /// <summary>
         /// IT_Betriebsart (TextBox)
         /// </summary>
-        public string IT_Betriebsart_Text
+        public string App_IT_Betriebsart_Text
         {
-            get => _iT_Betriebsart_Text;
+            get => _app_IT_Betriebsart_Text;
             set
             {
-                Set(() => IT_Betriebsart_Text, ref _iT_Betriebsart_Text, value);
-                if (IT_Betriebsart_Check)
-                    CurrentApplication.IT_Betriebsart = IT_Betriebsart_Text;
+                Set(() => App_IT_Betriebsart_Text, ref _app_IT_Betriebsart_Text, value);
+                if (App_IT_Betriebsart_Check)
+                    ApplicationCurrent.IT_Betriebsart = App_IT_Betriebsart_Text;
                 else
-                    CurrentApplication.IT_Betriebsart = IT_Betriebsart;
+                    ApplicationCurrent.IT_Betriebsart = App_IT_Betriebsart;
             }
         }
         /// <summary>
         /// IT_Betriebsart (CheckBox Switch))
         /// </summary>
-        public bool IT_Betriebsart_Check
+        public bool App_IT_Betriebsart_Check
         {
-            get => _iT_Betriebsart_Check;
+            get => _app_IT_Betriebsart_Check;
             set
             {
-                Set(() => IT_Betriebsart_Check, ref _iT_Betriebsart_Check, value);
-                if (CurrentApplication != null)
+                Set(() => App_IT_Betriebsart_Check, ref _app_IT_Betriebsart_Check, value);
+                if (ApplicationCurrent != null)
                 {
                     if (value)
-                        CurrentApplication.IT_Betriebsart = IT_Betriebsart_Text;
+                        ApplicationCurrent.IT_Betriebsart = App_IT_Betriebsart_Text;
                     else
-                        CurrentApplication.IT_Betriebsart = IT_Betriebsart;
+                        ApplicationCurrent.IT_Betriebsart = App_IT_Betriebsart;
                 }
             }
         }
@@ -301,45 +301,45 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Liste der Rechenzentren
         /// </summary>
-        public ObservableCollection<string> RechenzentrumList
+        public ObservableCollection<string> List_Rechenzentrum
         {
-            get => _rechenzentrumList;
-            set => Set(() => RechenzentrumList, ref _rechenzentrumList, value);
+            get => _list_Rechenzentrum;
+            set => Set(() => List_Rechenzentrum, ref _list_Rechenzentrum, value);
 
         }
         /// <summary>
         /// Liste der Server
         /// </summary>
-        public ObservableCollection<string> ServerList
+        public ObservableCollection<string> List_Server
         {
-            get => _serverList;
-            set => Set(() => ServerList, ref _serverList, value);
+            get => _list_Server;
+            set => Set(() => List_Server, ref _list_Server, value);
 
         }
         /// <summary>
         /// Liste der Virtuellen Maschinen
         /// </summary>
-        public ObservableCollection<string> Virtuelle_MaschineList
+        public ObservableCollection<string> List_Virtuelle_Maschine
         {
-            get => _virtuelle_MaschineList;
-            set => Set(() => Virtuelle_MaschineList, ref _virtuelle_MaschineList, value);
+            get => _list_Virtuelle_Maschine;
+            set => Set(() => List_Virtuelle_Maschine, ref _list_Virtuelle_Maschine, value);
 
         }
         /// <summary>
         /// Liste der Typen
         /// </summary>
-        public ObservableCollection<string> TypeList
+        public ObservableCollection<string> List_Typ
         {
-            get => _typeList;
-            set => Set(() => TypeList, ref _typeList, value);
+            get => _list_Typ;
+            set => Set(() => List_Typ, ref _list_Typ, value);
         }
         /// <summary>
         /// Liste der Kategorien
         /// </summary>
-        public ObservableCollection<string> IT_BetriebsartList
+        public ObservableCollection<string> List_IT_Betriebsart
         {
-            get => _iT_BetriebsartList;
-            set => Set(() => IT_BetriebsartList, ref _iT_BetriebsartList, value);
+            get => _list_IT_Betriebsart;
+            set => Set(() => List_IT_Betriebsart, ref _list_IT_Betriebsart, value);
 
         }
         #endregion
@@ -373,7 +373,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Bestimmt, ob die neuen Schutzziele angezeigt werden oder nicht
         /// </summary>
-        public bool SchutzzielVisible { get; set; }
+        public bool Vis_NewSecurityGoals { get; set; }
         #endregion
 
         #region Tabcontrol-Navigations-Properties (für lokale Navigation zwischen den Tabs in der Anwendungsansicht)
@@ -386,16 +386,16 @@ namespace ISB_BIA_IMPORT1.ViewModel
             set
             {
                 Set(()=> CurrentTab, ref _currentTab, value);
-                ButtonSaveVisibility = (_currentTab == 3)? Visibility.Visible: Visibility.Hidden;               
+                Vis_SaveButton = (_currentTab == 3)? Visibility.Visible: Visibility.Hidden;               
             }
         }
         /// <summary>
         /// Command, um zum nächsten Tab zu navigieren
         /// </summary>
-        public MyRelayCommand NextTab
+        public MyRelayCommand Cmd_NextTab
         {
-            get => _nextTab
-                    ?? (_nextTab = new MyRelayCommand(() =>
+            get => _cmd_NextTab
+                    ?? (_cmd_NextTab = new MyRelayCommand(() =>
                     {
                         CurrentTab += 1;
                     }, () => { return CurrentTab != 3; }));
@@ -403,10 +403,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Command, um zum vorherigen Tab zu navigieren
         /// </summary>
-        public MyRelayCommand PrevTab
+        public MyRelayCommand Cmd_PrevTab
         {
-            get => _prevTab
-                    ?? (_prevTab = new MyRelayCommand(() =>
+            get => _cmd_PrevTab
+                    ?? (_cmd_PrevTab = new MyRelayCommand(() =>
                     {
                         CurrentTab -= 1;
                     }, () => { return CurrentTab != 0; }));
@@ -414,10 +414,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Sichtbarkeit des Speicherbuttons (wenn letzter Tab aktiv)
         /// </summary>
-        public Visibility ButtonSaveVisibility
+        public Visibility Vis_SaveButton
         {
-            get => _buttonSaveVisibility;
-            set => Set(() => ButtonSaveVisibility, ref _buttonSaveVisibility, value);
+            get => _vis_SaveButton;
+            set => Set(() => Vis_SaveButton, ref _vis_SaveButton, value);
 
         }
         #endregion
@@ -426,7 +426,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Zurück Navigieren (Vorgang abbbrechen)
         /// </summary>
-        public MyRelayCommand NavBack
+        public MyRelayCommand Cmd_NavBack
         {
             get => new MyRelayCommand(() =>
             {
@@ -434,7 +434,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 {
                     Cleanup();
                     _myNavi.NavigateBack(true);
-                    _myData.UnlockObject(Table_Lock_Flags.Application, CurrentApplication.Applikation_Id);
+                    _myLock.Unlock_Object(Table_Lock_Flags.Application, ApplicationCurrent.Applikation_Id);
                 }
             });
         }
@@ -443,16 +443,16 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// Speichern und zurückkeheren. 
         /// Wenn <see cref="ProcAppMode"/> == Edit, dann Nachricht an ApplicationViewVM zur Aktualisierung der Anwendungsliste
         /// </summary>
-        public MyRelayCommand SaveAndContinue
+        public MyRelayCommand Cmd_SaveAndContinue
         {
             get => new MyRelayCommand(() =>
             {
-                if (_myData.InsertApplication(CurrentApplication, Mode))
+                if (_myApp.Insert_Application(ApplicationCurrent, Mode))
                 {
                     bool refreshMsg = (Mode == ProcAppMode.Change);
                     Cleanup();
                     _myNavi.NavigateBack(refreshMsg);
-                    _myData.UnlockObject(Table_Lock_Flags.Application, CurrentApplication.Applikation_Id);
+                    _myLock.Unlock_Object(Table_Lock_Flags.Application, ApplicationCurrent.Applikation_Id);
                 }
             }, () => { return CurrentTab == 3; });
         }
@@ -461,10 +461,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Zeigt Definitionen für Schutzziele an
         /// </summary>
-        public MyRelayCommand<string> Info
+        public MyRelayCommand<string> Cmd_Info
         {
-            get => _info
-                    ?? (_info = new MyRelayCommand<string>((name) =>
+            get => _cmd_Info
+                    ?? (_cmd_Info = new MyRelayCommand<string>((name) =>
                     {
                         try
                         {
@@ -490,47 +490,47 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Exportiere Bearbeitungs-Historie der Anwendungen
         /// </summary>
-        public MyRelayCommand ExportApplicationHistory
+        public MyRelayCommand Cmd_ExportApplicationHistory
         {
-            get => _exportApplicationHistory
-                    ?? (_exportApplicationHistory = new MyRelayCommand(() =>
+            get => _cmd_ExportApplicationHistory
+                    ?? (_cmd_ExportApplicationHistory = new MyRelayCommand(() =>
                     {
-                        _myExport.ExportApplications(_myData.GetApplicationHistory(CurrentApplication.Applikation_Id), "", CurrentApplication.Applikation_Id);
+                        _myExp.App_ExportApplications(_myApp.Get_History_Application(ApplicationCurrent.Applikation_Id), "", ApplicationCurrent.Applikation_Id);
                     }, () => Mode == ProcAppMode.Change));
         }
         /// <summary>
         /// Zurücksetzen der Daten der aktuellen Maske (Nur bei Anwendungsbearbeitung, nicht Neuanlage)
         /// </summary>
-        public MyRelayCommand ResetValues
+        public MyRelayCommand Cmd_ResetValues
         {
-            get => _resetValues
-                   ?? (_resetValues = new MyRelayCommand(() =>
+            get => _cmd_ResetValues
+                   ?? (_cmd_ResetValues = new MyRelayCommand(() =>
                    {
                        switch (CurrentTab)
                        {
                            case 0:
-                               CurrentApplication.IT_Anwendung_System = _oldCurrentApplication.IT_Anwendung_System;
-                               IT_Betriebsart = _oldCurrentApplication.IT_Betriebsart;
-                               IT_Betriebsart_Text = "";
-                               CurrentApplication.Wichtiges_Anwendungssystem = _oldCurrentApplication.Wichtiges_Anwendungssystem;
+                               ApplicationCurrent.IT_Anwendung_System = _oldCurrentApplication.IT_Anwendung_System;
+                               App_IT_Betriebsart = _oldCurrentApplication.IT_Betriebsart;
+                               App_IT_Betriebsart_Text = "";
+                               ApplicationCurrent.Wichtiges_Anwendungssystem = _oldCurrentApplication.Wichtiges_Anwendungssystem;
                                break;
                            case 1:
-                               Rechenzentrum = _oldCurrentApplication.Rechenzentrum;
-                               Rechenzentrum_Text = "";
-                               Server = _oldCurrentApplication.Server;
-                               Server_Text = "";
-                               Virtuelle_Maschine = _oldCurrentApplication.Virtuelle_Maschine;
-                               Virtuelle_Maschine_Text = "";
-                               Typ = _oldCurrentApplication.Typ;
-                               Typ_Text = "";
+                               App_Rechenzentrum = _oldCurrentApplication.Rechenzentrum;
+                               App_Rechenzentrum_Text = "";
+                               App_Server = _oldCurrentApplication.Server;
+                               App_Server_Text = "";
+                               App_Virtuelle_Maschine = _oldCurrentApplication.Virtuelle_Maschine;
+                               App_Virtuelle_Maschine_Text = "";
+                               App_Typ = _oldCurrentApplication.Typ;
+                               App_Typ_Text = "";
                                break;
                            case 2:
-                               CurrentApplication.SZ_1 = _oldCurrentApplication.SZ_1;
-                               CurrentApplication.SZ_2 = _oldCurrentApplication.SZ_2;
-                               CurrentApplication.SZ_3 = _oldCurrentApplication.SZ_3;
-                               CurrentApplication.SZ_4 = _oldCurrentApplication.SZ_4;
-                               CurrentApplication.SZ_5 = _oldCurrentApplication.SZ_5;
-                               CurrentApplication.SZ_6 = _oldCurrentApplication.SZ_6;
+                               ApplicationCurrent.SZ_1 = _oldCurrentApplication.SZ_1;
+                               ApplicationCurrent.SZ_2 = _oldCurrentApplication.SZ_2;
+                               ApplicationCurrent.SZ_3 = _oldCurrentApplication.SZ_3;
+                               ApplicationCurrent.SZ_4 = _oldCurrentApplication.SZ_4;
+                               ApplicationCurrent.SZ_5 = _oldCurrentApplication.SZ_5;
+                               ApplicationCurrent.SZ_6 = _oldCurrentApplication.SZ_6;
                                break;
                        }
                    }));
@@ -543,39 +543,45 @@ namespace ISB_BIA_IMPORT1.ViewModel
         #region Services
         private readonly IMyNavigationService _myNavi;
         private readonly IMyDialogService _myDia;
-        private readonly IMyDataService _myData;
-        private readonly IMyExportService _myExport;
+        private readonly IMyDataService_Application _myApp;
+        private readonly IMyDataService_Lock _myLock;
+        private readonly IMyDataService_Setting _mySett;
+        private readonly IMyExportService _myExp;
         private readonly IMySharedResourceService _myShared;
         #endregion
 
         /// <summary>
         /// Konstruktor
         /// </summary>
-        /// <param name="myDialogService"></param>
-        /// <param name="myNavigationService"></param>
-        /// <param name="myDataService"></param>
-        /// <param name="myExportService"></param>
-        /// <param name="mySharedResourceService"></param>
-        public Application_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMyDataService myDataService, IMyExportService myExportService, IMySharedResourceService mySharedResourceService)
+        /// <param name="myDia"></param>
+        /// <param name="myNavi"></param>
+        /// <param name="myApp"></param>
+        /// <param name="myExp"></param>
+        /// <param name="myShared"></param>
+        public Application_ViewModel(IMyDialogService myDia, IMyNavigationService myNavi, 
+            IMyDataService_Application myApp, IMyExportService myExp, 
+            IMySharedResourceService myShared, IMyDataService_Lock myLock, IMyDataService_Setting mySett)
         {
             #region Services
-            _myNavi = myNavigationService;
-            _myDia = myDialogService;
-            _myData = myDataService;
-            _myExport = myExportService;
-            _myShared = mySharedResourceService;
+            _myNavi = myNavi;
+            _myDia = myDia;
+            _myApp = myApp;
+            _mySett = mySett;
+            _myLock = myLock;
+            _myExp = myExp;
+            _myShared = myShared;
             #endregion
 
             if (IsInDesignMode)
             {
-                CurrentApplication = _myData.GetApplicationModelFromDB(1);
+                ApplicationCurrent = _myApp.Get_ModelFromDB(1);
                 Header = "TestHeader";
-                RechenzentrumList = _myData.GetRechenzentrum();
-                ServerList = _myData.GetServer();
-                Virtuelle_MaschineList = _myData.GetVirtuelle_Maschine();
-                TypeList = _myData.GetTypes();
-                IT_BetriebsartList = _myData.GetBetriebsart();
-                Setting = _myData.GetSettings();
+                List_Rechenzentrum = _myApp.Get_List_Rechenzentrum();
+                List_Server = _myApp.Get_List_Server();
+                List_Virtuelle_Maschine = _myApp.Get_List_Virtuelle_Maschine();
+                List_Typ = _myApp.Get_List_Types();
+                List_IT_Betriebsart = _myApp.Get_List_Betriebsart();
+                Setting = _mySett.Get_Settings();
             }
             else
             {
@@ -584,9 +590,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 MessengerInstance.Register<NotificationMessage<int>>(this, ProcAppMode.Change, message => {
                     if (!(message.Sender is IMyNavigationService)) return;
                     Mode = ProcAppMode.Change;
-                    CurrentApplication = _myData.GetApplicationModelFromDB(message.Content);
+                    ApplicationCurrent = _myApp.Get_ModelFromDB(message.Content);
                     //Wenn Daten Fehlerhaft dann zurückkehren
-                    if (CurrentApplication == null)
+                    if (ApplicationCurrent == null)
                     {
                         _myDia.ShowError("Fehler beim Laden der Daten.");
                         Cleanup();
@@ -594,32 +600,32 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     }
                     else
                     {
-                        _oldCurrentApplication = CurrentApplication.Copy();
+                        _oldCurrentApplication = ApplicationCurrent.Copy();
                         //Setzen der Properties der Textfelder der Control-abhängigen Infos 
-                        Rechenzentrum = CurrentApplication.Rechenzentrum;
-                        Server = CurrentApplication.Server;
-                        Virtuelle_Maschine = CurrentApplication.Virtuelle_Maschine;
-                        Typ = CurrentApplication.Typ;
-                        IT_Betriebsart = CurrentApplication.IT_Betriebsart;
+                        App_Rechenzentrum = ApplicationCurrent.Rechenzentrum;
+                        App_Server = ApplicationCurrent.Server;
+                        App_Virtuelle_Maschine = ApplicationCurrent.Virtuelle_Maschine;
+                        App_Typ = ApplicationCurrent.Typ;
+                        App_IT_Betriebsart = ApplicationCurrent.IT_Betriebsart;
                     }
                 });
                 MessengerInstance.Register<NotificationMessage<int>>(this, ProcAppMode.New, message => {
                     if (!(message.Sender is IMyNavigationService)) return;
                     Mode = ProcAppMode.New;
-                    CurrentApplication = new Application_Model();
+                    ApplicationCurrent = new Application_Model();
                     _oldCurrentApplication = new Application_Model();
                 });
                 #endregion
                 #region Abrufen der Listendaten für die Dropdown-Felder
-                RechenzentrumList = _myData.GetRechenzentrum();
-                ServerList = _myData.GetServer();
-                Virtuelle_MaschineList = _myData.GetVirtuelle_Maschine();
-                TypeList = _myData.GetTypes();
-                IT_BetriebsartList = _myData.GetBetriebsart();
+                List_Rechenzentrum = _myApp.Get_List_Rechenzentrum();
+                List_Server = _myApp.Get_List_Server();
+                List_Virtuelle_Maschine = _myApp.Get_List_Virtuelle_Maschine();
+                List_Typ = _myApp.Get_List_Types();
+                List_IT_Betriebsart = _myApp.Get_List_Betriebsart();
                 #endregion
                 #region Aus Settings-Tabelle Abfragen ob neue Schutzziele (5+6) aktiviert sind (angezeigt werden)
-                Setting = _myData.GetSettings();
-                SchutzzielVisible = (Setting.Neue_Schutzziele_aktiviert == "Ja");
+                Setting = _mySett.Get_Settings();
+                Vis_NewSecurityGoals = (Setting.Neue_Schutzziele_aktiviert == "Ja");
                 #endregion
             }
 

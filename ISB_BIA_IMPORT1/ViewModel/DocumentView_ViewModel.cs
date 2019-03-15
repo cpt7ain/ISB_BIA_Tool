@@ -14,22 +14,22 @@ namespace ISB_BIA_IMPORT1.ViewModel
     /// </summary>
     public class DocumentView_ViewModel : ViewModelBase
     {
-        private FixedDocumentSequence _documentSource;
-        private string _filename;
+        private FixedDocumentSequence _fds_DocumentSource;
+        private string _str_Filename;
 
         /// <summary>
         /// Zu betrachtendes Dokument
         /// </summary>
-        public FixedDocumentSequence DocumentSource
+        public FixedDocumentSequence Fds_DocumentSource
         {
-            get => _documentSource;
-            set => Set(() => DocumentSource, ref _documentSource, value);
+            get => _fds_DocumentSource;
+            set => Set(() => Fds_DocumentSource, ref _fds_DocumentSource, value);
         }
 
         /// <summary>
         /// Command zum Zurückkehren zum vorherigen Viewmodel
         /// </summary>
-        public MyRelayCommand NavBack
+        public MyRelayCommand Cmd_NavBack
         {
             get => new MyRelayCommand(() =>
                   {
@@ -41,13 +41,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Command zum Zurückkehren zum vorherigen Viewmodel
         /// </summary>
-        public MyRelayCommand OpenExtern
+        public MyRelayCommand Cmd_OpenDocExtern
         {
             get => new MyRelayCommand(() =>
             {
-                if (File.Exists(_filename))
+                if (File.Exists(_str_Filename))
                 {
-                    Process.Start(_filename);
+                    Process.Start(_str_Filename);
                     Cleanup();
                     _myNavi.NavigateBack();
                 }
@@ -75,9 +75,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
             // Message Registrierungen mit Überlieferung des zu betrachtenden Dokuments
             MessengerInstance.Register<NotificationMessage<FixedDocumentSequence>>(this, a =>
             {
-                DocumentSource = a.Content;
+                Fds_DocumentSource = a.Content;
                 if (a.Sender is Menu_ViewModel)
-                    _filename = a.Notification;
+                    _str_Filename = a.Notification;
             });
 
         }

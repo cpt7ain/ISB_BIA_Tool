@@ -26,7 +26,7 @@ namespace ISB_BIA_IMPORT1.Services
         }
 
         #region Datenmodell erstellen
-        public bool CheckDBConnection()
+        public bool Con_CheckDBConnection()
         {
             string s = "";
             try
@@ -44,7 +44,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return false;
             }
         }
-        public bool CreateDataModel(DataTable dt_Processes, DataTable dt_Applications, DataTable dt_Relation, DataTable dt_InformationSegments, DataTable dt_InformationSegmentAttributes)
+        public bool DataModel_Create(DataTable dt_Processes, DataTable dt_Applications, DataTable dt_Relation, DataTable dt_InformationSegments, DataTable dt_InformationSegmentAttributes)
         {
 
             #region SQL Strings für Erstellen der Tabellen mit Headern analog zu Excel (!Trotzdem nicht ändern, da im Code per Linq2SQL Klassenmember aufegrufen werden)
@@ -197,7 +197,7 @@ namespace ISB_BIA_IMPORT1.Services
             string sqlCreaLog =
                 "CREATE TABLE[dbo].[" + _myShared.Tbl_Log + "] (" +
                 "    [Id]                  INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
-                "    [Action] VARCHAR(200) NOT NULL," +
+                "    [Aktion] VARCHAR(200) NOT NULL," +
                 "    [Tabelle] VARCHAR(200) NOT NULL," +
                 "    [Details] VARCHAR(1000) NOT NULL," +
                 "    [Id_1] INT NOT NULL," +
@@ -231,7 +231,7 @@ namespace ISB_BIA_IMPORT1.Services
                 "    [Delta_abgeschlossen] VARCHAR(10) NOT NULL," +
                 "    [Attribut9_aktiviert] VARCHAR(10) NOT NULL," +
                 "    [Attribut10_aktiviert] VARCHAR(10) NOT NULL," +
-                "    [Multi_Save] VARCHAR(10) NOT NULL," +
+                "    [Multi_Speichern] VARCHAR(10) NOT NULL," +
                 "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:59.500',121))," +
                 "    [Benutzer] NVARCHAR(50) NOT NULL," +
                 ");";
@@ -239,8 +239,8 @@ namespace ISB_BIA_IMPORT1.Services
             string sqlCreaLock =
                 "CREATE TABLE[dbo].[" + _myShared.Tbl_Lock + "] (" +
                 "    [Id]                  INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
-                "    [Table_Flag] INT NOT NULL," +
-                "    [Object_Id] INT NOT NULL," +
+                "    [Tabellen_Kennzeichen] INT NOT NULL," +
+                "    [Objekt_Id] INT NOT NULL," +
                 "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:59.500',121))," +
                 "    [BenutzerNnVn] NVARCHAR(50) NOT NULL DEFAULT('')," +
                 "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
@@ -288,11 +288,11 @@ namespace ISB_BIA_IMPORT1.Services
                 //Schreiben der DataTables in die Datenbank (Initialer Stand der Daten)
                 using (SqlConnection con = new SqlConnection(_myShared.ConnectionString))
                 {
-                    SQLBulkCopy(_myShared.Tbl_Prozesse, con, dt_Processes);
-                    SQLBulkCopy(_myShared.Tbl_Applikationen, con, dt_Applications);
-                    SQLBulkCopy(_myShared.Tbl_Proz_App, con, dt_Relation);
-                    SQLBulkCopy(_myShared.Tbl_IS, con, dt_InformationSegments);
-                    SQLBulkCopy(_myShared.Tbl_IS_Attribute, con, dt_InformationSegmentAttributes);
+                    DataModel_SQLBulkCopy(_myShared.Tbl_Prozesse, con, dt_Processes);
+                    DataModel_SQLBulkCopy(_myShared.Tbl_Applikationen, con, dt_Applications);
+                    DataModel_SQLBulkCopy(_myShared.Tbl_Proz_App, con, dt_Relation);
+                    DataModel_SQLBulkCopy(_myShared.Tbl_IS, con, dt_InformationSegments);
+                    DataModel_SQLBulkCopy(_myShared.Tbl_IS_Attribute, con, dt_InformationSegmentAttributes);
 
                     dt_Applications.Dispose();
                     dt_Processes.Dispose();
@@ -333,7 +333,7 @@ namespace ISB_BIA_IMPORT1.Services
                         Delta_abgeschlossen = "Nein",
                         Attribut9_aktiviert = "Nein",
                         Attribut10_aktiviert = "Nein",
-                        Multi_Save = "Nein",
+                        Multi_Speichern = "Nein",
                         Datum = DateTime.Now,
                         Benutzer = Environment.UserName
                     };
@@ -351,7 +351,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return false;
             }
         }
-        public void SQLBulkCopy(string tableName, SqlConnection con, DataTable dt)
+        public void DataModel_SQLBulkCopy(string tableName, SqlConnection con, DataTable dt)
         {
             try
             {
@@ -376,13 +376,13 @@ namespace ISB_BIA_IMPORT1.Services
         #endregion
 
         #region Datensatz-Lock Operationen
-        public string GetObjectLocked(Table_Lock_Flags table_Flag, int id)
+        public string Lock_Get_ObjectIsLocked(Table_Lock_Flags table_Flag, int id)
         {
             try
             {
                 using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
                 {
-                    ISB_BIA_Lock lockObj = (db.ISB_BIA_Lock.Where(x => x.Table_Flag == (int)table_Flag && x.Object_Id == id).FirstOrDefault());
+                    ISB_BIA_Lock lockObj = (db.ISB_BIA_Lock.Where(x => x.Tabellen_Kennzeichen == (int)table_Flag && x.Objekt_Id == id).FirstOrDefault());
                     return (lockObj != null) ? lockObj.BenutzerNnVn + " (" + lockObj.Benutzer + ")" : "";
                 }
             }
@@ -392,7 +392,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return "";
             }
         }
-        public bool LockObject(Table_Lock_Flags table_Flag, int id)
+        public bool Lock_Lock_Object(Table_Lock_Flags table_Flag, int id)
         {
             try
             {
@@ -400,8 +400,8 @@ namespace ISB_BIA_IMPORT1.Services
                 {
                     ISB_BIA_Lock lockObject = new ISB_BIA_Lock()
                     {
-                        Table_Flag = (int)table_Flag,
-                        Object_Id = id,
+                        Tabellen_Kennzeichen = (int)table_Flag,
+                        Objekt_Id = id,
                         BenutzerNnVn = _myShared.User.Surname + ", " + _myShared.User.Givenname,
                         Datum = DateTime.Now,
                         Benutzer = _myShared.User.Username,
@@ -418,13 +418,13 @@ namespace ISB_BIA_IMPORT1.Services
                 return false;
             }
         }
-        public bool UnlockObject(Table_Lock_Flags table_Flag, int id)
+        public bool Lock_Unlock_Object(Table_Lock_Flags table_Flag, int id)
         {
             try
             {
                 using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
                 {
-                    db.ISB_BIA_Lock.DeleteAllOnSubmit(db.ISB_BIA_Lock.Where(x => x.Table_Flag == (int)table_Flag && x.Object_Id == id).ToList());
+                    db.ISB_BIA_Lock.DeleteAllOnSubmit(db.ISB_BIA_Lock.Where(x => x.Tabellen_Kennzeichen == (int)table_Flag && x.Objekt_Id == id).ToList());
                     db.SubmitChanges();
                     return true;
                 }
@@ -435,7 +435,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return false;
             }
         }
-        public bool UnlockAllObjectsForUserOnMachine()
+        public bool Lock_Unlock_AllObjectsForUserOnMachine()
         {
             try
             {
@@ -452,7 +452,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return false;
             }
         }
-        public bool UnlockAllObjects()
+        public bool Lock_Unlock_AllObjects()
         {
             try
             {
@@ -463,7 +463,7 @@ namespace ISB_BIA_IMPORT1.Services
                     //Logeintrag erzeugen
                     ISB_BIA_Log logEntry = new ISB_BIA_Log
                     {
-                        Action = "Entfernen aller User-Locks durch Admin",
+                        Aktion = "Entfernen aller User-Locks durch Admin",
                         Tabelle = _myShared.Tbl_Lock,
                         Details = list.Count + " Locks entfernt",
                         Id_1 = 0,
@@ -485,7 +485,7 @@ namespace ISB_BIA_IMPORT1.Services
         #endregion
 
         #region Process
-        public Process_Model GetProcessModelFromDB(int id)
+        public Process_Model Proc_Get_ProcessModelFromDB(int id)
         {
             try
             {
@@ -558,7 +558,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ISB_BIA_Prozesse MapProcessModelToDB(Process_Model p)
+        public ISB_BIA_Prozesse Proc_Map_ProcessModelToDB(Process_Model p)
         {
             try
             {
@@ -611,7 +611,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public Dictionary<string, string> GetISList()
+        public Dictionary<string, string> IS_Get_ISDropDownList()
         {
             try
             {
@@ -628,7 +628,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<ISB_BIA_Prozesse> GetProcessesByOE(ObservableCollection<string> listOE)
+        public ObservableCollection<ISB_BIA_Prozesse> Proc_Get_ProcessesByOE(ObservableCollection<string> listOE)
         {
             try
             {
@@ -645,7 +645,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<ISB_BIA_Prozesse> GetProcesses(DateTime? date = null)
+        public ObservableCollection<ISB_BIA_Prozesse> Proc_Get_AllProcesses(DateTime? date = null)
         {
             try
             {
@@ -665,7 +665,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<ISB_BIA_Prozesse> GetActiveProcesses()
+        public ObservableCollection<ISB_BIA_Prozesse> Proc_Get_ActiveProcesses()
         {
             try
             {
@@ -683,7 +683,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<string> GetProcessOwner()
+        public ObservableCollection<string> Proc_Get_ListProcessOwner()
         {
             try
             {
@@ -698,7 +698,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<string> GetOEsForUser(string userOE)
+        public ObservableCollection<string> Proc_Get_ListOEsForUser(string userOE)
         {
             try
             {
@@ -713,7 +713,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<string> GetOEs()
+        public ObservableCollection<string> Proc_Get_ListOEs()
         {
             try
             {
@@ -728,7 +728,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<string> GetPreProcesses()
+        public ObservableCollection<string> Proc_Get_ListPreProcesses()
         {
             try
             {
@@ -743,7 +743,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<string> GetPostProcesses()
+        public ObservableCollection<string> Proc_Get_ListPostProcesses()
         {
             try
             {
@@ -758,7 +758,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<ISB_BIA_Prozesse> GetProcessHistory(int process_id)
+        public ObservableCollection<ISB_BIA_Prozesse> Proc_Get_ProcessHistory(int process_id)
         {
             try
             {
@@ -775,7 +775,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public bool InsertProcessAndRelations(Process_Model p, ProcAppMode mode, ObservableCollection<ISB_BIA_Applikationen> add, ObservableCollection<ISB_BIA_Applikationen> remove)
+        public bool Proc_Insert_ProcessAndRelations(Process_Model p, ProcAppMode mode, ObservableCollection<ISB_BIA_Applikationen> add, ObservableCollection<ISB_BIA_Applikationen> remove)
         {
             if (p.IsValid)
             {
@@ -796,11 +796,11 @@ namespace ISB_BIA_IMPORT1.Services
                         p.Benutzer = Environment.UserName;
                         p.Datum = d;
                         //Nach DB-Format Mappen und einfügen
-                        db.ISB_BIA_Prozesse.InsertOnSubmit(MapProcessModelToDB(p));
+                        db.ISB_BIA_Prozesse.InsertOnSubmit(Proc_Map_ProcessModelToDB(p));
                         //Logeintrag erzeugen
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
-                            Action = "Ändern/Erstellen eines Prozesses",
+                            Aktion = "Ändern/Erstellen eines Prozesses",
                             Tabelle = _myShared.Tbl_Prozesse,
                             Details = "Id = " + p.Prozess_Id + ", Name = '" + p.Prozess + "', Sub-Name = '" + p.Sub_Prozess + "'",
                             Id_1 = p.Prozess_Id,
@@ -835,7 +835,7 @@ namespace ISB_BIA_IMPORT1.Services
 
                             ISB_BIA_Log logEntryRelation = new ISB_BIA_Log
                             {
-                                Action = "Ändern einer Prozesses-Applikations-Relation: " + s,
+                                Aktion = "Ändern einer Prozesses-Applikations-Relation: " + s,
                                 Tabelle = _myShared.Tbl_Proz_App,
                                 Details = "Prozess Id = " + proc_app.Prozess_Id + ", App. Id = " + proc_app.Applikation_Id + ", App. Name = '" + a.IT_Anwendung_System + "'",
                                 Id_1 = proc_app.Prozess_Id,
@@ -862,7 +862,7 @@ namespace ISB_BIA_IMPORT1.Services
                             "OE: " + p.OE_Filter + Environment.NewLine +
                             "Prozessverantwortlicher: " + p.Prozessverantwortlicher + Environment.NewLine +
                             "Datum: " + d;
-                        _myMail.Send_NotificationMail(subject, body, _myShared.Current_Environment);
+                        _myMail.Send_NotificationMail(subject, body, _myShared.CurrentEnvironment);
                         #endregion
                         db.SubmitChanges();
                     }
@@ -878,7 +878,7 @@ namespace ISB_BIA_IMPORT1.Services
                         {
                             ISB_BIA_Log logEntry = new ISB_BIA_Log
                             {
-                                Action = "Fehler: Ändern/Erstellen eines Prozesses",
+                                Aktion = "Fehler: Ändern/Erstellen eines Prozesses",
                                 Tabelle = _myShared.Tbl_Prozesse,
                                 Details = ex1.Message,
                                 Id_1 = p.Prozess_Id,
@@ -907,7 +907,7 @@ namespace ISB_BIA_IMPORT1.Services
             }
         }
         #region Prozess löschen (Setzen des Aktiv Flags in der Datenbank auf 0)
-        public ISB_BIA_Prozesse DeleteProcess(ISB_BIA_Prozesse p)
+        public ISB_BIA_Prozesse Proc_Delete_Process(ISB_BIA_Prozesse p)
         {
             ISB_BIA_Prozesse toDelete = new ISB_BIA_Prozesse
             {
@@ -944,9 +944,9 @@ namespace ISB_BIA_IMPORT1.Services
                 Aktiv = 0
             };
             bool res = _myDia.ShowQuestion("Möchten Sie den Prozess wirklich löschen?", "Prozess löschen");
-            return (res) ? TryInsert(toDelete) : null;
+            return (res) ? TryDeleteProcess(toDelete) : null;
         }
-        public ISB_BIA_Prozesse TryInsert(ISB_BIA_Prozesse toDelete)
+        public ISB_BIA_Prozesse TryDeleteProcess(ISB_BIA_Prozesse toDelete)
         {
             try
             {
@@ -957,7 +957,7 @@ namespace ISB_BIA_IMPORT1.Services
                     //Logeintrag erzeugen
                     ISB_BIA_Log logEntry = new ISB_BIA_Log
                     {
-                        Action = "Löschen eines Prozesses (Setzen auf inaktiv)",
+                        Aktion = "Löschen eines Prozesses (Setzen auf inaktiv)",
                         Tabelle = _myShared.Tbl_Prozesse,
                         Details = "Id = " + toDelete.Prozess_Id + ", Name = '" + toDelete.Prozess + "', Sub-Name = '" + toDelete.Sub_Prozess + "'",
                         Id_1 = toDelete.Prozess_Id,
@@ -974,7 +974,7 @@ namespace ISB_BIA_IMPORT1.Services
                         "OE: " + toDelete.OE_Filter + Environment.NewLine +
                         "Prozessverantwortlicher: " + toDelete.Prozessverantwortlicher + Environment.NewLine +
                         "Datum: " + toDelete.Datum;
-                    _myMail.Send_NotificationMail(subject, body, _myShared.Current_Environment);
+                    _myMail.Send_NotificationMail(subject, body, _myShared.CurrentEnvironment);
                     #endregion
                 }
                 _myDia.ShowMessage("Prozess gelöscht");
@@ -989,7 +989,7 @@ namespace ISB_BIA_IMPORT1.Services
                     {
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
-                            Action = "Fehler: Löschen eines Prozesses",
+                            Aktion = "Fehler: Löschen eines Prozesses",
                             Tabelle = _myShared.Tbl_Prozesse,
                             Details = ex1.Message,
                             Id_1 = toDelete.Prozess_Id,
@@ -1011,7 +1011,7 @@ namespace ISB_BIA_IMPORT1.Services
             }
         }
         #endregion
-        public bool SaveAllProcesses(ObservableCollection<ISB_BIA_Prozesse> pList)
+        public bool Proc_Insert_AllProcesses(ObservableCollection<ISB_BIA_Prozesse> pList)
         {
             List<ISB_BIA_Prozesse> refreshedProcesses = new List<ISB_BIA_Prozesse>();
 
@@ -1024,7 +1024,7 @@ namespace ISB_BIA_IMPORT1.Services
                 string lockedListStringMsg = "";
                 foreach (ISB_BIA_Prozesse p in pList)
                 {
-                    string user = GetObjectLocked(Table_Lock_Flags.Process, p.Prozess_Id);
+                    string user = Lock_Get_ObjectIsLocked(Table_Lock_Flags.Process, p.Prozess_Id);
                     if (user != "")
                     {
                         //Wenn Prozess gesperrt zur Liste hinzufügen
@@ -1082,7 +1082,7 @@ namespace ISB_BIA_IMPORT1.Services
                                 ISB_BIA_Log logEntry = new ISB_BIA_Log
                                 {
                                     Datum = process_refresh.Datum,
-                                    Action = "Aktualisieren eines Prozesses ohne Änderungen",
+                                    Aktion = "Aktualisieren eines Prozesses ohne Änderungen",
                                     Tabelle = _myShared.Tbl_Prozesse,
                                     Details = "Id = " + process_refresh.Prozess_Id + ", Name = '" + process_refresh.Prozess + "', Sub-Name = '" + process_refresh.Sub_Prozess + "'",
                                     Id_1 = process_refresh.Prozess_Id,
@@ -1102,7 +1102,7 @@ namespace ISB_BIA_IMPORT1.Services
                                 body += Environment.NewLine;
                                 body += h.Prozess_Id + ", " + h.Prozess + ", " + h.Sub_Prozess;
                             }
-                            _myMail.Send_NotificationMail(subject, body, _myShared.Current_Environment);
+                            _myMail.Send_NotificationMail(subject, body, _myShared.CurrentEnvironment);
                             #endregion
                             _myDia.ShowInfo("Prozesse erfolgreich gespeichert.");
                             return true;
@@ -1118,7 +1118,7 @@ namespace ISB_BIA_IMPORT1.Services
                                 ISB_BIA_Log logEntry = new ISB_BIA_Log
                                 {
                                     Datum = DateTime.Now,
-                                    Action = "Fehler: Aktualisieren von Prozessen ohne Änderungen",
+                                    Aktion = "Fehler: Aktualisieren von Prozessen ohne Änderungen",
                                     Tabelle = _myShared.Tbl_Prozesse,
                                     Details = ex.Message,
                                     Id_1 = 0,
@@ -1153,7 +1153,7 @@ namespace ISB_BIA_IMPORT1.Services
         #endregion
 
         #region Application
-        public Application_Model GetApplicationModelFromDB(int id)
+        public Application_Model App_Get_ApplicationModelFromDB(int id)
         {
             try
             {
@@ -1213,7 +1213,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ISB_BIA_Applikationen MapApplicationModelToDB(Application_Model a)
+        public ISB_BIA_Applikationen App_Map_ApplicationModelToDB(Application_Model a)
         {
             return new ISB_BIA_Applikationen()
             {
@@ -1236,7 +1236,7 @@ namespace ISB_BIA_IMPORT1.Services
                 Benutzer = a.Benutzer
             };
         }
-        public ObservableCollection<string> GetRechenzentrum()
+        public ObservableCollection<string> App_Get_ListRechenzentrum()
         {
             try
             {
@@ -1251,7 +1251,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<string> GetServer()
+        public ObservableCollection<string> App_Get_ListServer()
         {
             try
             {
@@ -1266,7 +1266,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<string> GetVirtuelle_Maschine()
+        public ObservableCollection<string> App_Get_ListVirtuelle_Maschine()
         {
             try
             {
@@ -1281,7 +1281,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<string> GetTypes()
+        public ObservableCollection<string> App_Get_ListTypes()
         {
             try
             {
@@ -1295,7 +1295,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<string> GetBetriebsart()
+        public ObservableCollection<string> App_Get_ListBetriebsart()
         {
             try
             {
@@ -1310,7 +1310,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<ISB_BIA_Applikationen> GetApplications(DateTime? date = null)
+        public ObservableCollection<ISB_BIA_Applikationen> App_Get_AllApplications(DateTime? date = null)
         {
             try
             {
@@ -1329,7 +1329,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<ISB_BIA_Applikationen> GetApplicationHistory(int applikation_Id)
+        public ObservableCollection<ISB_BIA_Applikationen> App_Get_ApplicationHistory(int applikation_Id)
         {
             try
             {
@@ -1346,7 +1346,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public bool InsertApplication(Application_Model a, ProcAppMode mode)
+        public bool App_Insert_Application(Application_Model a, ProcAppMode mode)
         {
             //Pflichtfelder (Anwendungsname & Kategorie)
             if (a.IT_Anwendung_System != ""
@@ -1368,11 +1368,11 @@ namespace ISB_BIA_IMPORT1.Services
                         a.Benutzer = Environment.UserName;
                         a.Datum = DateTime.Now;
                         //Mappen und Einfügen
-                        db.ISB_BIA_Applikationen.InsertOnSubmit(MapApplicationModelToDB(a));
+                        db.ISB_BIA_Applikationen.InsertOnSubmit(App_Map_ApplicationModelToDB(a));
                         //Logeintrag erstellen
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
-                            Action = "Ändern/Erstellen einer Anwendung",
+                            Aktion = "Ändern/Erstellen einer Anwendung",
                             Tabelle = _myShared.Tbl_Prozesse,
                             Details = "Id = " + a.Applikation_Id + ", Name = '" + a.IT_Anwendung_System + "'",
                             Id_1 = a.Applikation_Id,
@@ -1395,7 +1395,7 @@ namespace ISB_BIA_IMPORT1.Services
                         {
                             ISB_BIA_Log logEntry = new ISB_BIA_Log
                             {
-                                Action = "Fehler: Ändern/Erstellen einer Anwendung",
+                                Aktion = "Fehler: Ändern/Erstellen einer Anwendung",
                                 Tabelle = _myShared.Tbl_Prozesse,
                                 Details = ex1.Message,
                                 Id_1 = a.Applikation_Id,
@@ -1424,7 +1424,7 @@ namespace ISB_BIA_IMPORT1.Services
             }
         }
         #region Applikation löschen (Setzen des Aktiv Flags in der Datenbank auf 0)
-        public ISB_BIA_Applikationen DeleteApplication(ISB_BIA_Applikationen a)
+        public ISB_BIA_Applikationen App_Delete_Application(ISB_BIA_Applikationen a)
         {
             ISB_BIA_Applikationen toDelete = new ISB_BIA_Applikationen
             {
@@ -1446,9 +1446,9 @@ namespace ISB_BIA_IMPORT1.Services
                 Aktiv = 0
             };
             bool res = _myDia.ShowQuestion("Möchten Sie die Anwendung wirklich löschen (auf inaktiv setzen)?", "Anwendung löschen");
-            return (res) ? TryInsert(toDelete) : null;
+            return (res) ? TryDeleteApplication(toDelete) : null;
         }
-        public ISB_BIA_Applikationen TryInsert(ISB_BIA_Applikationen toDelete)
+        public ISB_BIA_Applikationen TryDeleteApplication(ISB_BIA_Applikationen toDelete)
         {
             try
             {
@@ -1458,7 +1458,7 @@ namespace ISB_BIA_IMPORT1.Services
                     db.ISB_BIA_Applikationen.InsertOnSubmit(toDelete);
                     ISB_BIA_Log logEntry = new ISB_BIA_Log
                     {
-                        Action = "Löschen einer Anwendung (Setzen auf inaktiv)",
+                        Aktion = "Löschen einer Anwendung (Setzen auf inaktiv)",
                         Tabelle = _myShared.Tbl_Applikationen,
                         Details = "Id = " + toDelete.Applikation_Id + ", Name = '" + toDelete.IT_Anwendung_System + "'",
                         Id_1 = toDelete.Applikation_Id,
@@ -1480,7 +1480,7 @@ namespace ISB_BIA_IMPORT1.Services
                     {
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
-                            Action = "Fehler: Löschen einer Anwendung",
+                            Aktion = "Fehler: Löschen einer Anwendung",
                             Tabelle = _myShared.Tbl_Applikationen,
                             Details = ex1.Message,
                             Id_1 = toDelete.Applikation_Id,
@@ -1502,7 +1502,7 @@ namespace ISB_BIA_IMPORT1.Services
             }
         }
         #endregion
-        public bool SaveAllApplications(ObservableCollection<ISB_BIA_Applikationen> aList)
+        public bool App_Insert_AllApplications(ObservableCollection<ISB_BIA_Applikationen> aList)
         {
             bool res = _myDia.ShowQuestion("Möchten Sie die ausgewählten Anwendungen wirklich ohne Änderungen aktualisieren?", "Auswahl bestätigen");
             if (res)
@@ -1513,7 +1513,7 @@ namespace ISB_BIA_IMPORT1.Services
                 string lockedListStringMsg = "";
                 foreach (ISB_BIA_Applikationen a in aList)
                 {
-                    string user = GetObjectLocked(Table_Lock_Flags.Application, a.Applikation_Id);
+                    string user = Lock_Get_ObjectIsLocked(Table_Lock_Flags.Application, a.Applikation_Id);
                     if (user != "")
                     {
                         //Wenn Anwendung gesperrt zur Liste hinzufügen
@@ -1556,7 +1556,7 @@ namespace ISB_BIA_IMPORT1.Services
                                 ISB_BIA_Log logEntry = new ISB_BIA_Log
                                 {
                                     Datum = application_refresh.Datum,
-                                    Action = "Aktualisieren einer Anwendung ohne Änderungen",
+                                    Aktion = "Aktualisieren einer Anwendung ohne Änderungen",
                                     Tabelle = _myShared.Tbl_Applikationen,
                                     Details = "Id = " + application_refresh.Applikation_Id + ", Name = '" + application_refresh.IT_Anwendung_System + "', Sub-Name = '" + application_refresh.IT_Betriebsart + "'",
                                     Id_1 = application_refresh.Applikation_Id,
@@ -1580,7 +1580,7 @@ namespace ISB_BIA_IMPORT1.Services
                                 ISB_BIA_Log logEntry = new ISB_BIA_Log
                                 {
                                     Datum = DateTime.Now,
-                                    Action = "Fehler: Aktualisieren von Anwendungen ohne Änderungen",
+                                    Aktion = "Fehler: Aktualisieren von Anwendungen ohne Änderungen",
                                     Tabelle = _myShared.Tbl_Applikationen,
                                     Details = ex.Message,
                                     Id_1 = 0,
@@ -1615,7 +1615,7 @@ namespace ISB_BIA_IMPORT1.Services
         #endregion
 
         #region Einstellungen
-        public Settings_Model GetSettingsModelFromDB()
+        public Settings_Model Set_Get_SettingsModelFromDB()
         {
             try
             {
@@ -1642,7 +1642,7 @@ namespace ISB_BIA_IMPORT1.Services
                         Delta_abgeschlossen = (linqSettings.Delta_abgeschlossen == "Ja") ? true : false,
                         Attribut9_aktiviert = (linqSettings.Attribut9_aktiviert == "Ja") ? true : false,
                         Attribut10_aktiviert = (linqSettings.Attribut10_aktiviert == "Ja") ? true : false,
-                        Multi_Save = (linqSettings.Multi_Save == "Ja") ? true : false,
+                        Multi_Speichern = (linqSettings.Multi_Speichern == "Ja") ? true : false,
                         Datum = linqSettings.Datum,
                         Benutzer = linqSettings.Benutzer
                     };
@@ -1660,7 +1660,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ISB_BIA_Settings MapSettingsModelToDB(Settings_Model s)
+        public ISB_BIA_Settings Set_Map_SettingsModelToDB(Settings_Model s)
         {
             return new ISB_BIA_Settings()
             {
@@ -1676,12 +1676,12 @@ namespace ISB_BIA_IMPORT1.Services
                 Delta_abgeschlossen = (s.Delta_abgeschlossen) ? "Ja" : "Nein",
                 Attribut9_aktiviert = (s.Attribut9_aktiviert) ? "Ja" : "Nein",
                 Attribut10_aktiviert = (s.Attribut10_aktiviert) ? "Ja" : "Nein",
-                Multi_Save = (s.Multi_Save) ? "Ja" : "Nein",
+                Multi_Speichern = (s.Multi_Speichern) ? "Ja" : "Nein",
                 Datum = s.Datum,
                 Benutzer = s.Benutzer
             };
         }
-        public ISB_BIA_Settings GetSettings()
+        public ISB_BIA_Settings Set_Get_Settings()
         {
             try
             {
@@ -1696,7 +1696,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public List<ISB_BIA_Settings> GetSettingsHistory()
+        public List<ISB_BIA_Settings> Set_Get_SettingsHistory()
         {
             try
             {
@@ -1711,7 +1711,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public bool InsertSettings(ISB_BIA_Settings newSettings, ISB_BIA_Settings oldSettings)
+        public bool Set_Insert_Settings(ISB_BIA_Settings newSettings, ISB_BIA_Settings oldSettings)
         {
             try
             {
@@ -1727,7 +1727,7 @@ namespace ISB_BIA_IMPORT1.Services
                     || newSettings.Delta_abgeschlossen != oldSettings.Delta_abgeschlossen
                     || newSettings.Attribut9_aktiviert != oldSettings.Attribut9_aktiviert
                     || newSettings.Attribut10_aktiviert != oldSettings.Attribut10_aktiviert
-                    || newSettings.Multi_Save != oldSettings.Multi_Save)
+                    || newSettings.Multi_Speichern != oldSettings.Multi_Speichern)
                 {
                     using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
                     {
@@ -1738,7 +1738,7 @@ namespace ISB_BIA_IMPORT1.Services
                         //Logeintrag erzeugen
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
-                            Action = "Ändern der Einstellungen",
+                            Aktion = "Ändern der Einstellungen",
                             Tabelle = _myShared.Tbl_Settings,
                             Details = "Für Details exportieren Sie die Einstellungshistorie",
                             Id_1 = 0,
@@ -1767,7 +1767,7 @@ namespace ISB_BIA_IMPORT1.Services
         #endregion
 
         #region Informationssegmente
-        public InformationSegment_Model GetSegmentModelFromDB(int id)
+        public InformationSegment_Model IS_Get_SegmentModelFromDB(int id)
         {
             try
             {
@@ -1811,7 +1811,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ISB_BIA_Informationssegmente MapSegmentModelToDB(InformationSegment_Model i)
+        public ISB_BIA_Informationssegmente IS_Map_SegmentModelToDB(InformationSegment_Model i)
         {
             return new ISB_BIA_Informationssegmente()
             {
@@ -1834,7 +1834,7 @@ namespace ISB_BIA_IMPORT1.Services
                 Benutzer = i.Benutzer
             };
         }
-        public InformationSegmentAttribute_Model GetAttributeModelFromDB(int id)
+        public InformationSegmentAttribute_Model Attr_Get_AttributeModelFromDB(int id)
         {
             try
             {
@@ -1872,7 +1872,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ISB_BIA_Informationssegmente_Attribute MapAttributeModelToDB(InformationSegmentAttribute_Model ia)
+        public ISB_BIA_Informationssegmente_Attribute Attr_Map_AttributeModelToDB(InformationSegmentAttribute_Model ia)
         {
             Int32.TryParse(ia.SZ_1, out int sz1);
             Int32.TryParse(ia.SZ_2, out int sz2);
@@ -1895,7 +1895,7 @@ namespace ISB_BIA_IMPORT1.Services
             };
             return map;
         }
-        public ObservableCollection<ISB_BIA_Informationssegmente> GetAllSegments()
+        public ObservableCollection<ISB_BIA_Informationssegmente> IS_Get_AllSegments()
         {
             try
             {
@@ -1912,7 +1912,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<ISB_BIA_Informationssegmente> GetEnabledSegments()
+        public ObservableCollection<ISB_BIA_Informationssegmente> IS_Get_EnabledSegments()
         {
             try
             {
@@ -1929,12 +1929,12 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public List<ISB_BIA_Informationssegmente> Get5SegmentsForCalculation(Process_Model process)
+        public List<ISB_BIA_Informationssegmente> IS_Get_5SegmentsForCalculation(Process_Model process)
         {
             using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
             {
                 //Zutreffende Segmente auswählen
-                return GetEnabledSegments().Where(x =>
+                return IS_Get_EnabledSegments().Where(x =>
                 x.Name == process.Relevantes_IS_1 ||
                 x.Name == process.Relevantes_IS_2 ||
                 x.Name == process.Relevantes_IS_3 ||
@@ -1942,7 +1942,7 @@ namespace ISB_BIA_IMPORT1.Services
                 x.Name == process.Relevantes_IS_5).ToList();
             }
         }
-        public ISB_BIA_Informationssegmente GetISByISName(string iSName)
+        public ISB_BIA_Informationssegmente IS_Get_ISByISName(string iSName)
         {
             try
             {
@@ -1958,7 +1958,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<ISB_BIA_Informationssegmente_Attribute> GetAttributes()
+        public ObservableCollection<ISB_BIA_Informationssegmente_Attribute> Attr_Get_Attributes()
         {
             try
             {
@@ -1975,7 +1975,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<string> GetAttributeNamesAndInfoForIS()
+        public ObservableCollection<string> Attr_Get_AttributeNamesAndInfoForIS()
         {
             try
             {
@@ -1993,7 +1993,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<string> GetAttributeNamesForHeader()
+        public ObservableCollection<string> Attr_Get_AttributeNamesForHeader()
         {
             try
             {
@@ -2011,7 +2011,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public bool InsertIS(InformationSegment_Model newIS, InformationSegment_Model oldIS)
+        public bool IS_Insert_Segment(InformationSegment_Model newIS, InformationSegment_Model oldIS)
         {
             //Wenn Änderungen gemacht wurden, Datenbankeintrag erzeugen
             if (oldIS.Segment != newIS.Segment
@@ -2036,11 +2036,11 @@ namespace ISB_BIA_IMPORT1.Services
                         newIS.Datum = DateTime.Now;
                         newIS.Benutzer = Environment.UserName;
                         //Mappen und in DB einfügen
-                        db.ISB_BIA_Informationssegmente.InsertOnSubmit(MapSegmentModelToDB(newIS));
+                        db.ISB_BIA_Informationssegmente.InsertOnSubmit(IS_Map_SegmentModelToDB(newIS));
                         //Logeintrag erzeugen
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
-                            Action = "Ändern eines Informationssegments",
+                            Aktion = "Ändern eines Informationssegments",
                             Tabelle = _myShared.Tbl_IS,
                             Details = "Id = " + newIS.Informationssegment_Id + ", Name = '" + newIS.Name + "'",
                             Id_1 = newIS.Informationssegment_Id,
@@ -2063,7 +2063,7 @@ namespace ISB_BIA_IMPORT1.Services
                         {
                             ISB_BIA_Log logEntry = new ISB_BIA_Log
                             {
-                                Action = "Fehler: Ändern eines Informationssegments",
+                                Aktion = "Fehler: Ändern eines Informationssegments",
                                 Tabelle = _myShared.Tbl_Prozesse,
                                 Details = ex1.Message,
                                 Id_1 = newIS.Informationssegment_Id,
@@ -2090,12 +2090,12 @@ namespace ISB_BIA_IMPORT1.Services
                 return false;
             }
         }
-        public bool InsertISAtt(ObservableCollection<InformationSegmentAttribute_Model> newAttributeList)
+        public bool Attr_Insert_Attribute(ObservableCollection<InformationSegmentAttribute_Model> newAttributeList)
         {
             //Indikator für Änderung
             bool change = false;
             ObservableCollection<ISB_BIA_Informationssegmente_Attribute> oldAttributeList;
-            oldAttributeList = GetAttributes();
+            oldAttributeList = Attr_Get_Attributes();
             if (oldAttributeList == null)
                 return false;
             else
@@ -2118,7 +2118,7 @@ namespace ISB_BIA_IMPORT1.Services
                             {
                                 // mindestens eine Änderung
                                 change = true;
-                                ISB_BIA_Informationssegmente_Attribute isMapped = MapAttributeModelToDB(isx);
+                                ISB_BIA_Informationssegmente_Attribute isMapped = Attr_Map_AttributeModelToDB(isx);
                                 isMapped.Datum = DateTime.Now;
                                 isMapped.Benutzer = Environment.UserName;
                                 db.ISB_BIA_Informationssegmente_Attribute.InsertOnSubmit(isMapped);
@@ -2126,7 +2126,7 @@ namespace ISB_BIA_IMPORT1.Services
                                 //Log Eintrag für erfolgreiches schreiben in Datenbank
                                 ISB_BIA_Log logEntry = new ISB_BIA_Log
                                 {
-                                    Action = "Ändern der Informationssegment-Attribute",
+                                    Aktion = "Ändern der Informationssegment-Attribute",
                                     Tabelle = _myShared.Tbl_IS_Attribute,
                                     Details = "Id = " + isx.Attribut_Id + ", Name = '" + isx.Name + "'",
                                     Id_1 = isx.Attribut_Id,
@@ -2156,7 +2156,7 @@ namespace ISB_BIA_IMPORT1.Services
                             ISB_BIA_Log logEntry = new ISB_BIA_Log
                             {
                                 Datum = DateTime.Now,
-                                Action = "Fehler: Ändern der Informationssegment-Attributstabelle",
+                                Aktion = "Fehler: Ändern der Informationssegment-Attributstabelle",
                                 Tabelle = _myShared.Tbl_Prozesse,
                                 Details = ex1.Message,
                                 Id_1 = 0,
@@ -2176,7 +2176,7 @@ namespace ISB_BIA_IMPORT1.Services
                     }
                 }
         }
-        public Tuple<List<ISB_BIA_Informationssegmente>, List<ISB_BIA_Informationssegmente>, List<ISB_BIA_Informationssegmente_Attribute>, List<ISB_BIA_Informationssegmente_Attribute>> GetISAndISAttForExport()
+        public Tuple<List<ISB_BIA_Informationssegmente>, List<ISB_BIA_Informationssegmente>, List<ISB_BIA_Informationssegmente_Attribute>, List<ISB_BIA_Informationssegmente_Attribute>> IS_Attr_Get_ISAndISAttForExport()
         {
             try
             {
@@ -2202,7 +2202,7 @@ namespace ISB_BIA_IMPORT1.Services
         #endregion
 
         #region Prozess<-->Applikation
-        public ObservableCollection<ISB_BIA_Applikationen> GetActiveApplications()
+        public ObservableCollection<ISB_BIA_Applikationen> App_Get_ActiveApplications()
         {
             try
             {
@@ -2221,7 +2221,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<string> GetApplicationCategories()
+        public ObservableCollection<string> Proc_Get_ListApplicationCategories()
         {
             try
             {
@@ -2240,7 +2240,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<ISB_BIA_Delta_Analyse> GetProcessApplicationHistoryForProcess(int id)
+        public ObservableCollection<ISB_BIA_Delta_Analyse> Proc_Get_HistoryProcessApplicationForProcess(int id)
         {
             try
             {
@@ -2279,7 +2279,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<ISB_BIA_Delta_Analyse> GetProcessApplicationHistoryForApplication(int id)
+        public ObservableCollection<ISB_BIA_Delta_Analyse> App_Get_HistoryProcessApplicationForApplication(int id)
         {
             try
             {
@@ -2322,7 +2322,7 @@ namespace ISB_BIA_IMPORT1.Services
         #endregion
 
         #region Delta
-        public ObservableCollection<ISB_BIA_Delta_Analyse> GetDeltaAnalysis()
+        public ObservableCollection<ISB_BIA_Delta_Analyse> Delta_Get_DeltaAnalysis()
         {
             try
             {
@@ -2338,7 +2338,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<ISB_BIA_Delta_Analyse> InitiateDeltaAnalysis(DateTime d)
+        public ObservableCollection<ISB_BIA_Delta_Analyse> Delta_InitiateDeltaAnalysis(DateTime d)
         {
             try
             {
@@ -2357,9 +2357,9 @@ namespace ISB_BIA_IMPORT1.Services
                     //Dialog ob Analyse in Datenbank gespeichert werden soll oder nicht
                     bool res = _myDia.ShowQuestion("Möchten Sie die letzte gespeicherte Deltaanalyse in Datenbank überschreiben?", "Deltaanalyse");
                     if (res)
-                        return DateDeltaAnalysis(d, true, proc_App);
+                        return Delta_DateDeltaAnalysis(d, true, proc_App);
                     else
-                        return DateDeltaAnalysis(d, false, proc_App);
+                        return Delta_DateDeltaAnalysis(d, false, proc_App);
                 }
                 else
                 {
@@ -2374,7 +2374,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<ISB_BIA_Delta_Analyse> DateDeltaAnalysis(DateTime date, bool toDB, List<ISB_BIA_Prozesse_Applikationen> proc_App)
+        public ObservableCollection<ISB_BIA_Delta_Analyse> Delta_DateDeltaAnalysis(DateTime date, bool toDB, List<ISB_BIA_Prozesse_Applikationen> proc_App)
         {
             List<ISB_BIA_Delta_Analyse> DeltaList = new List<ISB_BIA_Delta_Analyse>();
             try
@@ -2382,8 +2382,8 @@ namespace ISB_BIA_IMPORT1.Services
                 using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
                 {
                     //Erstelle Liste der Prozesse und Anwendungen mit dem zu dem gewählten Zeitpunkt aktuellsten Stand
-                    ObservableCollection<ISB_BIA_Prozesse> processes = GetProcesses(date);
-                    ObservableCollection<ISB_BIA_Applikationen> applications = GetApplications(date);
+                    ObservableCollection<ISB_BIA_Prozesse> processes = Proc_Get_AllProcesses(date);
+                    ObservableCollection<ISB_BIA_Applikationen> applications = App_Get_AllApplications(date);
                     if (toDB)
                     {
                         db.ISB_BIA_Delta_Analyse.DeleteAllOnSubmit(db.ISB_BIA_Delta_Analyse.ToList());
@@ -2425,7 +2425,7 @@ namespace ISB_BIA_IMPORT1.Services
                         //Log Eintrag für erfolgreiches schreiben in Datenbank
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
-                            Action = "Erstellen der Delta-Analyse",
+                            Aktion = "Erstellen der Delta-Analyse",
                             Tabelle = _myShared.Tbl_Delta,
                             Details = "-",
                             Id_1 = 0,
@@ -2449,7 +2449,7 @@ namespace ISB_BIA_IMPORT1.Services
                         _myDia.ShowError("Fehler: Ertellen der Delta-Analyse.", ex);
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
-                            Action = "Fehler: Erstellen der Delta-Analyse",
+                            Aktion = "Fehler: Erstellen der Delta-Analyse",
                             Tabelle = _myShared.Tbl_Delta,
                             Details = ex.Message,
                             Id_1 = 0,
@@ -2473,7 +2473,7 @@ namespace ISB_BIA_IMPORT1.Services
         #endregion
 
         #region OE
-        public ObservableCollection<ISB_BIA_OEs> GetOENames()
+        public ObservableCollection<ISB_BIA_OEs> OE_Get_ListOENames()
         {
             try
             {
@@ -2490,7 +2490,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<ISB_BIA_OEs> GetOENumbers()
+        public ObservableCollection<ISB_BIA_OEs> OE_Get_ListOENumbers()
         {
             try
             {
@@ -2506,7 +2506,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<ISB_BIA_OEs> GetOELinks()
+        public ObservableCollection<ISB_BIA_OEs> OE_Get_ListOELinks()
         {
             try
             {
@@ -2522,7 +2522,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ISB_BIA_OEs InsertOEName(string name)
+        public ISB_BIA_OEs OE_Insert_NewOEName(string name)
         {
             try
             {
@@ -2545,7 +2545,7 @@ namespace ISB_BIA_IMPORT1.Services
                         //Erstellen eines LogEntries und schreiben in Datenbank
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
-                            Action = "ADMIN/CISO: Erstellen einer OE",
+                            Aktion = "ADMIN/CISO: Erstellen einer OE",
                             Tabelle = _myShared.Tbl_Prozesse + ", " + _myShared.Tbl_OEs,
                             Details = "Name = '" + name + "'",
                             Id_1 = 0,
@@ -2572,7 +2572,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public bool EditOEName(string name, string oldName)
+        public bool OE_Insert_EditOEName(string name, string oldName)
         {
             //Ändern: OE_Name
             if (name != "" && name != oldName)
@@ -2588,13 +2588,13 @@ namespace ISB_BIA_IMPORT1.Services
                             //Liste aller Prozesse, der die OE-Gruppierung zugeordnet ist
                             List<ISB_BIA_Prozesse> oldProcessList = db.ISB_BIA_Prozesse.Where(c => c.OE_Filter == oldName).GroupBy(x => x.Prozess_Id).Select(y => y.OrderByDescending(z => z.Datum).FirstOrDefault()).ToList();
                             //Prüfen ob ein Prozess gesperrt ist (es darf kein Prozess geöffnet sein, da sonst veraltete Daten verwendet werden könnten)
-                            var lockedProcesses = db.ISB_BIA_Lock.Where(x => x.Table_Flag == (int)Table_Lock_Flags.Process).ToList();
+                            var lockedProcesses = db.ISB_BIA_Lock.Where(x => x.Tabellen_Kennzeichen == (int)Table_Lock_Flags.Process).ToList();
                             string pl = "Prozesse sind durch folgende User geöffnet";
                             if (lockedProcesses.Count != 0)
                             {
                                 foreach (ISB_BIA_Lock p in lockedProcesses)
                                 {
-                                    string user = GetObjectLocked(Table_Lock_Flags.Process, p.Object_Id);
+                                    string user = Lock_Get_ObjectIsLocked(Table_Lock_Flags.Process, p.Objekt_Id);
                                     if (user != "")
                                     {
                                         pl = pl + "\n" + user + "\n";
@@ -2656,7 +2656,7 @@ namespace ISB_BIA_IMPORT1.Services
                             //Erstellen eines LogEntries und schreiben in Datenbank
                             ISB_BIA_Log logEntry = new ISB_BIA_Log
                             {
-                                Action = "ADMIN/CISO: Ändern einer OE",
+                                Aktion = "ADMIN/CISO: Ändern einer OE",
                                 Tabelle = _myShared.Tbl_Prozesse + ", " + _myShared.Tbl_OEs,
                                 Details = "Von '" + oldName + "' zu '" + name + "'",
                                 Id_1 = 0,
@@ -2688,7 +2688,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return false;
             }
         }
-        public bool DeleteOEName(string oeName)
+        public bool OE_Delete_OEName(string oeName)
         {
             bool res = _myDia.ShowQuestion("Möchten Sie diesen OE-Filter wirklich löschen?\nAlle Zuordnungen werden ebenfalls gelöscht.", "OE-Filter löschen");
             if (res)
@@ -2706,13 +2706,13 @@ namespace ISB_BIA_IMPORT1.Services
                         }
 
                         //Prüfen ob ein Prozess gesperrt ist (es darf kein Prozess geöffnet sein, da sonst veraltete Daten verwendet werden könnten)
-                        var lockedProcesses = db.ISB_BIA_Lock.Where(x => x.Table_Flag == (int)Table_Lock_Flags.Process).ToList();
+                        var lockedProcesses = db.ISB_BIA_Lock.Where(x => x.Tabellen_Kennzeichen == (int)Table_Lock_Flags.Process).ToList();
                         string pl = "Prozesse sind durch folgende User geöffnet";
                         if (lockedProcesses.Count != 0)
                         {
                             foreach (ISB_BIA_Lock p in lockedProcesses)
                             {
-                                string user = GetObjectLocked(Table_Lock_Flags.Process, p.Object_Id);
+                                string user = Lock_Get_ObjectIsLocked(Table_Lock_Flags.Process, p.Objekt_Id);
                                 if (user != "")
                                 {
                                     pl = pl + "\n" + user + "\n";
@@ -2729,7 +2729,7 @@ namespace ISB_BIA_IMPORT1.Services
                             db.ISB_BIA_OEs.DeleteAllOnSubmit(db.ISB_BIA_OEs.Where(x => x.OE_Name == oeName));
                             ISB_BIA_Log logEntry = new ISB_BIA_Log
                             {
-                                Action = "Löschen einer OE",
+                                Aktion = "Löschen einer OE",
                                 Details = "Name = '" + oeName + "'",
                                 Tabelle = _myShared.Tbl_OEs,
                                 Id_1 = 0,
@@ -2758,7 +2758,7 @@ namespace ISB_BIA_IMPORT1.Services
             else
                 return false;
         }
-        public bool DeleteOELink(string oeName, string oeNumber)
+        public bool OE_Delete_OELink(string oeName, string oeNumber)
         {
             bool res = _myDia.ShowQuestion("Möchten Sie diesen diese OE-Zuordnung wirklich löschen?", "OE-Zuordnung löschen");
             if (res)
@@ -2771,7 +2771,7 @@ namespace ISB_BIA_IMPORT1.Services
                         db.ISB_BIA_OEs.DeleteAllOnSubmit(db.ISB_BIA_OEs.Where(x => x.OE_Nummer == oeNumber && x.OE_Name == oeName));
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
-                            Action = "Löschen einer OE-Zuordnung",
+                            Aktion = "Löschen einer OE-Zuordnung",
                             Tabelle = _myShared.Tbl_OEs,
                             Details = "Zuordnung = '" + oeName + "' <-> " + oeNumber,
                             Id_1 = 0,
@@ -2795,7 +2795,7 @@ namespace ISB_BIA_IMPORT1.Services
             else
                 return false;
         }
-        public bool DeleteOENumber(string oeNumber)
+        public bool OE_Delete_OENumber(string oeNumber)
         {
             bool res = _myDia.ShowQuestion("Möchten Sie diesen diese OE-Kennung wirklich löschen?\nAlle Zuordnungen werden ebenfalls gelöscht.", "OE-Kennung löschen");
             if (res)
@@ -2808,7 +2808,7 @@ namespace ISB_BIA_IMPORT1.Services
                         db.ISB_BIA_OEs.DeleteAllOnSubmit(db.ISB_BIA_OEs.Where(x => x.OE_Nummer == oeNumber));
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
-                            Action = "Löschen einer OE-Nummer",
+                            Aktion = "Löschen einer OE-Nummer",
                             Tabelle = _myShared.Tbl_OEs,
                             Details = "Nummer = " + oeNumber,
                             Id_1 = 0,
@@ -2831,7 +2831,7 @@ namespace ISB_BIA_IMPORT1.Services
             else
                 return false;
         }
-        public ISB_BIA_OEs InsertOELink(ISB_BIA_OEs name, ISB_BIA_OEs number)
+        public ISB_BIA_OEs OE_Insert_OELink(ISB_BIA_OEs name, ISB_BIA_OEs number)
         {
             if (name != null && number != null)
             {
@@ -2854,7 +2854,7 @@ namespace ISB_BIA_IMPORT1.Services
                             //Erstellen eines LogEntries und schreiben in Datenbank
                             ISB_BIA_Log logEntry = new ISB_BIA_Log
                             {
-                                Action = "ADMIN/CISO: Erstellen einer OE-Zuordnung",
+                                Aktion = "ADMIN/CISO: Erstellen einer OE-Zuordnung",
                                 Tabelle = _myShared.Tbl_Prozesse + ", " + _myShared.Tbl_OEs,
                                 Details = "Zuordnung = '" + name.OE_Name + "' <-> " + number.OE_Nummer,
                                 Id_1 = 0,
@@ -2886,7 +2886,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ISB_BIA_OEs InsertOENumber(string number, ISB_BIA_OEs name)
+        public ISB_BIA_OEs OE_Insert_NewOENumber(string number, ISB_BIA_OEs name)
         {
             if (name != null && number != "")
             {
@@ -2909,7 +2909,7 @@ namespace ISB_BIA_IMPORT1.Services
                             //Erstellen eines LogEntries und schreiben in Datenbank
                             ISB_BIA_Log logEntry = new ISB_BIA_Log
                             {
-                                Action = "ADMIN/CISO: Erstellen einer OE-Nummer",
+                                Aktion = "ADMIN/CISO: Erstellen einer OE-Nummer",
                                 Tabelle = _myShared.Tbl_Prozesse + ", " + _myShared.Tbl_OEs,
                                 Details = "Nummer = " + new_Number.OE_Nummer,
                                 Id_1 = 0,
@@ -2941,7 +2941,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public bool EditOENumber(string number, string oldNumber)
+        public bool OE_Insert_EditOENumber(string number, string oldNumber)
         {
             if (number != "" && number != oldNumber)
             {
@@ -2975,7 +2975,7 @@ namespace ISB_BIA_IMPORT1.Services
                         //Erstellen eines LogEntries und schreiben in Datenbank
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
-                            Action = "ADMIN/CISO: Ändern einer OE-Nummer",
+                            Aktion = "ADMIN/CISO: Ändern einer OE-Nummer",
                             Tabelle = _myShared.Tbl_Prozesse + ", " + _myShared.Tbl_OEs,
                             Details = "Von '" + number + "' zu '" + oldNumber + "'",
                             Id_1 = 0,
@@ -3004,7 +3004,7 @@ namespace ISB_BIA_IMPORT1.Services
         #endregion
 
         #region Log
-        public ObservableCollection<ISB_BIA_Log> GetLog()
+        public ObservableCollection<ISB_BIA_Log> Log_Get_Log()
         {
             try
             {
