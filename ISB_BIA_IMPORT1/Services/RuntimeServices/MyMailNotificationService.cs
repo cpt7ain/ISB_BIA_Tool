@@ -19,7 +19,7 @@ namespace ISB_BIA_IMPORT1.Services
 
         public void Send_NotificationMail(string subject, string body, Current_Environment ce)
         {
-            string to = myShared.TargetMail;
+            string to = myShared.Conf_TargetMail;
             try
             {
                 if (ce == Current_Environment.Local_Test)

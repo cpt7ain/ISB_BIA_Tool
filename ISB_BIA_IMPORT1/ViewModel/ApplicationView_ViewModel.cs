@@ -102,7 +102,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _cmd_ExportApplicationList
                     ?? (_cmd_ExportApplicationList = new MyRelayCommand(() =>
                     {
-                        _myExport.App_ExportAllApplications();
+                        _myExport.Export_Applications_All();
                     }));
         }
         #endregion

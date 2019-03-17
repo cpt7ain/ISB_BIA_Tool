@@ -15,6 +15,7 @@ namespace ISB_BIA_IMPORT1.Services
     public class MyDesignTimeDataService_Process : IMyDataService_Process
     {
         public ObservableCollection<ISB_BIA_Prozesse> ProcessDummyList;
+        public ObservableCollection<ISB_BIA_Applikationen> ApplicationDummyList;
         readonly IMyDialogService _myDia;
         readonly IMySharedResourceService _myShared;
         readonly IMyDataService_OE _myOE;
@@ -28,9 +29,37 @@ namespace ISB_BIA_IMPORT1.Services
             this._myOE = myOE;
             this._myIS = myIS;
             ProcessDummyList = GetDummyProcesses();
+            ApplicationDummyList = GetDummyApplications();
         }
 
         #region Process
+        public ObservableCollection<ISB_BIA_Applikationen> GetDummyApplications()
+        {
+            Random r = new Random();
+            List<int> k = new List<int>() { 1, 5, 10 };
+            var people = from n in Enumerable.Range(1, 100)
+                         select new ISB_BIA_Applikationen
+                         {
+                             Applikation_Id = n,
+                             IT_Anwendung_System = "TestAnwendung" + n,
+                             IT_Betriebsart = "TestKategorie" + n,
+                             Rechenzentrum = "TestRechenzentrum",
+                             Server = "TestServer",
+                             Virtuelle_Maschine = "TestVM",
+                             Typ = "TestTyp",
+                             Wichtiges_Anwendungssystem = "x",
+                             SZ_1 = r.Next(0, 5),
+                             SZ_2 = r.Next(0, 5),
+                             SZ_3 = r.Next(0, 5),
+                             SZ_4 = r.Next(0, 5),
+                             SZ_5 = r.Next(0, 5),
+                             SZ_6 = r.Next(0, 5),
+                             Aktiv = r.Next(0, 2),
+                             Datum = DateTime.Now,
+                             Benutzer = "TestUser"
+                         };
+            return new ObservableCollection<ISB_BIA_Applikationen>(people.ToList());
+        }
         public ObservableCollection<ISB_BIA_Prozesse> GetDummyProcesses()
         {
             Random r = new Random();
@@ -75,7 +104,7 @@ namespace ISB_BIA_IMPORT1.Services
                          Prozess_Id = n + 10,
                          Prozess = "Prozess" + n + 10,
                          Sub_Prozess = "Sub" + n + 10,
-                         OE_Filter = "I",
+                         OE_Filter = "Personal",
                          Prozessverantwortlicher = "Hr. Mustermann",
                          Kritikalität_des_Prozesses = (r.Next(0, 2) == 0) ? "Hoch" : "Sehr hoch",
                          Reifegrad_des_Prozesses = "1 - Initial",
@@ -106,7 +135,7 @@ namespace ISB_BIA_IMPORT1.Services
             ObservableCollection<ISB_BIA_Prozesse> res = new ObservableCollection<ISB_BIA_Prozesse>(p1.ToList().Concat<ISB_BIA_Prozesse>(p2));
             return res;
         }
-        public Process_Model Proc_Get_ProcessModelFromDB(int id)
+        public Process_Model Get_ModelFromDB(int id)
         {
             ISB_BIA_Prozesse linqProc = ProcessDummyList.FirstOrDefault();
             ObservableCollection<ISB_BIA_Applikationen> linqApps = new ObservableCollection<ISB_BIA_Applikationen>();
@@ -147,63 +176,63 @@ namespace ISB_BIA_IMPORT1.Services
                 ApplicationList = linqApps,
             };
         }
-        public ISB_BIA_Prozesse Proc_Map_ProcessModelToDB(Process_Model p)
+        public ISB_BIA_Prozesse Map_ModelToDB(Process_Model p)
         {
             return new ISB_BIA_Prozesse();
         }
-        public Dictionary<string, string> IS_Get_ISDropDownList()
+        public Dictionary<string, string> Get_List_ISDictionary()
         {
             List<ISB_BIA_Informationssegmente> listIS = _myIS.Get_Segments_All().ToList();
             listIS.Insert(0, new ISB_BIA_Informationssegmente() { Name = "", Segment = "<leer>" });
             return new Dictionary<string, string>(listIS.Select(t => new { t.Name, t.Segment }).ToDictionary(t => t.Name, t => t.Segment));
         }
-        public ObservableCollection<ISB_BIA_Prozesse> Proc_Get_ProcessesByOE(ObservableCollection<string> listOE)
+        public ObservableCollection<ISB_BIA_Prozesse> Get_Processes_ByOE(ObservableCollection<string> listOE)
         {
             return ProcessDummyList;
         }
-        public ObservableCollection<ISB_BIA_Prozesse> Proc_Get_AllProcesses(DateTime? d = null)
+        public ObservableCollection<ISB_BIA_Prozesse> Get_Processes_All(DateTime? d = null)
         {
             return ProcessDummyList;
         }
-        public ObservableCollection<ISB_BIA_Prozesse> Proc_Get_ActiveProcesses()
+        public ObservableCollection<ISB_BIA_Prozesse> Get_ActiveProcesses()
         {
             return new ObservableCollection<ISB_BIA_Prozesse>(ProcessDummyList.Where(x => x.Aktiv == 1).ToList());
         }
-        public ObservableCollection<string> Proc_Get_ListProcessOwner()
+        public ObservableCollection<string> Get_List_ProcessOwner()
         {
             return new ObservableCollection<string>(ProcessDummyList.Where(n => n.Prozessverantwortlicher != "" && n.Prozessverantwortlicher != " ").Select(p => p.Prozessverantwortlicher).Distinct());
         }
-        public ObservableCollection<string> Proc_Get_ListOEsForUser(string userOE)
+        public ObservableCollection<string> Get_List_OEsForUser(string userOE)
         {
             return new ObservableCollection<string>() { "4.4" };
         }
-        public ObservableCollection<string> Proc_Get_ListOEs()
+        public ObservableCollection<string> Get_List_OEs_All()
         {
             return new ObservableCollection<string>(_myOE.Get_OENames().Select(p => p.OE_Name).Distinct());
         }
-        public ObservableCollection<string> Proc_Get_ListPreProcesses()
+        public ObservableCollection<string> Get_List_PreProcesses()
         {
             return new ObservableCollection<string>(ProcessDummyList.Select(p => p.Vorgelagerte_Prozesse).Distinct());
         }
-        public ObservableCollection<string> Proc_Get_ListPostProcesses()
+        public ObservableCollection<string> Get_List_PostProcesses()
         {
             return new ObservableCollection<string>(ProcessDummyList.Select(p => p.Nachgelagerte_Prozesse).Distinct());
         }
-        public ObservableCollection<ISB_BIA_Prozesse> Proc_Get_ProcessHistory(int process_id)
+        public ObservableCollection<ISB_BIA_Prozesse> Get_History_Process(int process_id)
         {
             return new ObservableCollection<ISB_BIA_Prozesse>();
         }
-        public bool Proc_Insert_ProcessAndRelations(Process_Model p, ProcAppMode mode, ObservableCollection<ISB_BIA_Applikationen> add, ObservableCollection<ISB_BIA_Applikationen> remove)
+        public bool Insert_ProcessAndRelations(Process_Model p, ProcAppMode mode, ObservableCollection<ISB_BIA_Applikationen> add, ObservableCollection<ISB_BIA_Applikationen> remove)
         {
             return true;
         }
-        public ISB_BIA_Prozesse Proc_Delete_Process(ISB_BIA_Prozesse p)
+        public ISB_BIA_Prozesse Delete_Process(ISB_BIA_Prozesse p)
         {
             return p;
         }
         public ISB_BIA_Prozesse TryDeleteProcess(ISB_BIA_Prozesse toDelete)
         {
-            return Proc_Get_AllProcesses().FirstOrDefault();
+            return ProcessDummyList.FirstOrDefault();
         }
         public bool Proc_Insert_AllProcesses(ObservableCollection<ISB_BIA_Prozesse> pList)
         {
@@ -217,95 +246,25 @@ namespace ISB_BIA_IMPORT1.Services
         {
             return new ObservableCollection<string>();
         }
-
-        public Process_Model Get_ModelFromDB(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ISB_BIA_Prozesse Map_ModelToDB(Process_Model p)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ObservableCollection<ISB_BIA_Prozesse> Get_Processes_ByOE(ObservableCollection<string> listOE)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ObservableCollection<ISB_BIA_Prozesse> Get_Processes_All(DateTime? d = null)
-        {
-            throw new NotImplementedException();
-        }
-
         public ObservableCollection<ISB_BIA_Prozesse> Get_Processes_Active()
         {
-            throw new NotImplementedException();
+            return ProcessDummyList;
         }
-
-        public Dictionary<string, string> Get_List_ISDictionary()
-        {
-            throw new NotImplementedException();
-        }
-
-        public ISB_BIA_Informationssegmente Get_IS_ByName(string ISName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<ISB_BIA_Informationssegmente> Get_Segments_5ForCalculation(Process_Model process)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ObservableCollection<string> Get_List_ProcessOwner()
-        {
-            throw new NotImplementedException();
-        }
-
-        public ObservableCollection<string> Get_List_OEsForUser(string userOE)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ObservableCollection<string> Get_List_OEs_All()
-        {
-            throw new NotImplementedException();
-        }
-
-        public ObservableCollection<string> Get_List_PreProcesses()
-        {
-            throw new NotImplementedException();
-        }
-
-        public ObservableCollection<string> Get_List_PostProcesses()
-        {
-            throw new NotImplementedException();
-        }
-
-        public ObservableCollection<ISB_BIA_Prozesse> Get_History_Process(int process_id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool Insert_ProcessAndRelations(Process_Model p, ProcAppMode mode, ObservableCollection<ISB_BIA_Applikationen> add, ObservableCollection<ISB_BIA_Applikationen> remove)
-        {
-            return true;
-        }
-
-        public ISB_BIA_Prozesse Delete_Process(ISB_BIA_Prozesse p)
-        {
-            return new ISB_BIA_Prozesse();
-        }
-
         public bool Insert_Processes_All(ObservableCollection<ISB_BIA_Prozesse> pList)
         {
             return true;
         }
-
         public ObservableCollection<ISB_BIA_Applikationen> Get_Applications_Active()
         {
-            return new ObservableCollection<ISB_BIA_Applikationen>();
+            return ApplicationDummyList;
+        }
+        public ISB_BIA_Informationssegmente Get_IS_ByName(string ISName)
+        {
+            return new ISB_BIA_Informationssegmente();
+        }
+        public List<ISB_BIA_Informationssegmente> Get_Segments_5ForCalculation(Process_Model process)
+        {
+            return new List<ISB_BIA_Informationssegmente>();
         }
         #endregion
 

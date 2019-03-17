@@ -11,16 +11,16 @@ namespace ISB_BIA_IMPORT1.Services.Interfaces
     {
         /// <summary>
         /// Anwendungsliste aller Anwendungen aus DB abrufen
-        /// Ruft nach Abfrage <see cref="App_ExportApplications"/> auf
+        /// Ruft nach Abfrage <see cref="Export_Applications"/> auf
         /// </summary>
         /// <returns> Erfolgreicher Export oder nicht </returns>
-        bool App_ExportAllApplications();
+        bool Export_Applications_All();
         /// <summary>
         /// Anwendungsliste aller aktiven Anwendungen aus DB abrufen
-        /// Ruft nach Abfrage <see cref="App_ExportApplications"/> auf
+        /// Ruft nach Abfrage <see cref="Export_Applications"/> auf
         /// </summary>
         /// <returns> Erfolgreicher Export oder nicht </returns>
-        bool App_ExportActiveApplications();
+        bool Export_Applications_Active();
         /// <summary>
         /// Export der Historie einer einzelnen Applikation(wenn id !=0 angegeben), oder einer angegebenen Applikationsliste
         /// </summary>
@@ -28,42 +28,42 @@ namespace ISB_BIA_IMPORT1.Services.Interfaces
         /// <param name="title"> Indikator am Anfang des Dateinamen ob SBA oder Anwendungsliste </param>
         /// <param name="id"> AnwendungsID der Anwendung ("" wenn Anwendungsliste verschiedener Anwendungen, ID beim Export einer Anwednungs-Historie) </param>
         /// <returns> Erfolgreicher Export oder nicht </returns>
-        bool App_ExportApplications(ObservableCollection<ISB_BIA_Applikationen> appList, string title, int id=0);
+        bool Export_Applications(ObservableCollection<ISB_BIA_Applikationen> appList, string title, int id=0);
         /// <summary>
         /// Anwendungsliste aller aktiven Prozesse aus DB abrufen
-        /// Ruft nach Abfrage <see cref="Proc_ExportProcesses"/> auf
+        /// Ruft nach Abfrage <see cref="Export_Processes"/> auf
         /// </summary>
         /// <returns> Erfolgreicher Export oder nicht </returns>
-        bool Proc_ExportActiveProcesses();
+        bool Export_Processes_Active();
         /// <summary>
         /// Export der Historie eines einzelnen Prozesses(wenn id !=0 angegeben), oder einer angegebenen Prozessliste
         /// </summary>
         /// <param name="procList"> Zu Exportierende Prozessliste </param>
         /// <param name="id"> ProzessID des Prozesses ("" wenn Prozessliste verschiedener Prozesse, ID beim Export einer Prozess-Historie </param>
         /// <returns> Erfolgreicher Export oder nicht </returns>
-        bool Proc_ExportProcesses(ObservableCollection<ISB_BIA_Prozesse> procList, int id=0);
+        bool Export_Processes(ObservableCollection<ISB_BIA_Prozesse> procList, int id=0);
         /// <summary>
         /// Export der Segmente und Attribute nach Excel
         /// </summary>
         /// <returns></returns>
-        bool IS_Attr_ExportSegmentAndAttributeHistory();
+        bool Export_IS_Attr_History();
         /// <summary>
         /// Export der Deltaanalyse (nur Einträge mit Delta in mindestens einem Wert)
         /// </summary>
         /// <param name="DeltaList"> Liste der Deltaeinträge </param>
         /// <returns> Erfolgreicher Export oder nicht </returns>
-        bool Delta_ExportDeltaAnalysis(ObservableCollection<ISB_BIA_Delta_Analyse> DeltaList);
+        bool Export_DeltaAnalysis(ObservableCollection<ISB_BIA_Delta_Analyse> DeltaList);
         /// <summary>
         /// Log-Export
         /// </summary>
         /// <param name="Log"> Liste aller Logeinträge </param>
         /// <returns> Erfolgreicher Export oder nicht </returns>
-        bool Log_ExportLog(ObservableCollection<ISB_BIA_Log> Log);
+        bool Export_Log(ObservableCollection<ISB_BIA_Log> Log);
         /// <summary>
         /// Einstellungshistory Export
         /// </summary>
         /// <param name="Settings"> Liste aller Einstellungen </param>
         /// <returns> Erfolgreicher Export oder nicht </returns>
-        bool Set_ExportSettings(List<ISB_BIA_Settings> Settings);
+        bool Export_Settings(List<ISB_BIA_Settings> Settings);
     }
 }

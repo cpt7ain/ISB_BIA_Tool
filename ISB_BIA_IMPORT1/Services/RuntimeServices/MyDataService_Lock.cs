@@ -28,7 +28,7 @@ namespace ISB_BIA_IMPORT1.Services
             string s = "";
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     s = db.Connection.ConnectionString;
                     db.Connection.Open();
@@ -46,7 +46,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     ISB_BIA_Lock lockObj = (db.ISB_BIA_Lock.Where(x => x.Tabellen_Kennzeichen == (int)table_Flag && x.Objekt_Id == id).FirstOrDefault());
                     return (lockObj != null) ? lockObj.BenutzerNnVn + " (" + lockObj.Benutzer + ")" : "";
@@ -62,7 +62,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     ISB_BIA_Lock lockObject = new ISB_BIA_Lock()
                     {
@@ -88,7 +88,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     db.ISB_BIA_Lock.DeleteAllOnSubmit(db.ISB_BIA_Lock.Where(x => x.Tabellen_Kennzeichen == (int)table_Flag && x.Objekt_Id == id).ToList());
                     db.SubmitChanges();
@@ -105,7 +105,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     db.ISB_BIA_Lock.DeleteAllOnSubmit(db.ISB_BIA_Lock.Where(x => x.Benutzer == Environment.UserName && x.ComputerName == Dns.GetHostEntry("").HostName).ToList());
                     db.SubmitChanges();
@@ -122,7 +122,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     List<ISB_BIA_Lock> list = db.ISB_BIA_Lock.ToList();
                     db.ISB_BIA_Lock.DeleteAllOnSubmit(list);

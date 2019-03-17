@@ -33,7 +33,7 @@ namespace ISB_BIA_IMPORT1.Services
                 ISB_BIA_Applikationen linqApp;
                 ObservableCollection<ISB_BIA_Prozesse> linqProcs;
                 //Letzte Version der Anwendung abrufen
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     linqApp = db.ISB_BIA_Applikationen.Where(c => c.Applikation_Id == id)
                         .OrderByDescending(p => p.Datum).FirstOrDefault();
@@ -113,7 +113,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return new ObservableCollection<string>(db.ISB_BIA_Applikationen.Select(p => p.Rechenzentrum).Distinct());
                 }
@@ -128,7 +128,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return new ObservableCollection<string>(db.ISB_BIA_Applikationen.Select(p => p.Server).Distinct());
                 }
@@ -143,7 +143,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return new ObservableCollection<string>(db.ISB_BIA_Applikationen.Select(p => p.Virtuelle_Maschine).Distinct());
                 }
@@ -158,7 +158,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return new ObservableCollection<string>(db.ISB_BIA_Applikationen.Select(p => p.Typ).Distinct());
                 }
@@ -172,7 +172,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return new ObservableCollection<string>(db.ISB_BIA_Applikationen.Select(p => p.IT_Betriebsart).Distinct());
                 }
@@ -188,7 +188,7 @@ namespace ISB_BIA_IMPORT1.Services
             try
             {
                 if (!date.HasValue) date = DateTime.Now;
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return new ObservableCollection<ISB_BIA_Applikationen>(
                         db.ISB_BIA_Applikationen.Where(d => d.Datum <= date).GroupBy(a => a.Applikation_Id)
@@ -206,7 +206,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return new ObservableCollection<ISB_BIA_Applikationen>(
                         db.ISB_BIA_Applikationen.Where(a => a.Applikation_Id == applikation_Id).
@@ -229,7 +229,7 @@ namespace ISB_BIA_IMPORT1.Services
             }
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     int duplicateCount = Get_Applications_All().Where(x => x.IT_Anwendung_System == a.IT_Anwendung_System && x.IT_Betriebsart == a.IT_Betriebsart).Count();
                     if (duplicateCount > 0)
@@ -272,7 +272,7 @@ namespace ISB_BIA_IMPORT1.Services
                 //Logeintrag bei Fehler erstellen
                 try
                 {
-                    using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                    using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                     {
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
@@ -324,7 +324,7 @@ namespace ISB_BIA_IMPORT1.Services
             if (!res) return null;
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     toDelete.Datum = DateTime.Now;
                     db.ISB_BIA_Applikationen.InsertOnSubmit(toDelete);
@@ -348,7 +348,7 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 try
                 {
-                    using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                    using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                     {
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
@@ -402,7 +402,7 @@ namespace ISB_BIA_IMPORT1.Services
             }
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     foreach (ISB_BIA_Applikationen application_old in aList)
                     {
@@ -451,7 +451,7 @@ namespace ISB_BIA_IMPORT1.Services
                 //Bei Fehler Logeintrag
                 try
                 {
-                    using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                    using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                     {
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
@@ -480,7 +480,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return new ObservableCollection<ISB_BIA_Applikationen>(
                         db.ISB_BIA_Applikationen.GroupBy(y => y.Applikation_Id).
@@ -499,7 +499,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     ObservableCollection<ISB_BIA_Delta_Analyse> result = new ObservableCollection<ISB_BIA_Delta_Analyse>();
                     //Alle Einträge für Prozess

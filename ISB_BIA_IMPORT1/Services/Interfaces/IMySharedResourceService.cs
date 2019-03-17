@@ -17,15 +17,15 @@ namespace ISB_BIA_IMPORT1.Services.Interfaces
         /// <summary>
         /// Zum Deaktivieren aller Startbedingungen (DB Check etc.)
         /// </summary>
-        bool ConstructionMode { get; set; }
+        bool Conf_ConstructionMode { get; set; }
         /// <summary>
         /// Variable zum Testen der Anwendung außerhalb der Produktivumgebung (Deaktiviert ActiveDirectory-Check etc.)
         /// </summary>
-        Current_Environment CurrentEnvironment { get; set; }
+        Current_Environment Conf_CurrentEnvironment { get; set; }
         /// <summary>
         /// Variable zum Testen der Anwendung als Admin in der Produktivumgebung 
         /// </summary>
-        bool Admin { get; set; }
+        bool Conf_Admin { get; set; }
         /// <summary>
         /// User welcher aus Active Directory und PC-Usernamen sowie aktuellen Einstellungen für diese Anwendung erstellt wird
         /// </summary>
@@ -33,19 +33,36 @@ namespace ISB_BIA_IMPORT1.Services.Interfaces
         /// <summary>
         /// Zum Release definierter initialer Ordner mit den Daten (Excel-Datei) zur Erstellung des Datenmodells
         /// </summary>
-        string InitialDirectory { get; set; }
+        string Dir_InitialDirectory { get; set; }
         /// <summary>
         /// string welcher die Datenbankverbindung definiert
         /// </summary>
-        string ConnectionString { get; set; }
+        string Conf_ConnectionString { get; set; }
         /// <summary>
         /// Dateipfad, welcher Standardmäßig beim Öffnen des OpenFileDialogs in den Einstellungen für das Datenmodell angezeigt wird
         /// </summary>
-        string Source { get; set; }
+        string Dir_Source { get; set; }
         /// <summary>
         /// Mail-Adresse, an die Benachrichtigungen gesendet werden sollen
         /// </summary>
-        string TargetMail { get; set; }
+        string Conf_TargetMail { get; set; }
+        /// <summary>
+        /// String der CISO AD-Gruppe der jeweiligen Test/Prod-Umgebung
+        /// </summary>
+        string Conf_AD_Group_CISO { get; set; }
+        /// <summary>
+        /// String der Admin AD-Gruppe der jeweiligen Test/Prod-Umgebung
+        /// </summary>
+        string Conf_AD_Group_Admin { get; set; }
+        /// <summary>
+        /// String der SBA-User AD-Gruppe der jeweiligen Test/Prod-Umgebung
+        /// </summary>
+        string Conf_AD_Group_SBA { get; set; }
+        /// <summary>
+        /// String der Normal-User AD-Gruppe der jeweiligen Test/Prod-Umgebung
+        /// </summary>
+        string Conf_AD_Group_Normal { get; set; }
+
 
         #region Tabellennamen in Datenbank
         /// <summary>

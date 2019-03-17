@@ -1,74 +1,89 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ClassDiagram MajorVersion="1" MinorVersion="1">
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
   <Class Name="ISB_BIA_IMPORT1.LINQ2SQL.ISB_BIA_Applikationen" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="3" Y="1" Width="2.25" />
+    <Position X="3" Y="1.75" Width="2.25" />
     <TypeIdentifier>
       <HashCode>QgD2AgABEUELYAIDQJmBSJEDjiKGgAABACjARm8AUDA=</HashCode>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="ISB_BIA_IMPORT1.LINQ2SQL.ISB_BIA_Settings" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="6.75" Y="1.75" Width="1.5" />
+    <Position X="6.75" Y="2.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>QAA2RwABACiGAAAAUAMBCoQhjGKuEAAIEDgRFAgVACo=</HashCode>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="ISB_BIA_IMPORT1.LINQ2SQL.ISB_BIA_Delta_Analyse" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="1.25" Y="1.75" Width="2" />
+    <Position X="1.25" Y="2.5" Width="2" />
     <TypeIdentifier>
       <HashCode>CAA0IAAhUFAAAAYDQAcBQIEByCEKCASCgQIARC+AAgA=</HashCode>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="ISB_BIA_IMPORT1.LINQ2SQL.ISB_BIA_Informationssegmente" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="1.25" Y="2.5" Width="2.5" />
+    <Position X="1.25" Y="3.25" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Properties" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
     <TypeIdentifier>
       <HashCode>QIEmAAghgAAWcN8gcCUBqARBrCBDQCAEACgYBAAAAIA=</HashCode>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="ISB_BIA_IMPORT1.LINQ2SQL.ISB_BIA_Informationssegmente_Attribute" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="3.5" Y="1.75" Width="3" />
+    <Position X="3.5" Y="2.5" Width="3" />
     <TypeIdentifier>
       <HashCode>AAA2AAABAAACAIIBQQEFKIUJiCACQAAEACgQRG8AAAA=</HashCode>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="ISB_BIA_IMPORT1.LINQ2SQL.ISB_BIA_Lock" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="7" Y="2.5" Width="1.25" />
+    <Position X="7" Y="3.25" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AAAnAAEFIIACAIJAQEEBCBABjDACQAIAACggBAAUAAA=</HashCode>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="ISB_BIA_IMPORT1.LINQ2SQL.ISB_BIA_Log" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="5.5" Y="2.5" Width="1.25" />
+    <Position X="5.5" Y="3.25" Width="1.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Properties" Collapsed="true" />
+    </Compartments>
     <TypeIdentifier>
       <HashCode>AEBmiABBAACDAAACQAMBiCwBjCACABAAAChADAEUACA=</HashCode>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="ISB_BIA_IMPORT1.LINQ2SQL.ISB_BIA_OEs" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="4" Y="2.5" Width="1.25" />
+    <Position X="4" Y="3.25" Width="1.25" />
     <TypeIdentifier>
       <HashCode>QAAmAIABAAAGIAAAQAEBCAABjCQiAAAAACgABIAcAAA=</HashCode>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="ISB_BIA_IMPORT1.LINQ2SQL.ISB_BIA_Prozesse" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="1.25" Y="1" Width="1.5" />
+    <Position X="1.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>Amg0BoBhXEhiviorfx2JCcElijkCCASypTjoRz+0mDA=</HashCode>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="ISB_BIA_IMPORT1.LINQ2SQL.ISB_BIA_Prozesse_Applikationen" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="5.5" Y="1" Width="2.75" />
+    <Position X="5.5" Y="1.75" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAAkAAAhUEACAAQSRAMBSAAByCgKAAACgSoABACAAgA=</HashCode>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ISB_BIA_IMPORT1.LINQ2SQL.L2SDataContext" Collapsed="true">
+    <Position X="4" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>JAEBIECgAEgAIAABBgACAA4BACIKIAoAiDgACIAAIGg=</HashCode>
+    </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

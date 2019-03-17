@@ -83,7 +83,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                         {
                             if (processToDelete.Aktiv != 0)
                             {
-                                ISB_BIA_Prozesse newProcessToDelete = _myData.Delete_Process(processToDelete);
+                                ISB_BIA_Prozesse newProcessToDelete = _myProc.Delete_Process(processToDelete);
                                 if (newProcessToDelete != null)
                                 {
                                     Refresh();
@@ -143,7 +143,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                                 }
                                 if (lockedList.Count == 0)
                                 {
-                                    if (_myData.Insert_Processes_All(List_SelectedProcesses))
+                                    if (_myProc.Insert_Processes_All(List_SelectedProcesses))
                                     {
                                         Refresh();
                                     }
@@ -175,7 +175,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _cmd_ExportProcessList
                     ?? (_cmd_ExportProcessList = new MyRelayCommand(() =>
                     {
-                        _myExport.Proc_ExportProcesses(List_Processes);
+                        _myExport.Export_Processes(List_Processes);
                     }, () => Mode == ProcAppListMode.Change));
         }
         /// <summary>
@@ -272,7 +272,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private readonly IMyNavigationService _myNavi;
         private readonly IMyDialogService _myDia;
         private readonly IMyExportService _myExport;
-        private readonly IMyDataService_Process _myData;
+        private readonly IMyDataService_Process _myProc;
         private readonly IMySharedResourceService _myShared;
         private readonly IMyDataService_Lock _myLock;
         private readonly IMyDataService_Setting _mySett;
@@ -295,7 +295,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             _myDia = myDia;
             _myNavi = myNavi;
             _myExport = myExp;
-            _myData = myProc;
+            _myProc = myProc;
             _myLock = myLock;
             _mySett = mySett;
             _myShared = myShared;
@@ -303,7 +303,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
 
             if (IsInDesignMode)
             {
-                List_Processes = _myData.Get_Processes_All();
+                List_Processes = _myProc.Get_Processes_All();
                 Count_Edit = List_Processes.Where(x => x.Datum.Year == DateTime.Now.Year).ToList().Count;
                 Count_NonEdit = List_Processes.Where(x => x.Datum.Year != DateTime.Now.Year).ToList().Count;
                 
@@ -333,14 +333,14 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         public void Refresh()
         {
-            ObservableCollection<string> relevantOEsList = _myData.Get_List_OEsForUser(_myShared.User.OE);
+            ObservableCollection<string> relevantOEsList = _myProc.Get_List_OEsForUser(_myShared.User.OE);
             if(_myShared.User.UserGroup == UserGroups.Admin || _myShared.User.UserGroup == UserGroups.CISO)
             {
-                List_Processes = _myData.Get_Processes_All();
+                List_Processes = _myProc.Get_Processes_All();
             }
             else
             {
-                List_Processes = _myData.Get_Processes_ByOE(relevantOEsList);
+                List_Processes = _myProc.Get_Processes_ByOE(relevantOEsList);
             }
             if (List_Processes == null || relevantOEsList == null)
             {

@@ -154,7 +154,6 @@
     <Compile Include="Services\Interfaces\IMyDataService_IS_Attribute.cs" />
     <Compile Include="Services\Interfaces\IMyDataService_Setting.cs" />
     <Compile Include="Services\Interfaces\IMyDataService_Lock.cs" />
-    <Compile Include="Services\Interfaces\IMyDataService.cs" />
     <Compile Include="Services\Interfaces\IMyDialogService.cs" />
     <Compile Include="Services\Interfaces\IMyExportService.cs" />
     <Compile Include="Services\Interfaces\IMyMailNotificationService.cs" />
@@ -170,8 +169,6 @@
     <Compile Include="Services\RuntimeServices\MyDataService_OE.cs" />
     <Compile Include="Services\RuntimeServices\MyDataService_Process.cs" />
     <Compile Include="Services\RuntimeServices\MyDataService_Application.cs" />
-    <Compile Include="Services\RuntimeServices\MyDataService.cs" />
-    <Compile Include="Services\DesignTimeServices\MyDesignTimeDataService.cs" />
     <Compile Include="Services\DesignTimeServices\MyDesignTimeDialogService.cs" />
     <Compile Include="Services\DesignTimeServices\MyDesignTimeExportService.cs" />
     <Compile Include="Services\DesignTimeServices\MyDesignTimeMailNotificationService.cs" />
@@ -226,9 +223,6 @@
     </Compile>
     <Compile Include="View\LogView_View.xaml.cs">
       <DependentUpon>LogView_View.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Menu_View1.xaml.cs">
-      <DependentUpon>Menu_View1.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Menu_View.xaml.cs">
       <DependentUpon>Menu_View.xaml</DependentUpon>
@@ -296,10 +290,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\Menu_View1.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="View\Menu_View.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -364,6 +354,7 @@
     <None Include="CLD\CLDSProc.cd" />
     <None Include="CLD\ClassDiagramV.cd" />
     <None Include="CLD\ClassDiagramVM.cd" />
+    <None Include="CLD\L2SDC.cd" />
     <None Include="LINQ2SQL\L2S.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>
       <LastGenOutput>L2S.designer.cs</LastGenOutput>
@@ -377,7 +368,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Services\Interfaces\CLDSApp.cd" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="Microsoft.Office.Core">

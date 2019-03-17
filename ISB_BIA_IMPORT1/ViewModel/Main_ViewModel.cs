@@ -1,7 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.Model;
-using ISB_BIA_IMPORT1.Services;
 using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
@@ -12,6 +11,8 @@ using Microsoft.WindowsAPICodePack.ApplicationServices;
 using MS.WindowsAPICodePack.Internal;
 using ISB_BIA_IMPORT1.Helpers;
 using ISB_BIA_IMPORT1.Services.Interfaces;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace ISB_BIA_IMPORT1.ViewModel
 {
@@ -191,18 +192,18 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Haupt-VM Konstruktor
         /// </summary>
-        /// <param name="myDialogService"></param>
-        /// <param name="myNavigationService"></param>
-        /// <param name="mySharedResourceService"></param>
+        /// <param name="myDia"></param>
+        /// <param name="myNavi"></param>
+        /// <param name="myShared"></param>
         /// <param name="myLock"></param>
-        public Main_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMySharedResourceService mySharedResourceService, IMyDataService_Lock myLock)
+        public Main_ViewModel(IMyDialogService myDia, IMyNavigationService myNavi, IMySharedResourceService myShared, IMyDataService_Lock myLock)
         {
             Mouse.OverrideCursor = null;
 
             #region Services
-            _myDia = myDialogService;
-            _myNavi = myNavigationService;
-            _myShared = mySharedResourceService;
+            _myDia = myDia;
+            _myNavi = myNavi;
+            _myShared = myShared;
             _myLock = myLock;
             #endregion
 
@@ -229,10 +230,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
             // Standard-Schriftgröße
             GlobalFontSize = 14;
             //Fenstertitel
-            Str_WindowTitle = (_myShared.CurrentEnvironment == Current_Environment.Test) ? "ISB BIA Tool - Testumgebung" : "ISB BIA Tool";
+            Str_WindowTitle = (_myShared.Conf_CurrentEnvironment == Current_Environment.Test) ? "ISB BIA Tool - Testumgebung" : "ISB BIA Tool";
             
             // Wenn Konstruktionsmodus
-            if (_myShared.ConstructionMode)
+            if (_myShared.Conf_ConstructionMode)
             {
                 _myShared.User = ConstructionUser;
                 _myNavi.NavigateTo<Menu_ViewModel>();
@@ -240,7 +241,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             else
             {
                 // Wenn lokaler Test
-                if (_myShared.CurrentEnvironment == Current_Environment.Local_Test)
+                if (_myShared.Conf_CurrentEnvironment == Current_Environment.Local_Test)
                 {
                     // TestUser
                     _myShared.User = TestUser;
@@ -256,20 +257,20 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     if (!_myLock.CheckDBConnection())
                     {
                         //Exit wenn kein Admin
-                        if (!_myShared.Admin) Environment.Exit(0);
+                        if (!_myShared.Conf_Admin) Environment.Exit(0);
                     }
 
                     //Prüfen der Active-Directory -> EXIT wenn Fehler (Wenn erfolgreich: Usergroup ist gesetzt; entweder nach Standard oder nach Einstellung)
-                    if (_myShared.CurrentEnvironment != Current_Environment.Local_Test)
+                    if (_myShared.Conf_CurrentEnvironment != Current_Environment.Local_Test)
                     {
-                        if ((!GetUserFromAD() || !GetGroups()) && !_myShared.Admin) Environment.Exit(0);
+                        if ((!GetUserFromAD() || !GetGroups()) && !_myShared.Conf_Admin) Environment.Exit(0);
                     }
 
                     //Alle möglicherweise gesperrten Objekten aus unsauber beendeten früheren Sessions entfernen
                     _myLock.Unlock_AllObjectsForUserOnMachine();
 
                     //Direkt weiterleiten wenn nicht im Admin Modus
-                    if (!_myShared.Admin)
+                    if (!_myShared.Conf_Admin)
                     {
                         _myNavi.NavigateTo<Menu_ViewModel>();
                     }
@@ -277,7 +278,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 catch (Exception ex)
                 {
                     _myDia.ShowError("Es ist ein Fehler aufgetreten.\nDas Programm wird geschlossen.", ex);
-                    if (!_myShared.Admin) Environment.Exit(0);
+                    if (!_myShared.Conf_Admin) Environment.Exit(0);
                 }
             }
         }
@@ -354,40 +355,20 @@ namespace ISB_BIA_IMPORT1.ViewModel
                         }
                     }
 
-                //Gruppenabfrage für Produktivumgebung
-                if(_myShared.CurrentEnvironment == Current_Environment.Prod)
-                {
-                    //Gruppenabfrage von Gruppen mit vielen Rechten nach Gruppen mit wenigen (CISO->..->Normaler user) damit immer die Rolle mit den meisten Rechten angenommen wird falls mehrere zutreffen
-                    if (result.Contains(@System.Configuration.ConfigurationManager.AppSettings["AD_Group_CISO_PROD"])) _myShared.User.UserGroup = UserGroups.CISO;
-                    else if (result.Contains(@System.Configuration.ConfigurationManager.AppSettings["AD_Group_Admin_PROD"])) _myShared.User.UserGroup = UserGroups.Admin;
-                    else if (result.Contains(@System.Configuration.ConfigurationManager.AppSettings["AD_Group_SBA_PROD"])) _myShared.User.UserGroup = UserGroups.SBA_User;
-                    else if (result.Contains(@System.Configuration.ConfigurationManager.AppSettings["AD_Group_Normal_PROD"])) _myShared.User.UserGroup = UserGroups.Normal_User;
-                    else
-                    {
-                        _myDia.ShowWarning("Sie haben keine Berechtigungen für dieses Programm[Prod].\nUser:  " + _myShared.User.Username);
-                        return false;
-                    }
-                    return true;
-                }
-                //Gruppenabfrage für Testumgebung
-                else if (_myShared.CurrentEnvironment == Current_Environment.Test)
-                {
-                    if (result.Contains(@System.Configuration.ConfigurationManager.AppSettings["AD_Group_CISO_TEST"])) _myShared.User.UserGroup = UserGroups.CISO;
-                    else if (result.Contains(@System.Configuration.ConfigurationManager.AppSettings["AD_Group_Admin_TEST"])) _myShared.User.UserGroup = UserGroups.Admin;
-                    else if (result.Contains(@System.Configuration.ConfigurationManager.AppSettings["AD_Group_SBA_TEST"])) _myShared.User.UserGroup = UserGroups.SBA_User;
-                    else if (result.Contains(@System.Configuration.ConfigurationManager.AppSettings["AD_Group_Normal_TEST"])) _myShared.User.UserGroup = UserGroups.Normal_User;
-                    else
-                    {
-                        _myDia.ShowWarning("Sie haben keine Berechtigungen für dieses Programm[Test].\nUser:  " + _myShared.User.Username);
-                        return false;
-                    }
-                    return true;
-                }
+                //Gruppenabfrage von Gruppen mit vielen Rechten nach Gruppen mit wenigen (CISO->..->Normaler user) damit immer die Rolle mit den meisten Rechten angenommen wird falls mehrere zutreffen
+                //Service fragt je nach PROD/TEST Einstellungen richtige Gruppe ab
+                if (result.Contains(_myShared.Conf_AD_Group_CISO)) _myShared.User.UserGroup = UserGroups.CISO;
+                else if (result.Contains(_myShared.Conf_AD_Group_Admin)) _myShared.User.UserGroup = UserGroups.Admin;
+                else if (result.Contains(_myShared.Conf_AD_Group_SBA)) _myShared.User.UserGroup = UserGroups.SBA_User;
+                else if (result.Contains(_myShared.Conf_AD_Group_Normal)) _myShared.User.UserGroup = UserGroups.Normal_User;
                 else
                 {
-                    _myDia.ShowWarning("Sie haben keine Berechtigungen für dieses Programm.\nUser:  " + _myShared.User.Username + "\n[CurrentEnvironmentError]");
+                    string env = (_myShared.Conf_CurrentEnvironment == Current_Environment.Prod) ? "[Prod]" : "[Test]";
+                    _myDia.ShowWarning("Sie haben keine Berechtigungen für dieses Programm"+env+".\nUser:  " + _myShared.User.Username);
                     return false;
                 }
+                return true;
+
             }
             catch (Exception ex)
             {

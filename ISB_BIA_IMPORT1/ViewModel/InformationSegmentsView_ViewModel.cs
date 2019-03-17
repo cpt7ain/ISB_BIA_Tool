@@ -72,7 +72,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             get => new MyRelayCommand(() =>
             {
-                _myExp.IS_Attr_ExportSegmentAndAttributeHistory();
+                _myExp.Export_IS_Attr_History();
             });
         }
         /// <summary>

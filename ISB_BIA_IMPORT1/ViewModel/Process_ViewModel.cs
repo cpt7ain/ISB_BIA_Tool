@@ -578,7 +578,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             else
             {
                 if (_selectedFilterItem == "<Alle>") return true;
-                return (logItem.IT_Betriebsart.IndexOf(_selectedFilterItem, StringComparison.OrdinalIgnoreCase) >= 0);
+                return (logItem.IT_Betriebsart.Equals(_selectedFilterItem));
             }
         }
         /// <summary>
@@ -857,7 +857,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _cmd_ExportProcessHistory
                     ?? (_cmd_ExportProcessHistory = new MyRelayCommand(() =>
                     {
-                        _myExp.Proc_ExportProcesses(_myProc.Get_History_Process(ProcessCurrent.Prozess_Id), ProcessCurrent.Prozess_Id);
+                        _myExp.Export_Processes(_myProc.Get_History_Process(ProcessCurrent.Prozess_Id), ProcessCurrent.Prozess_Id);
                     },()=>Mode == ProcAppMode.Change));
         }
         /// <summary>
@@ -870,7 +870,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     {
                         try
                         {
-                            string file = _myShared.InitialDirectory + @"\" + name + "_Info.xps";
+                            string file = _myShared.Dir_InitialDirectory + @"\" + name + "_Info.xps";
                             if (File.Exists(file))
                             {
                                 XpsDocument xpsDocument = new XpsDocument(file, FileAccess.Read);

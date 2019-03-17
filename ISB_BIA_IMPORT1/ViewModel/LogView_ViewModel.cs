@@ -73,7 +73,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _cmd_ExportLog
                   ?? (_cmd_ExportLog = new MyRelayCommand(() =>
                   {
-                      _myExport.Log_ExportLog(LogList);
+                      _myExport.Export_Log(LogList);
                   }));
         }
 

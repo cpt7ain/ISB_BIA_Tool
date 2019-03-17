@@ -29,7 +29,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return new ObservableCollection<ISB_BIA_Delta_Analyse>(
                         db.ISB_BIA_Delta_Analyse.OrderBy(x => x.Prozess_Id).ToList());
@@ -46,7 +46,7 @@ namespace ISB_BIA_IMPORT1.Services
             try
             {
                 List<ISB_BIA_Prozesse_Applikationen> proc_App;
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     //einen Tag aufaddieren da immer zeit 00:00 benutzt wird & sonst Fehler für spätere Einträge des Tages auftreten
                     d = d.AddDays(1);
@@ -82,7 +82,7 @@ namespace ISB_BIA_IMPORT1.Services
             List<ISB_BIA_Delta_Analyse> DeltaList = new List<ISB_BIA_Delta_Analyse>();
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     //Erstelle Liste der Prozesse und Anwendungen mit dem zu dem gewählten Zeitpunkt aktuellsten Stand
                     ObservableCollection<ISB_BIA_Prozesse> processes = _myDataProcess.Get_Processes_All(date);
@@ -121,7 +121,7 @@ namespace ISB_BIA_IMPORT1.Services
                             Datum = date.Subtract(TimeSpan.FromDays(1))
                         };
                         DeltaList.Add(d);
-                        if (toDB) db.ISB_BIA_Delta_Analyse.InsertOnSubmit(d);
+                        if (toDB) db.ISB_BIA_Delta_Analyse.InsertOnSubmit(d);                        
                     }
                     if (toDB)
                     {
@@ -147,7 +147,7 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 try
                 {
-                    using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                    using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                     {
                         _myDia.ShowError("Fehler: Ertellen der Delta-Analyse.", ex);
                         ISB_BIA_Log logEntry = new ISB_BIA_Log

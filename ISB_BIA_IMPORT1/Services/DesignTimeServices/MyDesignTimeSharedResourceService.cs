@@ -5,11 +5,11 @@ namespace ISB_BIA_IMPORT1.Services
 {
     public class MyDesignTimeSharedResourceService : IMySharedResourceService
     {
-        public bool ConstructionMode { get; set; } = false;
+        public bool Conf_ConstructionMode { get; set; } = false;
 
-        public Current_Environment CurrentEnvironment { get; set; } = Current_Environment.Local_Test;
+        public Current_Environment Conf_CurrentEnvironment { get; set; } = Current_Environment.Local_Test;
 
-        public bool Admin { get; set; } = true;
+        public bool Conf_Admin { get; set; } = true;
 
         public Login_Model User { get; set; }
             = new Login_Model(){
@@ -20,24 +20,35 @@ namespace ISB_BIA_IMPORT1.Services
                     Username = "TEST"
                 };
 
-        public string TargetMail { get; set; } = "";
+        public string Conf_TargetMail { get; set; } = "";
 
         #region Standard Dateipfad für einzulesende Quelldatei
-        public string ConnectionString
+        public string Conf_ConnectionString
         {
             get => "";
             set { }
         }
-        public string InitialDirectory
+        public string Dir_InitialDirectory
         {
             get => "";
             set { }
         }
-        public string Source
+        public string Dir_Source
         {
             get => "";
             set { }
         }
+        public string Conf_AD_Group_CISO { get; set; }
+
+
+        public string Conf_AD_Group_Admin { get; set; }
+
+
+        public string Conf_AD_Group_SBA { get; set; }
+
+
+        public string Conf_AD_Group_Normal { get; set; }
+
         public string Tbl_Prozesse
         {
             get => "";

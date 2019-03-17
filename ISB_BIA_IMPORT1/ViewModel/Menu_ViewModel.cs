@@ -258,8 +258,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
                               //else if (myShared.User.UserGroup == UserGroup.Admin) name = "ISB-BIA-Tool_Hilfe - Admin";
                               else name = "ISB-BIA-Tool_Hilfe - CISO";
                           }
-                          string file1 = _myShared.InitialDirectory + @"\" + name + ".xps";
-                          string file2 = _myShared.InitialDirectory + @"\" + name + ".pdf";
+                          string file1 = _myShared.Dir_InitialDirectory + @"\" + name + ".xps";
+                          string file2 = _myShared.Dir_InitialDirectory + @"\" + name + ".pdf";
                           if (File.Exists(file1))
                           {
                               XpsDocument xpsDocument = new XpsDocument(file1, FileAccess.Read);
@@ -381,7 +381,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _cmd_ExportProcessList
                     ?? (_cmd_ExportProcessList = new MyRelayCommand(() =>
                     {
-                        bool success = _myExport.Proc_ExportActiveProcesses();
+                        bool success = _myExport.Export_Processes_Active();
                         if (success)
                         {
                             _myDia.ShowInfo("Export erfolgreich");
@@ -478,7 +478,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
 
             #region Prozessanzahl berechnen (komplett, bearbeitet)
             //Datenbankabfragen nicht ausführen wenn ConstructionMode (da Datenmodell evtl nicht auf neustem Stand)
-            if (!_myShared.ConstructionMode)
+            if (!_myShared.Conf_ConstructionMode)
             {
                 ObservableCollection<ISB_BIA_Prozesse> processes = _myProc.Get_Processes_Active();
                 Count_AllProcesses = processes.Count;

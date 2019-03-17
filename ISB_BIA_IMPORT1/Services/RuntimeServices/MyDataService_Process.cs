@@ -36,7 +36,7 @@ namespace ISB_BIA_IMPORT1.Services
                 //Letzte Version des Prozesses abrufen
                 ISB_BIA_Prozesse linqProc;
                 ObservableCollection<ISB_BIA_Applikationen> linqApps= new ObservableCollection<ISB_BIA_Applikationen>();
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     //Prozess
                     linqProc = db.ISB_BIA_Prozesse.Where(c => c.Prozess_Id == id).OrderByDescending(p => p.Datum).FirstOrDefault();
@@ -159,7 +159,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     List<ISB_BIA_Informationssegmente> listIS = db.ISB_BIA_Informationssegmente.Where(x => x.Segment != "Lorem ipsum").GroupBy(y => y.Informationssegment_Id).Select(c => c.OrderByDescending(d => d.Datum).FirstOrDefault()).ToList();
                     listIS.Insert(0, new ISB_BIA_Informationssegmente() { Name = "", Segment = "<leer>" });
@@ -176,7 +176,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return db.ISB_BIA_Informationssegmente.Where(y => y.Name == iSName).
                         GroupBy(a => a.Name).Select(g => g.OrderByDescending(p => p.Datum).FirstOrDefault()).FirstOrDefault();
@@ -190,7 +190,7 @@ namespace ISB_BIA_IMPORT1.Services
         }
         public List<ISB_BIA_Informationssegmente> Get_Segments_5ForCalculation(Process_Model process)
         {
-            using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+            using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
             {
                 //Zutreffende Segmente auswählen
                 return _myIS.Get_Segments_Enabled().Where(x =>
@@ -205,7 +205,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return new ObservableCollection<ISB_BIA_Prozesse>(
                         db.ISB_BIA_Prozesse.Where(n => listOE.Contains(n.OE_Filter)).GroupBy(p => p.Prozess_Id)
@@ -224,7 +224,7 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 if (!date.HasValue) date = DateTime.Now;
 
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return new ObservableCollection<ISB_BIA_Prozesse>(
                         db.ISB_BIA_Prozesse.Where(d => d.Datum <= date).GroupBy(p => p.Prozess_Id)
@@ -242,7 +242,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return new ObservableCollection<ISB_BIA_Prozesse>(
                         db.ISB_BIA_Prozesse.GroupBy(p => p.Prozess_Id)
@@ -260,7 +260,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return new ObservableCollection<string>(db.ISB_BIA_Prozesse.Where(n => n.Prozessverantwortlicher != "" && n.Prozessverantwortlicher != " ").Select(p => p.Prozessverantwortlicher).Distinct());
                 }
@@ -275,7 +275,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return new ObservableCollection<string>(db.ISB_BIA_OEs.Where(x => x.OE_Nummer.StartsWith(userOE)).Select(p => p.OE_Name).Distinct());
                 }
@@ -290,7 +290,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return new ObservableCollection<string>(db.ISB_BIA_OEs.Select(p => p.OE_Name).Distinct());
                 }
@@ -305,7 +305,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return new ObservableCollection<string>(db.ISB_BIA_Prozesse.Select(p => p.Vorgelagerte_Prozesse).ToList().Distinct(StringComparer.Ordinal).OrderBy(a => a));
                 }
@@ -320,7 +320,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return new ObservableCollection<string>(db.ISB_BIA_Prozesse.Select(p => p.Nachgelagerte_Prozesse).ToList().Distinct(StringComparer.Ordinal).OrderBy(a => a));
                 }
@@ -335,7 +335,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return new ObservableCollection<ISB_BIA_Prozesse>(
                         db.ISB_BIA_Prozesse.Where(p => p.Prozess_Id == process_id)
@@ -355,7 +355,7 @@ namespace ISB_BIA_IMPORT1.Services
                 try
                 {
                     //In Datenbank schreiben
-                    using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                    using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                     {
                         int duplicateCount = Get_Processes_All().Where(x => x.Prozess == p.Prozess && x.Sub_Prozess == p.Sub_Prozess && x.OE_Filter == p.OE_Filter).Count();
                         if (duplicateCount > 0)
@@ -444,7 +444,7 @@ namespace ISB_BIA_IMPORT1.Services
                             "OE: " + p.OE_Filter + Environment.NewLine +
                             "Prozessverantwortlicher: " + p.Prozessverantwortlicher + Environment.NewLine +
                             "Datum: " + d;
-                        _myMail.Send_NotificationMail(subject, body, _myShared.CurrentEnvironment);
+                        _myMail.Send_NotificationMail(subject, body, _myShared.Conf_CurrentEnvironment);
                         #endregion
                         db.SubmitChanges();
                     }
@@ -456,7 +456,7 @@ namespace ISB_BIA_IMPORT1.Services
                     //LogEntry bei Fehler erstellen + Schreiben in Datenbank
                     try
                     {
-                        using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                        using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                         {
                             ISB_BIA_Log logEntry = new ISB_BIA_Log
                             {
@@ -529,7 +529,7 @@ namespace ISB_BIA_IMPORT1.Services
             if (!res) return null;
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     toDelete.Datum = DateTime.Now;
                     db.ISB_BIA_Prozesse.InsertOnSubmit(toDelete);
@@ -553,7 +553,7 @@ namespace ISB_BIA_IMPORT1.Services
                         "OE: " + toDelete.OE_Filter + Environment.NewLine +
                         "Prozessverantwortlicher: " + toDelete.Prozessverantwortlicher + Environment.NewLine +
                         "Datum: " + toDelete.Datum;
-                    _myMail.Send_NotificationMail(subject, body, _myShared.CurrentEnvironment);
+                    _myMail.Send_NotificationMail(subject, body, _myShared.Conf_CurrentEnvironment);
                     #endregion
                 }
                 _myDia.ShowMessage("Prozess gelöscht");
@@ -564,7 +564,7 @@ namespace ISB_BIA_IMPORT1.Services
                 //Logeintrag bei Fehler
                 try
                 {
-                    using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                    using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                     {
                         ISB_BIA_Log logEntry = new ISB_BIA_Log
                         {
@@ -617,7 +617,7 @@ namespace ISB_BIA_IMPORT1.Services
                     //Schreiben in DB
                     try
                     {
-                        using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                        using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                         {
                             foreach (ISB_BIA_Prozesse process_old in pList)
                             {
@@ -681,7 +681,7 @@ namespace ISB_BIA_IMPORT1.Services
                                 body += Environment.NewLine;
                                 body += h.Prozess_Id + ", " + h.Prozess + ", " + h.Sub_Prozess;
                             }
-                            _myMail.Send_NotificationMail(subject, body, _myShared.CurrentEnvironment);
+                            _myMail.Send_NotificationMail(subject, body, _myShared.Conf_CurrentEnvironment);
                             #endregion
                             _myDia.ShowInfo("Prozesse erfolgreich gespeichert.");
                             return true;
@@ -692,7 +692,7 @@ namespace ISB_BIA_IMPORT1.Services
                         //Bei Fehler Logeintrag
                         try
                         {
-                            using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                            using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                             {
                                 ISB_BIA_Log logEntry = new ISB_BIA_Log
                                 {
@@ -733,7 +733,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return new ObservableCollection<ISB_BIA_Applikationen>(
                         db.ISB_BIA_Applikationen.GroupBy(y => y.Applikation_Id).
@@ -752,7 +752,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     List<ISB_BIA_Applikationen> ocCategories = db.ISB_BIA_Applikationen.GroupBy(y => y.Applikation_Id).Select(z => z.OrderByDescending(p => p.Datum).FirstOrDefault()).Where(u => u.Aktiv == 1).GroupBy(x => x.IT_Betriebsart).Select(group => group.FirstOrDefault()).ToList();
                     //Für späteres Filtern: Eintrag für alle Kategorien
@@ -771,7 +771,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     ObservableCollection<ISB_BIA_Delta_Analyse> result = new ObservableCollection<ISB_BIA_Delta_Analyse>();
                     List<ISB_BIA_Prozesse_Applikationen> procAppList = db.ISB_BIA_Prozesse_Applikationen.Where(x => x.Prozess_Id == id).OrderByDescending(c => c.Datum).ToList();

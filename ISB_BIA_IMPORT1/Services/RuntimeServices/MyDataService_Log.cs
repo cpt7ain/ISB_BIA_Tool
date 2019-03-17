@@ -27,7 +27,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return new ObservableCollection<ISB_BIA_Log>(db.ISB_BIA_Log.OrderByDescending(x => x.Datum).ToList());
                 }

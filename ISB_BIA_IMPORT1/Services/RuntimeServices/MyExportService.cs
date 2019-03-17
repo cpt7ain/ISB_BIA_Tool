@@ -34,33 +34,33 @@ namespace ISB_BIA_IMPORT1.Services
             this._myApp = myApp;
             this._myProc = myProc;
             this._myShared = mySharedResourceService;
-            if (!_myShared.ConstructionMode) Setting = _mySett.Get_Settings();
-            if (!_myShared.ConstructionMode) ISList = _myIS.Get_Segments_Enabled();
+            if (!_myShared.Conf_ConstructionMode) Setting = _mySett.Get_Settings();
+            if (!_myShared.Conf_ConstructionMode) ISList = _myIS.Get_Segments_Enabled();
         }
 
-        public bool App_ExportAllApplications()
+        public bool Export_Applications_All()
         {
             //Alle Applikationen abrufen
             ObservableCollection<ISB_BIA_Applikationen> queryApplications;
             queryApplications = _myApp.Get_Applications_All();
             if (queryApplications != null)
-                return App_ExportApplications(queryApplications);
+                return Export_Applications(queryApplications);
             else
                 return false;
         }
 
-        public bool App_ExportActiveApplications()
+        public bool Export_Applications_Active()
         {
             //Alle Applikationen abrufen
             ObservableCollection<ISB_BIA_Applikationen> queryApplications;
             queryApplications = _myApp.Get_Applications_Active();
             if (queryApplications != null)
-                return App_ExportApplications(queryApplications, "SBA_");
+                return Export_Applications(queryApplications, "SBA_");
             else
                 return false;
         }
 
-        public bool App_ExportApplications(ObservableCollection<ISB_BIA_Applikationen> apps, string title="", int id=0)
+        public bool Export_Applications(ObservableCollection<ISB_BIA_Applikationen> apps, string title="", int id=0)
         {
             //SaveFileDialog öffnen mit default Ordner "Dokumente"
             string a = (id == 0) ? "": id.ToString();
@@ -206,17 +206,17 @@ namespace ISB_BIA_IMPORT1.Services
             }
         }
 
-        public bool Proc_ExportActiveProcesses()
+        public bool Export_Processes_Active()
         {
             ObservableCollection<ISB_BIA_Prozesse> ps;
             ps = _myProc.Get_Processes_Active();
             if (ps != null)
-                return Proc_ExportProcesses(ps);
+                return Export_Processes(ps);
             else
                 return false;
         }
 
-        public bool Proc_ExportProcesses(ObservableCollection<ISB_BIA_Prozesse> procs, int id=0)
+        public bool Export_Processes(ObservableCollection<ISB_BIA_Prozesse> procs, int id=0)
         {
             SaveFileDialog sfd = new SaveFileDialog()
             {
@@ -392,7 +392,7 @@ namespace ISB_BIA_IMPORT1.Services
             }
         }
 
-        public bool IS_Attr_ExportSegmentAndAttributeHistory()
+        public bool Export_IS_Attr_History()
         {
             Tuple<List<ISB_BIA_Informationssegmente>, List<ISB_BIA_Informationssegmente>, List<ISB_BIA_Informationssegmente_Attribute>, List<ISB_BIA_Informationssegmente_Attribute>> tuple =_myIS.Get_ISAndISAttForExport();
             if (tuple != null)
@@ -550,7 +550,7 @@ namespace ISB_BIA_IMPORT1.Services
             return false;
         }
 
-        public bool Delta_ExportDeltaAnalysis(ObservableCollection<ISB_BIA_Delta_Analyse> DeltaList)
+        public bool Export_DeltaAnalysis(ObservableCollection<ISB_BIA_Delta_Analyse> DeltaList)
         {
             SaveFileDialog sfd = new SaveFileDialog()
             {
@@ -649,7 +649,7 @@ namespace ISB_BIA_IMPORT1.Services
             }
         }
 
-        public bool Log_ExportLog(ObservableCollection<ISB_BIA_Log> Log)
+        public bool Export_Log(ObservableCollection<ISB_BIA_Log> Log)
         {
             SaveFileDialog sfd = new SaveFileDialog()
             {
@@ -732,7 +732,7 @@ namespace ISB_BIA_IMPORT1.Services
             return false;
         }
 
-        public bool Set_ExportSettings(List<ISB_BIA_Settings> Log)
+        public bool Export_Settings(List<ISB_BIA_Settings> Log)
         {
             SaveFileDialog sfd = new SaveFileDialog()
             {

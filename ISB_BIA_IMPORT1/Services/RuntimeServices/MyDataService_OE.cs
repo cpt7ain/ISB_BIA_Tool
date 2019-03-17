@@ -30,7 +30,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     List<ISB_BIA_OEs> queryName = db.ISB_BIA_OEs.Where(c => c.OE_Name != "").
                         GroupBy(x => x.OE_Name).Select(g => g.OrderBy(p => p.Datum).FirstOrDefault()).ToList();
@@ -47,7 +47,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     List<ISB_BIA_OEs> queryKennung = db.ISB_BIA_OEs.Where(y => y.OE_Nummer != null && y.OE_Nummer != "").GroupBy(x => x.OE_Nummer).Select(g => g.OrderBy(p => p.Datum).FirstOrDefault()).ToList();
                     return new ObservableCollection<ISB_BIA_OEs>(queryKennung);
@@ -63,7 +63,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     List<ISB_BIA_OEs> queryLink = db.ISB_BIA_OEs.Where(x => x.OE_Nummer != "").OrderBy(c => c.OE_Name).ToList();
                     return new ObservableCollection<ISB_BIA_OEs>(queryLink);
@@ -80,7 +80,7 @@ namespace ISB_BIA_IMPORT1.Services
             try
             {
                 //neu erstellen: OE Gruppe
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     //Indikator ob Name bereits existiert
                     int already_exists = db.ISB_BIA_OEs.Where(x => x.OE_Name == name).ToList().Count;
@@ -132,7 +132,7 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 try
                 {
-                    using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                    using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                     {
                         //Indikator ob Name bereits existiert
                         int already_exists = db.ISB_BIA_OEs.Where(x => x.OE_Name == name).ToList().Count;
@@ -159,8 +159,7 @@ namespace ISB_BIA_IMPORT1.Services
                             }
 
                             //Alle OE-Einträge ändern (hier keine Historisierung)
-                            db.ISB_BIA_OEs.Where(n => n.OE_Name == oldName).ToList()
-                                .ForEach(x => { x.OE_Name = name; });
+                            db.ISB_BIA_OEs.Where(n => n.OE_Name == oldName).ToList().ForEach(x => { x.OE_Name = name; });
 
                             //Die OE's all dieser Prozesse ändern
                             foreach (ISB_BIA_Prozesse process_old in oldProcessList)
@@ -248,7 +247,7 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 try
                 {
-                    using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                    using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                     {
                         //OE Gruppe kann nur gelöscht werden, wenn kein Prozess mehr dieser Gruppe zugeordnet ist
                         List<ISB_BIA_Prozesse> list1 = db.ISB_BIA_Prozesse.Where(x => x.OE_Filter == oeName).ToList();
@@ -318,7 +317,7 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 try
                 {
-                    using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                    using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                     {
                         //Löschen der angegebenen Zuordnung
                         db.ISB_BIA_OEs.DeleteAllOnSubmit(db.ISB_BIA_OEs.Where(x => x.OE_Nummer == oeNumber && x.OE_Name == oeName));
@@ -355,7 +354,7 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 try
                 {
-                    using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                    using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                     {
                         //Löschen aller Zuordnungen mit dieser OE-Nummer
                         db.ISB_BIA_OEs.DeleteAllOnSubmit(db.ISB_BIA_OEs.Where(x => x.OE_Nummer == oeNumber));
@@ -390,7 +389,7 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 try
                 {
-                    using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                    using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                     {
                         //Prüfen ob Zuordnung bereits vorhanden
                         if (db.ISB_BIA_OEs.Where(x => x.OE_Name == name.OE_Name && x.OE_Nummer == number.OE_Nummer).ToList().Count == 0)
@@ -445,7 +444,7 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 try
                 {
-                    using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                    using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                     {
                         //Prüfen ob Zuordnung bereits existiert
                         if (db.ISB_BIA_OEs.Where(x => x.OE_Name == name.OE_Name && x.OE_Nummer == number).ToList().Count == 0)
@@ -500,7 +499,7 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 try
                 {
-                    using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                    using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                     {
                         //Prüfen ob Nummer bereits vorhanden
                         if (db.ISB_BIA_OEs.Where(x => x.OE_Nummer == number).ToList().Count > 0)

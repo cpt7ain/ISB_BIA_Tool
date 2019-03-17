@@ -64,7 +64,7 @@ namespace ISB_BIA_IMPORT1.Helpers
                 SimpleIoc.Default.Register<IMyDialogService, MyDialogService>();
                 SimpleIoc.Default.Register<IMySharedResourceService, MySharedResourceService>();
                 SimpleIoc.Default.Register<IMyNavigationService, MyNavigationService>();
-
+              
                 SimpleIoc.Default.Register<IMyDataService_Lock, MyDataService_Lock>();
                 SimpleIoc.Default.Register<IMyDataService_Setting, MyDataService_Setting>();
                 SimpleIoc.Default.Register<IMyDataService_DataModel, MyDataService_DataModel>();
@@ -74,7 +74,7 @@ namespace ISB_BIA_IMPORT1.Helpers
                 SimpleIoc.Default.Register<IMyDataService_Application, MyDataService_Application>();
                 SimpleIoc.Default.Register<IMyDataService_Delta, MyDataService_Delta>();
                 SimpleIoc.Default.Register<IMyDataService_OE, MyDataService_OE>();
-
+                
                 SimpleIoc.Default.Register<IMyExportService, MyExportService>();
                 SimpleIoc.Default.Register<IMyMailNotificationService, MyMailNotificationService>();
                 #endregion

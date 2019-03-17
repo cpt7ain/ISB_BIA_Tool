@@ -75,7 +75,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             get => new MyRelayCommand(() =>
             {
-                _myExport.Set_ExportSettings(_mySett.Get_History_Settings());
+                _myExport.Export_Settings(_mySett.Get_History_Settings());
             });
         }
 

@@ -149,8 +149,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       OpenFileDialog openFileDialog = new OpenFileDialog
                       {
                           DefaultExt = ".xlsx",
-                          InitialDirectory = _myShared.InitialDirectory,
-                          FileName = _myShared.InitialDirectory + @"\ISB_BIA-SBA.xlsx",
+                          InitialDirectory = _myShared.Dir_InitialDirectory,
+                          FileName = _myShared.Dir_InitialDirectory + @"\ISB_BIA-SBA.xlsx",
                           Filter = "Excel Files (*.xlsm;*.xlsx)|*.xlsm;*xlsx"
                       };
                       bool? result = _myDia.Open(openFileDialog);
@@ -218,10 +218,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
             _myNavi = myNavigationService;
             _myDia = myDialogService;
             _myShared = mySharedResourceService;
-            Str_SourceFile = _myShared.Source;
+            Str_SourceFile = _myShared.Dir_Source;
             #endregion
-            _str_OriginalFile = _myShared.InitialDirectory + @"\ISB_BIA-SBA.xlsx";
-            _str_WorkFile = _myShared.InitialDirectory + @"\ISB_BIA-SBA_tmp.xlsx";
+            _str_OriginalFile = _myShared.Dir_InitialDirectory + @"\ISB_BIA-SBA.xlsx";
+            _str_WorkFile = _myShared.Dir_InitialDirectory + @"\ISB_BIA-SBA_tmp.xlsx";
         }
 
         #region Datenmodell erstellen

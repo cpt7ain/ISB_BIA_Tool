@@ -12,10 +12,12 @@ namespace ISB_BIA_IMPORT1.Services
     public class MyDesignTimeDataService_IS_Attribute : IMyDataService_IS_Attribute
     {
         private ObservableCollection<ISB_BIA_Informationssegmente> SegmentDummyList;
+        private ObservableCollection<ISB_BIA_Informationssegmente_Attribute> AttributetDummyList;
 
         public MyDesignTimeDataService_IS_Attribute()
         {
             SegmentDummyList = GetDummySegments();
+            AttributetDummyList = GetDummyAttributes();
         }
 
         #region Informationssegmente
@@ -48,7 +50,7 @@ namespace ISB_BIA_IMPORT1.Services
         public ObservableCollection<ISB_BIA_Informationssegmente_Attribute> GetDummyAttributes()
         {
             Random r = new Random();
-            var people = from n in Enumerable.Range(1, 100)
+            var people = from n in Enumerable.Range(1, 10)
                          select new ISB_BIA_Informationssegmente_Attribute
                          {
                              Attribut_Id = n,
@@ -95,7 +97,7 @@ namespace ISB_BIA_IMPORT1.Services
         }
         public InformationSegmentAttribute_Model Get_AttributeModelFromDB(int id)
         {
-            ISB_BIA_Informationssegmente_Attribute linqAttribute = GetDummyAttributes()[id - 1];
+            ISB_BIA_Informationssegmente_Attribute linqAttribute = AttributetDummyList.First();
 
             InformationSegmentAttribute_Model result = new InformationSegmentAttribute_Model()
             {
@@ -146,20 +148,20 @@ namespace ISB_BIA_IMPORT1.Services
         public ObservableCollection<ISB_BIA_Informationssegmente_Attribute> Get_Attributes()
         {
             return new ObservableCollection<ISB_BIA_Informationssegmente_Attribute>(
-                GetDummyAttributes().GroupBy(a => a.Attribut_Id)
+                AttributetDummyList.GroupBy(a => a.Attribut_Id)
                 .Select(g => g.OrderByDescending(p => p.Datum).FirstOrDefault()).OrderBy(x => x.Attribut_Id).ToList());
         }
         public ObservableCollection<string> Get_List_AttributeNamesAndInfoForIS()
         {
             return new ObservableCollection<string>(
-                GetDummyAttributes().GroupBy(x => x.Attribut_Id).
+                AttributetDummyList.GroupBy(x => x.Attribut_Id).
                 Select(h => h.OrderByDescending(g => g.Datum).FirstOrDefault()).
                 ToList().OrderBy(b => b.Attribut_Id).Select(s => String.Concat(s.Name, " ", s.Info)));
         }
         public ObservableCollection<string> Get_List_AttributeNamesForHeader()
         {
             return new ObservableCollection<string>(
-                GetDummyAttributes().GroupBy(x => x.Attribut_Id).
+                AttributetDummyList.GroupBy(x => x.Attribut_Id).
                 Select(h => h.OrderByDescending(g => g.Datum).FirstOrDefault()).
                 ToList().OrderBy(b => b.Attribut_Id).Select(s => s.Name));
         }

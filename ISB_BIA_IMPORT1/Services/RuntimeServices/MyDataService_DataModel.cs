@@ -253,7 +253,7 @@ namespace ISB_BIA_IMPORT1.Services
             try
             {
                 //Löschen der Tabellen wenn vorhanden und neu erstellen
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {                  
                     foreach (string s in sqlCommandList)
                     {
@@ -263,7 +263,7 @@ namespace ISB_BIA_IMPORT1.Services
                 }
 
                 //Schreiben der DataTables in die Datenbank (Initialer Stand der Daten)
-                using (SqlConnection con = new SqlConnection(_myShared.ConnectionString))
+                using (SqlConnection con = new SqlConnection(_myShared.Conf_ConnectionString))
                 {
                     SQLBulkCopy(_myShared.Tbl_Prozesse, con, dt_Processes);
                     SQLBulkCopy(_myShared.Tbl_Applikationen, con, dt_Applications);
@@ -278,7 +278,7 @@ namespace ISB_BIA_IMPORT1.Services
                     dt_Relation.Dispose();
                 }
                 
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
 
                     //Initialer Inhalt der Tabelle für OE-Gruppenbezeichnungen wird aus Prozesstabelle entnommen

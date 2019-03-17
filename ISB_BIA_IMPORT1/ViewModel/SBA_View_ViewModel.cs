@@ -135,7 +135,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 return _cmd_ExportProcessList
                     ?? (_cmd_ExportProcessList = new MyRelayCommand(() =>
                     {
-                        _myExport.Proc_ExportActiveProcesses();
+                        _myExport.Export_Processes_Active();
                     }));
             }
         }
@@ -149,7 +149,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 return _cmd_ExportApplicationList
                     ?? (_cmd_ExportApplicationList = new MyRelayCommand(() =>
                     {
-                        _myExport.App_ExportActiveApplications();
+                        _myExport.Export_Applications_Active();
                     }));
             }
         }

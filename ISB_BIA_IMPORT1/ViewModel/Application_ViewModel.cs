@@ -468,7 +468,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     {
                         try
                         {
-                            string file = _myShared.InitialDirectory + @"\" + name + "_Info.xps";
+                            string file = _myShared.Dir_InitialDirectory + @"\" + name + "_Info.xps";
                             if (File.Exists(file))
                             {
                                 XpsDocument xpsDocument = new XpsDocument(file, FileAccess.Read);
@@ -495,7 +495,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _cmd_ExportApplicationHistory
                     ?? (_cmd_ExportApplicationHistory = new MyRelayCommand(() =>
                     {
-                        _myExp.App_ExportApplications(_myApp.Get_History_Application(ApplicationCurrent.Applikation_Id), "", ApplicationCurrent.Applikation_Id);
+                        _myExp.Export_Applications(_myApp.Get_History_Application(ApplicationCurrent.Applikation_Id), "", ApplicationCurrent.Applikation_Id);
                     }, () => Mode == ProcAppMode.Change));
         }
         /// <summary>

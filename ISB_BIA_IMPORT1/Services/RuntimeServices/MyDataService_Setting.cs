@@ -27,7 +27,7 @@ namespace ISB_BIA_IMPORT1.Services
             try
             {
                 ISB_BIA_Settings linqSettings;
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     linqSettings = db.ISB_BIA_Settings
                         .OrderByDescending(p => p.Datum).FirstOrDefault();
@@ -92,7 +92,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return db.ISB_BIA_Settings.OrderByDescending(d => d.Datum).FirstOrDefault();
                 }
@@ -107,7 +107,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return db.ISB_BIA_Settings.OrderByDescending(d => d.Datum).ToList();
                 }
@@ -136,7 +136,7 @@ namespace ISB_BIA_IMPORT1.Services
                     || newSettings.Attribut10_aktiviert != oldSettings.Attribut10_aktiviert
                     || newSettings.Multi_Speichern != oldSettings.Multi_Speichern)
                 {
-                    using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                    using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                     {
                         newSettings.Datum = DateTime.Now;
                         newSettings.Benutzer = Environment.UserName;

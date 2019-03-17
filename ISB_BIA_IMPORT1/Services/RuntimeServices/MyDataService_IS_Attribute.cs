@@ -26,7 +26,7 @@ namespace ISB_BIA_IMPORT1.Services
             try
             {
                 ISB_BIA_Informationssegmente linqIS;
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     linqIS = db.ISB_BIA_Informationssegmente.Where(c => c.Informationssegment_Id == id)
                         .OrderByDescending(p => p.Datum).FirstOrDefault();
@@ -93,7 +93,7 @@ namespace ISB_BIA_IMPORT1.Services
             try
             {
                 ISB_BIA_Informationssegmente_Attribute linqAttribute;
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     linqAttribute = db.ISB_BIA_Informationssegmente_Attribute.Where(c => c.Attribut_Id == id)
                         .OrderByDescending(p => p.Datum).FirstOrDefault();
@@ -153,7 +153,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return new ObservableCollection<ISB_BIA_Informationssegmente>(
                         db.ISB_BIA_Informationssegmente.GroupBy(a => a.Name)
@@ -170,7 +170,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return new ObservableCollection<ISB_BIA_Informationssegmente>(
                         db.ISB_BIA_Informationssegmente.Where(x => x.Segment != "Lorem ipsum").GroupBy(a => a.Name)
@@ -188,7 +188,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return new ObservableCollection<ISB_BIA_Informationssegmente_Attribute>(
                         db.ISB_BIA_Informationssegmente_Attribute.GroupBy(a => a.Attribut_Id)
@@ -205,7 +205,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return new ObservableCollection<string>(
                         db.ISB_BIA_Informationssegmente_Attribute.GroupBy(x => x.Attribut_Id).
@@ -223,7 +223,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     return new ObservableCollection<string>(
                         db.ISB_BIA_Informationssegmente_Attribute.GroupBy(x => x.Attribut_Id).
@@ -256,7 +256,7 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 try
                 {
-                    using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                    using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                     {
                         if (db.ISB_BIA_Informationssegmente.Count(x => x.Name == newIS.Name) > 0)
                         {
@@ -291,7 +291,7 @@ namespace ISB_BIA_IMPORT1.Services
                     //LogEntry bei Fehler erstellen & Schreiben in Datenbank
                     try
                     {
-                        using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                        using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                         {
                             ISB_BIA_Log logEntry = new ISB_BIA_Log
                             {
@@ -339,7 +339,7 @@ namespace ISB_BIA_IMPORT1.Services
                 //Schreiben in Datenbank
                 try
                 {
-                    using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                    using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                     {
                         foreach (InformationSegmentAttribute_Model isx in newAttributeList)
                         {
@@ -388,7 +388,7 @@ namespace ISB_BIA_IMPORT1.Services
                     //LogEntry bei Fehler erstellen + Schreiben in Datenbank
                     try
                     {
-                        using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                        using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                         {
                             ISB_BIA_Log logEntry = new ISB_BIA_Log
                             {
@@ -417,7 +417,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext(_myShared.ConnectionString))
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     var segmentsList = db.ISB_BIA_Informationssegmente.OrderBy(x=>x.Informationssegment_Id).ToList();
                     var currentSegmentList = segmentsList.GroupBy(x => x.Informationssegment_Id)

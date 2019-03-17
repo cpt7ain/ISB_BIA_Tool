@@ -109,7 +109,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _cmd_ExportDeltaList
                   ?? (_cmd_ExportDeltaList = new MyRelayCommand(() =>
                   {
-                      _myExport.Delta_ExportDeltaAnalysis(List_Delta);
+                      _myExport.Export_DeltaAnalysis(List_Delta);
                   }));          
         }
 
