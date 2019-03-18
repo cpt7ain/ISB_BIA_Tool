@@ -198,28 +198,29 @@ namespace ISB_BIA_IMPORT1.ViewModel
         }
 
         #region Services
-        private readonly IMyDataService_DataModel _myDM;
-        private readonly IMyNavigationService _myNavi;
-        private readonly IMyDialogService _myDia;
-        private readonly IMySharedResourceService _myShared;
+        private readonly IDataModelService _myDM;
+        private readonly INavigationService _myNavi;
+        private readonly IDialogService _myDia;
+        private readonly ISharedResourceService _myShared;
         #endregion
 
         /// <summary>
         /// Konstruktor
         /// </summary>
         /// <param name="myDM"></param>
-        /// <param name="myDialogService"></param>
-        /// <param name="myNavigationService"></param>
-        /// <param name="mySharedResourceService"></param>
-        public DataModel_ViewModel(IMyDataService_DataModel myDM,IMyDialogService myDialogService, IMyNavigationService myNavigationService, IMySharedResourceService mySharedResourceService)
+        /// <param name="myDia"></param>
+        /// <param name="myNavi"></param>
+        /// <param name="myShared"></param>
+        public DataModel_ViewModel(IDataModelService myDM,IDialogService myDia, 
+            INavigationService myNavi, ISharedResourceService myShared)
         {
             #region Services
             _myDM = myDM;
-            _myNavi = myNavigationService;
-            _myDia = myDialogService;
-            _myShared = mySharedResourceService;
-            Str_SourceFile = _myShared.Dir_Source;
+            _myNavi = myNavi;
+            _myDia = myDia;
+            _myShared = myShared;
             #endregion
+            Str_SourceFile = _myShared.Dir_Source;
             _str_OriginalFile = _myShared.Dir_InitialDirectory + @"\ISB_BIA-SBA.xlsx";
             _str_WorkFile = _myShared.Dir_InitialDirectory + @"\ISB_BIA-SBA_tmp.xlsx";
         }

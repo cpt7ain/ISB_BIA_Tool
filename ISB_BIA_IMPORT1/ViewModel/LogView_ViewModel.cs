@@ -13,7 +13,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
     /// <summary>
     /// VM zur Darstellung des Logs
     /// </summary>
-    public class LogView_ViewModel : ViewModelBase
+    public class LogView_ViewModel: ViewModelBase
     {
         #region Backing Fields
         private ObservableCollection<ISB_BIA_Log> _logList;
@@ -78,26 +78,27 @@ namespace ISB_BIA_IMPORT1.ViewModel
         }
 
         #region Services
-        private readonly IMyNavigationService _myNavi;
-        private readonly IMyExportService _myExport;
-        private readonly IMyDataService_Log _myLog;
+        private readonly INavigationService _myNavi;
+        private readonly IExportService _myExport;
+        private readonly IDataService_Log _myLog;
         #endregion
 
         /// <summary>
         /// Viewmodel für die Darstellung des Anwendungs-Logs
         /// </summary>
-        /// <param name="myNavigationService"> <see cref="IMyNavigationService"/> </param>
-        /// <param name="myExportService"><see cref="IMyExportService"/> </param>
+        /// <param name="myNavi"> <see cref="INavigationService"/> </param>
+        /// <param name="myExp"><see cref="IExportService"/> </param>
         /// <param name="myLog"><see cref="IMyDataService"/> </param>
-        public LogView_ViewModel(IMyNavigationService myNavigationService, IMyExportService myExportService, IMyDataService_Log myLog)
+        public LogView_ViewModel(INavigationService myNavi, IExportService myExp, IDataService_Log myLog)
         {
             #region Services
-            _myNavi = myNavigationService;
-            _myExport = myExportService;
+            _myNavi = myNavi;
+            _myExport = myExp;
             _myLog = myLog;
+            
             #endregion
             //Log abrufen
-            LogList = _myLog.Get_Log();
+            LogList = _myLog.Get_List_Log();
             //Definieren der Quelle für den CollectionView (=> Log Liste)
             FilterView = (CollectionView)CollectionViewSource.GetDefaultView(LogList);
             //Filter der CollectionView festlegen

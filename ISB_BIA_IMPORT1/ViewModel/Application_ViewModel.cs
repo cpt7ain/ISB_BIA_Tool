@@ -3,7 +3,6 @@ using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.Model;
 using ISB_BIA_IMPORT1.LINQ2SQL;
-using ISB_BIA_IMPORT1.Services;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -541,13 +540,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
         public ISB_BIA_Settings Setting { get; set; }
 
         #region Services
-        private readonly IMyNavigationService _myNavi;
-        private readonly IMyDialogService _myDia;
-        private readonly IMyDataService_Application _myApp;
-        private readonly IMyDataService_Lock _myLock;
-        private readonly IMyDataService_Setting _mySett;
-        private readonly IMyExportService _myExp;
-        private readonly IMySharedResourceService _myShared;
+        private readonly INavigationService _myNavi;
+        private readonly IDialogService _myDia;
+        private readonly IDataService_Application _myApp;
+        private readonly ILockService _myLock;
+        private readonly IDataService_Setting _mySett;
+        private readonly IExportService _myExp;
+        private readonly ISharedResourceService _myShared;
         #endregion
 
         /// <summary>
@@ -558,9 +557,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <param name="myApp"></param>
         /// <param name="myExp"></param>
         /// <param name="myShared"></param>
-        public Application_ViewModel(IMyDialogService myDia, IMyNavigationService myNavi, 
-            IMyDataService_Application myApp, IMyExportService myExp, 
-            IMySharedResourceService myShared, IMyDataService_Lock myLock, IMyDataService_Setting mySett)
+        public Application_ViewModel(IDialogService myDia, INavigationService myNavi, 
+            IDataService_Application myApp, IExportService myExp, 
+            ISharedResourceService myShared, ILockService myLock, IDataService_Setting mySett)
         {
             #region Services
             _myNavi = myNavi;
@@ -574,23 +573,23 @@ namespace ISB_BIA_IMPORT1.ViewModel
 
             if (IsInDesignMode)
             {
-                ApplicationCurrent = _myApp.Get_ModelFromDB(1);
+                ApplicationCurrent = _myApp.Get_Model_FromDB(1);
                 Header = "TestHeader";
-                List_Rechenzentrum = _myApp.Get_List_Rechenzentrum();
-                List_Server = _myApp.Get_List_Server();
-                List_Virtuelle_Maschine = _myApp.Get_List_Virtuelle_Maschine();
-                List_Typ = _myApp.Get_List_Types();
-                List_IT_Betriebsart = _myApp.Get_List_Betriebsart();
-                Setting = _mySett.Get_Settings();
+                List_Rechenzentrum = _myApp.Get_StringList_Rechenzentrum();
+                List_Server = _myApp.Get_StringList_Server();
+                List_Virtuelle_Maschine = _myApp.Get_StringList_Virtuelle_Maschine();
+                List_Typ = _myApp.Get_StringList_Types();
+                List_IT_Betriebsart = _myApp.Get_StringList_Betriebsart();
+                Setting = _mySett.Get_List_Settings();
             }
             else
             {
                 #region Messenger Registrierungen für 2 Modi (Anwendung bearbeiten, neue Anwendung anlegen)
                 //NotificationMessage<int> a = new NotificationMessage<int>(4,"");
                 MessengerInstance.Register<NotificationMessage<int>>(this, ProcAppMode.Change, message => {
-                    if (!(message.Sender is IMyNavigationService)) return;
+                    if (!(message.Sender is INavigationService)) return;
                     Mode = ProcAppMode.Change;
-                    ApplicationCurrent = _myApp.Get_ModelFromDB(message.Content);
+                    ApplicationCurrent = _myApp.Get_Model_FromDB(message.Content);
                     //Wenn Daten Fehlerhaft dann zurückkehren
                     if (ApplicationCurrent == null)
                     {
@@ -610,21 +609,21 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     }
                 });
                 MessengerInstance.Register<NotificationMessage<int>>(this, ProcAppMode.New, message => {
-                    if (!(message.Sender is IMyNavigationService)) return;
+                    if (!(message.Sender is INavigationService)) return;
                     Mode = ProcAppMode.New;
                     ApplicationCurrent = new Application_Model();
                     _oldCurrentApplication = new Application_Model();
                 });
                 #endregion
                 #region Abrufen der Listendaten für die Dropdown-Felder
-                List_Rechenzentrum = _myApp.Get_List_Rechenzentrum();
-                List_Server = _myApp.Get_List_Server();
-                List_Virtuelle_Maschine = _myApp.Get_List_Virtuelle_Maschine();
-                List_Typ = _myApp.Get_List_Types();
-                List_IT_Betriebsart = _myApp.Get_List_Betriebsart();
+                List_Rechenzentrum = _myApp.Get_StringList_Rechenzentrum();
+                List_Server = _myApp.Get_StringList_Server();
+                List_Virtuelle_Maschine = _myApp.Get_StringList_Virtuelle_Maschine();
+                List_Typ = _myApp.Get_StringList_Types();
+                List_IT_Betriebsart = _myApp.Get_StringList_Betriebsart();
                 #endregion
                 #region Aus Settings-Tabelle Abfragen ob neue Schutzziele (5+6) aktiviert sind (angezeigt werden)
-                Setting = _mySett.Get_Settings();
+                Setting = _mySett.Get_List_Settings();
                 Vis_NewSecurityGoals = (Setting.Neue_Schutzziele_aktiviert == "Ja");
                 #endregion
             }

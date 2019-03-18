@@ -32,7 +32,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private object _selectedItem;
         private ProcAppListMode _mode;
         private ISB_BIA_Settings _setting;
-
         #endregion
 
         /// <summary>
@@ -202,7 +201,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _count_Edit;
             set => Set(() => Count_Edit, ref _count_Edit, value);
         }
-
         /// <summary>
         /// Ausgewähltes Objekt
         /// </summary>
@@ -269,14 +267,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
         }
 
         #region Sevices
-        private readonly IMyNavigationService _myNavi;
-        private readonly IMyDialogService _myDia;
-        private readonly IMyExportService _myExport;
-        private readonly IMyDataService_Process _myProc;
-        private readonly IMySharedResourceService _myShared;
-        private readonly IMyDataService_Lock _myLock;
-        private readonly IMyDataService_Setting _mySett;
-
+        private readonly INavigationService _myNavi;
+        private readonly IDialogService _myDia;
+        private readonly IExportService _myExport;
+        private readonly IDataService_Process _myProc;
+        private readonly ISharedResourceService _myShared;
+        private readonly ILockService _myLock;
+        private readonly IDataService_Setting _mySett;
         #endregion
 
         /// <summary>
@@ -287,9 +284,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <param name="myExp"></param>
         /// <param name="myProc"></param>
         /// <param name="myShared"></param>
-        public ProcessView_ViewModel(IMyDialogService myDia, IMyNavigationService myNavi,
-            IMyExportService myExp, IMyDataService_Process myProc, IMyDataService_Lock myLock,
-            IMyDataService_Setting mySett,IMySharedResourceService myShared)
+        public ProcessView_ViewModel(IDialogService myDia, INavigationService myNavi,
+            IExportService myExp, IDataService_Process myProc, ILockService myLock,
+            IDataService_Setting mySett,ISharedResourceService myShared)
         {
             #region Services
             _myDia = myDia;
@@ -303,7 +300,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
 
             if (IsInDesignMode)
             {
-                List_Processes = _myProc.Get_Processes_All();
+                List_Processes = _myProc.Get_List_Processes_All();
                 Count_Edit = List_Processes.Where(x => x.Datum.Year == DateTime.Now.Year).ToList().Count;
                 Count_NonEdit = List_Processes.Where(x => x.Datum.Year != DateTime.Now.Year).ToList().Count;
                 
@@ -314,15 +311,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
             {
                 MessengerInstance.Register<NotificationMessage<ProcAppListMode>>(this, message =>
                 {
-                    if (!(message.Sender is IMyNavigationService)) return;
+                    if (!(message.Sender is INavigationService)) return;
                     Mode = message.Content;
                 });
                 MessengerInstance.Register<NotificationMessage<string>>(this, MessageToken.RefreshData, message =>
                 {
-                    if (!(message.Sender is IMyNavigationService)) return;
+                    if (!(message.Sender is INavigationService)) return;
                     Refresh();
                 });
-                Setting = _mySett.Get_Settings();
+                Setting = _mySett.Get_List_Settings();
                 //Laden der Daten
                 Refresh();
             }
@@ -333,14 +330,14 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         public void Refresh()
         {
-            ObservableCollection<string> relevantOEsList = _myProc.Get_List_OEsForUser(_myShared.User.OE);
+            ObservableCollection<string> relevantOEsList = _myProc.Get_StringList_OEsForUser(_myShared.User.OE);
             if(_myShared.User.UserGroup == UserGroups.Admin || _myShared.User.UserGroup == UserGroups.CISO)
             {
-                List_Processes = _myProc.Get_Processes_All();
+                List_Processes = _myProc.Get_List_Processes_All();
             }
             else
             {
-                List_Processes = _myProc.Get_Processes_ByOE(relevantOEsList);
+                List_Processes = _myProc.Get_List_Processes_ByOE(relevantOEsList);
             }
             if (List_Processes == null || relevantOEsList == null)
             {

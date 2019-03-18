@@ -17,6 +17,7 @@ using System.Windows.Documents;
 using System.Windows.Xps.Packaging;
 using ISB_BIA_IMPORT1.Helpers;
 using ISB_BIA_IMPORT1.Services.Interfaces;
+using System.Windows.Controls;
 
 namespace ISB_BIA_IMPORT1.ViewModel
 {
@@ -75,9 +76,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private MyRelayCommand<string> _cmd_NavToIS;
         private MyRelayCommand _cmd_ExportProcessHistory;
         private MyRelayCommand<string> _cmd_Info;
-        private ProcAppMode _mode;
         private MyRelayCommand<string> _cmd_ShowMsg;
         private MyRelayCommand _cmd_ResetValues;
+        private ProcAppMode _mode;
         #endregion
 
         #region Mindesteinstufungswerte der Schutzziele
@@ -792,18 +793,18 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 });
         }
         /// <summary>
-        /// Zum <see cref="InformationSegmentsView_ViewModel"/> navigieren
+        /// Zum <see cref="SegmentsView_ViewModel"/> navigieren
         /// </summary>
         public MyRelayCommand Cmd_NavToISViewChild
         {
             get => _cmd_NavToISViewChild
                   ?? (_cmd_NavToISViewChild = new MyRelayCommand(() =>
                   {
-                      _myNavi.NavigateTo<InformationSegmentsView_ViewModel>(ISISAttributeMode.View);
+                      _myNavi.NavigateTo<SegmentsView_ViewModel>(ISISAttributeMode.View);
                   }));
         }
         /// <summary>
-        /// Zum <see cref="InformationSegment_ViewModel"/> des ausgewählten Segments navigieren
+        /// Zum <see cref="Segment_ViewModel"/> des ausgewählten Segments navigieren
         /// </summary>
         public MyRelayCommand<string> Cmd_NavToIS
         {
@@ -813,7 +814,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       ISB_BIA_Informationssegmente seg = _myProc.Get_IS_ByName(msg);
                       if (seg != null)
                       {
-                          _myNavi.NavigateTo<InformationSegment_ViewModel>(seg.Informationssegment_Id, ISISAttributeMode.View);
+                          _myNavi.NavigateTo<Segment_ViewModel>(seg.Informationssegment_Id, ISISAttributeMode.View);
                       }
                       else
                       {
@@ -1172,15 +1173,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
         public ISB_BIA_Settings Setting { get; set; }
 
         #region Services
-        private readonly IMyNavigationService _myNavi;
-        private readonly IMyDialogService _myDia;
-        private readonly IMyDataService_Process _myProc;
-        private readonly IMyDataService_Lock _myLock;
-        private readonly IMyDataService_Setting _mySett;
-        private readonly IMyDataService_Application _myApp;
-        private readonly IMyDataService_IS_Attribute _myIS;
-        private readonly IMyExportService _myExp;
-        private readonly IMySharedResourceService _myShared;
+        private readonly INavigationService _myNavi;
+        private readonly IDialogService _myDia;
+        private readonly IDataService_Process _myProc;
+        private readonly ILockService _myLock;
+        private readonly IDataService_Setting _mySett;
+        private readonly IDataService_Application _myApp;
+        private readonly IDataService_Attribute _myIS;
+        private readonly IExportService _myExp;
+        private readonly ISharedResourceService _myShared;
         #endregion
 
         /// <summary>
@@ -1192,10 +1193,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <param name="myLock"></param>
         /// <param name="myExp"></param>
         /// <param name="myShared"></param>
-        public Process_ViewModel(IMyDialogService myDia, IMyNavigationService myNavi, 
-            IMyDataService_Process myProc, IMyDataService_Setting mySett, IMyDataService_IS_Attribute myIS,
-            IMyDataService_Application myApp, IMyDataService_Lock myLock, 
-            IMyExportService myExp, IMySharedResourceService myShared)
+        public Process_ViewModel(IDialogService myDia, INavigationService myNavi, 
+            IDataService_Process myProc, IDataService_Setting mySett, IDataService_Attribute myIS,
+            IDataService_Application myApp, ILockService myLock, 
+            IExportService myExp, ISharedResourceService myShared)
         {
             #region Services
             _myDia = myDia;
@@ -1211,7 +1212,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
 
             if (IsInDesignMode)
             {
-                ProcessCurrent = _myProc.Get_ModelFromDB(1);
+                ProcessCurrent = _myProc.Get_Model_FromDB(1);
                 _oldCurrentProcess = ProcessCurrent.Copy();
                 Proc_Prozessverantwortlicher = ProcessCurrent.Prozessverantwortlicher;
                 Proc_Vorgelagerte_Prozesse = ProcessCurrent.Vorgelagerte_Prozesse;
@@ -1221,9 +1222,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
             //Messenger Registrierung für Prozessbearbeitungsmodus
             MessengerInstance.Register<NotificationMessage<int>>(this, ProcAppMode.Change, message =>
             {
-                if (!(message.Sender is IMyNavigationService)) return;
+                if (!(message.Sender is INavigationService)) return;
                 Mode = ProcAppMode.Change;
-                ProcessCurrent = _myProc.Get_ModelFromDB(message.Content);
+                ProcessCurrent = _myProc.Get_Model_FromDB(message.Content);
                 //Wenn Daten Fehlerhaft dann zurückkehren
                 if (ProcessCurrent == null)
                 {
@@ -1245,7 +1246,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             //Messenger Registrierung für Prozesserstellungsmodus
             MessengerInstance.Register<NotificationMessage<int>>(this, ProcAppMode.New, message => 
             {
-                if (!(message.Sender is IMyNavigationService)) return;
+                if (!(message.Sender is INavigationService)) return;
                 Mode = ProcAppMode.New;
                 ProcessCurrent = new Process_Model();
                 _oldCurrentProcess=new Process_Model();
@@ -1254,8 +1255,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
             //MessengerInstance.Register<string>(this, MessageToken.ChangedToCriticalNotification,p=> { _myDia.ShowInfo(Krit_Ntf); });
             
             #region Listen und Daten für Prozess-Anwendungszuordnung
-            List_AllApplications = new ObservableCollection<ISB_BIA_Applikationen>(_myApp.Get_Applications_Active().OrderBy(c=>c.IT_Anwendung_System));
-            List_ApplicationCategories = _myProc.Get_List_AppCategories();
+            List_AllApplications = new ObservableCollection<ISB_BIA_Applikationen>(_myApp.Get_List_Applications_Active().OrderBy(c=>c.IT_Anwendung_System));
+            List_ApplicationCategories = _myProc.Get_StringList_AppCategories();
             #endregion
 
             #region Filter für Anwendungsliste definieren
@@ -1265,23 +1266,23 @@ namespace ISB_BIA_IMPORT1.ViewModel
             #endregion
 
             #region Füllen der Dropdownlisten
-            List_ProcessOwner = _myProc.Get_List_ProcessOwner();
-            List_OE = (_myShared.User.UserGroup == UserGroups.Admin || _myShared.User.UserGroup == UserGroups.CISO)?_myProc.Get_List_OEs_All():_myProc.Get_List_OEsForUser(_myShared.User.OE);
+            List_ProcessOwner = _myProc.Get_StringList_ProcessOwner();
+            List_OE = (_myShared.User.UserGroup == UserGroups.Admin || _myShared.User.UserGroup == UserGroups.CISO)?_myProc.Get_StringList_OEs_All():_myProc.Get_StringList_OEsForUser(_myShared.User.OE);
             List_Maturity = new ObservableCollection<string>(new List<string>() { "1 - Initial", "2 - Wiederholbar", "3 - Definiert", "4 - Gemanagt", "5 - Optimiert" });
             List_Crit = new ObservableCollection<string>(new List<string>() { "Normal", "Mittel", "Hoch", "Sehr hoch" });
             List_RTO = new ObservableCollection<int>(new List<int>() { 1, 5, 10, 20 });
-            List_PreProcess = _myProc.Get_List_PreProcesses();
-            List_PostProcess = _myProc.Get_List_PostProcesses();
-            List_IS = _myProc.Get_List_ISDictionary();
+            List_PreProcess = _myProc.Get_StringList_PreProcesses();
+            List_PostProcess = _myProc.Get_StringList_PostProcesses();
+            List_IS = _myProc.Get_StringList_ISDictionary();
             #endregion
 
             #region Einstellungen abrufen
-            Setting = _mySett.Get_Settings();
+            Setting = _mySett.Get_List_Settings();
             Vis_NewSecurityGoals = (Setting.Neue_Schutzziele_aktiviert == "Ja");
             #endregion
 
             #region Informationssegmente und Attribute abrufen
-            _list_AllAttributes = _myIS.Get_Attributes();
+            _list_AllAttributes = _myIS.Get_List_Attributes();
             #endregion
         }
 
@@ -1294,7 +1295,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             try
             {
 
-                List<ISB_BIA_Informationssegmente> queryIS = _myProc.Get_Segments_5ForCalculation(process);
+                List<ISB_BIA_Informationssegmente> queryIS = _myProc.Get_List_Segments_5ForCalculation(process);
                 //Liste zur speicherung der zutreffenden Attribute
                 List<int> list = new List<int>();
 

@@ -29,7 +29,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private int _count_Edit;
         private int _count_AllProcesses;
         private int _count_EditProcesses;
-
         #endregion
 
         #region Navigations-Commands die Viewmodel ändern und ggf. Daten daran versenden
@@ -108,7 +107,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                                 }
                                 if (lockedList.Count == 0)
                                 {
-                                    if (_myApp.Insert_AllApplications(List_SelectedApplications))
+                                    if (_myApp.Insert_Applications_All(List_SelectedApplications))
                                     {
                                         Refresh();
                                     }
@@ -226,13 +225,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
         public ISB_BIA_Settings Setting { get; set; }
 
         #region Services
-        private readonly IMyNavigationService _myNavi;
-        private readonly IMyDialogService _myDia;
-        private readonly IMyExportService _myExport;
-        private readonly IMyDataService_Application _myApp;
-        private readonly IMyDataService_Process _myProc;
-        private readonly IMyDataService_Setting _mySett;
-        private readonly IMyDataService_Lock _myLock;
+        private readonly INavigationService _myNavi;
+        private readonly IDialogService _myDia;
+        private readonly IExportService _myExport;
+        private readonly IDataService_Application _myApp;
+        private readonly IDataService_Process _myProc;
+        private readonly IDataService_Setting _mySett;
+        private readonly ILockService _myLock;
 
         #endregion
 
@@ -243,10 +242,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <param name="myNavi"></param>
         /// <param name="myExp"></param>
         /// <param name="myApp"></param>
-        public SBA_View_ViewModel(IMyDialogService myDia, IMyNavigationService myNavi, 
-            IMyExportService myExp, IMyDataService_Application myApp,IMyDataService_Lock myLock, 
-            IMyDataService_Setting mySett , IMyDataService_Process myProc)
+        public SBA_View_ViewModel(IDialogService myDia, INavigationService myNavi, 
+            IExportService myExp, IDataService_Application myApp,ILockService myLock, 
+            IDataService_Setting mySett , IDataService_Process myProc)
         {
+            #region Services
             _myNavi = myNavi;
             _myDia = myDia;
             _mySett = mySett;
@@ -254,12 +254,14 @@ namespace ISB_BIA_IMPORT1.ViewModel
             _myProc = myProc;
             _myExport = myExp;
             _myApp = myApp;
+            #endregion
+
             MessengerInstance.Register<NotificationMessage<string>>(this, MessageToken.RefreshData, message =>
             {
-                if (!(message.Sender is IMyNavigationService)) return;
+                if (!(message.Sender is INavigationService)) return;
                 Refresh();
             });
-            Setting = _mySett.Get_Settings();
+            Setting = _mySett.Get_List_Settings();
             Refresh();
         }
 
@@ -268,7 +270,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         public void Refresh()
         {
-            List_Applications = _myApp.Get_Applications_Active();
+            List_Applications = _myApp.Get_List_Applications_Active();
             if (List_Applications == null)
             {
                 Cleanup();
@@ -277,7 +279,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             }
             Count_Edit = List_Applications.Where(x => x.Datum.Year == DateTime.Now.Year).ToList().Count;
             Count_NonEdit = List_Applications.Where(x => x.Datum.Year != DateTime.Now.Year).ToList().Count;
-            ObservableCollection<ISB_BIA_Prozesse> processes = _myProc.Get_Processes_Active();
+            ObservableCollection<ISB_BIA_Prozesse> processes = _myProc.Get_List_Processes_Active();
             Count_AllProcesses = processes.Count;
             Count_EditProcesses = processes.Where(x => x.Datum.Year == DateTime.Now.Year).ToList().Count;
             List_SelectedApplications = new ObservableCollection<ISB_BIA_Applikationen>();

@@ -158,15 +158,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
             };
         }
 
-        public Login_Model TestUser
+        public Login_Model LocalUser
         {
             get => new Login_Model()
             {
-                Username = Environment.UserName,
+                Username = "TestUser",
                 UserGroup = UserGroups.CISO,
                 OE = "1.1",
-                Givenname = "Tim",
-                Surname = "Wolf"
+                Givenname = "Max",
+                Surname = "Mustermann"
             };
         }
 
@@ -183,10 +183,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         }
 
         #region Services
-        private readonly IMyDialogService _myDia;
-        private readonly IMyNavigationService _myNavi;
-        private readonly IMySharedResourceService _myShared;
-        private readonly IMyDataService_Lock _myLock;
+        private readonly IDialogService _myDia;
+        private readonly INavigationService _myNavi;
+        private readonly ISharedResourceService _myShared;
+        private readonly ILockService _myLock;
         #endregion 
 
         /// <summary>
@@ -196,7 +196,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <param name="myNavi"></param>
         /// <param name="myShared"></param>
         /// <param name="myLock"></param>
-        public Main_ViewModel(IMyDialogService myDia, IMyNavigationService myNavi, IMySharedResourceService myShared, IMyDataService_Lock myLock)
+        public Main_ViewModel(IDialogService myDia, INavigationService myNavi, ISharedResourceService myShared, ILockService myLock)
         {
             Mouse.OverrideCursor = null;
 
@@ -210,7 +210,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             //Messenger Registrierung für den Empfang Viewmodel-bestimmender Nachrichten
             MessengerInstance.Register<NotificationMessage<ViewModelBase>>(this, MessageToken.ChangeCurrentVM, s =>
             {
-                if (!(s.Sender is IMyNavigationService)) return;
+                if (!(s.Sender is INavigationService)) return;
                 if (s.Content != null) ViewModelCurrent = s.Content;
                 else ShutDown();
             });
@@ -244,7 +244,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 if (_myShared.Conf_CurrentEnvironment == Current_Environment.Local_Test)
                 {
                     // TestUser
-                    _myShared.User = TestUser;
+                    _myShared.User = LocalUser;
                 }
                 else
                 {
@@ -265,9 +265,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     {
                         if ((!GetUserFromAD() || !GetGroups()) && !_myShared.Conf_Admin) Environment.Exit(0);
                     }
-
-                    //Alle möglicherweise gesperrten Objekten aus unsauber beendeten früheren Sessions entfernen
-                    _myLock.Unlock_AllObjectsForUserOnMachine();
 
                     //Direkt weiterleiten wenn nicht im Admin Modus
                     if (!_myShared.Conf_Admin)
@@ -297,9 +294,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     SearchResult result = searcher.FindOne();
                     if(result != null)
                     {
+                        ResultPropertyCollection res = result.Properties;
                         if (result.Properties.Contains("department"))
                         {
-                            var department = result.Properties["department"];
+                            var department = res["department"];
                             if (department.Count > 0)
                             {
                                 _myShared.User.OE = department[0].ToString();
@@ -307,12 +305,12 @@ namespace ISB_BIA_IMPORT1.ViewModel
                         }
                         if (result.Properties.Contains("givenname"))
                         {
-                            var firstName = result.Properties["givenname"];
+                            var firstName = res["givenname"];
                             _myShared.User.Givenname = (firstName.Count > 0) ? firstName[0].ToString() : "n/a";
                         }
                         if (result.Properties.Contains("sn"))
                         {
-                            var surname = result.Properties["sn"];
+                            var surname = res["sn"];
                             _myShared.User.Surname = (surname.Count > 0) ? surname[0].ToString() : "n/a";
                         }
                         return true;

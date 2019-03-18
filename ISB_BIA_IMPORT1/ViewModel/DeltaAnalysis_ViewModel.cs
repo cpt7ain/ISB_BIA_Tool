@@ -136,32 +136,32 @@ namespace ISB_BIA_IMPORT1.ViewModel
         }
 
         #region Services
-        private readonly IMyNavigationService _myNavi;
-        private readonly IMyExportService _myExport;
-        private readonly IMyDataService_Delta _myDelta;
-        private readonly IMyDataService_Setting _mySett;
+        private readonly INavigationService _myNavi;
+        private readonly IExportService _myExport;
+        private readonly IDataService_Delta _myDelta;
+        private readonly IDataService_Setting _mySett;
         #endregion
 
         /// <summary>
         /// Konstruktor
         /// </summary>
-        /// <param name="myNavigationService"></param>
-        /// <param name="myExportService"></param>
+        /// <param name="myNavi"></param>
+        /// <param name="myExp"></param>
         /// <param name="myDelta"></param>
-        public DeltaAnalysis_ViewModel(IMyNavigationService myNavigationService, IMyExportService myExportService, 
-            IMyDataService_Delta myDelta, IMyDataService_Setting mySett)
+        public DeltaAnalysis_ViewModel(INavigationService myNavi, IExportService myExp, 
+            IDataService_Delta myDelta, IDataService_Setting mySett)
         {
             #region Services
-            _myNavi = myNavigationService;
-            _myExport = myExportService;
+            _myNavi = myNavi;
+            _myExport = myExp;
             _myDelta = myDelta;
             _mySett = mySett;
             #endregion
 
             if (IsInDesignMode)
             {
-                Setting = _mySett.Get_Settings();
-                List_Complete = _myDelta.Get_DeltaAnalysis();
+                Setting = _mySett.Get_List_Settings();
+                List_Complete = _myDelta.Get_List_Delta();
                 List_Delta = new ObservableCollection<ISB_BIA_Delta_Analyse>(List_Complete);
                 //DeltaList = _myData.GetDeltaAnalysis();
                 FilterView = (CollectionView)CollectionViewSource.GetDefaultView(List_Complete);
@@ -187,7 +187,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 });
                 #endregion
                 #region Einstellungen abrufen
-                Setting = _mySett.Get_Settings();
+                Setting = _mySett.Get_List_Settings();
                 Width_NewSecurityGoals = (Setting.Neue_Schutzziele_aktiviert == "Ja") ? 110 : 0;
                 Vis_NewSecurityGoals = (Setting.Neue_Schutzziele_aktiviert == "Ja") ? Visibility.Visible : Visibility.Collapsed;
                 #endregion

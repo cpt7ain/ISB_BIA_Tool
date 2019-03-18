@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
-  <Interface Name="ISB_BIA_IMPORT1.Services.Interfaces.IMyDataService_Delta">
+  <Interface Name="ISB_BIA_IMPORT1.Services.Interfaces.IDataService_Delta">
     <Position X="1" Y="1.5" Width="7.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAoAAAABAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Services\Interfaces\IMyDataService_Delta.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAgAAAA=</HashCode>
+      <FileName>Services\Interfaces\IDataService_Delta.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Font Name="Segoe UI" Size="9" />

@@ -88,9 +88,9 @@ namespace ISB_BIA_IMPORT1
             {
                 ApplicationRestartRecoveryManager.ApplicationRecoveryInProgress();
                 //Entsperrt alle vom User gesperrten Objekte falls die Anwendung crashed
-                var myLock = SimpleIoc.Default.GetInstance<IMyDataService_Lock>();
+                var myLock = SimpleIoc.Default.GetInstance<ILockService>();
                 myLock.Unlock_AllObjectsForUserOnMachine();
-                var myDia = SimpleIoc.Default.GetInstance<IMyDialogService>();
+                var myDia = SimpleIoc.Default.GetInstance<IDialogService>();
                 myDia.ShowError("Die Anwendung wurde aus einem unbekannten Grund beendet");
                 ApplicationRestartRecoveryManager.ApplicationRecoveryFinished(true);
             }

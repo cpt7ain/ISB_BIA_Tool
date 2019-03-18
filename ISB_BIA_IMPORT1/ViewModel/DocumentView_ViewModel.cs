@@ -59,19 +59,19 @@ namespace ISB_BIA_IMPORT1.ViewModel
         }
 
         #region Services
-        private readonly IMyNavigationService _myNavi;
-        private readonly IMyDialogService _myDia;
+        private readonly INavigationService _myNavi;
+        private readonly IDialogService _myDia;
         #endregion
 
         /// <summary>
         /// Konstruktor
         /// </summary>
-        /// <param name="myNavigationService"></param>
-        /// <param name="myDialogService"></param>
-        public DocumentView_ViewModel(IMyNavigationService myNavigationService, IMyDialogService myDialogService)
+        /// <param name="myNavi"></param>
+        /// <param name="myDia"></param>
+        public DocumentView_ViewModel(INavigationService myNavi, IDialogService myDia)
         {
-            _myNavi = myNavigationService;
-            _myDia = myDialogService;
+            _myNavi = myNavi;
+            _myDia = myDia;
             // Message Registrierungen mit Überlieferung des zu betrachtenden Dokuments
             MessengerInstance.Register<NotificationMessage<FixedDocumentSequence>>(this, a =>
             {

@@ -6,7 +6,7 @@ namespace ISB_BIA_IMPORT1.Model
     /// <summary>
     /// Model eines Informationssegments
     /// </summary>
-    public class InformationSegment_Model: ObservableObject
+    public class Segment_Model: ObservableObject
     {
         #region Backing-Fields
         private int _informationssegment_Id;

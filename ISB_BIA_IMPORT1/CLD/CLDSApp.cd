@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
-  <Interface Name="ISB_BIA_IMPORT1.Services.Interfaces.IMyDataService_Application">
+  <Interface Name="ISB_BIA_IMPORT1.Services.Interfaces.IDataService_Application">
     <Position X="1.5" Y="0.75" Width="5.25" />
     <TypeIdentifier>
-      <HashCode>AAAIBAAAAAAAAQAgAAEAAAQAAAAAEAQAoAAIAAAAEAA=</HashCode>
-      <FileName>Services\Interfaces\IMyDataService_Application.cs</FileName>
+      <HashCode>AAAAAQEAAAAFAAAgQABAAAAAAAEAEAQAIAQEAAAAIAA=</HashCode>
+      <FileName>Services\Interfaces\IDataService_Application.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Font Name="Segoe UI" Size="9" />

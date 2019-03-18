@@ -3,7 +3,6 @@ using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.Model;
 using ISB_BIA_IMPORT1.LINQ2SQL;
-using ISB_BIA_IMPORT1.Services;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -124,7 +123,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                           m = ISISAttributeMode.Edit;
                       else
                           m = ISISAttributeMode.View;
-                      _myNavi.NavigateTo<InformationSegmentsView_ViewModel>(m);
+                      _myNavi.NavigateTo<SegmentsView_ViewModel>(m);
                   }));
         }
 
@@ -145,7 +144,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                           if (user == "")
                           {
                               if (_myLock.Lock_Object(Table_Lock_Flags.Attributes, 0))
-                                  _myNavi.NavigateTo<InformationSegmentsAttributes_ViewModel>(mode);
+                                  _myNavi.NavigateTo<Attributes_ViewModel>(mode);
                           }
                           else
                           {
@@ -155,7 +154,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       else
                       {
                           mode = ISISAttributeMode.View;
-                          _myNavi.NavigateTo<InformationSegmentsAttributes_ViewModel>(mode);
+                          _myNavi.NavigateTo<Attributes_ViewModel>(mode);
                       }
                   }));
         }
@@ -172,7 +171,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       if (user == "")
                       {
                           if (_myLock.Lock_Object(Table_Lock_Flags.OEs, 0))
-                              _myNavi.NavigateTo<OE_AssignmentView_ViewModel>();
+                              _myNavi.NavigateTo<OE_ViewModel>();
                       }
                       else
                       {
@@ -343,7 +342,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _cmd_NavToDeltaDate
                   ?? (_cmd_NavToDeltaDate = new MyRelayCommand(() =>
                   {
-                      ObservableCollection<ISB_BIA_Delta_Analyse> list = _myDelta.Initiate_DeltaAnalysis(PickerDate);
+                      ObservableCollection<ISB_BIA_Delta_Analyse> list = _myDelta.Create_DeltaAnalysis(PickerDate);
                       if (list != null)
                       {
                           _myNavi.NavigateTo<DeltaAnalysis_ViewModel>();
@@ -360,7 +359,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _cmd_NavToLastDelta
                   ?? (_cmd_NavToLastDelta = new MyRelayCommand(() =>
                   {
-                      ObservableCollection<ISB_BIA_Delta_Analyse> list = _myDelta.Get_DeltaAnalysis();
+                      ObservableCollection<ISB_BIA_Delta_Analyse> list = _myDelta.Get_List_Delta();
                       if (list != null && list.Count > 0)
                       {
                           _myNavi.NavigateTo<DeltaAnalysis_ViewModel>();
@@ -443,35 +442,35 @@ namespace ISB_BIA_IMPORT1.ViewModel
         }
 
         #region Services
-        private readonly IMyNavigationService _myNavi;
-        private readonly IMyDialogService _myDia;
-        private readonly IMyExportService _myExport;
-        private readonly IMyDataService_Process _myProc;
-        private readonly IMyDataService_Delta _myDelta;
-        private readonly IMySharedResourceService _myShared;
-        private readonly IMyDataService_Lock _myLock;
+        private readonly INavigationService _myNavi;
+        private readonly IDialogService _myDia;
+        private readonly IExportService _myExport;
+        private readonly IDataService_Process _myProc;
+        private readonly IDataService_Delta _myDelta;
+        private readonly ISharedResourceService _myShared;
+        private readonly ILockService _myLock;
         #endregion
 
         /// <summary>
         /// Konstruktor
         /// </summary>
         /// <param name="myDialogService"></param>
-        /// <param name="myNavigationService"></param>
-        /// <param name="myExportService"></param>
+        /// <param name="myNavi"></param>
+        /// <param name="myExp"></param>
         /// <param name="myProc"></param>
-        /// <param name="mySharedResourceService"></param>
-        public Menu_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, 
-            IMyExportService myExportService, IMyDataService_Process myProc, IMyDataService_Delta myDelta,
-            IMySharedResourceService mySharedResourceService, IMyDataService_Lock myLock)
+        /// <param name="myShared"></param>
+        public Menu_ViewModel(IDialogService myDialogService, INavigationService myNavi, IExportService myExp, 
+            IDataService_Process myProc, IDataService_Delta myDelta, ISharedResourceService myShared, 
+            ILockService myLock)
         {
             #region Services
             _myDia = myDialogService;
-            _myNavi = myNavigationService;
-            _myExport = myExportService;
+            _myNavi = myNavi;
+            _myExport = myExp;
             _myDelta = myDelta;
             _myLock = myLock;
             _myProc = myProc;
-            _myShared = mySharedResourceService;
+            _myShared = myShared;
             #endregion
 
             PickerDate = DateTime.Now;
@@ -480,7 +479,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             //Datenbankabfragen nicht ausführen wenn ConstructionMode (da Datenmodell evtl nicht auf neustem Stand)
             if (!_myShared.Conf_ConstructionMode)
             {
-                ObservableCollection<ISB_BIA_Prozesse> processes = _myProc.Get_Processes_Active();
+                ObservableCollection<ISB_BIA_Prozesse> processes = _myProc.Get_List_Processes_Active();
                 Count_AllProcesses = processes.Count;
                 Count_EditProcesses = processes.Where(x => x.Datum.Year == DateTime.Now.Year).ToList().Count;
             }

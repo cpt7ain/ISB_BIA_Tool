@@ -159,11 +159,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
         public string Instruction { get; set; }
 
         #region Services
-        private readonly IMyNavigationService _myNavi;
-        private readonly IMyDialogService _myDia;
-        private readonly IMyExportService _myExport;
-        private readonly IMyDataService_Application _myApp;
-        private readonly IMyDataService_Lock _myLock;
+        private readonly INavigationService _myNavi;
+        private readonly IDialogService _myDia;
+        private readonly IExportService _myExport;
+        private readonly IDataService_Application _myApp;
+        private readonly ILockService _myLock;
         #endregion
         /// <summary>
         /// Konstruktor
@@ -172,8 +172,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <param name="myNavi"></param>
         /// <param name="myExp"></param>
         /// <param name="myApp"></param>
-        public ApplicationView_ViewModel(IMyDialogService myDia, IMyNavigationService myNavi, 
-            IMyExportService myExp, IMyDataService_Application myApp, IMyDataService_Lock myLock)
+        public ApplicationView_ViewModel(IDialogService myDia, INavigationService myNavi, 
+            IExportService myExp, IDataService_Application myApp, ILockService myLock)
         {
             #region Services
             _myDia = myDia;
@@ -185,7 +185,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
 
             if (IsInDesignMode)
             {
-                List_Application = _myApp.Get_Applications_All();
+                List_Application = _myApp.Get_List_Applications_All();
                 Header = "TestHeader";
                 Instruction = "TestInstruction";
             }
@@ -194,13 +194,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 //Message Registrierung zur Bestimmung des Ansichtsmodus
                 MessengerInstance.Register<NotificationMessage<ProcAppListMode>>(this, a =>
                 {
-                    if(!(a.Sender is IMyNavigationService)) return;
+                    if(!(a.Sender is INavigationService)) return;
                     ApplicationViewMode = a.Content;
                 });
                 //Message Registrierung für Refreshaufforderung nach bearbeiten einer Applikation
                 MessengerInstance.Register<NotificationMessage<string>>(this, MessageToken.RefreshData, s =>
                 {
-                    if (!(s.Sender is IMyNavigationService)) return;
+                    if (!(s.Sender is INavigationService)) return;
                     Refresh();
                 });
                 Refresh();
@@ -213,7 +213,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         public void Refresh()
         {
-            List_Application = _myApp.Get_Applications_All();
+            List_Application = _myApp.Get_List_Applications_All();
             if (List_Application == null)
             {
                 Cleanup();

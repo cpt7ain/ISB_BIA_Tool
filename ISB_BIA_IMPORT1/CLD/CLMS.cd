@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
-  <Interface Name="ISB_BIA_IMPORT1.Services.Interfaces.IMyMailNotificationService">
+  <Interface Name="ISB_BIA_IMPORT1.Services.Interfaces.IMailNotificationService">
     <Position X="1.5" Y="0.75" Width="4.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Services\Interfaces\IMyMailNotificationService.cs</FileName>
+      <FileName>Services\Interfaces\IMailNotificationService.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Font Name="Segoe UI" Size="9" />

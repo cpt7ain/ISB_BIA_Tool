@@ -16,8 +16,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
         #region Backing-Fields
         private Settings_Model _settingsOld;
         private Settings_Model _settingsNew;
-
         #endregion
+
         /// <summary>
         /// Ausgangseinstellungen
         /// </summary>
@@ -59,7 +59,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             get => new MyRelayCommand(() =>
             {
-                if (_mySett.Insert_Settings(_mySett.Map_ModelToDB(SettingsNew), _mySett.Map_ModelToDB(SettingsOld)))
+                if (_mySett.Insert_Settings(_mySett.Map_Model_ToDB(SettingsNew), _mySett.Map_Model_ToDB(SettingsOld)))
                 {
                     Cleanup();
                     _myNavi.NavigateBack();
@@ -80,31 +80,33 @@ namespace ISB_BIA_IMPORT1.ViewModel
         }
 
         #region Services
-        private readonly IMyNavigationService _myNavi;
-        private readonly IMyDialogService _myDia;
-        private readonly IMyDataService_Setting _mySett;
-        private readonly IMyDataService_Lock _myLock;
-        private readonly IMyExportService _myExport;
+        private readonly INavigationService _myNavi;
+        private readonly IDialogService _myDia;
+        private readonly IDataService_Setting _mySett;
+        private readonly ILockService _myLock;
+        private readonly IExportService _myExport;
         #endregion
 
         /// <summary>
         /// Konstruktor
         /// </summary>
-        /// <param name="myDialogService"></param>
-        /// <param name="myNavigationService"></param>
+        /// <param name="myDia"></param>
+        /// <param name="myNavi"></param>
         /// <param name="mySett"></param>
-        /// <param name="myExportService"></param>
-        public Settings_ViewModel(IMyDialogService myDialogService, IMyNavigationService myNavigationService, 
-            IMyDataService_Setting mySett, IMyDataService_Lock myLock, IMyExportService myExportService)
+        /// <param name="myExp"></param>
+        public Settings_ViewModel(IDialogService myDia, INavigationService myNavi, 
+            IDataService_Setting mySett, ILockService myLock, IExportService myExp)
         {
-            _myDia = myDialogService;
-            _myNavi = myNavigationService;
+            #region Services
+            _myDia = myDia;
+            _myNavi = myNavi;
             _mySett = mySett;
             _myLock = myLock;
-            _myExport = myExportService;
-            SettingsOld = _mySett.Get_ModelFromDB();
-            SettingsNew = _mySett.Get_ModelFromDB();
-            EventToCommand a = new EventToCommand();
+            _myExport = myExp;
+            #endregion
+
+            SettingsOld = _mySett.Get_Model_FromDB();
+            SettingsNew = _mySett.Get_Model_FromDB();
         }
 
         /// <summary>

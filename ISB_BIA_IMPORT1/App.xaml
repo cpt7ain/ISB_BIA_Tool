@@ -33,17 +33,17 @@
             <DataTemplate DataType="{x:Type vm:SBA_View_ViewModel}">
                 <v:SBA_View_View />
             </DataTemplate>
-            <DataTemplate DataType="{x:Type vm:InformationSegmentsView_ViewModel}">
-                <v:InformationSegmentsView_View />
+            <DataTemplate DataType="{x:Type vm:SegmentsView_ViewModel}">
+                <v:SegmentsView_View />
             </DataTemplate>
-            <DataTemplate DataType="{x:Type vm:InformationSegment_ViewModel}">
-                <v:InformationSegment_View />
+            <DataTemplate DataType="{x:Type vm:Segment_ViewModel}">
+                <v:Segment_View />
             </DataTemplate>
-            <DataTemplate DataType="{x:Type vm:InformationSegmentsAttributes_ViewModel}">
-                <v:InformationSegmentsAttributes_View />
+            <DataTemplate DataType="{x:Type vm:Attributes_ViewModel}">
+                <v:Attributes_View />
             </DataTemplate>
-            <DataTemplate DataType="{x:Type vm:OE_AssignmentView_ViewModel}">
-                <v:OE_AssignmentView_View />
+            <DataTemplate DataType="{x:Type vm:OE_ViewModel}">
+                <v:OE_View />
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:Settings_ViewModel}">
                 <v:Settings_View />

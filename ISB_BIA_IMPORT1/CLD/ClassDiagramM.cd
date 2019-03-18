@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="ISB_BIA_IMPORT1.Model.Application_Model" Collapsed="true">
+    <Position X="8.25" Y="3" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Properties" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AACAAwAAQAAKkQDCUIAASAgABgACAAQCAAhAQi8AEgA=</HashCode>
+      <FileName>Model\Application_Model.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ISB_BIA_IMPORT1.Model.Segment_Model" Collapsed="true">
+    <Position X="8.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAZAAAAAACgBCAAAEQhAQgAAACAiQQCAgAgQQAAAQ=</HashCode>
+      <FileName>Model\InformationSegment_Model.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ISB_BIA_IMPORT1.Model.Attributes_Model" Collapsed="true">
+    <Position X="10.25" Y="3" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Properties" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAIgAAAAgAkQAAAAAESAQAAAAAAgAAAAQgQG8AAAA=</HashCode>
+      <FileName>Model\InformationSegmentAttribute_Model.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ISB_BIA_IMPORT1.Model.Login_Model" Collapsed="true">
+    <Position X="6.75" Y="3" Width="1.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAoAABAAAAQAACAAABAAAEAAABAIAAAAEAAA=</HashCode>
+      <FileName>Model\Login_Model.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ISB_BIA_IMPORT1.Model.Process_Model" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="10.25" Y="2" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Properties" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AQAQAgABUCBIl3CNISwMSYABAhMCAAVPoAgAQS9lCiE=</HashCode>
+      <FileName>Model\Process_Model.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.785" />
+  </Class>
+  <Class Name="ISB_BIA_IMPORT1.Model.Settings_Model" Collapsed="true">
+    <Position X="6.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>hAACDAAAAAgAAACAQAAAM4wRAEAiAAQCCAgBEAAACCA=</HashCode>
+      <FileName>Model\Settings_Model.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GalaSoft.MvvmLight.ObservableObject" Collapsed="true">
+    <Position X="8.75" Y="1" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="700" 
              d:DesignWidth="1200"
-             DataContext="{Binding Source={StaticResource Locator}, Path=SettingsView}">
+             DataContext="{Binding Source={StaticResource Locator}, Path=Settings}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>

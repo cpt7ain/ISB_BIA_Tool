@@ -41,25 +41,25 @@
       <FileName>ViewModel\DocumentView_ViewModel.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ISB_BIA_IMPORT1.ViewModel.InformationSegment_ViewModel" Collapsed="true">
+  <Class Name="ISB_BIA_IMPORT1.ViewModel.Segment_ViewModel" Collapsed="true">
     <Position X="23.5" Y="5.75" Width="2.5" />
     <TypeIdentifier>
       <HashCode>CAAAAAAgSIgBBAAAAggAAAQiAAQAAAAAjABAAEAAAAA=</HashCode>
-      <FileName>ViewModel\InformationSegment_ViewModel.cs</FileName>
+      <FileName>ViewModel\Segment_ViewModel.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ISB_BIA_IMPORT1.ViewModel.InformationSegmentsAttributes_ViewModel" Collapsed="true">
+  <Class Name="ISB_BIA_IMPORT1.ViewModel.Attributes_ViewModel" Collapsed="true">
     <Position X="21.75" Y="2.75" Width="3.25" />
     <TypeIdentifier>
-      <HashCode>CAAAAAAAAIgBBAAAAgAAAAACgARgAEAADAAAEEBEAAA=</HashCode>
-      <FileName>ViewModel\InformationSegmentsAttributes_ViewModel.cs</FileName>
+      <HashCode>CAAAAAAAAIgBBAAAAgAAAAACgADgAEAADAAAEEBEAAA=</HashCode>
+      <FileName>ViewModel\Attributes_ViewModel.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ISB_BIA_IMPORT1.ViewModel.InformationSegmentsView_ViewModel" Collapsed="true">
+  <Class Name="ISB_BIA_IMPORT1.ViewModel.SegmentsView_ViewModel" Collapsed="true">
     <Position X="26.5" Y="3.75" Width="2.75" />
     <TypeIdentifier>
       <HashCode>CAACAgAADIBhBAAAAggAAAACIQRIAAEAhBAEAEAAAAA=</HashCode>
-      <FileName>ViewModel\InformationSegmentsView_ViewModel.cs</FileName>
+      <FileName>ViewModel\SegmentsView_ViewModel.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ISB_BIA_IMPORT1.ViewModel.LogView_ViewModel" Collapsed="true">
@@ -72,7 +72,7 @@
   <Class Name="ISB_BIA_IMPORT1.ViewModel.Main_ViewModel" Collapsed="true">
     <Position X="21.75" Y="5.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>CAAAAAAAgAABFAAEAAAAEgAEACAAAEgEAAAABQgAAAA=</HashCode>
+      <HashCode>CAAAAAAAgAABFAAEAAAAEgAEAAAAAEgEAAAABQgAAAA=</HashCode>
       <FileName>ViewModel\Main_ViewModel.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -83,11 +83,11 @@
       <FileName>ViewModel\Menu_ViewModel.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ISB_BIA_IMPORT1.ViewModel.OE_AssignmentView_ViewModel" Collapsed="true">
+  <Class Name="ISB_BIA_IMPORT1.ViewModel.OE_ViewModel" Collapsed="true">
     <Position X="26.5" Y="4.75" Width="2.5" />
     <TypeIdentifier>
       <HashCode>KBiqhkBTayABBoQgCAEAZACDCUAtQIgIAZFCIcBkBqQ=</HashCode>
-      <FileName>ViewModel\OE_AssignmentView_ViewModel.cs</FileName>
+      <FileName>ViewModel\OE_ViewModel.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ISB_BIA_IMPORT1.ViewModel.Process_ViewModel" Collapsed="true" BaseTypeListCollapsed="true">
@@ -107,7 +107,7 @@
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>CBAAAAgBAIBJFDABgwQAAIIDQQFAAIAEJBBACENAAAA=</HashCode>
+      <HashCode>CAAAAAgJAIBJFDABgwQAAIIDQQFAAIAEJBBACENAAAA=</HashCode>
       <FileName>ViewModel\ProcessView_ViewModel.cs</FileName>
     </TypeIdentifier>
   </Class>

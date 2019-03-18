@@ -137,61 +137,64 @@
     <Compile Include="Model\Login_Model.cs" />
     <Compile Include="Model\Process_Model.cs" />
     <Compile Include="Model\Settings_Model.cs" />
-    <Compile Include="Services\DesignTimeServices\MyDesignTimeDataService_Application.cs" />
-    <Compile Include="Services\DesignTimeServices\MyDesignTimeDataService_DataModel.cs" />
-    <Compile Include="Services\DesignTimeServices\MyDesignTimeDataService_Delta.cs" />
-    <Compile Include="Services\DesignTimeServices\MyDesignTimeDataService_IS_Attribute.cs" />
-    <Compile Include="Services\DesignTimeServices\MyDesignTimeDataService_Lock.cs" />
-    <Compile Include="Services\DesignTimeServices\MyDesignTimeDataService_Log.cs" />
-    <Compile Include="Services\DesignTimeServices\MyDesignTimeDataService_OE.cs" />
-    <Compile Include="Services\DesignTimeServices\MyDesignTimeDataService_Process.cs" />
-    <Compile Include="Services\DesignTimeServices\MyDesignTimeDataService_Setting.cs" />
-    <Compile Include="Services\Interfaces\IMyDataService_Application.cs" />
-    <Compile Include="Services\Interfaces\IMyDataService_DataModel.cs" />
-    <Compile Include="Services\Interfaces\IMyDataService_Delta.cs" />
-    <Compile Include="Services\Interfaces\IMyDataService_OE.cs" />
-    <Compile Include="Services\Interfaces\IMyDataService_Process.cs" />
-    <Compile Include="Services\Interfaces\IMyDataService_IS_Attribute.cs" />
-    <Compile Include="Services\Interfaces\IMyDataService_Setting.cs" />
-    <Compile Include="Services\Interfaces\IMyDataService_Lock.cs" />
-    <Compile Include="Services\Interfaces\IMyDialogService.cs" />
-    <Compile Include="Services\Interfaces\IMyExportService.cs" />
-    <Compile Include="Services\Interfaces\IMyMailNotificationService.cs" />
-    <Compile Include="Services\Interfaces\IMyNavigationService.cs" />
-    <Compile Include="Services\Interfaces\IMySharedResourceService.cs" />
-    <Compile Include="Services\Interfaces\IMyDataService_Log.cs" />
-    <Compile Include="Services\RuntimeServices\MyDataService_Log.cs" />
-    <Compile Include="Services\RuntimeServices\MyDataService_DataModel.cs" />
-    <Compile Include="Services\RuntimeServices\MyDataService_Delta.cs" />
-    <Compile Include="Services\RuntimeServices\MyDataService_Lock.cs" />
-    <Compile Include="Services\RuntimeServices\MyDataService_Setting.cs" />
-    <Compile Include="Services\RuntimeServices\MyDataService_IS_Attribute.cs" />
-    <Compile Include="Services\RuntimeServices\MyDataService_OE.cs" />
-    <Compile Include="Services\RuntimeServices\MyDataService_Process.cs" />
-    <Compile Include="Services\RuntimeServices\MyDataService_Application.cs" />
-    <Compile Include="Services\DesignTimeServices\MyDesignTimeDialogService.cs" />
-    <Compile Include="Services\DesignTimeServices\MyDesignTimeExportService.cs" />
-    <Compile Include="Services\DesignTimeServices\MyDesignTimeMailNotificationService.cs" />
-    <Compile Include="Services\DesignTimeServices\MyDesignTimeNavigationService.cs" />
-    <Compile Include="Services\DesignTimeServices\MyDesignTimeSharedResourceService.cs" />
-    <Compile Include="Services\RuntimeServices\MyDialogService.cs" />
-    <Compile Include="Services\RuntimeServices\MyExportService.cs" />
-    <Compile Include="Services\RuntimeServices\MyMailNotificationService.cs" />
-    <Compile Include="Services\RuntimeServices\MyNavigationService.cs" />
-    <Compile Include="Services\RuntimeServices\MySharedResourceService.cs" />
+    <Compile Include="Services\DesignTimeServices\DesignTimeDataService_Application.cs" />
+    <Compile Include="Services\DesignTimeServices\DesignTimeDataService_DataModel.cs" />
+    <Compile Include="Services\DesignTimeServices\DesignTimeDataService_Delta.cs" />
+    <Compile Include="Services\DesignTimeServices\DesignTimeDataService_Segment.cs" />
+    <Compile Include="Services\DesignTimeServices\DesignTimeDataService_Attribute.cs" />
+    <Compile Include="Services\DesignTimeServices\DesignTimeDataService_Lock.cs" />
+    <Compile Include="Services\DesignTimeServices\DesignTimeDataService_Log.cs" />
+    <Compile Include="Services\DesignTimeServices\DesignTimeDataService_OE.cs" />
+    <Compile Include="Services\DesignTimeServices\DesignTimeDataService_Process.cs" />
+    <Compile Include="Services\DesignTimeServices\DesignTimeDataService_Setting.cs" />
+    <Compile Include="Services\Interfaces\IDataService_Application.cs" />
+    <Compile Include="Services\Interfaces\IDataModelService.cs" />
+    <Compile Include="Services\Interfaces\IDataService_Delta.cs" />
+    <Compile Include="Services\Interfaces\IDataService_OE.cs" />
+    <Compile Include="Services\Interfaces\IDataService_Process.cs" />
+    <Compile Include="Services\Interfaces\IDataService_Attribute.cs" />
+    <Compile Include="Services\Interfaces\IDataService_Segment.cs" />
+    <Compile Include="Services\Interfaces\IDataService_Setting.cs" />
+    <Compile Include="Services\Interfaces\ILockService.cs" />
+    <Compile Include="Services\Interfaces\IDialogService.cs" />
+    <Compile Include="Services\Interfaces\IExportService.cs" />
+    <Compile Include="Services\Interfaces\IMailNotificationService.cs" />
+    <Compile Include="Services\Interfaces\INavigationService.cs" />
+    <Compile Include="Services\Interfaces\ISharedResourceService.cs" />
+    <Compile Include="Services\Interfaces\IDataService_Log.cs" />
+    <Compile Include="Services\RuntimeServices\DataService_Segment.cs" />
+    <Compile Include="Services\RuntimeServices\DataService_Log.cs" />
+    <Compile Include="Services\RuntimeServices\DataService_DataModel.cs" />
+    <Compile Include="Services\RuntimeServices\DataService_Delta.cs" />
+    <Compile Include="Services\RuntimeServices\DataService_Lock.cs" />
+    <Compile Include="Services\RuntimeServices\DataService_Setting.cs" />
+    <Compile Include="Services\RuntimeServices\DataService_Attribute.cs" />
+    <Compile Include="Services\RuntimeServices\DataService_OE.cs" />
+    <Compile Include="Services\RuntimeServices\DataService_Process.cs" />
+    <Compile Include="Services\RuntimeServices\DataService_Application.cs" />
+    <Compile Include="Services\DesignTimeServices\DesignTimeDialogService.cs" />
+    <Compile Include="Services\DesignTimeServices\DesignTimeExportService.cs" />
+    <Compile Include="Services\DesignTimeServices\DesignTimeMailNotificationService.cs" />
+    <Compile Include="Services\DesignTimeServices\DesignTimeNavigationService.cs" />
+    <Compile Include="Services\DesignTimeServices\DesignTimeSharedResourceService.cs" />
+    <Compile Include="Services\RuntimeServices\DialogService.cs" />
+    <Compile Include="Services\RuntimeServices\ExportService.cs" />
+    <Compile Include="Services\RuntimeServices\MailNotificationService.cs" />
+    <Compile Include="Services\RuntimeServices\NavigationService.cs" />
+    <Compile Include="Services\RuntimeServices\SharedResourceService.cs" />
     <Compile Include="ViewModel\ApplicationView_ViewModel.cs" />
     <Compile Include="ViewModel\Application_ViewModel.cs" />
     <Compile Include="ViewModel\DataModel_ViewModel.cs" />
     <Compile Include="ViewModel\DeltaAnalysis_ViewModel.cs" />
     <Compile Include="ViewModel\DocumentView_ViewModel.cs" />
-    <Compile Include="ViewModel\InformationSegmentsAttributes_ViewModel.cs" />
-    <Compile Include="ViewModel\InformationSegmentsView_ViewModel.cs" />
-    <Compile Include="ViewModel\InformationSegment_ViewModel.cs" />
+    <Compile Include="ViewModel\Attributes_ViewModel.cs" />
+    <Compile Include="ViewModel\SegmentsView_ViewModel.cs" />
+    <Compile Include="ViewModel\Segment_ViewModel.cs" />
     <Compile Include="ViewModel\LogView_ViewModel.cs" />
     <Compile Include="ViewModel\Main_ViewModel.cs" />
     <Compile Include="ViewModel\Menu_ViewModel.cs" />
     <Compile Include="Helpers\MyRelayCommand.cs" />
-    <Compile Include="ViewModel\OE_AssignmentView_ViewModel.cs" />
+    <Compile Include="ViewModel\OE_ViewModel.cs" />
     <Compile Include="ViewModel\ProcessView_ViewModel.cs" />
     <Compile Include="ViewModel\Process_ViewModel.cs" />
     <Compile Include="ViewModel\SBA_View_ViewModel.cs" />
@@ -212,14 +215,14 @@
     <Compile Include="View\DocumentView_View.xaml.cs">
       <DependentUpon>DocumentView_View.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\InformationSegmentsAttributes_View.xaml.cs">
-      <DependentUpon>InformationSegmentsAttributes_View.xaml</DependentUpon>
+    <Compile Include="View\Attributes_View.xaml.cs">
+      <DependentUpon>Attributes_View.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\InformationSegmentsView_View.xaml.cs">
-      <DependentUpon>InformationSegmentsView_View.xaml</DependentUpon>
+    <Compile Include="View\SegmentsView_View.xaml.cs">
+      <DependentUpon>SegmentsView_View.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\InformationSegment_View.xaml.cs">
-      <DependentUpon>InformationSegment_View.xaml</DependentUpon>
+    <Compile Include="View\Segment_View.xaml.cs">
+      <DependentUpon>Segment_View.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\LogView_View.xaml.cs">
       <DependentUpon>LogView_View.xaml</DependentUpon>
@@ -227,8 +230,8 @@
     <Compile Include="View\Menu_View.xaml.cs">
       <DependentUpon>Menu_View.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\OE_AssignmentView_View.xaml.cs">
-      <DependentUpon>OE_AssignmentView_View.xaml</DependentUpon>
+    <Compile Include="View\OE_View.xaml.cs">
+      <DependentUpon>OE_View.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\ProcessView_View.xaml.cs">
       <DependentUpon>ProcessView_View.xaml</DependentUpon>
@@ -274,15 +277,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\InformationSegmentsAttributes_View.xaml">
+    <Page Include="View\Attributes_View.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\InformationSegmentsView_View.xaml">
+    <Page Include="View\SegmentsView_View.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\InformationSegment_View.xaml">
+    <Page Include="View\Segment_View.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -294,7 +297,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\OE_AssignmentView_View.xaml">
+    <Page Include="View\OE_View.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -335,9 +338,10 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="app.config" />
-    <None Include="CLD\ClassDiagram1.cd" />
-    <None Include="CLD\ClassDiagram2.cd" />
+    <None Include="CLD\CLLogin.cd" />
     <None Include="CLD\ClassDiagramISB.cd" />
+    <None Include="CLD\ClassDiagramM.cd" />
+    <None Include="CLD\CLDSAll.cd" />
     <None Include="CLD\CLMS.cd" />
     <None Include="CLD\CLSS.cd" />
     <None Include="CLD\CLDS.cd" />

@@ -8,7 +8,7 @@
              d:DesignHeight="700" 
              d:DesignWidth="1200"
              Background="LightSteelBlue"
-             DataContext="{Binding Source={StaticResource Locator}, Path=DataModelView}">
+             DataContext="{Binding Source={StaticResource Locator}, Path=DataModel}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
