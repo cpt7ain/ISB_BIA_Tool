@@ -24,8 +24,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private MyRelayCommand _cmd_NavToProcess;
         private MyRelayCommand _cmd_DeleteProc;
         private ObservableCollection<ISB_BIA_Prozesse> _list_SelectedProcesses;
-        private MyRelayCommand<object> _cmd_SaveSelectedProcesses;
-        private MyRelayCommand _cmd_ExportProcessList;
+        private MyRelayCommand<object> _cmd_SaveSelectedItems;
+        private MyRelayCommand _cmd_ExportList;
         private ObservableCollection<ISB_BIA_Prozesse> _list_Processes;
         private int _count_NonEdit;
         private int _count_Edit;
@@ -115,14 +115,14 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Command für die Gruppenspeicherung/>
         /// </summary>
-        public MyRelayCommand<object> Cmd_SaveSelectedProcesses
+        public MyRelayCommand<object> Cmd_SaveSelectedItems
         {
             get
             {
                 if (!IsInDesignMode)
                 {
-                     return _cmd_SaveSelectedProcesses
-                        ?? (_cmd_SaveSelectedProcesses = new MyRelayCommand<object>((list) =>
+                     return _cmd_SaveSelectedItems
+                        ?? (_cmd_SaveSelectedItems = new MyRelayCommand<object>((list) =>
                         {
                             System.Collections.IList items = (System.Collections.IList)list;
                             if(items.Count > 0)
@@ -169,10 +169,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Exportieren der Liste der angezeigten Prozesse nach Excel
         /// </summary>
-        public MyRelayCommand Cmd_ExportProcessList
+        public MyRelayCommand Cmd_ExportList
         {
-            get => _cmd_ExportProcessList
-                    ?? (_cmd_ExportProcessList = new MyRelayCommand(() =>
+            get => _cmd_ExportList
+                    ?? (_cmd_ExportList = new MyRelayCommand(() =>
                     {
                         _myExport.Export_Processes(List_Processes);
                     }, () => Mode == ProcAppListMode.Change));
@@ -223,7 +223,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 {
                     SelectionMode = (Setting.Multi_Speichern == "Ja")? DataGridSelectionMode.Extended:DataGridSelectionMode.Single;
                     Vis_ButtonMultiSave = Visibility.Visible;
-                    Str_Instruction = "Doppelklick auf einen Prozess, den Sie ändern möchten, oder Prozesse anhaken, welche ohne Änderungen gespeichert werden sollen.";
+                    Str_Instruction = "Doppelklick auf einen Prozess, den Sie ändern möchten, oder Prozesse markieren, welche ohne Änderungen gespeichert werden sollen.";
                     Str_Header = "Prozesse bearbeiten";
                     Cmd_RowDoubleClick = Cmd_NavToProcess;
                 }

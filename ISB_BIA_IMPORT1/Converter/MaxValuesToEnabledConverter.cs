@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ISB_BIA_IMPORT1.ViewModel;
+using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
@@ -18,9 +19,9 @@ namespace ISB_BIA_IMPORT1.Converter
         /// <returns> Wahrheitswert </returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (parameter != null && (value is int i && int.TryParse(parameter.ToString(), out var para)))
+            if (parameter != null && (value is SZ_Values i && parameter is SZ_Values para))
             {
-                return (i <= para);
+                return ((int)i <= (int)para);
             }
             return DependencyProperty.UnsetValue;
         }

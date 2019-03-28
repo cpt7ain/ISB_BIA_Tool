@@ -29,9 +29,9 @@
         <Border Grid.ColumnSpan="3" Background="White" Grid.Row="1" Margin="10" BorderBrush="Black" BorderThickness="1">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="450*"/>
+                    <ColumnDefinition Width="450"/>
                     <ColumnDefinition Width="250*"/>
-                    <ColumnDefinition Width="500*"/>
+                    <ColumnDefinition Width="400"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="60"/>
@@ -40,20 +40,26 @@
                     <RowDefinition Height="40"/>
                     <RowDefinition Height="40"/>
                     <RowDefinition Height="40"/>
-                    <RowDefinition Height="40"/>
                     <RowDefinition Height="10"/>
                 </Grid.RowDefinitions>
-                <TextBlock VerticalAlignment="Center" Margin="10,0,0,0" Text="{Binding Str_Instruction}" Grid.Row="0" Grid.ColumnSpan="2" TextWrapping="WrapWithOverflow"/>
-                <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <TextBox Name="SearchBox" Text="" HorizontalAlignment="Right" VerticalAlignment="Center" Width="300" KeyUp="SearchBox_KeyUp"/>
-                    <Button Content="Suche" VerticalAlignment="Center" Click="SearchButton_Click" Margin ="0,0,10,0"/>
-                    <Button Content="Excel-Export" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Command="{Binding Cmd_ExportApplicationList}"/>
-                </StackPanel>
+                <Grid Grid.ColumnSpan="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="300*"/>
+                        <ColumnDefinition Width="250"/>
+                        <ColumnDefinition Width="70"/>
+                        <ColumnDefinition Width="120"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" HorizontalAlignment="Left" Margin="10,0,0,0" Text="{Binding Str_Instruction}" VerticalAlignment="Center" TextWrapping="WrapWithOverflow"/>
+                    <TextBox Grid.Column="1" Name="SearchBox" Text="" VerticalAlignment="Center" KeyUp="SearchBox_KeyUp"/>
+                    <Button Grid.Column="2" Content="Suche" VerticalAlignment="Center" Click="SearchButton_Click" Margin ="0,0,10,0"/>
+                    <Button Grid.Column="3" Content="Excel-Export" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10,0,10,0" Command="{Binding Cmd_ExportList}"/>
+                </Grid>
                 <DataGrid 
                     Name="ApplicationDataGrid"
                     IsReadOnly="true" 
                     VerticalAlignment="Top" 
                     Grid.Row="1"
+                    RowHeaderWidth="0"
                     VerticalGridLinesBrush="LightGray"
                     HorizontalGridLinesBrush="LightGray"
                     AutoGenerateColumns="False"
@@ -65,15 +71,6 @@
                         <MouseBinding Gesture="LeftDoubleClick" Command="{Binding Cmd_NavToApp}"/>
                         <KeyBinding Key="Enter" Command="{Binding Cmd_NavToApp}"/>
                     </DataGrid.InputBindings>
-                    <DataGrid.RowHeaderTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <CheckBox IsChecked="{Binding Path=IsSelected, Mode=TwoWay,
-                  RelativeSource={RelativeSource FindAncestor,
-                  AncestorType={x:Type DataGridRow}}}"/>
-                            </Grid>
-                        </DataTemplate>
-                    </DataGrid.RowHeaderTemplate>
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Anwendung" Width="600" MaxWidth="1000" Binding="{Binding IT_Anwendung_System}"/>
                         <DataGridTextColumn Header="Kategorie" Width="250" Binding="{Binding IT_Betriebsart}"/>
@@ -86,17 +83,12 @@
                         </Style>
                     </DataGrid.RowStyle>
                 </DataGrid>
-                <Button CommandParameter="{Binding ElementName=ApplicationDataGrid, Path=SelectedItems}" Command="{Binding Cmd_SaveSelectedApplications}" Grid.Row="2" Content="Ausgewählte Anwendungen speichern" Grid.RowSpan="2" Margin="10,20,2,20"/>
-                <Rectangle Fill="White" Width="50" HorizontalAlignment="Left" Margin="20,10,0,10" Grid.Row="4" Stroke="Black"/>
-                <Label Content="Dieses Jahr nicht bearbeitete Anwendung" Grid.Row="4" Margin="80,0,0,0" VerticalAlignment="Center"/>
-                <Rectangle Fill="LightGreen" Width="50" HorizontalAlignment="Left" Margin="20,10,0,10" Grid.Row="5" Stroke="Black"/>
-                <Label Content="Dieses Jahr bearbeitete Anwendung" Grid.Row="5" Margin="80,0,0,0" VerticalAlignment="Center"/>
-                <Label Content="Anzahl: " Grid.Row="4" Grid.Column="1" VerticalAlignment="Center"/>
-                <Label Content="{Binding Count_NonEdit}" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" Margin="80,0,0,0"/>
-                <Label Content="Anzahl:" Grid.Row="5" Grid.Column="1" VerticalAlignment="Center"/>
-                <Label Content="{Binding Count_Edit}" Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" Margin="80,0,0,0"/>
-                <Label Content="Gesamt: " Grid.Row="6" Grid.Column="1" VerticalAlignment="Center"/>
-                <Label Content="{Binding List_Applications.Count}" Grid.Row="6" Grid.Column="1" VerticalAlignment="Center" Margin="80,0,0,0"/>
+                <Button CommandParameter="{Binding ElementName=ApplicationDataGrid, Path=SelectedItems}" Margin="20,0,0,0" Command="{Binding Cmd_SaveSelectedItems}" Visibility="{Binding Vis_ButtonMultiSave}" Grid.Row="2" Content="Ausgewählte Anwendungen speichern" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <Rectangle Fill="White" Width="50" HorizontalAlignment="Left" Margin="20,10,0,10" Grid.Row="3" Stroke="Black" Grid.Column="0"/>
+                <TextBlock Text="{Binding Count_NonEdit, StringFormat='Noch nicht bearbeitete Anwendungen: {0}'}" Grid.Row="3" Margin="80,0,0,0" Grid.Column="0" VerticalAlignment="Center"/>
+                <Rectangle Fill="LightGreen" Width="50" HorizontalAlignment="Left" Margin="20,10,0,10" Grid.Row="4" Stroke="Black" Grid.Column="0"/>
+                <TextBlock Text="{Binding Count_Edit, StringFormat='Bearbeitete Anwendungen: {0}'}" Grid.Row="4" Margin="80,0,0,0" Grid.Column="0" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding List_Applications.Count, StringFormat='Gesamt: {0}'}" Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" Margin="80,0,0,0"/>
                 <Border Background="LightSteelBlue" Grid.Column="2" Grid.Row="2" Margin="20,20,20,20" Grid.RowSpan="5">
                     <Grid>
                         <Grid.RowDefinitions>

@@ -62,7 +62,7 @@ namespace ISB_BIA_IMPORT1.Services
                         Typ = linqApp.Typ,
                         IT_Betriebsart = linqApp.IT_Betriebsart,
                         IT_Anwendung_System = linqApp.IT_Anwendung_System,
-                        Wichtiges_Anwendungssystem = (linqApp.Wichtiges_Anwendungssystem != ""),
+                        Wichtiges_Anwendungssystem = !(String.IsNullOrWhiteSpace(linqApp.Wichtiges_Anwendungssystem)),
                         SZ_1 = (SZ_Values)linqApp.SZ_1,
                         SZ_2 = (SZ_Values)linqApp.SZ_2,
                         SZ_3 = (SZ_Values)linqApp.SZ_3,
@@ -231,8 +231,8 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
-                    int duplicateCount = Get_List_Applications_All().Where(x => x.IT_Anwendung_System == a.IT_Anwendung_System && x.IT_Betriebsart == a.IT_Betriebsart).Count();
-                    if (mode == ProcAppMode.New && duplicateCount > 0)
+                    int duplicateCount = Get_List_Applications_All().GroupBy(c => c.Applikation_Id).Select(v => v.OrderByDescending(b => b.Datum).FirstOrDefault()).Where(x => x.IT_Anwendung_System == a.IT_Anwendung_System && x.IT_Betriebsart == a.IT_Betriebsart && x.Applikation_Id != a.Applikation_Id).Count();
+                    if (duplicateCount > 0)
                     {
                         _myDia.ShowMessage("Es existiert(e) bereits eine Anwendung/System mit diesem Namen und Kategorie.\nWählen Sie bitte andere Bezeichnungen für diese Anwendung/System.");
                         return false;

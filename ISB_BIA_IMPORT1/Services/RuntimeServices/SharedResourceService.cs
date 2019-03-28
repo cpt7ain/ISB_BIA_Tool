@@ -3,6 +3,7 @@ using ISB_BIA_IMPORT1.Model;
 using System.Configuration;
 using System.IO;
 using ISB_BIA_IMPORT1.Services.Interfaces;
+using System;
 
 namespace ISB_BIA_IMPORT1.Services
 {
@@ -31,13 +32,14 @@ namespace ISB_BIA_IMPORT1.Services
                 {
                     Conf_ConnectionString = ConfigurationManager.ConnectionStrings["TEST_DataConnectionString"].ConnectionString;
                     Conf_AD_Group_CISO = ConfigurationManager.AppSettings["AD_Group_CISO_TEST"].ToString();
-                    Conf_AD_Group_SBA = ConfigurationManager.AppSettings["AD_Group_SBA_User_TEST"].ToString();
+                    Conf_AD_Group_SBA = ConfigurationManager.AppSettings["AD_Group_SBA_TEST"].ToString();
                     Conf_AD_Group_Admin = ConfigurationManager.AppSettings["AD_Group_Admin_TEST"].ToString();
-                    Conf_AD_Group_Normal = ConfigurationManager.AppSettings["AD_Group_Normal_User_TEST"].ToString();
+                    Conf_AD_Group_Normal = ConfigurationManager.AppSettings["AD_Group_Normal_TEST"].ToString();
                 }
-                catch
+                catch ( Exception ex)
                 {
-                    myDia.ShowError("Ungültige Konfiguration.");
+                    myDia.ShowError("Konfigurationsdatei ungültig.");
+                    Environment.Exit(0);
                 }
             }
             else if (ConfigurationManager.AppSettings["Current_Environment"] == "prod")
@@ -47,18 +49,20 @@ namespace ISB_BIA_IMPORT1.Services
                 {
                     Conf_ConnectionString = ConfigurationManager.ConnectionStrings["PROD_DataConnectionString"].ConnectionString;
                     Conf_AD_Group_CISO = ConfigurationManager.AppSettings["AD_Group_CISO_PROD"].ToString();
-                    Conf_AD_Group_SBA = ConfigurationManager.AppSettings["AD_Group_SBA_User_PROD"].ToString();
+                    Conf_AD_Group_SBA = ConfigurationManager.AppSettings["AD_Group_SBA_PROD"].ToString();
                     Conf_AD_Group_Admin = ConfigurationManager.AppSettings["AD_Group_Admin_PROD"].ToString();
-                    Conf_AD_Group_Normal = ConfigurationManager.AppSettings["AD_Group_Normal_User_PROD"].ToString();
+                    Conf_AD_Group_Normal = ConfigurationManager.AppSettings["AD_Group_Normal_PROD"].ToString();
                 }
                 catch
                 {
-                    myDia.ShowError("Ungültige Konfiguration.");
+                    myDia.ShowError("Konfigurationsdatei ungültig.");
+                    Environment.Exit(0);
                 }
             }
             else
             {
                 myDia.ShowError("Konfigurationsdatei ungültig.\n'Current_Environment' muss einen der folgenden Werte besitzen: 'prod','test',local'");
+                Environment.Exit(0);
             }
 
             try
@@ -66,13 +70,24 @@ namespace ISB_BIA_IMPORT1.Services
                 Conf_ConstructionMode = (ConfigurationManager.AppSettings["MODE_Construction"] == "true") ? true : false;
                 Conf_Admin = (ConfigurationManager.AppSettings["MODE_Admin"] == "true") ? true : false;
                 Conf_TargetMail = ConfigurationManager.AppSettings["Target_Mail"];
+            }
+            catch
+            {
+                myDia.ShowError("Ungültige Konfigurationsdatei.");
+                Environment.Exit(0);
+            }
+
+            try
+            {
                 Dir_InitialDirectory = Directory.GetDirectories(Directory.GetCurrentDirectory(), "Data")[0];
                 Dir_Source = Dir_InitialDirectory + @"\ISB_BIA-SBA.xlsx";
             }
             catch
             {
-                myDia.ShowError("Ungültige Konfigurationsdatei.");
+                Dir_InitialDirectory = Directory.GetCurrentDirectory();
+                Dir_Source = "";
             }
+
 
             Tbl_Prozesse = "ISB_BIA_Prozesse";
             Tbl_Proz_App = "ISB_BIA_Prozesse_Applikationen";

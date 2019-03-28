@@ -200,7 +200,7 @@ namespace ISB_BIA_IMPORT1.Services
         }
         public ObservableCollection<string> Get_StringList_ProcessOwner()
         {
-            return new ObservableCollection<string>(ProcessDummyList.Where(n => n.Prozessverantwortlicher != "" && n.Prozessverantwortlicher != " ").Select(p => p.Prozessverantwortlicher).Distinct());
+            return new ObservableCollection<string>(ProcessDummyList.Where(n => !(n.Prozessverantwortlicher == null || n.Prozessverantwortlicher.Trim() == string.Empty)).Select(p => p.Prozessverantwortlicher).Distinct());
         }
         public ObservableCollection<string> Get_StringList_OEsForUser(string userOE)
         {

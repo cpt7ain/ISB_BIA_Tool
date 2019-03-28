@@ -180,7 +180,7 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
-                    if (db.ISB_BIA_Informationssegmente.Count(x => x.Segment == newIS.Segment) > 0)
+                    if (db.ISB_BIA_Informationssegmente.GroupBy(c=>c.Name).Select(v=>v.OrderByDescending(n=>n.Datum).FirstOrDefault()).Count(x => x.Segment == newIS.Segment) > 0)
                     {
                         _myDia.ShowInfo("Der Informationssegment-Name ist bereits vergeben.");
                         return false;

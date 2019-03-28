@@ -473,7 +473,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                                 XpsDocument xpsDocument = new XpsDocument(file, FileAccess.Read);
                                 FixedDocumentSequence fds = xpsDocument.GetFixedDocumentSequence();
                                 _myNavi.NavigateTo<DocumentView_ViewModel>();
-                                MessengerInstance.Send(new NotificationMessage<FixedDocumentSequence>(this,fds,null));
+                                MessengerInstance.Send(new NotificationMessage<FixedDocumentSequence>(this,fds,file));
                             }
                             else
                             {

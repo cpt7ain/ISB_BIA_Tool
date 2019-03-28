@@ -376,26 +376,28 @@ namespace ISB_BIA_IMPORT1.ViewModel
         }
 
         /// <summary>
-        /// Methode um die Registrierung von der Application Recovery zu löschen
-        /// </summary>
-        private void UnregisterApplicationRecovery()
-        {
-            if (!CoreHelpers.RunningOnVista)
-            {
-                return;
-            }
-            ApplicationRestartRecoveryManager.UnregisterApplicationRecovery();
-        }
-
-        /// <summary>
         /// Methode um das Programm zu beenden. 
         /// Entfernt alle Locks des Users und löscht die Registrierung von der Application Recovery
         /// </summary>
         private void ShutDown()
         {
-            _myLock.Unlock_AllObjectsForUserOnMachine();
-            UnregisterApplicationRecovery();
-            Environment.Exit(0);
+            try
+            {
+                _myLock.Unlock_AllObjectsForUserOnMachine();
+            }
+            catch
+            {
+            }
+            try
+            {
+                ApplicationRestartRecoveryManager.UnregisterApplicationRecovery();
+                Application.Current.Shutdown();
+            }
+            catch (Exception ex)
+            {
+                _myDia.ShowError(ex.ToString());
+                Application.Current.Shutdown();
+            }
         }
     }
 }

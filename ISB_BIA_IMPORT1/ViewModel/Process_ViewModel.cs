@@ -27,12 +27,12 @@ namespace ISB_BIA_IMPORT1.ViewModel
     public class Process_ViewModel : ViewModelBase, INotifyDataErrorInfo
     {
         #region Backing-Fields
-        private int _sZ_1_Max = 0;
-        private int _sZ_2_Max = 0;
-        private int _sZ_3_Max = 0;
-        private int _sZ_4_Max = 0;
-        private int _sZ_5_Max = 0;
-        private int _sZ_6_Max = 0;
+        private SZ_Values _sZ_1_Max = SZ_Values.None;
+        private SZ_Values _sZ_2_Max = SZ_Values.None;
+        private SZ_Values _sZ_3_Max = SZ_Values.None;
+        private SZ_Values _sZ_4_Max = SZ_Values.None;
+        private SZ_Values _sZ_5_Max = SZ_Values.None;
+        private SZ_Values _sZ_6_Max = SZ_Values.None;
         private Process_Model _processCurrent;
         private Process_Model _oldCurrentProcess;
 
@@ -85,7 +85,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Mindesteinstufung nach Berechnung für 1. Schutzziel
         /// </summary>
-        public int SZ_1_Max
+        public SZ_Values SZ_1_Max
         {
             get => _sZ_1_Max;
             set => Set(() => SZ_1_Max, ref _sZ_1_Max, value);
@@ -93,7 +93,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Mindesteinstufung nach Berechnung für 2. Schutzziel
         /// </summary>
-        public int SZ_2_Max
+        public SZ_Values SZ_2_Max
         {
             get => _sZ_2_Max;
             set => Set(() => SZ_2_Max, ref _sZ_2_Max, value);
@@ -102,7 +102,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Mindesteinstufung nach Berechnung für 3. Schutzziel
         /// </summary>
-        public int SZ_3_Max
+        public SZ_Values SZ_3_Max
         {
             get => _sZ_3_Max;
             set => Set(() => SZ_3_Max, ref _sZ_3_Max, value);
@@ -111,7 +111,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Mindesteinstufung nach Berechnung für 4. Schutzziel
         /// </summary>
-        public int SZ_4_Max
+        public SZ_Values SZ_4_Max
         {
             get => _sZ_4_Max;
             set => Set(() => SZ_4_Max, ref _sZ_4_Max, value);
@@ -120,7 +120,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Mindesteinstufung nach Berechnung für 5. Schutzziel
         /// </summary>
-        public int SZ_5_Max
+        public SZ_Values SZ_5_Max
         {
             get => _sZ_5_Max;
             set => Set(() => SZ_5_Max, ref _sZ_5_Max, value);
@@ -129,7 +129,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Mindesteinstufung nach Berechnung für 6. Schutzziel
         /// </summary>
-        public int SZ_6_Max
+        public SZ_Values SZ_6_Max
         {
             get => _sZ_6_Max;
             set => Set(() => SZ_6_Max, ref _sZ_6_Max, value);
@@ -164,7 +164,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     ProcessCurrent.Prozessverantwortlicher = Proc_Prozessverantwortlicher_Text;
                 else
                     ProcessCurrent.Prozessverantwortlicher = Proc_Prozessverantwortlicher;
-                if (!string.IsNullOrWhiteSpace(_proc_Prozessverantwortlicher))
+                if (!String.IsNullOrWhiteSpace(_proc_Prozessverantwortlicher))
                     RemoveError(nameof(Proc_Prozessverantwortlicher));
             }
         }
@@ -181,7 +181,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     ProcessCurrent.Prozessverantwortlicher = Proc_Prozessverantwortlicher_Text;
                 else
                     ProcessCurrent.Prozessverantwortlicher = Proc_Prozessverantwortlicher;
-                if (!string.IsNullOrWhiteSpace(_proc_ProzessverantwortlicherText))
+                if (!String.IsNullOrWhiteSpace(_proc_ProzessverantwortlicherText))
                     RemoveError(nameof(Proc_Prozessverantwortlicher_Text));
             }
         }
@@ -877,7 +877,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                                 XpsDocument xpsDocument = new XpsDocument(file, FileAccess.Read);
                                 FixedDocumentSequence fds = xpsDocument.GetFixedDocumentSequence();
                                 _myNavi.NavigateTo<DocumentView_ViewModel>();
-                                MessengerInstance.Send(new NotificationMessage<FixedDocumentSequence>(this, fds, null));
+                                MessengerInstance.Send(new NotificationMessage<FixedDocumentSequence>(this, fds, file));
                             }
                             else
                             {
@@ -1287,14 +1287,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
         }
 
         /// <summary>
-        /// Methode zur berechnung der Mindesteinstufung der Schutzziele eines Prozesses abhängig von den gewählten Informationssegmenten
+        /// Methode zur Berechnung der Mindesteinstufung der Schutzziele eines Prozesses abhängig von den gewählten Informationssegmenten
         /// </summary>
         /// <param name="process"> Aktueller Prozess </param>
         public void CheckMinValues(Process_Model process)
         {
             try
             {
-
                 List<ISB_BIA_Informationssegmente> queryIS = _myProc.Get_List_Segments_5ForCalculation(process);
                 //Liste zur speicherung der zutreffenden Attribute
                 List<int> list = new List<int>();
@@ -1323,12 +1322,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 //=> Maximalwert der Schutzziele über alle Attribute berechnen
                 if (list.Count != 0)
                 {
-                    SZ_1_Max = _list_AllAttributes.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_1);
-                    SZ_2_Max = _list_AllAttributes.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_2);
-                    SZ_3_Max = _list_AllAttributes.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_3);
-                    SZ_4_Max = _list_AllAttributes.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_4);
-                    SZ_5_Max = _list_AllAttributes.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_5);
-                    SZ_6_Max = _list_AllAttributes.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Attribut_Id).Max(x => x.SZ_6);
+                    var maxList = _list_AllAttributes.Where(n => list.Contains(n.Attribut_Id)).GroupBy(x => x.Attribut_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault());
+                    SZ_1_Max = (SZ_Values) maxList.Max(x => x.SZ_1);
+                    SZ_2_Max = (SZ_Values) maxList.Max(x => x.SZ_2);
+                    SZ_3_Max = (SZ_Values) maxList.Max(x => x.SZ_3);
+                    SZ_4_Max = (SZ_Values) maxList.Max(x => x.SZ_4);
+                    SZ_5_Max = (SZ_Values) maxList.Max(x => x.SZ_5);
+                    SZ_6_Max = (SZ_Values) maxList.Max(x => x.SZ_6);
                 }
                 else
                 {

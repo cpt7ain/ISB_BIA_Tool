@@ -545,17 +545,17 @@ namespace ISB_BIA_IMPORT1.Model
         /// </summary>
         public void EvaluateErrors()
         {
-            if(string.IsNullOrWhiteSpace(_prozess))
+            if(String.IsNullOrWhiteSpace(_prozess))
                 AddError(nameof(Prozess), "Pflichtfeld");
-            if (string.IsNullOrWhiteSpace(_oE_Filter))
+            if (String.IsNullOrWhiteSpace(_oE_Filter))
                 AddError(nameof(OE_Filter), "Pflichtfeld");
-            if (string.IsNullOrWhiteSpace(_prozessverantwortlicher))
+            if (String.IsNullOrWhiteSpace(_prozessverantwortlicher))
                 AddError(nameof(Prozessverantwortlicher), "Pflichtfeld");
-            if (string.IsNullOrWhiteSpace(_kritikalität_des_Prozesses))
+            if (String.IsNullOrWhiteSpace(_kritikalität_des_Prozesses))
                 AddError(nameof(Kritikalität_des_Prozesses), "Pflichtfeld");
-            if (string.IsNullOrWhiteSpace(_reifegrad_des_Prozesses))
+            if (String.IsNullOrWhiteSpace(_reifegrad_des_Prozesses))
                 AddError(nameof(Reifegrad_des_Prozesses), "Pflichtfeld");
-            if (string.IsNullOrWhiteSpace(_servicezeit_Helpdesk) || _servicezeit_Helpdesk.StartsWith("Bsp"))
+            if (String.IsNullOrWhiteSpace(_servicezeit_Helpdesk) || _servicezeit_Helpdesk.StartsWith("Bsp"))
                 AddError(nameof(Servicezeit_Helpdesk), "Pflichtfeld");
             if (_rTO_Wiederanlaufzeit_Recovery_Time_Objective.ToString() =="0")
                 AddError(nameof(RTO_Wiederanlaufzeit_Recovery_Time_Objective), "Pflichtfeld");

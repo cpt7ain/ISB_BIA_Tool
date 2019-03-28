@@ -75,9 +75,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
             // Message Registrierungen mit Überlieferung des zu betrachtenden Dokuments
             MessengerInstance.Register<NotificationMessage<FixedDocumentSequence>>(this, a =>
             {
-                Fds_DocumentSource = a.Content;
-                if (a.Sender is Menu_ViewModel)
+                if (a.Sender is ViewModelBase)
+                {
+                    Fds_DocumentSource = a.Content;
                     _str_Filename = a.Notification;
+                }
             });
 
         }

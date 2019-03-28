@@ -1,7 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
   <Class Name="ISB_BIA_IMPORT1.LINQ2SQL.ISB_BIA_Applikationen" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="3" Y="1.75" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
     <TypeIdentifier>
       <HashCode>QgD2AgABEUELYAIDQJmBSJEDjiKGgAABACjARm8AUDA=</HashCode>
     </TypeIdentifier>
@@ -73,7 +77,7 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="ISB_BIA_IMPORT1.LINQ2SQL.ISB_BIA_Prozesse_Applikationen" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="5.5" Y="1.75" Width="2.75" />
+    <Position X="5.5" Y="1.75" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAkAAAhUEACAAQSRAMBSAAByCgKAAACgSoABACAAgA=</HashCode>
     </TypeIdentifier>

@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.ViewModel;
+using System;
 using System.Collections.Generic;
 
 namespace ISB_BIA_IMPORT1.Model
@@ -40,7 +41,7 @@ namespace ISB_BIA_IMPORT1.Model
             get => _name;
             set
             {
-                if (value != "")
+                if (!String.IsNullOrWhiteSpace(value))
                     Set(() => Name, ref _name, value);
                 else
                     NotifyOnValidationError("Bitte Namen eingeben");

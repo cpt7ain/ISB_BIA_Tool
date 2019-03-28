@@ -22,7 +22,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private ObservableCollection<ISB_BIA_Applikationen> _list_SelectedApplications;
         private MyRelayCommand<object> _cmd_SaveSelectedApplications;
         private MyRelayCommand _cmd_ExportProcessList;
-        private MyRelayCommand _cmd_ExportApplicationList;
+        private MyRelayCommand _cmd_ExportList;
         private ObservableCollection<ISB_BIA_Applikationen> _list_Applications;
         private object _selectedItem;
         private int _count_NonEdit;
@@ -141,12 +141,12 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Exportieren der Liste aller aktiven Applikationen nach Excel
         /// </summary>
-        public MyRelayCommand Cmd_ExportApplicationList
+        public MyRelayCommand Cmd_ExportList
         {
             get
             {
-                return _cmd_ExportApplicationList
-                    ?? (_cmd_ExportApplicationList = new MyRelayCommand(() =>
+                return _cmd_ExportList
+                    ?? (_cmd_ExportList = new MyRelayCommand(() =>
                     {
                         _myExport.Export_Applications_Active();
                     }));

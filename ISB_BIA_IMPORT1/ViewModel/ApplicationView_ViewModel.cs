@@ -17,7 +17,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         #region Backing-Fields
         private MyRelayCommand _cmd_NavToApp;
         private MyRelayCommand _cmd_DeleteApp;
-        private MyRelayCommand _cmd_ExportApplicationList;
+        private MyRelayCommand _cmd_ExportList;
         private ObservableCollection<ISB_BIA_Applikationen> _list_Application;
         private object _selectedItem;
         private ProcAppListMode _applicationViewMode;
@@ -97,10 +97,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Command zum Exportieren der Applikationsliste nach Excel
         /// </summary>
-        public MyRelayCommand Cmd_ExportApplicationList
+        public MyRelayCommand Cmd_ExportList
         {
-            get => _cmd_ExportApplicationList
-                    ?? (_cmd_ExportApplicationList = new MyRelayCommand(() =>
+            get => _cmd_ExportList
+                    ?? (_cmd_ExportList = new MyRelayCommand(() =>
                     {
                         _myExport.Export_Applications_All();
                     }));
@@ -137,14 +137,14 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 Set(() => ApplicationViewMode, ref _applicationViewMode, value);
                 if (value == ProcAppListMode.Change)
                 {
-                    Header = "Anwendungen bearbeiten";
-                    Instruction = "Doppelklick auf eine Anwendung, die Sie ändern möchten.";
+                    Str_Header = "Anwendungen bearbeiten";
+                    Str_Instruction = "Doppelklick auf eine Anwendung, die Sie ändern möchten.";
                     Cmd_RowDoubleClick = Cmd_NavToApp;
                 }
                 else if (value == ProcAppListMode.Delete)
                 {
-                    Header = "Anwendungen löschen";
-                    Instruction = "Doppelklick auf eine Anwendung, die Sie löschen möchten.";
+                    Str_Header = "Anwendungen löschen";
+                    Str_Instruction = "Doppelklick auf eine Anwendung, die Sie löschen möchten.";
                     Cmd_RowDoubleClick = Cmd_DeleteApp;
                 }
             }
@@ -152,11 +152,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// <summary>
         /// Überschrift
         /// </summary>
-        public string Header { get; set; }
+        public string Str_Header { get; set; }
         /// <summary>
         /// Anweisung
         /// </summary>
-        public string Instruction { get; set; }
+        public string Str_Instruction { get; set; }
 
         #region Services
         private readonly INavigationService _myNavi;
@@ -186,8 +186,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
             if (IsInDesignMode)
             {
                 List_Application = _myApp.Get_List_Applications_All();
-                Header = "TestHeader";
-                Instruction = "TestInstruction";
+                Str_Header = "TestHeader";
+                Str_Instruction = "TestInstruction";
             }
             else
             {

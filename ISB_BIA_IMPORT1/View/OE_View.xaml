@@ -33,7 +33,7 @@
         </Grid.ColumnDefinitions>
         <Border Grid.ColumnSpan="7">
             <Grid>
-                <Label Content="OE Einstellungen" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                <Label Content="OE Verwaltung" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0"/>
                 <Button Content="Zurück" HorizontalAlignment="Right" Background="Wheat"  Margin="0,0,10,0" VerticalAlignment="Center" Command="{Binding Cmd_NavBack}"/>
             </Grid>
         </Border>

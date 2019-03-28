@@ -37,12 +37,18 @@
                     <RowDefinition Height="40"/>
                 </Grid.RowDefinitions>
 
-                <Label Content="{Binding Instruction}" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Width="700"/>
-                <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <TextBox Name="SearchBox" Text="" HorizontalAlignment="Right" VerticalAlignment="Center" Width="300" KeyUp="SearchBox_KeyUp"/>
-                    <Button Content="Suche" VerticalAlignment="Center" Click="SearchButton_Click" Margin ="0,0,10,0"/>
-                    <Button Content="Excel-Export" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Command="{Binding Cmd_ExportApplicationList}"/>
-                </StackPanel>
+                <Grid Grid.ColumnSpan="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="300*"/>
+                        <ColumnDefinition Width="250"/>
+                        <ColumnDefinition Width="70"/>
+                        <ColumnDefinition Width="120"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" HorizontalAlignment="Left" Margin="10,0,0,0" Text="{Binding Str_Instruction}" VerticalAlignment="Center" TextWrapping="WrapWithOverflow"/>
+                    <TextBox Grid.Column="1" Name="SearchBox" Text="" VerticalAlignment="Center" KeyUp="SearchBox_KeyUp"/>
+                    <Button Grid.Column="2" Content="Suche" VerticalAlignment="Center" Click="SearchButton_Click" Margin ="0,0,10,0"/>
+                    <Button Grid.Column="3" Content="Excel-Export" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10,0,10,0" Command="{Binding Cmd_ExportList}"/>
+                </Grid>
                 <DataGrid 
                     Name="ApplicationDataGrid"
                   IsReadOnly="true" 

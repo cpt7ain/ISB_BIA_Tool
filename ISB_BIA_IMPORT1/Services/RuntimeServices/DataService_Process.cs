@@ -262,7 +262,7 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
-                    return new ObservableCollection<string>(db.ISB_BIA_Prozesse.Where(n => n.Prozessverantwortlicher != "" && n.Prozessverantwortlicher != " ").Select(p => p.Prozessverantwortlicher).Distinct());
+                    return new ObservableCollection<string>(db.ISB_BIA_Prozesse.Where(n => !(n.Prozessverantwortlicher == null || n.Prozessverantwortlicher.Trim() == string.Empty)).Select(p => p.Prozessverantwortlicher).Distinct());
                 }
             }
             catch (Exception ex)
@@ -360,8 +360,8 @@ namespace ISB_BIA_IMPORT1.Services
                 //In Datenbank schreiben
                 using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
-                    int duplicateCount = Get_List_Processes_All().Where(x => x.Prozess == p.Prozess && x.Sub_Prozess == p.Sub_Prozess && x.OE_Filter == p.OE_Filter).Count();
-                    if (mode == ProcAppMode.New && duplicateCount > 0)
+                    int duplicateCount = Get_List_Processes_All().GroupBy(c=> c.Prozess_Id).Select(v=>v.OrderByDescending(b=>b.Datum).FirstOrDefault()).Where(x => x.Prozess == p.Prozess && x.Sub_Prozess == p.Sub_Prozess && x.OE_Filter == p.OE_Filter && x.Prozess_Id != p.Prozess_Id).Count();
+                    if (duplicateCount > 0)
                     {
                         _myDia.ShowMessage("Es existiert(e) bereits ein Prozess mit diesem Prozess- und Sub-Prozess Namen in dieser OE.\nFalls es sich um einen gelöschten Prozess handelt, den Sie reaktivieren möchten, wenden Sie sich bitte an die IT.\nAndernfalls wählen Sie bitte andere Bezeichnungen für diesen Prozess.");
                         return false;
