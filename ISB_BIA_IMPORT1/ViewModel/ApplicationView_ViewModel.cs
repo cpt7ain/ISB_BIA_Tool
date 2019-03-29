@@ -2,7 +2,6 @@
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.LINQ2SQL;
-using ISB_BIA_IMPORT1.Services;
 using System.Collections.ObjectModel;
 using ISB_BIA_IMPORT1.Helpers;
 using ISB_BIA_IMPORT1.Services.Interfaces;

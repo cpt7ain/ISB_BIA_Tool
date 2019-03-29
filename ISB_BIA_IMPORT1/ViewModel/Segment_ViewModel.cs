@@ -3,7 +3,6 @@ using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.Model;
 using ISB_BIA_IMPORT1.LINQ2SQL;
-using ISB_BIA_IMPORT1.Services;
 using System.Collections.ObjectModel;
 using System.Windows;
 using ISB_BIA_IMPORT1.Helpers;
@@ -22,7 +21,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private Segment_Model _segmentOld;
         private ISISAttributeMode _mode;
         #endregion
-
         /// <summary>
         ///  Attribut-Namensliste zur Darstellung, welche Attribute auf das aktuelle Segment zutreffen
         /// </summary>
@@ -31,7 +29,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _list_AttributeName;
             set => Set(() => List_AttributeName, ref _list_AttributeName, value);
         }
-
         /// <summary>
         /// Aktuelles Segment an dem Änderungen vorgenommen werden
         /// </summary>
@@ -40,7 +37,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _segmentCurrent;
             set => Set(() => SegmentCurrent, ref _segmentCurrent, value);
         }
-
         /// <summary>
         /// Altes Segment zum aufspüren von Änderungen
         /// </summary>
@@ -79,7 +75,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             get => (Settings.Attribut9_aktiviert == "Ja") ? Visibility.Visible : Visibility.Collapsed;
         }
-
         /// <summary>
         /// Sichtbarkeit von Attribut 10
         /// </summary>
@@ -87,12 +82,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             get => (Settings.Attribut10_aktiviert == "Ja") ? Visibility.Visible : Visibility.Collapsed;
         }
-
         /// <summary>
         /// Aktuelle Einstellungen
         /// </summary>
         public ISB_BIA_Settings Settings { get; set; }
-
         /// <summary>
         /// Command zum Speichern des Segments und zurückkehren zu Prozess oder Übersicht
         /// </summary>
@@ -108,7 +101,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 }
             });
         }
-
         /// <summary>
         /// Command zum Zurückkehren zum vorherigen VM
         /// </summary>
@@ -136,7 +128,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private readonly IDataService_Segment _myIS;
         private readonly ILockService _myLock;
         private readonly IDataService_Setting _mySett;
-
         #endregion
 
         /// <summary>

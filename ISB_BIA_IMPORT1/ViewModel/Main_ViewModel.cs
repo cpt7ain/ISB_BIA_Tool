@@ -8,11 +8,9 @@ using System.Security.Principal;
 using System.Windows.Input;
 using ISB_BIA_IMPORT1.View;
 using Microsoft.WindowsAPICodePack.ApplicationServices;
-using MS.WindowsAPICodePack.Internal;
 using ISB_BIA_IMPORT1.Helpers;
 using ISB_BIA_IMPORT1.Services.Interfaces;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace ISB_BIA_IMPORT1.ViewModel
 {

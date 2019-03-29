@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using GalaSoft.MvvmLight.Messaging;
+﻿using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.ViewModel;
 using System.Windows;
 
@@ -10,6 +9,10 @@ namespace ISB_BIA_IMPORT1.View
     /// </summary>
     public partial class MainWindow : Window
     {
+
+        /// <summary>
+        /// Vew des <see cref="Main_ViewModel"/>
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();

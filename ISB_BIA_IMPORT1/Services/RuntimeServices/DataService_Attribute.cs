@@ -1,7 +1,6 @@
 ﻿using ISB_BIA_IMPORT1.Model;
 using ISB_BIA_IMPORT1.LINQ2SQL;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Data;

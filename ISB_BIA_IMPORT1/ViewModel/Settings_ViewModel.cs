@@ -1,8 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Ioc;
 using ISB_BIA_IMPORT1.Model;
-using ISB_BIA_IMPORT1.Services;
 using ISB_BIA_IMPORT1.Helpers;
 using ISB_BIA_IMPORT1.Services.Interfaces;
 
@@ -26,7 +24,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _settingsOld;
             set => Set(() => SettingsOld, ref _settingsOld, value);
         }
-
         /// <summary>
         /// Aktuelle Einstellungen zum ändern
         /// </summary>
@@ -35,7 +32,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _settingsNew;
             set => Set(() => SettingsNew, ref _settingsNew, value);
         }
-
         /// <summary>
         /// Command zum Zurückkehren zum vorherigen VM
         /// </summary>
@@ -51,7 +47,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 }
             });
         }
-
         /// <summary>
         /// Command zum Speichern der <see cref="SettingsNew"/>
         /// </summary>
@@ -67,7 +62,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 }
             });
         }
-
         /// <summary>
         /// Command zum Exportieren der Einstellungshistorie
         /// </summary>

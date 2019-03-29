@@ -1,20 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.DirectoryServices;
-using System.Security.AccessControl;
-using System.Security.Principal;
 using System.Threading;
 using System.Windows;
-using System.Windows.Input;
 using GalaSoft.MvvmLight.Ioc;
-using ISB_BIA_IMPORT1.Helpers;
-using ISB_BIA_IMPORT1.Services;
 using ISB_BIA_IMPORT1.Services.Interfaces;
-using ISB_BIA_IMPORT1.View;
-using ISB_BIA_IMPORT1.ViewModel;
-using Microsoft.Shell;
 using Microsoft.WindowsAPICodePack.ApplicationServices;
-using MS.WindowsAPICodePack.Internal;
 
 namespace ISB_BIA_IMPORT1
 {
@@ -35,7 +24,6 @@ namespace ISB_BIA_IMPORT1
         [STAThread]
         public static void Main()
         {
-            Mouse.OverrideCursor = Cursors.Wait;
             using (instanceMutex = new Mutex(false, @"Global\ISB_BIA_Tool" + Environment.UserName + Unique))
             {
                 var isOwned = false;
@@ -63,68 +51,8 @@ namespace ISB_BIA_IMPORT1
                     if (isOwned) instanceMutex.ReleaseMutex();
                 }
             }
-
-            /*
-            bool firstInstance = true;
-            using (instanceMutex = new Mutex(true, @"Global\ISB_BIA_Tool" + Environment.UserName + Unique, out firstInstance))
-            {
-                if (!firstInstance)
-                {
-                    MessageBox.Show("ISB_BIA-Tool läuft bereits");
-                    Application.Current.Shutdown();
-                    return;
-                }
-                app.RegisterAppRecovery();
-                app.InitializeComponent();
-                app.Run();
-            }*/
         }
 
-        public static void ReleaseMutex()
-        {
-            instanceMutex.ReleaseMutex();
-        }
-
-
-        /*
-        /// <summary>
-        /// Explizite Angabe der Main Methode, welche sonst standartmäßig durch den c# Compiler erstellt wird
-        /// Verwendet um SingleInstance-Mechanismus zu implementieren
-        /// Projekt -> Eigenschaften -> Startobjekt auf ~App Namen~ anstatt auf "Nicht Festgelegt"
-        /// App.xaml -> Eigenschaften -> Buildvorgang auf "Page" statt "Application Definition"
-        /// </summary>
-        [STAThread]
-        public static void Main()
-        {
-            Mouse.OverrideCursor = Cursors.Wait;
-            if (SingleInstance<App>.InitializeAsFirstInstance(Unique))
-            {
-                app.RegisterAppRecovery();
-                app.InitializeComponent();
-                app.Run();
-                // Allow single instance code to perform cleanup operations
-                SingleInstance<App>.Cleanup();
-            }
-            Mouse.OverrideCursor = null;           
-        }
-
-        /// <summary>
-        /// Bringt App in den Vordergrund falls nicht erste Instanz gestartet
-        /// </summary>
-        /// <param name="args"> </param>
-        /// <returns></returns>
-        public bool SignalExternalCommandLineArgs(IList<string> args)
-        {
-            if (app.MainWindow != null)
-            {
-                app.MainWindow.Visibility = Visibility.Visible;
-                app.MainWindow.WindowState = WindowState.Normal;
-                app.MainWindow.Activate();
-                app.MainWindow.BringIntoView();
-            }
-            return true;
-        }
-        */
         #region Applikations Recovery Funktionen
         /// <summary>
         /// Registrieren der Anwendung für die Application-Recovery

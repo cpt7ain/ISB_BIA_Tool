@@ -2,7 +2,6 @@
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.LINQ2SQL;
-using ISB_BIA_IMPORT1.Services;
 using System.Collections.ObjectModel;
 using System.Windows;
 using ISB_BIA_IMPORT1.Helpers;
@@ -34,7 +33,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 _myNavi.NavigateBack();
             });
         }
-
         /// <summary>
         /// Zu dem ausgewählten Informationssegment <see cref="SelectedItem"/> navigieren.
         /// Wenn EditMode dann Objekt zusätzlich sperren.
@@ -83,7 +81,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _list_InformationSegment;
             set => Set(() => List_InformationSegment, ref _list_InformationSegment, value);
         }
-
         /// <summary>
         /// Liste der Attribut-Namen im Spaltenheader je nach aktueller Benennung des jeweiligen Attributs
         /// </summary>
@@ -92,7 +89,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _attributeColumnHeaderText;
             set => Set(() => AttributeColumnHeaderText, ref _attributeColumnHeaderText, value);
         }
-
         /// <summary>
         /// Ausgewähltes Element
         /// </summary>
@@ -144,7 +140,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 }
             }
         }
-
         /// <summary>
         /// Anweisung
         /// </summary>

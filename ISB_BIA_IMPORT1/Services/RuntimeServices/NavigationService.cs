@@ -1,6 +1,5 @@
 ﻿using CommonServiceLocator;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.ViewModel;
 using System.Collections.ObjectModel;

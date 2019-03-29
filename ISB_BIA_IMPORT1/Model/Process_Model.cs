@@ -1,5 +1,4 @@
 ﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.LINQ2SQL;
 using ISB_BIA_IMPORT1.ViewModel;
 using System;
@@ -8,7 +7,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace ISB_BIA_IMPORT1.Model
 {

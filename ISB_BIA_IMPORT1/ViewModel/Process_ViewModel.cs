@@ -3,7 +3,6 @@ using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using ISB_BIA_IMPORT1.Model;
 using ISB_BIA_IMPORT1.LINQ2SQL;
-using ISB_BIA_IMPORT1.Services;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,7 +16,6 @@ using System.Windows.Documents;
 using System.Windows.Xps.Packaging;
 using ISB_BIA_IMPORT1.Helpers;
 using ISB_BIA_IMPORT1.Services.Interfaces;
-using System.Windows.Controls;
 
 namespace ISB_BIA_IMPORT1.ViewModel
 {
@@ -623,7 +621,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             get => _vis_ButtonSave;
             set => Set(() => Vis_ButtonSave, ref _vis_ButtonSave, value);
-
         }
         /// <summary>
         /// Zum nächsten Tab navigieren

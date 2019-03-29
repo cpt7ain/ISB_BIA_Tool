@@ -1,10 +1,7 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
+﻿using ISB_BIA_IMPORT1.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using GalaSoft.MvvmLight;
-
 
 namespace ISB_BIA_IMPORT1.View
 {
@@ -20,7 +17,6 @@ namespace ISB_BIA_IMPORT1.View
         {
             InitializeComponent();
         }
-
         /// <summary>
         /// Benachrichtigung bei Kritischer Einstufung des Prozesses
         /// </summary>
@@ -48,11 +44,9 @@ namespace ISB_BIA_IMPORT1.View
         /// <param name="e"></param>
         private void CritLabel_TargetUpdated(object sender, DataTransferEventArgs e)
         {
-            Label a=(Label) e.TargetObject;
-            
+            Label a=(Label) e.TargetObject;     
             if (a.Content.ToString() == "Ja") MessageBox.Show(Crit_Ntf, "Warnung", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
-
         /// <summary>
         /// Durch <see cref="ButtonAddApplication_Click"/> ausgelöste Fokussierung des hinzugefügten Elements => Scroll zu dem Element
         /// </summary>
@@ -67,9 +61,8 @@ namespace ISB_BIA_IMPORT1.View
                 d.ScrollIntoView(d.SelectedItem);
             }
         }
-
         /// <summary>
-        /// Click Event bei hinzufügen einer Anwendung zum Prozess
+        /// Click Event bei hinzufügen einer Anwendung zum Prozess => Prozess wird fokussiert
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
