@@ -125,7 +125,6 @@
     <Compile Include="Converter\NegateBooleanToVisibilityConverter.cs" />
     <Compile Include="Converter\NumToAlphBinaryConverter.cs" />
     <Compile Include="Converter\TextInputToVisibilityConverter.cs" />
-    <Compile Include="Helpers\SingleInstance.cs" />
     <Compile Include="LINQ2SQL\L2S.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
