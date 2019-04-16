@@ -4,6 +4,7 @@ using System.Configuration;
 using System.IO;
 using ISB_BIA_IMPORT1.Services.Interfaces;
 using System;
+using System.Windows;
 
 namespace ISB_BIA_IMPORT1.Services
 {
@@ -36,7 +37,7 @@ namespace ISB_BIA_IMPORT1.Services
                     Conf_AD_Group_Admin = ConfigurationManager.AppSettings["AD_Group_Admin_TEST"].ToString();
                     Conf_AD_Group_Normal = ConfigurationManager.AppSettings["AD_Group_Normal_TEST"].ToString();
                 }
-                catch ( Exception ex)
+                catch
                 {
                     myDia.ShowError("Konfigurationsdatei ungültig.");
                     Environment.Exit(0);
@@ -56,13 +57,13 @@ namespace ISB_BIA_IMPORT1.Services
                 catch
                 {
                     myDia.ShowError("Konfigurationsdatei ungültig.");
-                    Environment.Exit(0);
+                    Application.Current.Shutdown();
                 }
             }
             else
             {
                 myDia.ShowError("Konfigurationsdatei ungültig.\n'Current_Environment' muss einen der folgenden Werte besitzen: 'prod','test',local'");
-                Environment.Exit(0);
+                Application.Current.Shutdown();
             }
 
             try
@@ -74,7 +75,7 @@ namespace ISB_BIA_IMPORT1.Services
             catch
             {
                 myDia.ShowError("Ungültige Konfigurationsdatei.");
-                Environment.Exit(0);
+                Application.Current.Shutdown();
             }
 
             try

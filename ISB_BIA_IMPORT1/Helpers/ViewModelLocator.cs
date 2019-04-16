@@ -66,9 +66,9 @@ namespace ISB_BIA_IMPORT1.Helpers
                 SimpleIoc.Default.Register<ISharedResourceService, SharedResourceService>();
                 SimpleIoc.Default.Register<INavigationService, NavigationService>();
               
-                SimpleIoc.Default.Register<ILockService, DataService_Lock>();
+                SimpleIoc.Default.Register<ILockService, LockService>();
                 SimpleIoc.Default.Register<IDataService_Setting, DataService_Setting>();
-                SimpleIoc.Default.Register<IDataModelService, DataService_DataModel>();
+                SimpleIoc.Default.Register<IDataModelService, DataModelService>();
                 SimpleIoc.Default.Register<IDataService_Log, DataService_Log>();
                 SimpleIoc.Default.Register<IDataService_Segment, DataService_Segment>();
                 SimpleIoc.Default.Register<IDataService_Attribute, DataService_Attribute>();

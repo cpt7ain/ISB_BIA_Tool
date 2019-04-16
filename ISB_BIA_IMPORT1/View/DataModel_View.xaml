@@ -16,63 +16,64 @@
         </Grid.RowDefinitions>
         <Border Grid.ColumnSpan="3">
             <Grid>
-                <Label Content="Datenmodell eneuern" FontWeight="Bold" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
+                <Label Content="Datenmodell eneuern" FontWeight="Bold" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="10,0,0,0"/>
                 <Button Content="Zurück" Background="Wheat" Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Command="{Binding Cmd_NavBack}"/>
             </Grid>
         </Border>
         <Border Grid.Row="1" Margin="10" BorderBrush="Black" BorderThickness="1">
-            <Border Grid.Row="1" VerticalAlignment="Center" Width="800" HorizontalAlignment="Center" BorderThickness="1" BorderBrush="Black" Background="White">
-                <Grid Margin="20,20,20,20" Background="White">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="50*"/>
-                        <ColumnDefinition Width="50*"/>
-                        <ColumnDefinition Width="20"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="20"/>
-                        <RowDefinition Height="50*"/>
-                        <RowDefinition Height="50*"/>
-                        <RowDefinition Height="50*"/>
-                        <RowDefinition Height="50*"/>
-                        <RowDefinition Height="50*"/>
-                        <RowDefinition Height="50*"/>
-                        <RowDefinition Height="50*"/>
-                        <RowDefinition Height="50*"/>
-                        <RowDefinition Height="50*"/>
-                        <RowDefinition Height="50*"/>
-                        <RowDefinition Height="50*"/>
-                        <RowDefinition Height="20"/>
-                        <RowDefinition Height="50*"/>
-                    </Grid.RowDefinitions>
-                    <Label Content="Datei" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    <Button Command="{Binding Cmd_ChooseFile}" Content="Datei wählen" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                    <TextBox Text="{Binding Str_SourceFile}" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,10,0" IsReadOnly="True"/>
-                    <Label Content="Prozess-Sheet" ToolTip="Name des Sheets in der Excel-Datei, in dem die Prozessdaten für die BIA enthalten sind" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    <TextBox Text="{Binding Str_Sheet_Process}" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,10,0" />
-                    <Label Content="Prozess-Range" ToolTip="Bereich der Zellen, in dem die Prozessdaten für die BIA enthalten sind (inklusive Header)" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    <TextBox Text="{Binding Str_Range_Process}" Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,10,0" />
-                    <Label Content="Applikation-Sheet" ToolTip="Name des Sheets in der Excel-Datei, in dem die Anwendungsdaten für die SBA enthalten sind" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    <TextBox Text="{Binding Str_Sheet_App}" Grid.Row="4" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,10,0" />
-                    <Label Content="Applikation-Range" ToolTip="Bereich der Zellen, in dem die Anwendungsdaten für die SBA enthalten sind (inklusive Header)" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    <TextBox Text="{Binding Str_Range_App}" Grid.Row="5" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,10,0" />
-                    <Label Content="Prozess-Applikation-Matrix-Sheet" ToolTip="Name des Sheets in der Excel-Datei, in dem die Matrix für die Prozess-Anwendungs-Relationen dargestellt ist" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    <TextBox Text="{Binding Str_Sheet_Process_App_Matrix}" Grid.Row="6" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,10,0" />
-                    <Label Content="Prozess-Applikation-Matrix-Range" ToolTip="Bereich der Zellen, in dem die Matrix für die Prozess-Anwendungs-Relationen dargestellt ist" Grid.Row="7" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    <TextBox Text="{Binding Str_Range_Process_App_Matrix}" Grid.Row="7" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,10,0" />
-                    <Label Content="Informationssegment-Sheet" ToolTip="Name des Sheets in der Excel-Datei, in dem die Tabelle der Informationssegmente dargestellt ist" Grid.Row="8" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    <TextBox Text="{Binding Str_Sheet_InformationSegment}" Grid.Row="8" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,10,0" />
-                    <Label Content="Informationssegment-Range" ToolTip="Bereich der Zellen, in dem die Tabelle der Informationssegmente dargestellt ist" Grid.Row="9" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    <TextBox Text="{Binding Str_Range_InformationSegment}" Grid.Row="9" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,10,0" />
-                    <Label Content="Informationssegment-Attribut-Sheet" ToolTip="Name des Sheets in der Excel-Datei, in dem die Tabelle der Informationssegment-Attribute dargestellt ist" Grid.Row="10" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    <TextBox Text="{Binding Str_Sheet_Attribute}" Grid.Row="10" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,10,0" />
-                    <Label Content="Informationssegment-Attribut-Range" ToolTip="Bereich der Zellen, in dem die Tabelle der Informationssegment-Attribute dargestellt ist" Grid.Row="11" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    <TextBox Text="{Binding Str_Range_Attribute}" Grid.Row="11" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,10,0" />
-                    <Button Command="{Binding Cmd_Save}" Content="Datenmodell erneuern" Grid.Row="13" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,0,30,0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                    <Button Command="{Binding NavToMenu}" Content="Abbrechen" Grid.Row="13" Grid.Column="1" Grid.ColumnSpan="2" Margin="30,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-
-                </Grid>
-            </Border>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                <Border Grid.Row="1" VerticalAlignment="Center" Width="800" HorizontalAlignment="Center" BorderThickness="1" BorderBrush="Black" Background="White">
+                    <Grid Margin="20,20,20,20" Background="White">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="50*"/>
+                            <ColumnDefinition Width="50*"/>
+                            <ColumnDefinition Width="20"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="50*"/>
+                            <RowDefinition Height="50*"/>
+                            <RowDefinition Height="50*"/>
+                            <RowDefinition Height="50*"/>
+                            <RowDefinition Height="50*"/>
+                            <RowDefinition Height="50*"/>
+                            <RowDefinition Height="50*"/>
+                            <RowDefinition Height="50*"/>
+                            <RowDefinition Height="50*"/>
+                            <RowDefinition Height="50*"/>
+                            <RowDefinition Height="50*"/>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="50*"/>
+                        </Grid.RowDefinitions>
+                        <Label Content="Datei" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Button Command="{Binding Cmd_ChooseFile}" Content="Datei wählen" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                        <TextBox Text="{Binding Str_SourceFile}" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,10,0" IsReadOnly="True"/>
+                        <Label Content="Prozess-Sheet" ToolTip="Name des Sheets in der Excel-Datei, in dem die Prozessdaten für die BIA enthalten sind" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBox Text="{Binding Str_Sheet_Process}" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,10,0" />
+                        <Label Content="Prozess-Range" ToolTip="Bereich der Zellen, in dem die Prozessdaten für die BIA enthalten sind (inklusive Header)" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBox Text="{Binding Str_Range_Process}" Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,10,0" />
+                        <Label Content="Applikation-Sheet" ToolTip="Name des Sheets in der Excel-Datei, in dem die Anwendungsdaten für die SBA enthalten sind" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBox Text="{Binding Str_Sheet_App}" Grid.Row="4" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,10,0" />
+                        <Label Content="Applikation-Range" ToolTip="Bereich der Zellen, in dem die Anwendungsdaten für die SBA enthalten sind (inklusive Header)" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBox Text="{Binding Str_Range_App}" Grid.Row="5" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,10,0" />
+                        <Label Content="Prozess-Applikation-Matrix-Sheet" ToolTip="Name des Sheets in der Excel-Datei, in dem die Matrix für die Prozess-Anwendungs-Relationen dargestellt ist" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBox Text="{Binding Str_Sheet_Process_App_Matrix}" Grid.Row="6" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,10,0" />
+                        <Label Content="Prozess-Applikation-Matrix-Range" ToolTip="Bereich der Zellen, in dem die Matrix für die Prozess-Anwendungs-Relationen dargestellt ist" Grid.Row="7" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBox Text="{Binding Str_Range_Process_App_Matrix}" Grid.Row="7" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,10,0" />
+                        <Label Content="Informationssegment-Sheet" ToolTip="Name des Sheets in der Excel-Datei, in dem die Tabelle der Informationssegmente dargestellt ist" Grid.Row="8" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBox Text="{Binding Str_Sheet_InformationSegment}" Grid.Row="8" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,10,0" />
+                        <Label Content="Informationssegment-Range" ToolTip="Bereich der Zellen, in dem die Tabelle der Informationssegmente dargestellt ist" Grid.Row="9" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBox Text="{Binding Str_Range_InformationSegment}" Grid.Row="9" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,10,0" />
+                        <Label Content="Informationssegment-Attribut-Sheet" ToolTip="Name des Sheets in der Excel-Datei, in dem die Tabelle der Informationssegment-Attribute dargestellt ist" Grid.Row="10" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBox Text="{Binding Str_Sheet_Attribute}" Grid.Row="10" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,10,0" />
+                        <Label Content="Informationssegment-Attribut-Range" ToolTip="Bereich der Zellen, in dem die Tabelle der Informationssegment-Attribute dargestellt ist" Grid.Row="11" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBox Text="{Binding Str_Range_Attribute}" Grid.Row="11" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,10,0" />
+                        <Button Command="{Binding Cmd_Save}" Content="Datenmodell erneuern" Grid.Row="13" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,0,30,0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                        <Button Command="{Binding NavToMenu}" Content="Abbrechen" Grid.Row="13" Grid.Column="1" Grid.ColumnSpan="2" Margin="30,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    </Grid>
+                </Border>
+            </ScrollViewer>
         </Border>
     </Grid>
 </UserControl>

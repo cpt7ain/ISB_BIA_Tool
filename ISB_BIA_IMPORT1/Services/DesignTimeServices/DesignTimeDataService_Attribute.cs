@@ -11,7 +11,6 @@ namespace ISB_BIA_IMPORT1.Services
 {
     public class DesignTimeDataService_Attribute : IDataService_Attribute
     {
-        private ObservableCollection<ISB_BIA_Informationssegmente> SegmentDummyList;
         private ObservableCollection<ISB_BIA_Informationssegmente_Attribute> AttributetDummyList;
 
         public DesignTimeDataService_Attribute()

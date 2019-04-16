@@ -6,11 +6,10 @@ using System.Collections.Generic;
 using System.DirectoryServices;
 using System.Security.Principal;
 using System.Windows.Input;
-using ISB_BIA_IMPORT1.View;
-using Microsoft.WindowsAPICodePack.ApplicationServices;
 using ISB_BIA_IMPORT1.Helpers;
 using ISB_BIA_IMPORT1.Services.Interfaces;
 using System.Windows;
+using System.ComponentModel;
 
 namespace ISB_BIA_IMPORT1.ViewModel
 {
@@ -89,7 +88,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
     {
         ChangeCurrentVM,
         ISAttributValidationError,
-        WindowClosingRequest,
         RefreshData,
         ChangeTextSize,
     }
@@ -144,6 +142,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
             set => Set(() => Str_WindowTitle, ref _str_WindowTitle, value);
         }
 
+        /// <summary>
+        /// Benutzer, welcher den Login-Vorgang für Entwicklungszwecke umgeht 
+        /// </summary>
         public Login_Model ConstructionUser
         {
             get => new Login_Model()
@@ -155,7 +156,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 Surname = "Wolf"
             };
         }
-
+        
+        /// <summary>
+        /// Benutzer für die lokale Entwicklung der Anwendung
+        /// </summary>
         public Login_Model LocalUser
         {
             get => new Login_Model()
@@ -168,12 +172,14 @@ namespace ISB_BIA_IMPORT1.ViewModel
             };
         }
 
+        /// <summary>
+        /// Initialer Benutzer vor Abruf der AD-Daten
+        /// </summary>
         public Login_Model InitialUser
         {
             get => new Login_Model()
             {
                 Username = Environment.UserName,
-                UserGroup = UserGroups.Normal_User,
                 OE = "",
                 Givenname = "",
                 Surname = ""
@@ -210,19 +216,12 @@ namespace ISB_BIA_IMPORT1.ViewModel
             {
                 if (!(s.Sender is INavigationService)) return;
                 if (s.Content != null) ViewModelCurrent = s.Content;
-                else ShutDown();
             });
             //Messenger Registrierung für den Empfang Schriftgrößen-bestimmender Nachrichten
             MessengerInstance.Register<NotificationMessage<int>>(this, MessageToken.ChangeTextSize, s =>
             {
                 if(!(s.Sender is Menu_ViewModel)) return;
                 GlobalFontSize = s.Content;
-            });
-            //Messenger Registrierung für den Empfang Anwendungs-beendender Nachrichten
-            MessengerInstance.Register<NotificationMessage<string>>(this, MessageToken.WindowClosingRequest, s =>
-            {
-                if (!(s.Sender is MainWindow)) return;
-                ShutDown();
             });
 
             // Standard-Schriftgröße
@@ -236,7 +235,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 _myShared.User = ConstructionUser;
                 _myNavi.NavigateTo<Menu_ViewModel>();
             }
-            else
+            else 
             {
                 // Wenn lokaler Test
                 if (_myShared.Conf_CurrentEnvironment == Current_Environment.Local_Test)
@@ -244,6 +243,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     // TestUser
                     _myShared.User = LocalUser;
                 }
+                //Wenn Test/Prod Umgebung
                 else
                 {
                     // User für ISB Test/Prod Umgebung, wird des Weiteren durch Daten aus AD gefüllt
@@ -255,14 +255,17 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     if (!_myLock.CheckDBConnection())
                     {
                         //Exit wenn kein Admin
-                        if (!_myShared.Conf_Admin) Environment.Exit(0);
+                        if (!_myShared.Conf_Admin) Application.Current.Shutdown();
                     }
 
                     //Prüfen der Active-Directory -> EXIT wenn Fehler (Wenn erfolgreich: Usergroup ist gesetzt; entweder nach Standard oder nach Einstellung)
                     if (_myShared.Conf_CurrentEnvironment != Current_Environment.Local_Test)
                     {
-                        if ((!GetUserFromAD() || !GetGroups()) && !_myShared.Conf_Admin) Environment.Exit(0);
+                        if ((!GetUserFromAD() || !GetGroups()) && !_myShared.Conf_Admin) Application.Current.Shutdown();
                     }
+
+                    //Möglicherweise gesperrte Objekte entsperren
+                    _myLock.Unlock_AllObjectsForUserOnMachine();
 
                     //Direkt weiterleiten wenn nicht im Admin Modus
                     if (!_myShared.Conf_Admin)
@@ -273,7 +276,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 catch (Exception ex)
                 {
                     _myDia.ShowError("Es ist ein Fehler aufgetreten.\nDas Programm wird geschlossen.", ex);
-                    if (!_myShared.Conf_Admin) Environment.Exit(0);
+                    if (!_myShared.Conf_Admin) Application.Current.Shutdown();
                 }
             }
         }
@@ -374,28 +377,31 @@ namespace ISB_BIA_IMPORT1.ViewModel
         }
 
         /// <summary>
-        /// Methode um das Programm zu beenden. 
-        /// Entfernt alle Locks des Users und löscht die Registrierung von der Application Recovery
+        /// Event-To-Command um das Programm zu beenden. 
+        /// Entfernt alle Locks des Users
         /// </summary>
-        private void ShutDown()
+        public MyRelayCommand<CancelEventArgs> WindowClosing
         {
-            try
-            {
-                _myLock.Unlock_AllObjectsForUserOnMachine();
-            }
-            catch
-            {
-            }
-            try
-            {
-                ApplicationRestartRecoveryManager.UnregisterApplicationRecovery();
-                Application.Current.Shutdown();
-            }
-            catch (Exception ex)
-            {
-                _myDia.ShowError(ex.ToString());
-                Application.Current.Shutdown();
-            }
+            get => new MyRelayCommand<CancelEventArgs>((e) =>
+             {
+                 string msg = "Möchten Sie die Anwendung wirklich schließen?\nAlle nicht gespeicherten Änderungen gehen verloren.";
+                 MessageBoxResult result =
+                   MessageBox.Show(
+                     msg,
+                     "Schließen",
+                     MessageBoxButton.YesNo,
+                     MessageBoxImage.Warning);
+                 if (result == MessageBoxResult.Yes)
+                 {
+                     _myLock.Unlock_AllObjectsForUserOnMachine();
+                     Application.Current.Shutdown();
+                 }
+                 else
+                 {
+                     e.Cancel = true;
+                 }
+             });
         }
+
     }
 }

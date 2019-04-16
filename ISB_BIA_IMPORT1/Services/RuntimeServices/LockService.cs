@@ -8,12 +8,12 @@ using ISB_BIA_IMPORT1.Services.Interfaces;
 
 namespace ISB_BIA_IMPORT1.Services
 {
-    class DataService_Lock : ILockService
+    class LockService : ILockService
     {
         readonly IDialogService _myDia;
         readonly ISharedResourceService _myShared;
 
-        public DataService_Lock(IDialogService myDia, ISharedResourceService myShared)
+        public LockService(IDialogService myDia, ISharedResourceService myShared)
         {
             this._myDia = myDia;
             this._myShared = myShared;

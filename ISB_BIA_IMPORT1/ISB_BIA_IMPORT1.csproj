@@ -95,6 +95,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\System.Windows.Interactivity.dll</HintPath>
@@ -125,6 +126,9 @@
     <Compile Include="Converter\NegateBooleanToVisibilityConverter.cs" />
     <Compile Include="Converter\NumToAlphBinaryConverter.cs" />
     <Compile Include="Converter\TextInputToVisibilityConverter.cs" />
+    <Compile Include="Helpers\MsgWindow.xaml.cs">
+      <DependentUpon>MsgWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="LINQ2SQL\L2S.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -163,9 +167,10 @@
     <Compile Include="Services\Interfaces\IDataService_Log.cs" />
     <Compile Include="Services\RuntimeServices\DataService_Segment.cs" />
     <Compile Include="Services\RuntimeServices\DataService_Log.cs" />
-    <Compile Include="Services\RuntimeServices\DataService_DataModel.cs" />
+    <Compile Include="Services\RuntimeServices\DataModelService.cs" />
     <Compile Include="Services\RuntimeServices\DataService_Delta.cs" />
-    <Compile Include="Services\RuntimeServices\DataService_Lock.cs" />
+    <Compile Include="Services\RuntimeServices\DialogWinService.cs" />
+    <Compile Include="Services\RuntimeServices\LockService.cs" />
     <Compile Include="Services\RuntimeServices\DataService_Setting.cs" />
     <Compile Include="Services\RuntimeServices\DataService_Attribute.cs" />
     <Compile Include="Services\RuntimeServices\DataService_OE.cs" />
@@ -244,6 +249,10 @@
     <Compile Include="View\Settings_View.xaml.cs">
       <DependentUpon>Settings_View.xaml</DependentUpon>
     </Compile>
+    <Page Include="Helpers\MsgWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

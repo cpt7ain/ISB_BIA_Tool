@@ -4,17 +4,24 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ISB_BIA_IMPORT1"
+        xmlns:command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Platform"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         mc:Ignorable="d"
         Title="{Binding Str_WindowTitle}" 
         Height="700" 
-        MinHeight="700"
+        MinHeight="600"
         Width="1200"
-        MinWidth="900"
+        MinWidth="1000"
         Name="MainW"
         Background="LightSteelBlue"
         FontSize="{Binding GlobalFontSize}"
         DataContext="{Binding Source={StaticResource Locator}, Path=Main}" 
-        Closing="Window_Closing">
+        >
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <command:EventToCommand Command="{Binding WindowClosing}" PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <Grid>
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
             <Button Content="CISO" CommandParameter="2" Command="{Binding AdminSelectGroupCommand}"/>

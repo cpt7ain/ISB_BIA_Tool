@@ -8,7 +8,7 @@ namespace ISB_BIA_IMPORT1.Services
     public class DialogService : IDialogService
     {
         public void ShowError(string Message, Exception Error)
-        {
+        {            
             MessageBox.Show(Message +"\n"+ Error.Message.ToString(), "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 

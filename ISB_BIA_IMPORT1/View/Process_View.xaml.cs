@@ -10,6 +10,7 @@ namespace ISB_BIA_IMPORT1.View
     /// </summary>
     public partial class Process_View : UserControl
     {
+        bool first=true;
         /// <summary>
         /// View des <see cref="Process_ViewModel"/>
         /// </summary>
@@ -45,7 +46,11 @@ namespace ISB_BIA_IMPORT1.View
         private void CritLabel_TargetUpdated(object sender, DataTransferEventArgs e)
         {
             Label a=(Label) e.TargetObject;     
-            if (a.Content.ToString() == "Ja") MessageBox.Show(Crit_Ntf, "Warnung", MessageBoxButton.OK, MessageBoxImage.Warning);
+            if (a.Content.ToString() == "Ja" && !first)
+            {
+                MessageBox.Show(Crit_Ntf, "Warnung", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            first = false;
         }
         /// <summary>
         /// Durch <see cref="ButtonAddApplication_Click"/> ausgelöste Fokussierung des hinzugefügten Elements => Scroll zu dem Element
@@ -71,6 +76,17 @@ namespace ISB_BIA_IMPORT1.View
             TargetDataGrid.Focus();
             if(TargetDataGrid.SelectedItem != null)
                 TargetDataGrid.ScrollIntoView(TargetDataGrid.SelectedItem);
+        }
+
+        /// <summary>
+        /// Click Event bei hinzufügen einer Anwendung zum Prozess => Prozess wird fokussiert
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Crit_Reset_Combo_Click(object sender, RoutedEventArgs e)
+        {
+            Combo_Dmg.SelectedIndex = -1;
+            Combo_Freq.SelectedIndex = -1;
         }
     }
 }

@@ -23,7 +23,7 @@
         </Grid.RowDefinitions>
         <Border Grid.ColumnSpan="3">
             <Grid>
-                <Label Content="{Binding Str_Header}" FontWeight="Bold" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
+                <Label Content="{Binding Str_Header}" Margin="10,0,0,0" FontWeight="Bold" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
                 <Button Content="Zurück" Background="Wheat" Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Command="{Binding Cmd_NavBack}"/>
             </Grid>
         </Border>

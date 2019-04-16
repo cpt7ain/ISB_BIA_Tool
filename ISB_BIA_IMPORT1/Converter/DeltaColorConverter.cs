@@ -21,7 +21,9 @@ namespace ISB_BIA_IMPORT1.Converter
         {
             if(value is int i)
             {
-                return (i < 0) ? "LightSalmon" : "LightGreen";
+                if (i < 0) return "LightSalmon";
+                else if (i > 0) return "LightYellow";
+                else return "LightGreen";
             }
             return DependencyProperty.UnsetValue;
         }

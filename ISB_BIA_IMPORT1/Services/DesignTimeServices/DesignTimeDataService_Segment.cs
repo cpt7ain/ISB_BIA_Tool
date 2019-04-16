@@ -17,6 +17,7 @@ namespace ISB_BIA_IMPORT1.Services
         public DesignTimeDataService_Segment()
         {
             SegmentDummyList = GetDummySegments();
+            AttributetDummyList = GetDummyAttributes();
         }
 
         #region Informationssegmente
@@ -45,6 +46,26 @@ namespace ISB_BIA_IMPORT1.Services
                              Benutzer = "Test"
                          };
             return new ObservableCollection<ISB_BIA_Informationssegmente>(people.ToList());
+        }
+        public ObservableCollection<ISB_BIA_Informationssegmente_Attribute> GetDummyAttributes()
+        {
+            Random r = new Random();
+            var people = from n in Enumerable.Range(1, 10)
+                         select new ISB_BIA_Informationssegmente_Attribute
+                         {
+                             Attribut_Id = n,
+                             Name = "Att" + n,
+                             Info = "Info " + n,
+                             SZ_1 = r.Next(0, 5),
+                             SZ_2 = r.Next(0, 5),
+                             SZ_3 = r.Next(0, 5),
+                             SZ_4 = r.Next(0, 5),
+                             SZ_5 = r.Next(0, 5),
+                             SZ_6 = r.Next(0, 5),
+                             Datum = DateTime.Now,
+                             Benutzer = "Test"
+                         };
+            return new ObservableCollection<ISB_BIA_Informationssegmente_Attribute>(people.ToList());
         }
         public Segment_Model Get_Model_FromDB(int id)
         {

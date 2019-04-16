@@ -8,12 +8,12 @@ using ISB_BIA_IMPORT1.Services.Interfaces;
 
 namespace ISB_BIA_IMPORT1.Services
 {
-    class DataService_DataModel : IDataModelService
+    class DataModelService : IDataModelService
     {
         readonly IDialogService _myDia;
         readonly ISharedResourceService _myShared;
 
-        public DataService_DataModel(IDialogService myDia, ISharedResourceService myShared)
+        public DataModelService(IDialogService myDia, ISharedResourceService myShared)
         {
             this._myDia = myDia;
             this._myShared = myShared;
@@ -343,7 +343,7 @@ namespace ISB_BIA_IMPORT1.Services
                 {
                     bulkCopy.BulkCopyTimeout = 600;
                     bulkCopy.DestinationTableName = tableName;
-                    
+
                     foreach (DataColumn col in dt.Columns)
                     {
                         bulkCopy.ColumnMappings.Add(col.ColumnName, col.ColumnName);

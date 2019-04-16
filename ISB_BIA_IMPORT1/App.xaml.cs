@@ -33,9 +33,11 @@ namespace ISB_BIA_IMPORT1
                     {
                         if (!instanceMutex.WaitOne(1000,false))
                         {
-                            MessageBox.Show("ISB_BIA-Tool läuft bereits");
+                            MessageBox.Show("Die Anwendung ISB_BIA_Tool.exe läuft bereits");
                             Application.Current.Shutdown();
                         }
+                        else
+                            isOwned = true;
                     }
                     catch (AbandonedMutexException)
                     {

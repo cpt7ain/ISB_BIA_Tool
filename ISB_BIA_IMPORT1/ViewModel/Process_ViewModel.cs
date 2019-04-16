@@ -43,9 +43,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private string _proc_Nachgelagerte_Prozesse = "";
         private string _proc_Nachgelagerte_Prozesse_Text = "";
         private bool _proc_Nachgelagerte_Prozesse_Check;
+        private KeyValuePair<int, string> _proc_Schaden;
+        private KeyValuePair<int, string> _proc_Frequenz;
         private ObservableCollection<string> _list_OE;
         private ObservableCollection<string> _list_ProcessOwner;
         private ObservableCollection<string> _list_Crit;
+        private Dictionary<int, string> _list_Dmg;
+        private Dictionary<int, string> _list_Freq;
         private ObservableCollection<string> _list_Maturity;
         private ObservableCollection<string> _list_PreProcess;
         private ObservableCollection<string> _list_PostProcess;
@@ -421,6 +425,78 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 }
             }
         }
+        /// <summary>
+        /// Nachgelagerte Prozesse (DropDown)
+        /// </summary>
+        public KeyValuePair<int, string> Proc_Schaden
+        {
+            get => _proc_Schaden;
+            set
+            {
+                Set(() => Proc_Schaden, ref _proc_Schaden, value);
+                int i =0;
+                if (value.Key == 4 && Proc_Frequenz.Key == 4) i = 4;
+                if ((value.Key == 4 && Proc_Frequenz.Key < 4 && Proc_Frequenz.Key > 0) ||(value.Key == 3 && Proc_Frequenz.Key == 4)) i = 3;
+                if ((value.Key == 3 && Proc_Frequenz.Key < 4 && Proc_Frequenz.Key > 0) || (value.Key == 2 && Proc_Frequenz.Key > 1)||(value.Key == 1 && Proc_Frequenz.Key == 4)) i = 2;
+                if ((value.Key == 2 && Proc_Frequenz.Key == 1)||(value.Key == 1 && Proc_Frequenz.Key < 4 && Proc_Frequenz.Key > 0)) i = 1;
+                switch (i)
+                {
+                    case 0:
+                        ProcessCurrent.Kritikalität_des_Prozesses = null;
+                        break;
+                    case 1:
+                        ProcessCurrent.Kritikalität_des_Prozesses = List_Crit[0];
+                        break;
+                    case 2:
+                        ProcessCurrent.Kritikalität_des_Prozesses = List_Crit[1];
+                        break;
+                    case 3:
+                        ProcessCurrent.Kritikalität_des_Prozesses = List_Crit[2];
+                        break;
+                    case 4:
+                        ProcessCurrent.Kritikalität_des_Prozesses = List_Crit[3];
+                        break;
+                }
+                if (_proc_Schaden.Value!=null)
+                    RemoveError(nameof(Proc_Schaden));
+            }
+        }
+        /// <summary>
+        /// Nachgelagerte Prozesse (TextBox)
+        /// </summary>
+        public KeyValuePair<int, string> Proc_Frequenz
+        {
+            get => _proc_Frequenz;
+            set
+            {
+                Set(() => Proc_Frequenz, ref _proc_Frequenz, value);
+                int i = 0;
+                if (Proc_Schaden.Key == 4 && value.Key == 4) i = 4;
+                if ((Proc_Schaden.Key == 4 && value.Key < 4 && value.Key > 0) || (Proc_Schaden.Key == 3 && value.Key == 4)) i = 3;
+                if ((Proc_Schaden.Key == 3 && value.Key < 4 && value.Key > 0) || (Proc_Schaden.Key == 2 && value.Key > 1) || (Proc_Schaden.Key == 1 && value.Key == 4)) i = 2;
+                if ((Proc_Schaden.Key == 2 && value.Key == 1) || (Proc_Schaden.Key == 1 && value.Key < 4 && value.Key > 0)) i = 1;
+                switch (i)
+                {
+                    case 0:
+                        ProcessCurrent.Kritikalität_des_Prozesses = null;
+                        break;
+                    case 1:
+                        ProcessCurrent.Kritikalität_des_Prozesses = List_Crit[0];
+                        break;
+                    case 2:
+                        ProcessCurrent.Kritikalität_des_Prozesses = List_Crit[1];
+                        break;
+                    case 3:
+                        ProcessCurrent.Kritikalität_des_Prozesses = List_Crit[2];
+                        break;
+                    case 4:
+                        ProcessCurrent.Kritikalität_des_Prozesses = List_Crit[3];
+                        break;
+                }
+                if (_proc_Frequenz.Value != null)
+                    RemoveError(nameof(Proc_Frequenz));
+            }
+        }
         #endregion
 
         #region DropDown Listen
@@ -447,6 +523,22 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             get => _list_Crit;
             set => Set(() => List_Crit, ref _list_Crit,value);
+        }
+        /// <summary>
+        /// Liste der Schadensstufen
+        /// </summary>
+        public Dictionary<int, string> List_Dmg
+        {
+            get => _list_Dmg;
+            set => Set(() => List_Dmg, ref _list_Dmg, value);
+        }
+        /// <summary>
+        /// Liste der Häufigkeiten
+        /// </summary>
+        public Dictionary<int, string> List_Freq
+        {
+            get => _list_Freq;
+            set => Set(() => List_Freq, ref _list_Freq, value);
         }
         /// <summary>
         /// Liste der Prozessreifegrade
@@ -944,6 +1036,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
                                ProcessCurrent.RTO_Wiederanlaufzeit_Recovery_Time_Objective_Notfall = _oldCurrentProcess.RTO_Wiederanlaufzeit_Recovery_Time_Objective_Notfall;
                                break;
                            case 5:
+                               Proc_Schaden = default(KeyValuePair<int, string>);
+                               Proc_Frequenz = default(KeyValuePair<int, string>);
                                ProcessCurrent.Kritikalität_des_Prozesses = _oldCurrentProcess.Kritikalität_des_Prozesses;
                                ProcessCurrent.Regulatorisch = _oldCurrentProcess.Regulatorisch;
                                ProcessCurrent.Reputatorisch = _oldCurrentProcess.Reputatorisch;
@@ -993,6 +1087,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
                  + "\n- Maximal tolerierbare Ausfallzeit des Prozesses"
                  + "\n- Auswirkung auf Folgeprozesse"
                  + "\n- ggf. Workaround bei Prozessstörung";
+        }
+        /// <summary>
+        /// Nachricht bei Kritischer Einstufung des Prozesses
+        /// </summary>
+        public string Str_Msg_Krit1
+        {
+            get => "Um die Kritikalität des Prozesses zu berechnen, wählen Sie die zutreffende 'Potenzielle Schadenshöhe' und die 'Eintrittswahrscheinlichkeit' aus den Auswahlfeldern aus.";
         }
         /// <summary>
         /// Regulatorisch Info
@@ -1181,6 +1282,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private readonly ISharedResourceService _myShared;
         #endregion
 
+        public bool first = true;
+
         /// <summary>
         /// Konstruktor
         /// </summary>
@@ -1267,6 +1370,16 @@ namespace ISB_BIA_IMPORT1.ViewModel
             List_OE = (_myShared.User.UserGroup == UserGroups.Admin || _myShared.User.UserGroup == UserGroups.CISO)?_myProc.Get_StringList_OEs_All():_myProc.Get_StringList_OEsForUser(_myShared.User.OE);
             List_Maturity = new ObservableCollection<string>(new List<string>() { "1 - Initial", "2 - Wiederholbar", "3 - Definiert", "4 - Gemanagt", "5 - Optimiert" });
             List_Crit = new ObservableCollection<string>(new List<string>() { "Normal", "Mittel", "Hoch", "Sehr hoch" });
+            List_Dmg = new Dictionary<int, string>();
+            List_Dmg.Add(1, "0 - 50.000" );
+            List_Dmg.Add(2, "50.000 - 2 Mio.");
+            List_Dmg.Add(3, "2 - 5 Mio.");
+            List_Dmg.Add(4, "mehr als 5 Mio.");
+            List_Freq = new Dictionary<int, string>();
+            List_Freq.Add(1, "Max. 1 Mal pro 5 Jahre");
+            List_Freq.Add(2, "Max. 2 Mal pro 5 Jahre");
+            List_Freq.Add(3, "Max. 3 Mal pro 5 Jahre");
+            List_Freq.Add(4, "Max. 4 Mal pro 5 Jahre");
             List_RTO = new ObservableCollection<int>(new List<int>() { 1, 5, 10, 20 });
             List_PreProcess = _myProc.Get_StringList_PreProcesses();
             List_PostProcess = _myProc.Get_StringList_PostProcesses();
@@ -1368,6 +1481,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 AddError(nameof(Proc_Prozessverantwortlicher), "Pflichtfeld");
             if (string.IsNullOrEmpty(_proc_ProzessverantwortlicherText))
                 AddError(nameof(Proc_Prozessverantwortlicher_Text), "Pflichtfeld");
+            if (String.IsNullOrEmpty(ProcessCurrent.Kritikalität_des_Prozesses))
+            {
+                if (_proc_Frequenz.Value == null)
+                    AddError(nameof(Proc_Frequenz), "Pflichtfeld");
+                if (_proc_Schaden.Value == null)
+                    AddError(nameof(Proc_Schaden), "Pflichtfeld");
+            }
         }
 
         /// <summary>

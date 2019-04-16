@@ -169,30 +169,7 @@ namespace ISB_BIA_IMPORT1.Services
                         }
                     }
 
-                    // MemoryStream variable um in das Sheet zu schreiben
-                    var stream = new MemoryStream();
-                    workbook.Write(stream);
-
-                    string FilePath = sfd.FileName;
-
-                    //wenn Datei existiert löschen (Frage im FileDialog)
-                    if (File.Exists(FilePath))
-                    {
-                        File.Delete(FilePath);
-                    }
-                    FileStream file = new FileStream(FilePath, FileMode.CreateNew, FileAccess.Write);
-                    stream.WriteTo(file);
-                    file.Close();
-                    stream.Close();
-                    if (_myDia.ShowQuestion("Export erfolgreich\nMöchten Sie die Datei nun öffen?", "Export öffnen?"))
-                    {
-                        if(File.Exists(sfd.FileName))
-                            Process.Start(sfd.FileName);
-                        else 
-                            _myDia.ShowError("Datei existiert nicht mehr");
-                    }
-                    //Erfolg
-                    return true;
+                    return SaveFile(workbook, sfd);
                 }
                 catch (Exception ex)
                 {
@@ -356,29 +333,7 @@ namespace ISB_BIA_IMPORT1.Services
                         }
                     }
 
-                    // Declare one MemoryStream variable for write file in stream  
-                    var stream = new MemoryStream();
-                    workbook.Write(stream);
-
-                    string FilePath = sfd.FileName;
-
-                    //Write to file using file stream  
-                    if (File.Exists(FilePath))
-                    {
-                        File.Delete(FilePath);
-                    }
-                    FileStream file = new FileStream(FilePath, FileMode.CreateNew, FileAccess.Write);
-                    stream.WriteTo(file);
-                    file.Close();
-                    stream.Close();
-                    if (_myDia.ShowQuestion("Export erfolgreich\nMöchten Sie die Datei nun öffen?", "Export öffnen?"))
-                    {
-                        if (File.Exists(sfd.FileName))
-                            Process.Start(sfd.FileName);
-                        else
-                            _myDia.ShowError("Datei existiert nicht mehr");
-                    }
-                    return true;
+                    return SaveFile(workbook, sfd);
                 }
                 catch (Exception ex)
                 {
@@ -516,29 +471,7 @@ namespace ISB_BIA_IMPORT1.Services
                         }
                         #endregion
 
-                        // Declare one MemoryStream variable for write file in stream  
-                        var stream = new MemoryStream();
-                        workbook.Write(stream);
-
-                        string FilePath = sfd.FileName;
-
-                        //Write to file using file stream  
-                        if (File.Exists(FilePath))
-                        {
-                            File.Delete(FilePath);
-                        }
-                        FileStream file = new FileStream(FilePath, FileMode.CreateNew, FileAccess.Write);
-                        stream.WriteTo(file);
-                        file.Close();
-                        stream.Close();
-                        if (_myDia.ShowQuestion("Export erfolgreich\nMöchten Sie die Datei nun öffen?", "Export öffnen?"))
-                        {
-                            if (File.Exists(sfd.FileName))
-                                Process.Start(sfd.FileName);
-                            else
-                                _myDia.ShowError("Datei existiert nicht mehr");
-                        }
-                        return true;
+                        return SaveFile(workbook, sfd);
                     }
                     catch (Exception ex)
                     {
@@ -613,29 +546,7 @@ namespace ISB_BIA_IMPORT1.Services
                         cell.SetCellValue(DeltaList[i].Datum.ToShortDateString());
                     }
 
-                    // Declare one MemoryStream variable for write file in stream  
-                    var stream = new MemoryStream();
-                    workbook.Write(stream);
-
-                    string FilePath = sfd.FileName;
-
-                    //Write to file using file stream  
-                    if (File.Exists(FilePath))
-                    {
-                        File.Delete(FilePath);
-                    }
-                    FileStream file = new FileStream(FilePath, FileMode.CreateNew, FileAccess.Write);
-                    stream.WriteTo(file);
-                    file.Close();
-                    stream.Close();
-                    if (_myDia.ShowQuestion("Export erfolgreich\nMöchten Sie die Datei nun öffen?", "Export öffnen?"))
-                    {
-                        if (File.Exists(sfd.FileName))
-                            Process.Start(sfd.FileName);
-                        else
-                            _myDia.ShowError("Datei existiert nicht mehr");
-                    }
-                    return true;
+                    return SaveFile(workbook, sfd);
                 }
                 catch (Exception ex)
                 {
@@ -700,28 +611,7 @@ namespace ISB_BIA_IMPORT1.Services
                         cell.SetCellValue(Log[i].Benutzer);
                     }
 
-                    var stream = new MemoryStream();
-                    workbook.Write(stream);
-
-                    string FilePath = sfd.FileName;
-
-                    //Überschreiben falls vorhanden 
-                    if (File.Exists(FilePath))
-                    {
-                        File.Delete(FilePath);
-                    }
-                    FileStream file = new FileStream(FilePath, FileMode.CreateNew, FileAccess.Write);
-                    stream.WriteTo(file);
-                    file.Close();
-                    stream.Close();
-                    if (_myDia.ShowQuestion("Export erfolgreich\nMöchten Sie die Datei nun öffen?", "Export öffnen?"))
-                    {
-                        if (File.Exists(sfd.FileName))
-                            Process.Start(sfd.FileName);
-                        else
-                            _myDia.ShowError("Datei existiert nicht mehr");
-                    }
-                    return true;
+                    return SaveFile(workbook, sfd);
                 }
                 catch (Exception ex)
                 {
@@ -799,28 +689,7 @@ namespace ISB_BIA_IMPORT1.Services
                         cell.SetCellValue(Log[i].Benutzer);
                     }
 
-                    var stream = new MemoryStream();
-                    workbook.Write(stream);
-
-                    string FilePath = sfd.FileName;
-
-                    //Überschreiben falls vorhanden 
-                    if (File.Exists(FilePath))
-                    {
-                        File.Delete(FilePath);
-                    }
-                    FileStream file = new FileStream(FilePath, FileMode.CreateNew, FileAccess.Write);
-                    stream.WriteTo(file);
-                    file.Close();
-                    stream.Close();
-                    if (_myDia.ShowQuestion("Export erfolgreich\nMöchten Sie die Datei nun öffen?", "Export öffnen?"))
-                    {
-                        if (File.Exists(sfd.FileName))
-                            Process.Start(sfd.FileName);
-                        else
-                            _myDia.ShowError("Datei existiert nicht mehr");
-                    }
-                    return true;
+                    return SaveFile(workbook, sfd);
                 }
                 catch (Exception ex)
                 {
@@ -829,6 +698,32 @@ namespace ISB_BIA_IMPORT1.Services
                 }
             }
             return false;
+        }
+
+        public bool SaveFile(HSSFWorkbook workbook, SaveFileDialog sfd)
+        {
+            // MemoryStream variable um in das Sheet zu schreiben
+            var stream = new MemoryStream();
+            workbook.Write(stream);
+            string FilePath = sfd.FileName;
+            //wenn Datei existiert löschen (Frage im FileDialog)
+            if (File.Exists(FilePath))
+            {
+                File.Delete(FilePath);
+            }
+            FileStream file = new FileStream(FilePath, FileMode.CreateNew, FileAccess.Write);
+            stream.WriteTo(file);
+            file.Close();
+            stream.Close();
+            if (_myDia.ShowQuestion("Export erfolgreich\nMöchten Sie die Datei nun öffen?", "Export öffnen?"))
+            {
+                if (File.Exists(sfd.FileName))
+                    Process.Start(sfd.FileName);
+                else
+                    _myDia.ShowError("Datei existiert nicht mehr");
+            }
+            //Erfolg
+            return true;
         }
     }
 }
