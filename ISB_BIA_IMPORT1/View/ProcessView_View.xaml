@@ -120,7 +120,7 @@
                 </Grid>
                 <TextBlock Text="{Binding List_Processes.Count, StringFormat='Gesamt: {0}'}" Grid.Row="5" VerticalAlignment="Center" Margin="80,0,0,0"/>
                 <TextBlock Text="!" FontWeight="Bold" Foreground="Red" Grid.Row="6" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="45,0,0,0"/>
-                <TextBlock Text="{Binding Count_Crit, StringFormat='Kritische (aktive) Prozesse: {0}'}" Grid.Row="6" VerticalAlignment="Center" Margin="80,0,0,0"/>
+                <TextBlock Text="{Binding Count_Crit, StringFormat='Kritische Prozesse: {0}'}" Grid.Row="6" VerticalAlignment="Center" Margin="80,0,0,0"/>
             </Grid>
         </Border>
     </Grid>

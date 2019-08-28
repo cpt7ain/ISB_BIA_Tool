@@ -2,5 +2,6 @@
 # Diese .gitignore-Datei wurde von Microsoft(R) Visual Studio automatisch erstellt.
 ################################################################################
 
-/ISB_BIA_IMPORT1/bin/Debug
+/ISB_BIA_IMPORT1/bin
 /.vs/ISB_BIA_IMPORT1
+/ISB_BIA_IMPORT1/obj
