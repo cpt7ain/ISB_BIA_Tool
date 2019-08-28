@@ -15,6 +15,10 @@ namespace ISB_BIA_IMPORT1.Services
     public class DesignTimeDataService_OE : IDataService_OE
     {
         #region OE
+        public string Get_OwnerOfOENumber(string stab)
+        {
+            return "Owner";
+        }
         public ObservableCollection<ISB_BIA_OEs> GetDummyOEs()
         {
             Random r = new Random();
@@ -24,6 +28,7 @@ namespace ISB_BIA_IMPORT1.Services
                              Id = n,
                              OE_Name = "OE" + n,
                              OE_Nummer = r.Next(1, 4) + "." + r.Next(1, 3),
+                             Prozesseigentümer="Owner",
                              Datum = DateTime.Now,
                              Benutzer = "TestUser" + n
                          };
@@ -77,14 +82,19 @@ namespace ISB_BIA_IMPORT1.Services
             return GetDummyOEs().FirstOrDefault();
         }
 
-        public ISB_BIA_OEs Insert_OENumber_New(string number, ISB_BIA_OEs name)
+        public ISB_BIA_OEs Insert_OENumber_New(string number, string owner, ISB_BIA_OEs name)
         {
             return GetDummyOEs().FirstOrDefault();
         }
 
-        public bool Insert_OENumber_Edit(string number, string oldNumber)
+        public bool Insert_OENumber_Edit(string number, string owner, string oldNumber, string oldOwner)
         {
             return true;
+        }
+
+        public string Get_OwnerOfOEName(string stab, Process_Model p)
+        {
+            throw new NotImplementedException();
         }
         #endregion
 

@@ -36,6 +36,8 @@ namespace ISB_BIA_IMPORT1.Services
                 //Letzte Version des Prozesses abrufen
                 ISB_BIA_Prozesse linqProc;
                 ObservableCollection<ISB_BIA_Applikationen> linqApps= new ObservableCollection<ISB_BIA_Applikationen>();
+                ObservableCollection<ISB_BIA_Prozesse> linqvP = new ObservableCollection<ISB_BIA_Prozesse>();
+                ObservableCollection<ISB_BIA_Prozesse> linqnP = new ObservableCollection<ISB_BIA_Prozesse>();
                 using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     //Prozess
@@ -47,10 +49,23 @@ namespace ISB_BIA_IMPORT1.Services
                         linqApps = new ObservableCollection<ISB_BIA_Applikationen>();
                     else
                         linqApps = new ObservableCollection<ISB_BIA_Applikationen>(db.ISB_BIA_Applikationen.Where(x => listIdCurrentApplications.Contains(x.Applikation_Id)).GroupBy(y => y.Applikation_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Applikation_Id).ToList());
+                    //vPnP Listen
+                    List<ISB_BIA_Prozesse_Prozesse> vP_Current = db.ISB_BIA_Prozesse_Prozesse.Where(x => x.Prozess_Id == id && x.Typ == 1).GroupBy(y => y.Ref_Prozess_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).ToList();
+                    List<int> listIdCurrentvP = vP_Current.Where(x => x.Relation == 1).Select(y => y.Ref_Prozess_Id).ToList();
+                    List<ISB_BIA_Prozesse_Prozesse> nP_Current = db.ISB_BIA_Prozesse_Prozesse.Where(x => x.Prozess_Id == id && x.Typ == 2).GroupBy(y => y.Ref_Prozess_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).ToList();
+                    List<int> listIdCurrentnP = nP_Current.Where(x => x.Relation == 1).Select(y => y.Ref_Prozess_Id).ToList();
+                    if (listIdCurrentvP.Count == 0)
+                        linqvP = new ObservableCollection<ISB_BIA_Prozesse>();
+                    else
+                        linqvP = new ObservableCollection<ISB_BIA_Prozesse>(db.ISB_BIA_Prozesse.Where(x => listIdCurrentvP.Contains(x.Prozess_Id)).GroupBy(y => y.Prozess_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Prozess_Id).ToList());
 
+                    if (listIdCurrentnP.Count == 0)
+                        linqnP = new ObservableCollection<ISB_BIA_Prozesse>();
+                    else
+                        linqnP = new ObservableCollection<ISB_BIA_Prozesse>(db.ISB_BIA_Prozesse.Where(x => listIdCurrentnP.Contains(x.Prozess_Id)).GroupBy(y => y.Prozess_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Prozess_Id).ToList());
                 }
                 //Falls existiert
-                if (linqProc != null && linqApps != null)
+                if (linqProc != null && linqApps != null && linqvP != null && linqnP != null)
                 {
                     Process_Model result = new Process_Model()
                     {
@@ -60,6 +75,7 @@ namespace ISB_BIA_IMPORT1.Services
                         OE_Filter = linqProc.OE_Filter,
                         Prozess = linqProc.Prozess,
                         Sub_Prozess = linqProc.Sub_Prozess,
+                        Prozesseigentümer = linqProc.Prozesseigentümer,
                         Prozessverantwortlicher = linqProc.Prozessverantwortlicher,
                         Kritikalität_des_Prozesses = linqProc.Kritikalität_des_Prozesses,
                         Reifegrad_des_Prozesses = linqProc.Reifegrad_des_Prozesses,
@@ -72,8 +88,6 @@ namespace ISB_BIA_IMPORT1.Services
                         SZ_4 = (SZ_Values)linqProc.SZ_4,
                         SZ_5 = (SZ_Values)linqProc.SZ_5,
                         SZ_6 = (SZ_Values)linqProc.SZ_6,
-                        Vorgelagerte_Prozesse = linqProc.Vorgelagerte_Prozesse,
-                        Nachgelagerte_Prozesse = linqProc.Nachgelagerte_Prozesse,
                         Servicezeit_Helpdesk = linqProc.Servicezeit_Helpdesk,
                         RPO_Datenverlustzeit_Recovery_Point_Objective = linqProc.RPO_Datenverlustzeit_Recovery_Point_Objective,
                         RTO_Wiederanlaufzeit_Recovery_Time_Objective = linqProc.RTO_Wiederanlaufzeit_Recovery_Time_Objective,
@@ -87,6 +101,8 @@ namespace ISB_BIA_IMPORT1.Services
                         Datum = linqProc.Datum,
                         Benutzer = linqProc.Benutzer,
                         ApplicationList = linqApps,
+                        VPList = linqvP,
+                        NPList = linqnP
                     };
                     return result;
                 }
@@ -106,48 +122,40 @@ namespace ISB_BIA_IMPORT1.Services
         {
             try
             {
-                using (L2SDataContext db = new L2SDataContext())
+                return new ISB_BIA_Prozesse()
                 {
-                    List<ISB_BIA_Informationssegmente> ISListForDates = db.ISB_BIA_Informationssegmente
-                        .GroupBy(x => x.Name)
-                        .Select(c => c.OrderByDescending(v => v.Datum).FirstOrDefault()).ToList();
-                    ISB_BIA_Prozesse res = new ISB_BIA_Prozesse()
-                    {
-                        Prozess_Id = p.Prozess_Id,
-                        OE_Filter = p.OE_Filter,
-                        Prozess = p.Prozess,
-                        Sub_Prozess = p.Sub_Prozess,
-                        Prozessverantwortlicher = p.Prozessverantwortlicher,
-                        Kritikalität_des_Prozesses = p.Kritikalität_des_Prozesses,
-                        Kritischer_Prozess = (p.Kritischer_Prozess == "Ja") ? "x" : "",
-                        Reifegrad_des_Prozesses = p.Reifegrad_des_Prozesses,
-                        Regulatorisch = (p.Regulatorisch) ? "x" : "",
-                        Reputatorisch = (p.Reputatorisch) ? "x" : "",
-                        Finanziell = (p.Finanziell) ? "x" : "",
-                        SZ_1 = (int) p.SZ_1,
-                        SZ_2 = (int) p.SZ_2,
-                        SZ_3 = (int) p.SZ_3,
-                        SZ_4 = (int) p.SZ_4,
-                        SZ_5 = (int) p.SZ_5,
-                        SZ_6 = (int) p.SZ_6,
-                        Vorgelagerte_Prozesse = p.Vorgelagerte_Prozesse,
-                        Nachgelagerte_Prozesse = p.Nachgelagerte_Prozesse,
-                        Servicezeit_Helpdesk = p.Servicezeit_Helpdesk,
-                        RPO_Datenverlustzeit_Recovery_Point_Objective = p.RPO_Datenverlustzeit_Recovery_Point_Objective,
-                        RTO_Wiederanlaufzeit_Recovery_Time_Objective = p.RTO_Wiederanlaufzeit_Recovery_Time_Objective,
-                        RTO_Wiederanlaufzeit_Recovery_Time_Objective_Notfall =
-                            p.RTO_Wiederanlaufzeit_Recovery_Time_Objective_Notfall,
-                        Relevantes_IS_1 = p.Relevantes_IS_1,
-                        Relevantes_IS_2 = p.Relevantes_IS_2,
-                        Relevantes_IS_3 = p.Relevantes_IS_3,
-                        Relevantes_IS_4 = p.Relevantes_IS_4,
-                        Relevantes_IS_5 = p.Relevantes_IS_5,
-                        Aktiv = p.Aktiv,
-                        Datum = p.Datum,
-                        Benutzer = p.Benutzer
-                    };
-                    return res;
-                }
+                    Prozess_Id = p.Prozess_Id,
+                    OE_Filter = p.OE_Filter,
+                    Prozess = p.Prozess,
+                    Sub_Prozess = p.Sub_Prozess,
+                    Prozesseigentümer = p.Prozesseigentümer,
+                    Prozessverantwortlicher = p.Prozessverantwortlicher,
+                    Kritikalität_des_Prozesses = p.Kritikalität_des_Prozesses,
+                    Kritischer_Prozess = (p.Kritischer_Prozess == "Ja") ? "x" : "",
+                    Reifegrad_des_Prozesses = p.Reifegrad_des_Prozesses,
+                    Regulatorisch = (p.Regulatorisch) ? "x" : "",
+                    Reputatorisch = (p.Reputatorisch) ? "x" : "",
+                    Finanziell = (p.Finanziell) ? "x" : "",
+                    SZ_1 = (int)p.SZ_1,
+                    SZ_2 = (int)p.SZ_2,
+                    SZ_3 = (int)p.SZ_3,
+                    SZ_4 = (int)p.SZ_4,
+                    SZ_5 = (int)p.SZ_5,
+                    SZ_6 = (int)p.SZ_6,
+                    Servicezeit_Helpdesk = p.Servicezeit_Helpdesk,
+                    RPO_Datenverlustzeit_Recovery_Point_Objective = p.RPO_Datenverlustzeit_Recovery_Point_Objective,
+                    RTO_Wiederanlaufzeit_Recovery_Time_Objective = p.RTO_Wiederanlaufzeit_Recovery_Time_Objective,
+                    RTO_Wiederanlaufzeit_Recovery_Time_Objective_Notfall =
+                       p.RTO_Wiederanlaufzeit_Recovery_Time_Objective_Notfall,
+                    Relevantes_IS_1 = p.Relevantes_IS_1,
+                    Relevantes_IS_2 = p.Relevantes_IS_2,
+                    Relevantes_IS_3 = p.Relevantes_IS_3,
+                    Relevantes_IS_4 = p.Relevantes_IS_4,
+                    Relevantes_IS_5 = p.Relevantes_IS_5,
+                    Aktiv = p.Aktiv,
+                    Datum = p.Datum,
+                    Benutzer = p.Benutzer
+                };
             }
             catch (Exception ex)
             {
@@ -201,7 +209,7 @@ namespace ISB_BIA_IMPORT1.Services
                     x.Name == process.Relevantes_IS_5).ToList();
             }
         }
-        public ObservableCollection<ISB_BIA_Prozesse> Get_List_Processes_ByOE(ObservableCollection<string> listOE)
+        public ObservableCollection<ISB_BIA_Prozesse> Get_List_Processes_ByOE_All(ObservableCollection<string> listOE)
         {
             try
             {
@@ -209,7 +217,7 @@ namespace ISB_BIA_IMPORT1.Services
                 {
                     return new ObservableCollection<ISB_BIA_Prozesse>(
                         db.ISB_BIA_Prozesse.Where(n => listOE.Contains(n.OE_Filter)).GroupBy(p => p.Prozess_Id)
-                        .Select(g => g.OrderByDescending(p => p.Datum).FirstOrDefault()).Where(v => v.Aktiv == 1).OrderBy(x => x.Prozess_Id).ToList());
+                        .Select(g => g.OrderByDescending(p => p.Datum).FirstOrDefault()).OrderBy(x => x.Prozess_Id).ToList());
                 }
             }
             catch (Exception ex)
@@ -256,28 +264,36 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<string> Get_StringList_ProcessOwner()
+        public ObservableCollection<string> Get_StringList_ProcessResponsible()
         {
             try
             {
                 using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
-                    return new ObservableCollection<string>(db.ISB_BIA_Prozesse.Where(n => !(n.Prozessverantwortlicher == null || n.Prozessverantwortlicher.Trim() == string.Empty)).Select(p => p.Prozessverantwortlicher).Distinct());
+                    List<string> owner = new List<string>(db.ISB_BIA_Prozesse.Where(n => !(n.Prozesseigentümer == null || n.Prozesseigentümer.Trim() == string.Empty)).Select(p => p.Prozesseigentümer).Distinct());
+                    List<string> responsible = new List<string>(db.ISB_BIA_Prozesse.Where(n => !(n.Prozessverantwortlicher == null || n.Prozessverantwortlicher.Trim() == string.Empty)).Select(p => p.Prozessverantwortlicher).Distinct());
+                    return new ObservableCollection<string>(owner.Concat(responsible).OrderBy(i=>i).Distinct());
                 }
             }
             catch (Exception ex)
             {
-                _myDia.ShowError("Prozesseigentümer konnten nicht abgerufen werden", ex);
+                _myDia.ShowError("Prozesseigentümer/verantwortliche konnten nicht abgerufen werden", ex);
                 return null;
             }
         }
-        public ObservableCollection<string> Get_StringList_OEsForUser(string userOE)
+        public ObservableCollection<string> Get_StringList_OEsForUser(List<string> userOE)
         {
+            List<string> res = new List<string>();
             try
             {
                 using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
-                    return new ObservableCollection<string>(db.ISB_BIA_OEs.Where(x => x.OE_Nummer.StartsWith(userOE)).Select(p => p.OE_Name).Distinct());
+                    foreach (string oe in userOE)
+                    {
+                        List<string> tmp = new List<string>(db.ISB_BIA_OEs.Where(x => x.OE_Nummer.StartsWith(oe)).Select(p => p.OE_Name).Distinct()).ToList();
+                        res=new List<string>(res.Union(tmp));
+                    }
+                    return new ObservableCollection<string>(res);
                 }
             }
             catch (Exception ex)
@@ -301,36 +317,6 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<string> Get_StringList_PreProcesses()
-        {
-            try
-            {
-                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
-                {
-                    return new ObservableCollection<string>(db.ISB_BIA_Prozesse.Select(p => p.Vorgelagerte_Prozesse).ToList().Distinct(StringComparer.Ordinal).OrderBy(a => a));
-                }
-            }
-            catch (Exception ex)
-            {
-                _myDia.ShowError("Vorgelagerte Prozesse konnten nicht abgerufen werden", ex);
-                return null;
-            }
-        }
-        public ObservableCollection<string> Get_StringList_PostProcesses()
-        {
-            try
-            {
-                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
-                {
-                    return new ObservableCollection<string>(db.ISB_BIA_Prozesse.Select(p => p.Nachgelagerte_Prozesse).ToList().Distinct(StringComparer.Ordinal).OrderBy(a => a));
-                }
-            }
-            catch (Exception ex)
-            {
-                _myDia.ShowError("Nachgelagerte Prozesse konnten nicht abgerufen werden", ex);
-                return null;
-            }
-        }
         public ObservableCollection<ISB_BIA_Prozesse> Get_History_Process(int process_id)
         {
             try
@@ -348,7 +334,7 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public bool Insert_ProcessAndRelations(Process_Model p, ProcAppMode mode, ObservableCollection<ISB_BIA_Applikationen> add, ObservableCollection<ISB_BIA_Applikationen> remove)
+        public bool Insert_ProcessAndRelations(Process_Model p, ProcAppMode mode, ObservableCollection<ISB_BIA_Applikationen> add_App, ObservableCollection<ISB_BIA_Applikationen> remove_App, ObservableCollection<ISB_BIA_Prozesse> add_vP, ObservableCollection<ISB_BIA_Prozesse> remove_vP, ObservableCollection<ISB_BIA_Prozesse> add_nP, ObservableCollection<ISB_BIA_Prozesse> remove_nP)
         {
             if (!p.IsValid)
             {
@@ -370,11 +356,12 @@ namespace ISB_BIA_IMPORT1.Services
                     if (p.Aktiv == 0) p.Aktiv = (_myDia.ShowQuestion("Der Prozess ist momentan auf inaktiv gesetzt. Möchten Sie den Prozess auf aktiv setzen?", "Prozess aktivieren")) ? 1 : 0;
                     //Bei Neuanlage neue ID berechnen
                     if (mode == ProcAppMode.New) p.Prozess_Id = db.ISB_BIA_Prozesse.Max(x => x.Prozess_Id) + 1;
-
+                    p.Benutzer = _myShared.User.WholeName;
                     DateTime d = DateTime.Now;
-                    p.Benutzer = _myShared.User.Username;
                     p.Datum = d;
                     //Nach DB-Format Mappen und einfügen
+                    ISB_BIA_Prozesse res= Map_Model_ToDB(p);
+                    if (res == null) return false;
                     db.ISB_BIA_Prozesse.InsertOnSubmit(Map_Model_ToDB(p));
                     //Logeintrag erzeugen
                     ISB_BIA_Log logEntry = new ISB_BIA_Log
@@ -385,14 +372,14 @@ namespace ISB_BIA_IMPORT1.Services
                         Id_1 = p.Prozess_Id,
                         Id_2 = 0,
                         Datum = d,
-                        Benutzer = p.Benutzer
+                        Benutzer = _myShared.User.WholeName
                     };
                     db.ISB_BIA_Log.InsertOnSubmit(logEntry);
 
                     #region relation
-                    int k = add.Count;
+                    int k = add_App.Count;
                     int i = 0;
-                    List<ISB_BIA_Applikationen> result = add.Concat(remove).ToList();
+                    List<ISB_BIA_Applikationen> result = add_App.Concat(remove_App).ToList();
                     foreach (ISB_BIA_Applikationen a in result)
                     {
                         i++;
@@ -404,7 +391,7 @@ namespace ISB_BIA_IMPORT1.Services
                             Datum_Prozess = d,
                             Relation = (i <= k) ? 1 : 0,
                             Datum = d,
-                            Benutzer = _myShared.User.Username
+                            Benutzer = _myShared.User.WholeName
                         };
 
                         //Schreiben in Datenbank
@@ -414,13 +401,89 @@ namespace ISB_BIA_IMPORT1.Services
 
                         ISB_BIA_Log logEntryRelation = new ISB_BIA_Log
                         {
-                            Aktion = "Ändern einer Prozesses-Applikations-Relation: " + s,
+                            Aktion = "Ändern einer Prozess-Applikations-Relation: " + s,
                             Tabelle = _myShared.Tbl_Proz_App,
                             Details = "Prozess Id = " + proc_app.Prozess_Id + ", App. Id = " + proc_app.Applikation_Id + ", App. Name = '" + a.IT_Anwendung_System + "'",
                             Id_1 = proc_app.Prozess_Id,
                             Id_2 = proc_app.Applikation_Id,
                             Datum = d,
-                            Benutzer = p.Benutzer,
+                            Benutzer = _myShared.User.WholeName
+                        };
+                        db.ISB_BIA_Log.InsertOnSubmit(logEntryRelation);
+                    }
+                    #endregion
+
+                    #region vorgelagerte prozesse
+                    k = add_vP.Count;
+                    i = 0;
+                    List<ISB_BIA_Prozesse> resultvP = add_vP.Concat(remove_vP).ToList();
+                    foreach (ISB_BIA_Prozesse a in resultvP)
+                    {
+                        i++;
+                        ISB_BIA_Prozesse_Prozesse proc_vP = new ISB_BIA_Prozesse_Prozesse
+                        {
+                            Prozess_Id = p.Prozess_Id,
+                            Datum_Prozess = d,
+                            Ref_Prozess_Id = a.Prozess_Id,
+                            Datum_Ref_Prozess = a.Datum,
+                            Typ = 1,
+                            Relation = (i <= k) ? 1 : 0,
+                            Datum = d,
+                            Benutzer = _myShared.User.WholeName
+                        };
+
+                        //Schreiben in Datenbank
+                        db.ISB_BIA_Prozesse_Prozesse.InsertOnSubmit(proc_vP);
+
+                        string s = (proc_vP.Relation == 1) ? "Verknüpfung" : "Trennung";
+
+                        ISB_BIA_Log logEntryRelation = new ISB_BIA_Log
+                        {
+                            Aktion = "Ändern einer Prozess-Prozess-Relation (vP): " + s,
+                            Tabelle = _myShared.Tbl_Proz_App,
+                            Details = "Prozess Id = " + proc_vP.Prozess_Id + ", vorgelagerter Prozess Id = " + proc_vP.Ref_Prozess_Id + ", vorgelagerter Prozess Name = '" + a.Prozess +" ~ "+ a.Sub_Prozess + "'",
+                            Id_1 = proc_vP.Prozess_Id,
+                            Id_2 = proc_vP.Ref_Prozess_Id,
+                            Datum = d,
+                            Benutzer = _myShared.User.WholeName
+                        };
+                        db.ISB_BIA_Log.InsertOnSubmit(logEntryRelation);
+                    }
+                    #endregion
+
+                    #region nachgelagerte prozesse
+                    k = add_nP.Count;
+                    i = 0;
+                    List<ISB_BIA_Prozesse> resultnP = add_nP.Concat(remove_nP).ToList();
+                    foreach (ISB_BIA_Prozesse a in resultnP)
+                    {
+                        i++;
+                        ISB_BIA_Prozesse_Prozesse proc_nP = new ISB_BIA_Prozesse_Prozesse
+                        {
+                            Prozess_Id = p.Prozess_Id,
+                            Datum_Prozess = d,
+                            Ref_Prozess_Id = a.Prozess_Id,
+                            Datum_Ref_Prozess = a.Datum,
+                            Typ = 2,
+                            Relation = (i <= k) ? 1 : 0,
+                            Datum = d,
+                            Benutzer = _myShared.User.WholeName
+                        };
+
+                        //Schreiben in Datenbank
+                        db.ISB_BIA_Prozesse_Prozesse.InsertOnSubmit(proc_nP);
+
+                        string s = (proc_nP.Relation == 1) ? "Verknüpfung" : "Trennung";
+
+                        ISB_BIA_Log logEntryRelation = new ISB_BIA_Log
+                        {
+                            Aktion = "Ändern einer Prozess-Prozess-Relation (vP): " + s,
+                            Tabelle = _myShared.Tbl_Proz_App,
+                            Details = "Prozess Id = " + proc_nP.Prozess_Id + ", vorgelagerter Prozess Id = " + proc_nP.Ref_Prozess_Id + ", vorgelagerter Prozess Name = '" + a.Prozess + " ~ " + a.Sub_Prozess + "'",
+                            Id_1 = proc_nP.Prozess_Id,
+                            Id_2 = proc_nP.Ref_Prozess_Id,
+                            Datum = d,
+                            Benutzer = _myShared.User.WholeName
                         };
                         db.ISB_BIA_Log.InsertOnSubmit(logEntryRelation);
                     }
@@ -434,7 +497,8 @@ namespace ISB_BIA_IMPORT1.Services
                         "Prozess Name: " + p.Prozess + Environment.NewLine +
                         "OE: " + p.OE_Filter + Environment.NewLine +
                         "Prozessverantwortlicher: " + p.Prozessverantwortlicher + Environment.NewLine +
-                        "Datum: " + d;
+                        "Datum: " + d +
+                        "Bearbeitet von: " + _myShared.User.WholeName;
                     _myMail.Send_NotificationMail(subject, body, _myShared.Conf_CurrentEnvironment);
                     #endregion
                     db.SubmitChanges();
@@ -463,6 +527,7 @@ namespace ISB_BIA_IMPORT1.Services
                         db.ISB_BIA_Log.InsertOnSubmit(logEntry);
                         db.SubmitChanges();
                         _myDia.ShowError("Fehler beim Speichern des Prozesses!\nEin Log Eintrag wurde erzeugt.", ex1);
+                        _myDia.ShowError(ex1.ToString());
                         return false;
                     }
                 }
@@ -483,6 +548,7 @@ namespace ISB_BIA_IMPORT1.Services
                 OE_Filter = p.OE_Filter,
                 Prozess = p.Prozess,
                 Sub_Prozess = p.Sub_Prozess,
+                Prozesseigentümer = p.Prozesseigentümer,
                 Prozessverantwortlicher = p.Prozessverantwortlicher,
                 Kritischer_Prozess = p.Kritischer_Prozess,
                 Kritikalität_des_Prozesses = p.Kritikalität_des_Prozesses,
@@ -496,8 +562,6 @@ namespace ISB_BIA_IMPORT1.Services
                 SZ_4 = p.SZ_4,
                 SZ_5 = p.SZ_5,
                 SZ_6 = p.SZ_6,
-                Vorgelagerte_Prozesse = p.Vorgelagerte_Prozesse,
-                Nachgelagerte_Prozesse = p.Nachgelagerte_Prozesse,
                 Servicezeit_Helpdesk = p.Servicezeit_Helpdesk,
                 RPO_Datenverlustzeit_Recovery_Point_Objective = p.RPO_Datenverlustzeit_Recovery_Point_Objective,
                 RTO_Wiederanlaufzeit_Recovery_Time_Objective = p.RTO_Wiederanlaufzeit_Recovery_Time_Objective,
@@ -508,7 +572,7 @@ namespace ISB_BIA_IMPORT1.Services
                 Relevantes_IS_4 = p.Relevantes_IS_4,
                 Relevantes_IS_5 = p.Relevantes_IS_5,
                 Datum = DateTime.Now,
-                Benutzer =  _myShared.User.Username,
+                Benutzer = _myShared.User.WholeName,
                 Aktiv = 0
             };
             bool res = _myDia.ShowQuestion("Möchten Sie den Prozess wirklich löschen?", "Prozess löschen");
@@ -528,7 +592,7 @@ namespace ISB_BIA_IMPORT1.Services
                         Id_1 = toDelete.Prozess_Id,
                         Id_2 = 0,
                         Datum = toDelete.Datum,
-                        Benutzer =  _myShared.User.Username
+                        Benutzer = _myShared.User.WholeName
                     };
                     db.ISB_BIA_Log.InsertOnSubmit(logEntry);
                     db.SubmitChanges();
@@ -538,7 +602,8 @@ namespace ISB_BIA_IMPORT1.Services
                         "Prozess Name: " + toDelete.Prozess + Environment.NewLine +
                         "OE: " + toDelete.OE_Filter + Environment.NewLine +
                         "Prozessverantwortlicher: " + toDelete.Prozessverantwortlicher + Environment.NewLine +
-                        "Datum: " + toDelete.Datum;
+                        "Datum: " + toDelete.Datum +
+                        "Bearbeitet von: " + _myShared.User.WholeName;
                     _myMail.Send_NotificationMail(subject, body, _myShared.Conf_CurrentEnvironment);
                     #endregion
                 }
@@ -560,7 +625,7 @@ namespace ISB_BIA_IMPORT1.Services
                             Id_1 = toDelete.Prozess_Id,
                             Id_2 = 0,
                             Datum = toDelete.Datum,
-                            Benutzer =  _myShared.User.Username
+                            Benutzer = _myShared.User.WholeName
                         };
                         db.ISB_BIA_Log.InsertOnSubmit(logEntry);
                         db.SubmitChanges();
@@ -571,6 +636,106 @@ namespace ISB_BIA_IMPORT1.Services
                 catch (Exception ex2)
                 {
                     _myDia.ShowError("Prozess konnte nicht gelöscht werden!\nEin Log Eintrag konnte ebenfalls nicht erzeugt werden.\n", ex2);
+                    return null;
+                }
+            }
+        }
+        public ISB_BIA_Prozesse Reactivate_Process(ISB_BIA_Prozesse p)
+        {
+            ISB_BIA_Prozesse toReactivate = new ISB_BIA_Prozesse
+            {
+                Prozess_Id = p.Prozess_Id,
+                OE_Filter = p.OE_Filter,
+                Prozess = p.Prozess,
+                Sub_Prozess = p.Sub_Prozess,
+                Prozesseigentümer = p.Prozesseigentümer,
+                Prozessverantwortlicher = p.Prozessverantwortlicher,
+                Kritischer_Prozess = p.Kritischer_Prozess,
+                Kritikalität_des_Prozesses = p.Kritikalität_des_Prozesses,
+                Reifegrad_des_Prozesses = p.Reifegrad_des_Prozesses,
+                Regulatorisch = p.Regulatorisch,
+                Reputatorisch = p.Reputatorisch,
+                Finanziell = p.Finanziell,
+                SZ_1 = p.SZ_1,
+                SZ_2 = p.SZ_2,
+                SZ_3 = p.SZ_3,
+                SZ_4 = p.SZ_4,
+                SZ_5 = p.SZ_5,
+                SZ_6 = p.SZ_6,
+                Servicezeit_Helpdesk = p.Servicezeit_Helpdesk,
+                RPO_Datenverlustzeit_Recovery_Point_Objective = p.RPO_Datenverlustzeit_Recovery_Point_Objective,
+                RTO_Wiederanlaufzeit_Recovery_Time_Objective = p.RTO_Wiederanlaufzeit_Recovery_Time_Objective,
+                RTO_Wiederanlaufzeit_Recovery_Time_Objective_Notfall = p.RTO_Wiederanlaufzeit_Recovery_Time_Objective_Notfall,
+                Relevantes_IS_1 = p.Relevantes_IS_1,
+                Relevantes_IS_2 = p.Relevantes_IS_2,
+                Relevantes_IS_3 = p.Relevantes_IS_3,
+                Relevantes_IS_4 = p.Relevantes_IS_4,
+                Relevantes_IS_5 = p.Relevantes_IS_5,
+                Datum = DateTime.Now,
+                Benutzer = _myShared.User.WholeName,
+                Aktiv = 1
+            };
+            bool res = _myDia.ShowQuestion("Möchten Sie den Prozess wirklich reaktivieren?", "Prozess reaktivieren");
+            if (!res) return null;
+            try
+            {
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
+                {
+                    toReactivate.Datum = DateTime.Now;
+                    db.ISB_BIA_Prozesse.InsertOnSubmit(toReactivate);
+                    //Logeintrag erzeugen
+                    ISB_BIA_Log logEntry = new ISB_BIA_Log
+                    {
+                        Aktion = "Reaktivieren eines Prozesses (Setzen auf aktiv)",
+                        Tabelle = _myShared.Tbl_Prozesse,
+                        Details = "Id = " + toReactivate.Prozess_Id + ", Name = '" + toReactivate.Prozess + "', Sub-Name = '" + toReactivate.Sub_Prozess + "'",
+                        Id_1 = toReactivate.Prozess_Id,
+                        Id_2 = 0,
+                        Datum = toReactivate.Datum,
+                        Benutzer = _myShared.User.WholeName
+                    };
+                    db.ISB_BIA_Log.InsertOnSubmit(logEntry);
+                    db.SubmitChanges();
+                    #region Mail Notification senden
+                    string subject = "BIA-Tool Auto-Notification: Prozess reaktiviert";
+                    string body = "Prozess-ID: " + toReactivate.Prozess_Id + Environment.NewLine +
+                        "Prozess Name: " + toReactivate.Prozess + Environment.NewLine +
+                        "OE: " + toReactivate.OE_Filter + Environment.NewLine +
+                        "Prozessverantwortlicher: " + toReactivate.Prozessverantwortlicher + Environment.NewLine +
+                        "Datum: " + toReactivate.Datum +
+                        "Bearbeitet von: " + _myShared.User.WholeName;
+                    _myMail.Send_NotificationMail(subject, body, _myShared.Conf_CurrentEnvironment);
+                    #endregion
+                }
+                _myDia.ShowMessage("Prozess reaktiviert");
+                return toReactivate;
+            }
+            catch (Exception ex1)
+            {
+                //Logeintrag bei Fehler
+                try
+                {
+                    using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
+                    {
+                        ISB_BIA_Log logEntry = new ISB_BIA_Log
+                        {
+                            Aktion = "Fehler: Reaktivieren eines Prozesses",
+                            Tabelle = _myShared.Tbl_Prozesse,
+                            Details = ex1.Message,
+                            Id_1 = toReactivate.Prozess_Id,
+                            Id_2 = 0,
+                            Datum = toReactivate.Datum,
+                            Benutzer = _myShared.User.WholeName
+                        };
+                        db.ISB_BIA_Log.InsertOnSubmit(logEntry);
+                        db.SubmitChanges();
+                        _myDia.ShowError("Prozess konnte nicht reaktiviert werden.\n", ex1);
+                        return null;
+                    }
+                }
+                catch (Exception ex2)
+                {
+                    _myDia.ShowError("Prozess konnte nicht reaktiviert werden!\nEin Log Eintrag konnte ebenfalls nicht erzeugt werden.\n", ex2);
                     return null;
                 }
             }
@@ -623,6 +788,7 @@ namespace ISB_BIA_IMPORT1.Services
                             OE_Filter = process_old.OE_Filter,
                             Prozess = process_old.Prozess,
                             Sub_Prozess = process_old.Sub_Prozess,
+                            Prozesseigentümer = process_old.Prozesseigentümer,
                             Prozessverantwortlicher = process_old.Prozessverantwortlicher,
                             Kritikalität_des_Prozesses = process_old.Kritikalität_des_Prozesses,
                             Kritischer_Prozess = process_old.Kritischer_Prozess,
@@ -636,8 +802,6 @@ namespace ISB_BIA_IMPORT1.Services
                             SZ_4 = process_old.SZ_4,
                             SZ_5 = process_old.SZ_5,
                             SZ_6 = process_old.SZ_6,
-                            Vorgelagerte_Prozesse = process_old.Vorgelagerte_Prozesse,
-                            Nachgelagerte_Prozesse = process_old.Nachgelagerte_Prozesse,
                             Servicezeit_Helpdesk = process_old.Servicezeit_Helpdesk,
                             RPO_Datenverlustzeit_Recovery_Point_Objective = process_old.RPO_Datenverlustzeit_Recovery_Point_Objective,
                             RTO_Wiederanlaufzeit_Recovery_Time_Objective = process_old.RTO_Wiederanlaufzeit_Recovery_Time_Objective,
@@ -648,7 +812,7 @@ namespace ISB_BIA_IMPORT1.Services
                             Relevantes_IS_4 = process_old.Relevantes_IS_4,
                             Relevantes_IS_5 = process_old.Relevantes_IS_5,
                         };
-                        process_refresh.Benutzer = _myShared.User.Username;
+                        process_refresh.Benutzer = _myShared.User.WholeName;
                         process_refresh.Datum = DateTime.Now;
                         db.ISB_BIA_Prozesse.InsertOnSubmit(process_refresh);
                         //Logeintrag erzeugen
@@ -660,14 +824,14 @@ namespace ISB_BIA_IMPORT1.Services
                             Details = "Id = " + process_refresh.Prozess_Id + ", Name = '" + process_refresh.Prozess + "', Sub-Name = '" + process_refresh.Sub_Prozess + "'",
                             Id_1 = process_refresh.Prozess_Id,
                             Id_2 = 0,
-                            Benutzer = _myShared.User.Username
+                            Benutzer = _myShared.User.WholeName,
                         };
                         db.ISB_BIA_Log.InsertOnSubmit(logEntry);
                         refreshedProcesses.Add(process_refresh);
                     }
                     db.SubmitChanges();
                     #region Mail Notification senden
-                    string body = "Benutzer: " + _myShared.User.Username + "\nErfolgreich: " + refreshedProcesses.Count + "\nFolgende Prozesse wurden ohne Änderungen aktualisiert:";
+                    string body = "Benutzer: " + _myShared.User.WholeName + "\nErfolgreich: " + refreshedProcesses.Count + "\nFolgende Prozesse wurden ohne Änderungen aktualisiert:";
                     string subject = "BIA-Tool Auto-Notification: Aktualisieren von Prozessen";
                     body += Environment.NewLine;
                     foreach (ISB_BIA_Prozesse h in refreshedProcesses)
@@ -696,7 +860,7 @@ namespace ISB_BIA_IMPORT1.Services
                             Details = ex.Message,
                             Id_1 = 0,
                             Id_2 = 0,
-                            Benutzer = _myShared.User.Username
+                            Benutzer = _myShared.User.WholeName,
                         };
                         db.ISB_BIA_Log.InsertOnSubmit(logEntry);
                         db.SubmitChanges();
@@ -763,14 +927,9 @@ namespace ISB_BIA_IMPORT1.Services
                     List<ISB_BIA_Applikationen> applications = db.ISB_BIA_Applikationen.ToList();
                     foreach (ISB_BIA_Prozesse_Applikationen k in procAppList)
                     {
-                        ISB_BIA_Prozesse p = processes.Where(x => x.Prozess_Id == k.Prozess_Id).GroupBy(l => l.Prozess_Id).Select(g => g.OrderByDescending(d => d.Datum).FirstOrDefault()).FirstOrDefault();
                         ISB_BIA_Applikationen a = applications.Where(x => x.Applikation_Id == k.Applikation_Id).GroupBy(l => l.Applikation_Id).Select(g => g.OrderByDescending(d => d.Datum).FirstOrDefault()).FirstOrDefault();
-
                         ISB_BIA_Delta_Analyse n = new ISB_BIA_Delta_Analyse()
                         {
-                            Prozess_Id = p.Prozess_Id,
-                            Prozess = p.Prozess,
-                            Sub_Prozess = p.Sub_Prozess,
                             Applikation_Id = a.Applikation_Id,
                             Applikation = a.IT_Anwendung_System,
                             SZ_1 = k.Relation,
@@ -784,11 +943,80 @@ namespace ISB_BIA_IMPORT1.Services
             }
             catch (Exception ex)
             {
-                _myDia.ShowError("Anwendungskategorien konnten nicht abgerufen werden.", ex);
+                _myDia.ShowError("Anwendungshistorie konnten nicht abgerufen werden.", ex);
                 return null;
             }
         }
         #endregion
-        
+        public ObservableCollection<ISB_BIA_Delta_Analyse> Get_History_PreProcRelations(int id)
+        {
+            try
+            {
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
+                {
+                    ObservableCollection<ISB_BIA_Delta_Analyse> result = new ObservableCollection<ISB_BIA_Delta_Analyse>();
+                    List<ISB_BIA_Prozesse_Prozesse> preProcList = db.ISB_BIA_Prozesse_Prozesse.Where(x => x.Prozess_Id == id && x.Typ == 1).OrderByDescending(c => c.Datum).ToList();
+                    List<ISB_BIA_Prozesse_Prozesse> preProcListCurrent = preProcList.GroupBy(x => x.Ref_Prozess_Id)
+                        .Select(c => c.OrderByDescending(v => v.Datum).FirstOrDefault()).ToList();
+                    List<ISB_BIA_Prozesse> processes = db.ISB_BIA_Prozesse.ToList();
+                    List<ISB_BIA_Prozesse> preProcesses = db.ISB_BIA_Prozesse.ToList();
+                    foreach (ISB_BIA_Prozesse_Prozesse k in preProcList)
+                    {
+                        ISB_BIA_Prozesse a = preProcesses.Where(x => x.Prozess_Id == k.Ref_Prozess_Id).GroupBy(l => l.Prozess_Id).Select(g => g.OrderByDescending(d => d.Datum).FirstOrDefault()).FirstOrDefault();
+                        ISB_BIA_Delta_Analyse n = new ISB_BIA_Delta_Analyse()
+                        {
+                            Prozess_Id = a.Prozess_Id,
+                            Prozess = a.Prozess,
+                            Sub_Prozess = a.Sub_Prozess,
+                            SZ_1 = k.Relation,
+                            SZ_2 = (preProcListCurrent.Count(x => x.Prozess_Id == k.Prozess_Id && x.Ref_Prozess_Id == k.Ref_Prozess_Id && x.Datum == k.Datum) > 0) ? 1 : 0,
+                            Datum = k.Datum
+                        };
+                        result.Add(n);
+                    }
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                _myDia.ShowError("Historie vorgelagerter Prozesse konnte nicht abgerufen werden.", ex);
+                return null;
+            }
+        }
+        public ObservableCollection<ISB_BIA_Delta_Analyse> Get_History_PostProcRelations(int id)
+        {
+            try
+            {
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
+                {
+                    ObservableCollection<ISB_BIA_Delta_Analyse> result = new ObservableCollection<ISB_BIA_Delta_Analyse>();
+                    List<ISB_BIA_Prozesse_Prozesse> postProcList = db.ISB_BIA_Prozesse_Prozesse.Where(x => x.Prozess_Id == id && x.Typ == 2).OrderByDescending(c => c.Datum).ToList();
+                    List<ISB_BIA_Prozesse_Prozesse> postProcListCurrent = postProcList.GroupBy(x => x.Ref_Prozess_Id)
+                        .Select(c => c.OrderByDescending(v => v.Datum).FirstOrDefault()).ToList();
+                    List<ISB_BIA_Prozesse> processes = db.ISB_BIA_Prozesse.ToList();
+                    List<ISB_BIA_Prozesse> postProcesses = db.ISB_BIA_Prozesse.ToList();
+                    foreach (ISB_BIA_Prozesse_Prozesse k in postProcList)
+                    {
+                        ISB_BIA_Prozesse a = postProcesses.Where(x => x.Prozess_Id == k.Ref_Prozess_Id).GroupBy(l => l.Prozess_Id).Select(g => g.OrderByDescending(d => d.Datum).FirstOrDefault()).FirstOrDefault();
+                        ISB_BIA_Delta_Analyse n = new ISB_BIA_Delta_Analyse()
+                        {
+                            Prozess_Id = a.Prozess_Id,
+                            Prozess = a.Prozess,
+                            Sub_Prozess = a.Sub_Prozess,
+                            SZ_1 = k.Relation,
+                            SZ_2 = (postProcListCurrent.Count(x => x.Prozess_Id == k.Prozess_Id && x.Ref_Prozess_Id == k.Ref_Prozess_Id && x.Datum == k.Datum) > 0) ? 1 : 0,
+                            Datum = k.Datum
+                        };
+                        result.Add(n);
+                    }
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                _myDia.ShowError("Historie nachgelagerter Prozesse konnte nicht abgerufen werden.", ex);
+                return null;
+            }
+        }
     }
 }

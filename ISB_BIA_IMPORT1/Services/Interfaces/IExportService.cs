@@ -1,4 +1,5 @@
 ﻿using ISB_BIA_IMPORT1.LINQ2SQL;
+using ISB_BIA_IMPORT1.Model;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -28,7 +29,7 @@ namespace ISB_BIA_IMPORT1.Services.Interfaces
         /// <param name="title"> Indikator am Anfang des Dateinamen ob SBA oder Anwendungsliste </param>
         /// <param name="id"> AnwendungsID der Anwendung ("" wenn Anwendungsliste verschiedener Anwendungen, ID beim Export einer Anwednungs-Historie) </param>
         /// <returns> Erfolgreicher Export oder nicht </returns>
-        bool Export_Applications(ObservableCollection<ISB_BIA_Applikationen> appList, string title, int id=0);
+        bool Export_Applications(ObservableCollection<Application_Model> appList, string title, int id=0);
         /// <summary>
         /// Anwendungsliste aller aktiven Prozesse aus DB abrufen
         /// Ruft nach Abfrage <see cref="Export_Processes"/> auf

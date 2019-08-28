@@ -54,6 +54,19 @@ namespace ISB_BIA_IMPORT1.Services
         {
             return null;
         }
+        public ObservableCollection<Application_Model> Get_List_ApplicationModels_Active(bool additional = false)
+        {
+            ObservableCollection <ISB_BIA_Applikationen> a= new ObservableCollection<ISB_BIA_Applikationen>(
+                ApplicationDummyList.GroupBy(y => y.Applikation_Id).
+                    Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).
+                    Where(x => x.Aktiv == 1).OrderBy(k => k.Applikation_Id).ToList());
+            ObservableCollection<Application_Model> res = new ObservableCollection<Application_Model>();
+            foreach (ISB_BIA_Applikationen b in a)
+            {
+                res.Add(Map_DB_ToModel(b));
+            }
+            return res;
+        }
         public ObservableCollection<ISB_BIA_Applikationen> Get_List_Applications_Active()
         {
             return new ObservableCollection<ISB_BIA_Applikationen>(
@@ -87,7 +100,51 @@ namespace ISB_BIA_IMPORT1.Services
         }
         public ISB_BIA_Applikationen Map_Model_ToDB(Application_Model a)
         {
-            return null;
+            return new ISB_BIA_Applikationen()
+            {
+                Applikation_Id = a.Applikation_Id,
+                Rechenzentrum = a.Rechenzentrum,
+                Server = a.Server,
+                Virtuelle_Maschine = a.Virtuelle_Maschine,
+                Typ = a.Typ,
+                IT_Betriebsart = a.IT_Betriebsart,
+                IT_Anwendung_System = a.IT_Anwendung_System,
+                Wichtiges_Anwendungssystem = (a.Wichtiges_Anwendungssystem) ? "x" : "",
+                SZ_1 = (int)a.SZ_1,
+                SZ_2 = (int)a.SZ_2,
+                SZ_3 = (int)a.SZ_3,
+                SZ_4 = (int)a.SZ_4,
+                SZ_5 = (int)a.SZ_5,
+                SZ_6 = (int)a.SZ_6,
+                Aktiv = a.Aktiv,
+                Datum = a.Datum,
+                Benutzer = a.Benutzer,
+                Erstanlage = a.Erstanlage,
+            };
+        }
+        public Application_Model Map_DB_ToModel(ISB_BIA_Applikationen a)
+        {
+            return new Application_Model()
+            {
+                Applikation_Id = a.Applikation_Id,
+                Rechenzentrum = a.Rechenzentrum,
+                Server = a.Server,
+                Virtuelle_Maschine = a.Virtuelle_Maschine,
+                Typ = a.Typ,
+                IT_Betriebsart = a.IT_Betriebsart,
+                IT_Anwendung_System = a.IT_Anwendung_System,
+                Wichtiges_Anwendungssystem = (a.Wichtiges_Anwendungssystem == "x") ? true : false,
+                SZ_1 = (SZ_Values)a.SZ_1,
+                SZ_2 = (SZ_Values)a.SZ_2,
+                SZ_3 = (SZ_Values)a.SZ_3,
+                SZ_4 = (SZ_Values)a.SZ_4,
+                SZ_5 = (SZ_Values)a.SZ_5,
+                SZ_6 = (SZ_Values)a.SZ_6,
+                Aktiv = a.Aktiv,
+                Datum = a.Datum,
+                Benutzer = a.Benutzer,
+                Erstanlage = a.Erstanlage,
+            };
         }
         public ObservableCollection<string> Get_StringList_Rechenzentrum()
         {
@@ -109,32 +166,40 @@ namespace ISB_BIA_IMPORT1.Services
         {
             return new ObservableCollection<string>(ApplicationDummyList.Select(p => p.IT_Betriebsart).Distinct());
         }
-        public ObservableCollection<ISB_BIA_Applikationen> Get_List_Applications_All(DateTime? date = null)
+        public ObservableCollection<Application_Model> Get_List_ApplicationModels_All(DateTime? date = null, bool additional = false)
         {
-            return new ObservableCollection<ISB_BIA_Applikationen>(
-                ApplicationDummyList.GroupBy(a => a.Applikation_Id)
+            ObservableCollection<ISB_BIA_Applikationen> a = new ObservableCollection<ISB_BIA_Applikationen>(
+                ApplicationDummyList.GroupBy(r => r.Applikation_Id)
                 .Select(g => g.OrderByDescending(p => p.Datum).FirstOrDefault()).
                 OrderBy(x => x.Applikation_Id).ToList());
+            ObservableCollection<Application_Model> res = new ObservableCollection<Application_Model>();
+            foreach (ISB_BIA_Applikationen b in a)
+            {
+                res.Add(Map_DB_ToModel(b));
+            }
+            return res;
         }
-        public ObservableCollection<ISB_BIA_Applikationen> Get_History_Application(int applikation_Id)
+        public ObservableCollection<Application_Model> Get_History_Application(int applikation_Id)
         {
-            return new ObservableCollection<ISB_BIA_Applikationen>(
-                ApplicationDummyList.Where(a => a.Applikation_Id == applikation_Id).
+            ObservableCollection<ISB_BIA_Applikationen> a = new ObservableCollection<ISB_BIA_Applikationen>(
+                ApplicationDummyList.Where(r => r.Applikation_Id == applikation_Id).
                 OrderByDescending(p => p.Datum).ToList());
+            ObservableCollection<Application_Model> res = new ObservableCollection<Application_Model>();
+            foreach (ISB_BIA_Applikationen b in a)
+            {
+                res.Add(Map_DB_ToModel(b));
+            }
+            return res;
         }
         public bool Insert_Application(Application_Model a, ProcAppMode mode)
         {
             return true;
         }
-        public ISB_BIA_Applikationen Delete_Application(ISB_BIA_Applikationen a)
+        public ISB_BIA_Applikationen Delete_Application(Application_Model a)
         {
-            return Get_List_Applications_All().FirstOrDefault();
+            return null;
         }
-        public ISB_BIA_Applikationen TryDeleteApplication(ISB_BIA_Applikationen toDelete)
-        {
-            return Get_List_Applications_All().FirstOrDefault();
-        }
-        public bool Insert_Applications_All(ObservableCollection<ISB_BIA_Applikationen> aList)
+        public bool Insert_Applications_All(ObservableCollection<Application_Model> aList)
         {
             return true;
         }

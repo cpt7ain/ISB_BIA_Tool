@@ -34,7 +34,7 @@ namespace ISB_BIA_IMPORT1.Helpers
         /// <param name="parameter"></param>
         public override void Execute(object parameter)
         {
-            Mouse.OverrideCursor = Cursors.Wait;
+            Mouse.OverrideCursor = Cursors.ArrowCD;
             base.Execute(parameter);
             Mouse.OverrideCursor = null;
         }
@@ -71,7 +71,7 @@ namespace ISB_BIA_IMPORT1.Helpers
         /// <param name="parameter"></param>
         public override void Execute(object parameter)
         {
-            Mouse.OverrideCursor = Cursors.Wait;
+            Mouse.OverrideCursor = Cursors.ArrowCD;
             base.Execute(parameter);
             Mouse.OverrideCursor = null;
         }

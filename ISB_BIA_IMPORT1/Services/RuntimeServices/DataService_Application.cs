@@ -35,23 +35,25 @@ namespace ISB_BIA_IMPORT1.Services
                 {
                     linqApp = db.ISB_BIA_Applikationen.Where(c => c.Applikation_Id == id)
                         .OrderByDescending(p => p.Datum).FirstOrDefault();
-
                     List<ISB_BIA_Prozesse_Applikationen> proc_AppCurrent =
-                        db.ISB_BIA_Prozesse_Applikationen.Where(x => x.Applikation_Id == id).
+                        db.ISB_BIA_Prozesse_Applikationen.Where(x => x.Applikation_Id == linqApp.Applikation_Id).
                             GroupBy(y => y.Prozess_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).ToList();
                     //Aktive Relationen filtern
                     List<int> listIdCurrentProcesses =
                         proc_AppCurrent.Where(x => x.Relation == 1).Select(y => y.Prozess_Id).ToList();
                     if (listIdCurrentProcesses.Count == 0)
+                    {
                         linqProcs = new ObservableCollection<ISB_BIA_Prozesse>();
+                    }
                     else
-                        //
+                    {
                         linqProcs = new ObservableCollection<ISB_BIA_Prozesse>(db.ISB_BIA_Prozesse.Where(x => listIdCurrentProcesses.Contains(x.Prozess_Id)).GroupBy(y => y.Prozess_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).OrderBy(k => k.Prozess_Id).ToList());
+                    }
                 }
                 //Falls existiert
                 if (linqApp != null)
                 {
-                    Application_Model result = new Application_Model
+                    Application_Model result = new Application_Model()
                     {
                         Applikation_Id = linqApp.Applikation_Id,
                         Rechenzentrum = linqApp.Rechenzentrum,
@@ -60,7 +62,7 @@ namespace ISB_BIA_IMPORT1.Services
                         Typ = linqApp.Typ,
                         IT_Betriebsart = linqApp.IT_Betriebsart,
                         IT_Anwendung_System = linqApp.IT_Anwendung_System,
-                        Wichtiges_Anwendungssystem = !(String.IsNullOrWhiteSpace(linqApp.Wichtiges_Anwendungssystem)),
+                        Wichtiges_Anwendungssystem = (linqApp.Wichtiges_Anwendungssystem == "x") ? true : false,
                         SZ_1 = (SZ_Values)linqApp.SZ_1,
                         SZ_2 = (SZ_Values)linqApp.SZ_2,
                         SZ_3 = (SZ_Values)linqApp.SZ_3,
@@ -68,7 +70,11 @@ namespace ISB_BIA_IMPORT1.Services
                         SZ_5 = (SZ_Values)linqApp.SZ_5,
                         SZ_6 = (SZ_Values)linqApp.SZ_6,
                         Aktiv = linqApp.Aktiv,
-                        ProcessList = linqProcs
+                        Datum = linqApp.Datum,
+                        Benutzer = linqApp.Benutzer,
+                        Erstanlage = linqApp.Erstanlage,
+                        ProcessList = linqProcs,
+                        Verknüpfte_Prozesse = linqProcs.Count
                     };
                     return result;
                 }
@@ -86,26 +92,67 @@ namespace ISB_BIA_IMPORT1.Services
         }
         public ISB_BIA_Applikationen Map_Model_ToDB(Application_Model a)
         {
-            return new ISB_BIA_Applikationen()
+            try
             {
-                Applikation_Id = a.Applikation_Id,
-                Rechenzentrum = a.Rechenzentrum,
-                Server = a.Server,
-                Virtuelle_Maschine = a.Virtuelle_Maschine,
-                Typ = a.Typ,
-                IT_Betriebsart = a.IT_Betriebsart,
-                IT_Anwendung_System = a.IT_Anwendung_System,
-                Wichtiges_Anwendungssystem = (a.Wichtiges_Anwendungssystem) ? "x" : "",
-                SZ_1 = (int)a.SZ_1,
-                SZ_2 = (int)a.SZ_2,
-                SZ_3 = (int)a.SZ_3,
-                SZ_4 = (int)a.SZ_4,
-                SZ_5 = (int)a.SZ_5,
-                SZ_6 = (int)a.SZ_6,
-                Aktiv = a.Aktiv,
-                Datum = a.Datum,
-                Benutzer = a.Benutzer
-            };
+                return new ISB_BIA_Applikationen()
+                {
+                    Applikation_Id = a.Applikation_Id,
+                    Rechenzentrum = a.Rechenzentrum,
+                    Server = a.Server,
+                    Virtuelle_Maschine = a.Virtuelle_Maschine,
+                    Typ = a.Typ,
+                    IT_Betriebsart = a.IT_Betriebsart,
+                    IT_Anwendung_System = a.IT_Anwendung_System,
+                    Wichtiges_Anwendungssystem = (a.Wichtiges_Anwendungssystem) ? "x" : "",
+                    SZ_1 = (int)a.SZ_1,
+                    SZ_2 = (int)a.SZ_2,
+                    SZ_3 = (int)a.SZ_3,
+                    SZ_4 = (int)a.SZ_4,
+                    SZ_5 = (int)a.SZ_5,
+                    SZ_6 = (int)a.SZ_6,
+                    Aktiv = a.Aktiv,
+                    Datum = a.Datum,
+                    Benutzer = a.Benutzer,
+                    Erstanlage = a.Erstanlage,
+                };
+            }
+            catch (Exception ex)
+            {
+                _myDia.ShowError("Fehler beim Mappen der Anwendung", ex);
+                return null;
+            }
+        }
+        public Application_Model Map_DB_ToModel(ISB_BIA_Applikationen a)
+        {
+            try
+            {                              
+                return new Application_Model()
+                {
+                    Applikation_Id = a.Applikation_Id,
+                    Rechenzentrum = a.Rechenzentrum,
+                    Server = a.Server,
+                    Virtuelle_Maschine = a.Virtuelle_Maschine,
+                    Typ = a.Typ,
+                    IT_Betriebsart = a.IT_Betriebsart,
+                    IT_Anwendung_System = a.IT_Anwendung_System,
+                    Wichtiges_Anwendungssystem = (a.Wichtiges_Anwendungssystem == "x") ? true : false,
+                    SZ_1 = (SZ_Values)a.SZ_1,
+                    SZ_2 = (SZ_Values)a.SZ_2,
+                    SZ_3 = (SZ_Values)a.SZ_3,
+                    SZ_4 = (SZ_Values)a.SZ_4,
+                    SZ_5 = (SZ_Values)a.SZ_5,
+                    SZ_6 = (SZ_Values)a.SZ_6,
+                    Aktiv = a.Aktiv,
+                    Datum = a.Datum,
+                    Benutzer = a.Benutzer,
+                    Erstanlage = a.Erstanlage,
+                };
+            }
+            catch (Exception ex)
+            {
+                _myDia.ShowError("Fehler beim Mappen der Anwendung", ex);
+                return null;
+            }
         }
         public ObservableCollection<string> Get_StringList_Rechenzentrum()
         {
@@ -181,17 +228,42 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<ISB_BIA_Applikationen> Get_List_Applications_All(DateTime? date = null)
+        public ObservableCollection<Application_Model> Get_List_ApplicationModels_All(DateTime? date = null, bool additional = false)
         {
             try
             {
                 if (!date.HasValue) date = DateTime.Now;
                 using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
-                    return new ObservableCollection<ISB_BIA_Applikationen>(
-                        db.ISB_BIA_Applikationen.Where(d => d.Datum <= date).GroupBy(a => a.Applikation_Id)
+                    ObservableCollection <ISB_BIA_Applikationen> a = new ObservableCollection<ISB_BIA_Applikationen>(
+                        db.ISB_BIA_Applikationen.Where(d => d.Datum <= date).GroupBy(r => r.Applikation_Id)
                         .Select(g => g.OrderByDescending(p => p.Datum).FirstOrDefault()).
                         OrderBy(x => x.Applikation_Id).ToList());
+
+                    ObservableCollection<Application_Model> res = new ObservableCollection<Application_Model>();
+                    foreach (ISB_BIA_Applikationen b in a)
+                    {
+                        Application_Model c;
+                        //Wenn die Anzahl der zuegordneten Prozesse benötigt wird (additional = 1)
+                        if (additional)
+                        {
+                            List<ISB_BIA_Prozesse_Applikationen> proc_AppCurrent =
+                                db.ISB_BIA_Prozesse_Applikationen.Where(x => x.Applikation_Id == b.Applikation_Id).
+                                GroupBy(y => y.Prozess_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).ToList();
+                            //Aktive Relationen filtern
+                            List<int> listIdCurrentProcesses =
+                                proc_AppCurrent.Where(x => x.Relation == 1).Select(y => y.Prozess_Id).ToList();
+
+                            c = Map_DB_ToModel(b);
+                            c.Verknüpfte_Prozesse = listIdCurrentProcesses.Count;
+                        }
+                        else
+                        {
+                            c = Map_DB_ToModel(b);
+                        }
+                        res.Add(c);
+                    }
+                    return res;
                 }
             }
             catch (Exception ex)
@@ -200,15 +272,21 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ObservableCollection<ISB_BIA_Applikationen> Get_History_Application(int applikation_Id)
+        public ObservableCollection<Application_Model> Get_History_Application(int applikation_Id)
         {
             try
             {
                 using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
-                    return new ObservableCollection<ISB_BIA_Applikationen>(
-                        db.ISB_BIA_Applikationen.Where(a => a.Applikation_Id == applikation_Id).
+                    ObservableCollection<ISB_BIA_Applikationen> a = new ObservableCollection<ISB_BIA_Applikationen>(
+                        db.ISB_BIA_Applikationen.Where(r => r.Applikation_Id == applikation_Id).
                         OrderByDescending(p => p.Datum).ToList());
+                    ObservableCollection<Application_Model> res = new ObservableCollection<Application_Model>();
+                    foreach (ISB_BIA_Applikationen b in a)
+                    {
+                        res.Add(Map_DB_ToModel(b));
+                    }
+                    return res;
                 }
             }
             catch (Exception ex)
@@ -229,25 +307,35 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
-                    int duplicateCount = Get_List_Applications_All().GroupBy(c => c.Applikation_Id).Select(v => v.OrderByDescending(b => b.Datum).FirstOrDefault()).Where(x => x.IT_Anwendung_System == a.IT_Anwendung_System && x.IT_Betriebsart == a.IT_Betriebsart && x.Applikation_Id != a.Applikation_Id).Count();
+                    int duplicateCount = Get_List_ApplicationModels_All().GroupBy(c => c.Applikation_Id).Select(v => v.OrderByDescending(b => b.Datum).FirstOrDefault()).Where(x => x.IT_Anwendung_System == a.IT_Anwendung_System && x.IT_Betriebsart == a.IT_Betriebsart && x.Applikation_Id != a.Applikation_Id).Count();
                     if (duplicateCount > 0)
                     {
                         _myDia.ShowMessage("Es existiert(e) bereits eine Anwendung/System mit diesem Namen und Kategorie.\nWählen Sie bitte andere Bezeichnungen für diese Anwendung/System.");
                         return false;
-                    }                    //Wenn Anwendung momentan inaktiv ist => Frage bzgl. Aktivierung
+                    }
+                    //Wenn Anwendung momentan inaktiv ist => Frage bzgl. Aktivierung
                     if (a.Aktiv == 0)
                     {
                         a.Aktiv = (_myDia.ShowQuestion("Die Anwendung ist momentan auf inaktiv gesetzt. Möchten Sie die Anwendung auf aktiv setzen?", "Anwendung aktivieren")) ? 1 : 0;
                     }
+                    else
+                    {
+                        //Ansonsten Erstanlage auf Nein (da Bearbeitung und nicht reaktivierung)
+                        a.Erstanlage = "Nein";
+                    }
                     //neue Anwendungs ID erzeugen im Falle eines neuen Prozesses
+
                     if (mode == ProcAppMode.New)
                     {
                         a.Applikation_Id = db.ISB_BIA_Applikationen.Select(x => x.Applikation_Id).Max() + 1;
+                        a.Erstanlage = "Ja";
                     }               
-                    a.Benutzer =  _myShared.User.Username;
                     a.Datum = DateTime.Now;
+                    a.Benutzer = _myShared.User.WholeName;
                     //Mappen und Einfügen
-                    db.ISB_BIA_Applikationen.InsertOnSubmit(Map_Model_ToDB(a));
+                    ISB_BIA_Applikationen res = Map_Model_ToDB(a);
+                    if (res == null) return false;
+                    db.ISB_BIA_Applikationen.InsertOnSubmit(res);
                     //Logeintrag erstellen
                     ISB_BIA_Log logEntry = new ISB_BIA_Log
                     {
@@ -257,7 +345,7 @@ namespace ISB_BIA_IMPORT1.Services
                         Id_1 = a.Applikation_Id,
                         Id_2 = 0,
                         Datum = DateTime.Now,
-                        Benutzer = a.Benutzer
+                        Benutzer = _myShared.User.WholeName
                     };
                     db.ISB_BIA_Log.InsertOnSubmit(logEntry);
                     db.SubmitChanges();
@@ -280,7 +368,7 @@ namespace ISB_BIA_IMPORT1.Services
                             Id_1 = a.Applikation_Id,
                             Id_2 = 0,
                             Datum = DateTime.Now,
-                            Benutzer =  _myShared.User.Username
+                            Benutzer = _myShared.User.WholeName
                         };
 
                         db.ISB_BIA_Log.InsertOnSubmit(logEntry);
@@ -297,27 +385,11 @@ namespace ISB_BIA_IMPORT1.Services
             }
         }
         #region Applikation löschen (Setzen des Aktiv Flags in der Datenbank auf 0)
-        public ISB_BIA_Applikationen Delete_Application(ISB_BIA_Applikationen a)
+        public ISB_BIA_Applikationen Delete_Application(Application_Model a)
         {
-            ISB_BIA_Applikationen toDelete = new ISB_BIA_Applikationen
-            {
-                Applikation_Id = a.Applikation_Id,
-                IT_Anwendung_System = a.IT_Anwendung_System,
-                IT_Betriebsart = a.IT_Betriebsart,
-                Wichtiges_Anwendungssystem = a.Wichtiges_Anwendungssystem,
-                Rechenzentrum = a.Rechenzentrum,
-                Server = a.Server,
-                Virtuelle_Maschine = a.Virtuelle_Maschine,
-                Typ = a.Typ,
-                SZ_1 = a.SZ_1,
-                SZ_2 = a.SZ_2,
-                SZ_3 = a.SZ_3,
-                SZ_4 = a.SZ_4,
-                SZ_5 = a.SZ_5,
-                SZ_6 = a.SZ_6,
-                Benutzer =  _myShared.User.Username,
-                Aktiv = 0
-            };
+            ISB_BIA_Applikationen toDelete = Map_Model_ToDB(a);
+            toDelete.Benutzer = _myShared.User.WholeName;
+            toDelete.Aktiv = 0;
             bool res = _myDia.ShowQuestion("Möchten Sie die Anwendung wirklich löschen (auf inaktiv setzen)?", "Anwendung löschen");
             if (!res) return null;
             try
@@ -334,7 +406,7 @@ namespace ISB_BIA_IMPORT1.Services
                         Id_1 = toDelete.Applikation_Id,
                         Id_2 = 0,
                         Datum = toDelete.Datum,
-                        Benutzer =  _myShared.User.Username
+                        Benutzer = _myShared.User.WholeName
                     };
                     db.ISB_BIA_Log.InsertOnSubmit(logEntry);
                     db.SubmitChanges();
@@ -356,7 +428,7 @@ namespace ISB_BIA_IMPORT1.Services
                             Id_1 = toDelete.Applikation_Id,
                             Id_2 = 0,
                             Datum = toDelete.Datum,
-                            Benutzer =  _myShared.User.Username
+                            Benutzer = _myShared.User.WholeName
                         };
                         db.ISB_BIA_Log.InsertOnSubmit(logEntry);
                         db.SubmitChanges();
@@ -372,16 +444,16 @@ namespace ISB_BIA_IMPORT1.Services
             }
         }
         #endregion
-        public bool Insert_Applications_All(ObservableCollection<ISB_BIA_Applikationen> aList)
+        public bool Insert_Applications_All(ObservableCollection<Application_Model> aList)
         {
             bool res = _myDia.ShowQuestion("Möchten Sie die ausgewählten Anwendungen wirklich ohne Änderungen aktualisieren?", "Auswahl bestätigen");
             if (!res) return false;
 
             //Liste der gesperrten Anwendungen
-            List<ISB_BIA_Applikationen> lockedList = new List<ISB_BIA_Applikationen>();
+            List<Application_Model> lockedList = new List<Application_Model>();
             //String für die Nachricht welche Anwendung durch welchen User gesperrt ist
             string lockedListStringMsg = "";
-            foreach (ISB_BIA_Applikationen a in aList)
+            foreach (Application_Model a in aList)
             {
                 string user = _myLock.Get_ObjectIsLocked(Table_Lock_Flags.Application, a.Applikation_Id);
                 if (user != "")
@@ -402,28 +474,12 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
-                    foreach (ISB_BIA_Applikationen application_old in aList)
+                    foreach (Application_Model application_old in aList)
                     {
                         //zu speichernde Anwendung in neues Objekt "kopieren"
-                        ISB_BIA_Applikationen application_refresh = new ISB_BIA_Applikationen
-                        {
-                            Applikation_Id = application_old.Applikation_Id,
-                            Aktiv = application_old.Aktiv,
-                            Rechenzentrum = application_old.Rechenzentrum,
-                            Server = application_old.Server,
-                            Virtuelle_Maschine = application_old.Virtuelle_Maschine,
-                            Typ = application_old.Typ,
-                            IT_Betriebsart = application_old.IT_Betriebsart,
-                            IT_Anwendung_System = application_old.IT_Anwendung_System,
-                            Wichtiges_Anwendungssystem = application_old.Wichtiges_Anwendungssystem,
-                            SZ_1 = application_old.SZ_1,
-                            SZ_2 = application_old.SZ_2,
-                            SZ_3 = application_old.SZ_3,
-                            SZ_4 = application_old.SZ_4,
-                            SZ_5 = application_old.SZ_5,
-                            SZ_6 = application_old.SZ_6,
-                        };
-                        application_refresh.Benutzer =  _myShared.User.Username;
+                        ISB_BIA_Applikationen application_refresh = Map_Model_ToDB(application_old);
+                        application_refresh.Erstanlage = "Nein";
+                        application_refresh.Benutzer = _myShared.User.WholeName;
                         application_refresh.Datum = DateTime.Now;
                         db.ISB_BIA_Applikationen.InsertOnSubmit(application_refresh);
                         //Logeintrag erzeugen
@@ -435,7 +491,7 @@ namespace ISB_BIA_IMPORT1.Services
                             Details = "Id = " + application_refresh.Applikation_Id + ", Name = '" + application_refresh.IT_Anwendung_System + "', Sub-Name = '" + application_refresh.IT_Betriebsart + "'",
                             Id_1 = application_refresh.Applikation_Id,
                             Id_2 = 0,
-                            Benutzer =  _myShared.User.Username
+                            Benutzer = _myShared.User.WholeName
                         };
                         db.ISB_BIA_Log.InsertOnSubmit(logEntry);
                     }
@@ -459,7 +515,7 @@ namespace ISB_BIA_IMPORT1.Services
                             Details = ex.Message,
                             Id_1 = 0,
                             Id_2 = 0,
-                            Benutzer =  _myShared.User.Username
+                            Benutzer = _myShared.User.WholeName
                         };
                         db.ISB_BIA_Log.InsertOnSubmit(logEntry);
                         db.SubmitChanges();
@@ -474,17 +530,61 @@ namespace ISB_BIA_IMPORT1.Services
                 }
             }
         }
+        public ObservableCollection<Application_Model> Get_List_ApplicationModels_Active(bool additional = false)
+        {
+            try
+            {
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
+                {
+                    //Applikationsliste
+                    ObservableCollection<ISB_BIA_Applikationen> a = new ObservableCollection<ISB_BIA_Applikationen>(
+                        db.ISB_BIA_Applikationen.GroupBy(y => y.Applikation_Id).
+                        Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).
+                        Where(x => x.Aktiv == 1).OrderBy(k => k.Applikation_Id).OrderBy(v=>v.Applikation_Id).ToList());
+
+                    ObservableCollection<Application_Model> res = new ObservableCollection<Application_Model>();
+                    foreach (ISB_BIA_Applikationen b in a)
+                    {
+                        Application_Model c;
+                        //Wenn die Anzahl der zuegordneten Prozesse benötigt wird (additional = 1)
+                        if (additional)
+                        {
+                            List<ISB_BIA_Prozesse_Applikationen> proc_AppCurrent =
+                                db.ISB_BIA_Prozesse_Applikationen.Where(x => x.Applikation_Id == b.Applikation_Id).
+                                GroupBy(y => y.Prozess_Id).Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).ToList();
+                            //Aktive Relationen filtern
+                            List<int> listIdCurrentProcesses =
+                                proc_AppCurrent.Where(x => x.Relation == 1).Select(y => y.Prozess_Id).ToList();
+
+                            c = Map_DB_ToModel(b);
+                            c.Verknüpfte_Prozesse = listIdCurrentProcesses.Count;
+                        }
+                        else
+                        {
+                            c = Map_DB_ToModel(b);
+                        }
+                        res.Add(c);
+                    }
+                    return res;
+                }
+            }
+            catch (Exception ex)
+            {
+                _myDia.ShowError("Applikationen konnten nicht abgerufen werden.", ex);
+                return null;
+            }
+        }
         public ObservableCollection<ISB_BIA_Applikationen> Get_List_Applications_Active()
         {
             try
             {
                 using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
+                    //Applikationsliste
                     return new ObservableCollection<ISB_BIA_Applikationen>(
                         db.ISB_BIA_Applikationen.GroupBy(y => y.Applikation_Id).
                         Select(z => z.OrderByDescending(q => q.Datum).FirstOrDefault()).
-                        Where(x => x.Aktiv == 1).OrderBy(k => k.Applikation_Id).ToList());
-
+                        Where(x => x.Aktiv == 1).OrderBy(k => k.Applikation_Id).OrderBy(v => v.Applikation_Id).ToList());
                 }
             }
             catch (Exception ex)

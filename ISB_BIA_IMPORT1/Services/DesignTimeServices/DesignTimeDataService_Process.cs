@@ -83,8 +83,6 @@ namespace ISB_BIA_IMPORT1.Services
                          SZ_4 = 4,
                          SZ_5 = 0,
                          SZ_6 = 0,
-                         Vorgelagerte_Prozesse = (r.Next(0, 2) == 0) ? "v1" : "v2",
-                         Nachgelagerte_Prozesse = (r.Next(0, 2) == 0) ? "n1" : "n2",
                          Servicezeit_Helpdesk = (r.Next(0, 2) == 0) ? "Mo 6-8" : "Di 7-8",
                          RPO_Datenverlustzeit_Recovery_Point_Objective = k[r.Next(k.Count)],
                          RTO_Wiederanlaufzeit_Recovery_Time_Objective = k[r.Next(k.Count)],
@@ -117,8 +115,6 @@ namespace ISB_BIA_IMPORT1.Services
                          SZ_4 = 3,
                          SZ_5 = 3,
                          SZ_6 = 3,
-                         Vorgelagerte_Prozesse = (r.Next(0, 2) == 0) ? "v1" : "v2",
-                         Nachgelagerte_Prozesse = (r.Next(0, 2) == 0) ? "n1" : "n2",
                          Servicezeit_Helpdesk = (r.Next(0, 2) == 0) ? "Mo 6-8" : "Di 7-8",
                          RPO_Datenverlustzeit_Recovery_Point_Objective = k[r.Next(k.Count)],
                          RTO_Wiederanlaufzeit_Recovery_Time_Objective = k[r.Next(k.Count)],
@@ -159,8 +155,6 @@ namespace ISB_BIA_IMPORT1.Services
                 SZ_4 = (SZ_Values)linqProc.SZ_4,
                 SZ_5 = (SZ_Values)linqProc.SZ_5,
                 SZ_6 = (SZ_Values)linqProc.SZ_6,
-                Vorgelagerte_Prozesse = linqProc.Vorgelagerte_Prozesse,
-                Nachgelagerte_Prozesse = linqProc.Nachgelagerte_Prozesse,
                 Servicezeit_Helpdesk = linqProc.Servicezeit_Helpdesk,
                 RPO_Datenverlustzeit_Recovery_Point_Objective = linqProc.RPO_Datenverlustzeit_Recovery_Point_Objective,
                 RTO_Wiederanlaufzeit_Recovery_Time_Objective = linqProc.RTO_Wiederanlaufzeit_Recovery_Time_Objective,
@@ -186,7 +180,7 @@ namespace ISB_BIA_IMPORT1.Services
             listIS.Insert(0, new ISB_BIA_Informationssegmente() { Name = "", Segment = "<leer>" });
             return new Dictionary<string, string>(listIS.Select(t => new { t.Name, t.Segment }).ToDictionary(t => t.Name, t => t.Segment));
         }
-        public ObservableCollection<ISB_BIA_Prozesse> Get_List_Processes_ByOE(ObservableCollection<string> listOE)
+        public ObservableCollection<ISB_BIA_Prozesse> Get_List_Processes_ByOE_All(ObservableCollection<string> listOE)
         {
             return ProcessDummyList;
         }
@@ -198,11 +192,11 @@ namespace ISB_BIA_IMPORT1.Services
         {
             return new ObservableCollection<ISB_BIA_Prozesse>(ProcessDummyList.Where(x => x.Aktiv == 1).ToList());
         }
-        public ObservableCollection<string> Get_StringList_ProcessOwner()
+        public ObservableCollection<string> Get_StringList_ProcessResponsible()
         {
             return new ObservableCollection<string>(ProcessDummyList.Where(n => !(n.Prozessverantwortlicher == null || n.Prozessverantwortlicher.Trim() == string.Empty)).Select(p => p.Prozessverantwortlicher).Distinct());
         }
-        public ObservableCollection<string> Get_StringList_OEsForUser(string userOE)
+        public ObservableCollection<string> Get_StringList_OEsForUser(List<string> userOE)
         {
             return new ObservableCollection<string>() { "4.4" };
         }
@@ -210,19 +204,11 @@ namespace ISB_BIA_IMPORT1.Services
         {
             return new ObservableCollection<string>(_myOE.Get_List_OENames().Select(p => p.OE_Name).Distinct());
         }
-        public ObservableCollection<string> Get_StringList_PreProcesses()
-        {
-            return new ObservableCollection<string>(ProcessDummyList.Select(p => p.Vorgelagerte_Prozesse).Distinct());
-        }
-        public ObservableCollection<string> Get_StringList_PostProcesses()
-        {
-            return new ObservableCollection<string>(ProcessDummyList.Select(p => p.Nachgelagerte_Prozesse).Distinct());
-        }
         public ObservableCollection<ISB_BIA_Prozesse> Get_History_Process(int process_id)
         {
             return new ObservableCollection<ISB_BIA_Prozesse>();
         }
-        public bool Insert_ProcessAndRelations(Process_Model p, ProcAppMode mode, ObservableCollection<ISB_BIA_Applikationen> add, ObservableCollection<ISB_BIA_Applikationen> remove)
+        public bool Insert_ProcessAndRelations(Process_Model p, ProcAppMode mode, ObservableCollection<ISB_BIA_Applikationen> add, ObservableCollection<ISB_BIA_Applikationen> remove, ObservableCollection<ISB_BIA_Prozesse> add_vP, ObservableCollection<ISB_BIA_Prozesse> remove_vP, ObservableCollection<ISB_BIA_Prozesse> add_nP, ObservableCollection<ISB_BIA_Prozesse> remove_nP)
         {
             return true;
         }
@@ -230,9 +216,9 @@ namespace ISB_BIA_IMPORT1.Services
         {
             return p;
         }
-        public ISB_BIA_Prozesse TryDeleteProcess(ISB_BIA_Prozesse toDelete)
+        public ISB_BIA_Prozesse Reactivate_Process(ISB_BIA_Prozesse p)
         {
-            return ProcessDummyList.FirstOrDefault();
+            return p;
         }
         public bool Proc_Insert_AllProcesses(ObservableCollection<ISB_BIA_Prozesse> pList)
         {
@@ -265,6 +251,16 @@ namespace ISB_BIA_IMPORT1.Services
         public List<ISB_BIA_Informationssegmente> Get_List_Segments_5ForCalculation(Process_Model process)
         {
             return new List<ISB_BIA_Informationssegmente>();
+        }
+
+        public ObservableCollection<ISB_BIA_Delta_Analyse> Get_History_PreProcRelations(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ObservableCollection<ISB_BIA_Delta_Analyse> Get_History_PostProcRelations(int id)
+        {
+            throw new NotImplementedException();
         }
         #endregion
 

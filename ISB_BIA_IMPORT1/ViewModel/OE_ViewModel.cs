@@ -22,7 +22,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private ISB_BIA_OEs _oE_SelectedNumber;
         private ISB_BIA_OEs _oE_SelectedNewNumberName;
         private string _str_NewNumber;
+        private string _str_NewOwner;
         private string _str_EditNewNumber;
+        private string _str_EditNewOwner;
         private ObservableCollection<ISB_BIA_OEs> _list_OELinks;
         private ISB_BIA_OEs _oE_SelectedLink;
         private ISB_BIA_OEs _oE_SelectedNewLinkName;
@@ -102,12 +104,28 @@ namespace ISB_BIA_IMPORT1.ViewModel
             set => Set(() => Str_NewNumber, ref _str_NewNumber, value);
         }
         /// <summary>
+        /// Prozesseigentümer einer OE bei Neuanlage
+        /// </summary>
+        public string Str_NewOwner
+        {
+            get => _str_NewOwner;
+            set => Set(() => Str_NewOwner, ref _str_NewOwner, value);
+        }
+        /// <summary>
         /// Nummer einer OE bei Bearbeitung
         /// </summary>
         public string Str_EditNewNumber
         {
             get => _str_EditNewNumber;
             set => Set(() => Str_EditNewNumber, ref _str_EditNewNumber, value);
+        }
+        /// <summary>
+        /// Prozesseigentümer einer OE bei Bearbeitung
+        /// </summary>
+        public string Str_EditNewOwner
+        {
+            get => _str_EditNewOwner;
+            set => Set(() => Str_EditNewOwner, ref _str_EditNewOwner, value);
         }
         #endregion
 
@@ -332,7 +350,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _cmd_SaveNumberNew
                   ?? (_cmd_SaveNumberNew = new MyRelayCommand(() =>
                   {
-                      ISB_BIA_OEs result = _myOE.Insert_OENumber_New(Str_NewNumber, OE_SelectedNewNumberName);
+                      ISB_BIA_OEs result = _myOE.Insert_OENumber_New(Str_NewNumber, Str_NewOwner, OE_SelectedNewNumberName);
                       if (result != null)
                       {
                           CancelEdit();
@@ -350,7 +368,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _cmd_SaveNumberEdit
                   ?? (_cmd_SaveNumberEdit = new MyRelayCommand(() =>
                   {
-                      bool result = _myOE.Insert_OENumber_Edit(Str_EditNewNumber, OE_SelectedNumber.OE_Nummer);
+                      bool result = _myOE.Insert_OENumber_Edit(Str_EditNewNumber, Str_EditNewOwner, OE_SelectedNumber.OE_Nummer, OE_SelectedNumber.Prozesseigentümer);
                       if (result)
                       {
                           CancelEdit();
@@ -545,6 +563,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
             List_OENames = _myOE.Get_List_OENames();
             List_OENumbers = _myOE.Get_List_OENumbers();
             List_OELinks = _myOE.Get_List_OERelation();
+
+            #region initiale Sichtbarkeiten
             Vis_NameBorder = Visibility.Visible;
             Vis_NameNewBorder = Visibility.Collapsed;
             Vis_NameEditBorder = Visibility.Collapsed;
@@ -555,6 +575,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             Vis_NumberBorder = Visibility.Visible;
             Vis_NumberNewBorder = Visibility.Collapsed;
             Vis_NumberEditBorder = Visibility.Collapsed;
+            #endregion
         }
 
         /// <summary>

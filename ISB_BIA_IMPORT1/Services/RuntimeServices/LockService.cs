@@ -31,9 +31,9 @@ namespace ISB_BIA_IMPORT1.Services
                 }
                 return true;
             }
-            catch (Exception ex)
+            catch
             {
-                _myDia.ShowError("Es konnte keine Verbindung zur Datenbank [" + s + "] hergestellt werden.\nDie Anwendung wird geschlossen.", ex);
+                _myDia.ShowError("Es konnte keine Verbindung zur Datenbank [" + s + "] hergestellt werden.\nDie Anwendung wird geschlossen.");
                 return false;
             }
         }
@@ -122,12 +122,26 @@ namespace ISB_BIA_IMPORT1.Services
                 {
                     List<ISB_BIA_Lock> list = db.ISB_BIA_Lock.ToList();
                     db.ISB_BIA_Lock.DeleteAllOnSubmit(list);
+                    string o="";
+                    int i = 0;
+                    foreach(ISB_BIA_Lock p in list)
+                    {
+                        o +="\n"+ p.BenutzerNnVn + "(" + p.Benutzer + ")";
+                        i++;
+                        if (i == 20)
+                        {
+                            o += "\n und " + (list.Count - i) + " weitere";
+                            break;
+                        }
+                    }
+                    _myDia.ShowQuestion("Die folgenden " + list.Count + " Locks aufheben?:" + o,"Userlocks entfernen");
+                    o = list.Count + " Locks entfernt" + o;
                     //Logeintrag erzeugen
                     ISB_BIA_Log logEntry = new ISB_BIA_Log
                     {
                         Aktion = "Entfernen aller User-Locks durch Admin",
                         Tabelle = _myShared.Tbl_Lock,
-                        Details = list.Count + " Locks entfernt",
+                        Details = o,
                         Id_1 = 0,
                         Id_2 = 0,
                         Datum = DateTime.Now,

@@ -1,4 +1,5 @@
 ﻿using ISB_BIA_IMPORT1.Model;
+using System.Collections.Generic;
 
 namespace ISB_BIA_IMPORT1.Services.Interfaces
 {
@@ -26,6 +27,14 @@ namespace ISB_BIA_IMPORT1.Services.Interfaces
         /// Variable zum Testen der Anwendung als Admin in der Produktivumgebung 
         /// </summary>
         bool Conf_Admin { get; set; }
+        /// <summary>
+        /// Variable definieren der Test-OE als Admin in der Produktivumgebung 
+        /// </summary>
+        string Conf_Admin_OE { get; set; }
+        /// <summary>
+        /// Variable definieren der Test-OE als Admin in der Produktivumgebung (Liste)
+        /// </summary>
+        List<string> Conf_Admin_OE_List { get; set; }
         /// <summary>
         /// User welcher aus Active Directory und PC-Usernamen sowie aktuellen Einstellungen für diese Anwendung erstellt wird
         /// </summary>
@@ -106,8 +115,10 @@ namespace ISB_BIA_IMPORT1.Services.Interfaces
         /// </summary>
         string Tbl_Lock { get; set; }
 
+        //---------
+        string Tbl_Proz_vPnP { get; set; }
+        //---------
         #endregion
-
 
     }
 }

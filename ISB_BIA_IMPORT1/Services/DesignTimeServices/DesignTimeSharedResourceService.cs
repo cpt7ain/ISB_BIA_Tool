@@ -1,5 +1,6 @@
 ﻿using ISB_BIA_IMPORT1.Model;
 using ISB_BIA_IMPORT1.Services.Interfaces;
+using System.Collections.Generic;
 
 namespace ISB_BIA_IMPORT1.Services
 {
@@ -10,12 +11,14 @@ namespace ISB_BIA_IMPORT1.Services
         public Current_Environment Conf_CurrentEnvironment { get; set; } = Current_Environment.Local_Test;
 
         public bool Conf_Admin { get; set; } = true;
+        public string Conf_Admin_OE { get; set; } = "1.1";
+        public List<string> Conf_Admin_OE_List { get; set; } = new List<string>() { "1.1" };
 
         public Login_Model User { get; set; }
             = new Login_Model(){
                     Givenname = "TestUser",
                     Surname = "Test",
-                    OE = "1.1",
+                    ListOE = new List<string>() { "1.1" },
                     UserGroup = UserGroups.CISO,
                     Username = "TEST"
                 };
@@ -95,6 +98,12 @@ namespace ISB_BIA_IMPORT1.Services
             set { }
         }
         public string Tbl_Lock
+        {
+            get => "";
+            set { }
+        }
+
+        public string Tbl_Proz_vPnP
         {
             get => "";
             set { }

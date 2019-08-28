@@ -12,6 +12,7 @@ using System.Windows.Documents;
 using System.Windows.Xps.Packaging;
 using ISB_BIA_IMPORT1.Helpers;
 using ISB_BIA_IMPORT1.Services.Interfaces;
+using System.Diagnostics;
 
 namespace ISB_BIA_IMPORT1.ViewModel
 {
@@ -47,6 +48,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private int _count_AllProcesses;
         private int _count_EditProcesses;
         private MyRelayCommand _cmd_ChangeTextSize;
+        private MyRelayCommand<String> _cmd_OpenDocExtern;
         #endregion
 
         #region Nav-Commands
@@ -61,7 +63,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       _myNavi.NavigateTo<Process_ViewModel>(0, ProcAppMode.New);
                   }));
         }
-
         /// <summary>
         /// Navigiert zum ProcessViewVM um einen vorhandenen Prozess zu bearbeiten oder zu löschen
         /// </summary>
@@ -73,7 +74,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       _myNavi.NavigateTo<ProcessView_ViewModel>(m);
                   }));
         }
-
         /// <summary>
         /// Navigiert zum ApplicationVM um eine neue Anwendung anzulegen
         /// </summary>
@@ -85,7 +85,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       _myNavi.NavigateTo<Application_ViewModel>(0, ProcAppMode.New);
                   }));
         }
-
         /// <summary>
         /// Navigiert zum ApplicationViewVM um eine vorhandenen Anwendung zu bearbeiten oder zu löschen
         /// </summary>
@@ -97,7 +96,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       _myNavi.NavigateTo<ApplicationView_ViewModel>(mode);
                   }));
         }
-
         /// <summary>
         /// Navigiert zum ApplicationVM um eine vorhandenen Anwendung zu bearbeiten
         /// </summary>
@@ -109,7 +107,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       _myNavi.NavigateTo<SBA_View_ViewModel>();
                   }));
         }
-
         /// <summary>
         /// Navigiert zum InformationSegmentViewVM um ein Informationssegment zu bearbeiten oder zu betrachten
         /// </summary>
@@ -126,7 +123,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       _myNavi.NavigateTo<SegmentsView_ViewModel>(m);
                   }));
         }
-
         /// <summary>
         /// Navigiert zum InformationSegmentsAttributesVM um Attribute zu bearbeiten oder zu betrachten
         /// Im Berbeitungsmodus wird die Liste für andere Bearbeitungen zusätzlich gesperrt
@@ -158,7 +154,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       }
                   }));
         }
-
         /// <summary>
         /// Navigiert zum OE_AssignmentViewVM um OE's und OE-Gruppen zu verwalten und einander zuzuordnen, zu bearbeiten oder zu betrachten
         /// </summary>
@@ -179,7 +174,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       }
                   }));
         }
-
         /// <summary>
         /// Navigiert zum SettingsVM um Einstellungen der Anwendung zu ändern
         /// </summary>
@@ -200,7 +194,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       }
                   }));
         }
-
         /// <summary>
         /// Navigiert zum DataModelVM um das Datenmodell komplett neu zu erstellen (Funktion soll gesperrt werden)
         /// </summary>
@@ -212,7 +205,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       _myNavi.NavigateTo<DataModel_ViewModel>();
                   }));
         }
-
         /// <summary>
         /// Navigiert zum LogVM um das Anwendungslog zu betrachten oder zu exportieren 
         /// </summary>
@@ -224,7 +216,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       _myNavi.NavigateTo<LogView_ViewModel>();
                   }));
         }
-
         /// <summary>
         /// Command, um alle bestehenden Locks aus der DB zu entfernen (Im Fehlerfall, falls Locks nicht korrekt entfernt wurden)
         /// </summary>
@@ -239,7 +230,38 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       }
                   }));
         }
+        /// <summary>
+        /// Command zum Zurückkehren zum vorherigen Viewmodel
+        /// </summary>
+        public MyRelayCommand<string> Cmd_OpenDocExtern
+        {
+            get => _cmd_OpenDocExtern
+                ?? (_cmd_OpenDocExtern = new MyRelayCommand<string>((name) =>
+                {
+                    try
+                    {
+                        if (name == "Hilfe")
+                        {
+                            if (_myShared.User.UserGroup == UserGroups.Normal_User) name = "ISB-BIA-Tool_Hilfe";
+                            else name = "ISB-BIA-Tool_Hilfe - CISO";
+                        }
+                        string _str_Filename = _myShared.Dir_InitialDirectory + @"\" + name + ".pdf";
+                        if (File.Exists(_str_Filename))
+                        {
+                            Process.Start(_str_Filename);
+                        }
+                        else
+                        {
+                            _myDia.ShowInfo("Keine Hilfe verfügbar");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _myDia.ShowError("Keine Hilfe verfügbar.", ex);
+                    }
+                }));
 
+        }
         /// <summary>
         /// Navigiert zum InfoVM diverse externe Hilfe/Infodateien innerhalb der Anwendung zu betrachten 
         /// </summary>
@@ -278,62 +300,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       }
                   }));
         }
-        #endregion
-
-        /// <summary>
-        /// Sichtbarkeit des Anwedungsreiters im Menü
-        /// </summary>
-        public Visibility Vis_AppMenu
-        {
-            get=> _vis_AppMenu;
-            set => Set(()=> Vis_AppMenu, ref _vis_AppMenu, value);
-        }
-
-        /// <summary>
-        /// Sichtbarkeit des Schutzbedarfsanalysereiters im Menü
-        /// </summary>
-        public Visibility Vis_SBAMenu
-        {
-            get => _vis_SBaMenu;
-            set => Set(() => Vis_SBAMenu, ref _vis_SBaMenu, value);
-        }
-
-        /// <summary>
-        /// Sichtbarkeit des Einstellungsreiters im Menü
-        /// </summary>
-        public Visibility Vis_SettingsMenu
-        {
-            get => _vis_SettingsMenu;
-            set => Set(() => Vis_SettingsMenu, ref _vis_SettingsMenu, value);
-        }
-
-        /// <summary>
-        /// Sichtbarkeit des Deltaanalysebereichs
-        /// </summary>
-        public Visibility Vis_DeltaBorder
-        {
-            get => _vis_DeltaBorder;
-            set => Set(() => Vis_DeltaBorder, ref _vis_DeltaBorder, value);
-        }
-
-        /// <summary>
-        /// Sichtbarkeit des BIA-Prozessbereichs
-        /// </summary>
-        public Visibility Vis_ProcessBorder
-        {
-            get => _vis_ProcessBorder;
-            set => Set(() => Vis_ProcessBorder, ref _vis_ProcessBorder, value);
-        }
-
-        /// <summary>
-        /// Datum des Datepickers für die Deltaanalyse
-        /// </summary>
-        public DateTime PickerDate
-        {
-            get => _pickerDate;
-            set => Set(()=> PickerDate, ref _pickerDate, value);
-        }
-
         /// <summary>
         /// Navigiert zum DeltaAnalysisVM um eine Deltaanalyse für das gegebene Datum zu erstellen und zu betrachten
         /// </summary>
@@ -346,11 +312,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       if (list != null)
                       {
                           _myNavi.NavigateTo<DeltaAnalysis_ViewModel>();
-                          MessengerInstance.Send(new NotificationMessage<ObservableCollection<ISB_BIA_Delta_Analyse>>(this,list,null));
+                          MessengerInstance.Send(new NotificationMessage<ObservableCollection<ISB_BIA_Delta_Analyse>>(this, list, null));
                       }
                   }));
         }
-
         /// <summary>
         /// Navigiert zum DeltaAnalysisVM um die letzte gespeicherte Deltaanalyse zu betrachten
         /// </summary>
@@ -371,7 +336,52 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       }
                   }));
         }
+        #endregion
 
+        #region Sichtbarkeiten für Menüpunkte
+        /// <summary>
+        /// Sichtbarkeit des Anwedungsreiters im Menü
+        /// </summary>
+        public Visibility Vis_AppMenu
+        {
+            get=> _vis_AppMenu;
+            set => Set(()=> Vis_AppMenu, ref _vis_AppMenu, value);
+        }
+        /// <summary>
+        /// Sichtbarkeit des Schutzbedarfsanalysereiters im Menü
+        /// </summary>
+        public Visibility Vis_SBAMenu
+        {
+            get => _vis_SBaMenu;
+            set => Set(() => Vis_SBAMenu, ref _vis_SBaMenu, value);
+        }
+        /// <summary>
+        /// Sichtbarkeit des Einstellungsreiters im Menü
+        /// </summary>
+        public Visibility Vis_SettingsMenu
+        {
+            get => _vis_SettingsMenu;
+            set => Set(() => Vis_SettingsMenu, ref _vis_SettingsMenu, value);
+        }
+        /// <summary>
+        /// Sichtbarkeit des Deltaanalysebereichs
+        /// </summary>
+        public Visibility Vis_DeltaBorder
+        {
+            get => _vis_DeltaBorder;
+            set => Set(() => Vis_DeltaBorder, ref _vis_DeltaBorder, value);
+        }
+        /// <summary>
+        /// Sichtbarkeit des BIA-Prozessbereichs
+        /// </summary>
+        public Visibility Vis_ProcessBorder
+        {
+            get => _vis_ProcessBorder;
+            set => Set(() => Vis_ProcessBorder, ref _vis_ProcessBorder, value);
+        }
+        #endregion
+
+        #region Commands
         /// <summary>
         /// Exportieren der Liste aller Prozesse nach Excel
         /// </summary>
@@ -380,14 +390,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _cmd_ExportProcessList
                     ?? (_cmd_ExportProcessList = new MyRelayCommand(() =>
                     {
-                        bool success = _myExport.Export_Processes_Active();
-                        if (success)
-                        {
-                            _myDia.ShowInfo("Export erfolgreich");
-                        }
+                        _myExport.Export_Processes_Active();
                     }));           
         }
-
         /// <summary>
         /// Ändern der allgemeinen Schriftgröße
         /// </summary>
@@ -400,7 +405,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
                         MessengerInstance.Send(new NotificationMessage<int>(this,GlobalFontSize,null), MessageToken.ChangeTextSize);
                     }));
         }
+        #endregion
 
+        #region sonstige Eigenschaften
         /// <summary>
         /// allgemeine Schriftgröße (für Menü)
         /// </summary>
@@ -409,7 +416,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _globalFontSize;
             set => Set(() => GlobalFontSize, ref _globalFontSize, value);
         }
-
         /// <summary>
         /// Anzahl aller Prozesse
         /// </summary>
@@ -418,7 +424,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _count_AllProcesses;
             set => Set(() => Count_AllProcesses, ref _count_AllProcesses, value);
         }
-
         /// <summary>
         /// Anzahl aller bearbeiteten Prozesse
         /// </summary>
@@ -427,12 +432,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _count_EditProcesses;
             set => Set(() => Count_EditProcesses, ref _count_EditProcesses, value);
         }
-
         /// <summary>
         /// Anweisung im MenüVM
         /// </summary>
-        public string[] Instructions { get; set; }
-        
+        public string[] Instructions { get; set; }   
         /// <summary>
         /// Angemeldeter User
         /// </summary>
@@ -440,6 +443,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             get => _myShared.User;
         }
+        /// <summary>
+        /// Datum des Datepickers für die Deltaanalyse
+        /// </summary>
+        public DateTime PickerDate
+        {
+            get => _pickerDate;
+            set => Set(() => PickerDate, ref _pickerDate, value);
+        }
+        #endregion
 
         #region Services
         private readonly INavigationService _myNavi;
@@ -450,6 +462,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private readonly ISharedResourceService _myShared;
         private readonly ILockService _myLock;
         #endregion
+
 
         /// <summary>
         /// Konstruktor
@@ -485,7 +498,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             }
             #endregion
 
-            //Sichtbarkeiten und Anweisungen für den jeweiligen Usermodus definieren
+            #region Sichtbarkeiten und Anweisungen für den jeweiligen Usermodus definieren
             Instructions = new string[3];
             Vis_AppMenu = Visibility.Visible;
             Vis_SBAMenu = Visibility.Visible;
@@ -517,7 +530,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     Instructions[0] = "Bitte starten Sie im Sinne der Business Impact Analysis mit Ihrer Bearbeitung (Neuanlage, Löschen) von Prozessen über den Menüpunkt 'Prozesse' in der Menüleiste oben.\nBitte füllen Sie mindestens alle Felder mit fettgedrucktem Feldnamen aus, da diese als Pflichtfelder definiert sind.";
                     break;
             }
-            
+            #endregion
         }
 
         /// <summary>

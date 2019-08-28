@@ -5,6 +5,7 @@ using ISB_BIA_IMPORT1.ViewModel;
 using System.Collections.ObjectModel;
 using System.Linq;
 using ISB_BIA_IMPORT1.Services.Interfaces;
+using System;
 
 namespace ISB_BIA_IMPORT1.Services
 {
@@ -20,6 +21,7 @@ namespace ISB_BIA_IMPORT1.Services
         public void NavigateBack(bool refresh = false)
         {
             VMHistory.RemoveAt(0);
+            GC.Collect();
             if (refresh)
             {
                 Messenger.Default.Send(new NotificationMessage<string>(this,"Refresh",null), MessageToken.RefreshData);

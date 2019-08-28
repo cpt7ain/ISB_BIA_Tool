@@ -24,10 +24,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         //Hier die Daten angeben, welche für den DatenImport benötigt werden (Name des Excel-Sheets, Zellenrange)
         private string _str_Sheet_Process = "3 - BIA";
         private string _str_Sheet_App = "4 - SBA";
-        private string _str_Range_Process = "B6:AC776";
-        private string _str_Range_App = "B6:O402";
+        private string _str_Range_Process = "B6:AB776";
+        private string _str_Range_App = "B6:O466";
         private string _str_Sheet_Process_App_Matrix = "3 - BIA";
-        private string _str_Range_Process_App_Matrix = "AD7:PI776";
+        private string _str_Range_Process_App_Matrix = "AC7:RT776";
         private string _str_Range_InformationSegment = "B8:P43";
         private string _str_Sheet_InformationSegment = "Informationssegmente";
         private string _str_Range_Attribute = "Y8:AG18";
@@ -36,6 +36,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
 
         #region Strings der Dateien und SQL-Drop Befehle (abhängig von den Daten in myShared im Konstruktor erzeugt)
         //Original & Arbeitsdatei der Quelldaten
+        private string _str_SourceFile;
         private string _str_OriginalFile;
         private string _str_WorkFile;
         #endregion
@@ -56,7 +57,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             get => _str_Range_Process;
             set => Set(() => Str_Range_Process, ref _str_Range_Process, value);
-
         }
         /// <summary>
         /// Name des Sheets mit der Anwendungsliste
@@ -119,7 +119,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             get => _str_Sheet_Attribute;
             set => Set(() => Str_Sheet_Attribute, ref _str_Sheet_Attribute, value);
-
         }
         /// <summary>
         /// Bereich der Informationssegment-Attribut-Daten auf dem Sheet
@@ -128,15 +127,19 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             get => _str_Range_Attribute;
             set => Set(() => Str_Range_Attribute, ref _str_Range_Attribute, value);
-
         }
         #endregion
 
         /// <summary>
         /// Dateipfad für Quelldatei
         /// </summary>
-        public string Str_SourceFile { get; set; }
+        public string Str_SourceFile
+        {
+            get => _str_SourceFile;
+            set => Set(() => Str_SourceFile, ref _str_SourceFile, value);
+        }
 
+        #region Commands
         /// <summary>
         /// Quelldatei Auswählen
         /// </summary>
@@ -158,10 +161,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       {
                           _str_OriginalFile = openFileDialog.FileName;
                           _str_WorkFile = openFileDialog.InitialDirectory + @"\ISB_BIA-SBA_tmp.xlsx";
+                          Str_SourceFile = _str_OriginalFile;
                       }
                   }));
         }
-
         /// <summary>
         /// Erneuerung des Datenmodells Ausführen und schliessen
         /// </summary>
@@ -177,7 +180,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       }
                   }));
         }
-
         /// <summary>
         /// Command zum Zurückkehren zum vorherigen VM
         /// </summary>
@@ -195,6 +197,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 });
             }
         }
+        #endregion
 
         #region Services
         private readonly IDataModelService _myDM;
@@ -293,10 +296,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private bool GetDataForDatamodel(IWorkbook workbook)
         {
             //Funktionen ausführen, um daten aus der Excel-Datei zu erhalten
-            DataTable dt_Applications = GetApplicationDataFromXLSX(workbook);
-            DataTable dt_Processes = GetProcessDataFromXLSX(workbook);
-            DataTable dt_InformationSegments = GetInformationSegmentDataFromXLSX(workbook);
-            DataTable dt_InformationSegmentAttributes = GetInformationSegmentAttributDataFromXLSX(workbook);
+            DataTable dt_Applications = GetDataFromXLSX(workbook, Str_Sheet_App, Str_Range_App, "Applikationen");
+            DataTable dt_Processes = GetDataFromXLSX(workbook, Str_Sheet_Process, Str_Range_Process, "Prozesse");
+            DataTable dt_InformationSegments = GetDataFromXLSX(workbook, Str_Sheet_InformationSegment, Str_Range_InformationSegment, "Segmente");
+            DataTable dt_InformationSegmentAttributes = GetDataFromXLSX(workbook, Str_Sheet_Attribute, Str_Range_Attribute, "Attribute");
             DataTable dt_Relation = FillSQLRelationFromXLSX(workbook);
 
             if (dt_Applications == null || dt_Processes == null || dt_InformationSegments == null || dt_InformationSegmentAttributes == null || dt_Relation == null)
@@ -306,8 +309,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
             }
             else
             {
-
-
                 //Datenbank Operation durch Service übernommen
                 return _myDM.Create(dt_Processes, dt_Applications, dt_Relation, dt_InformationSegments, dt_InformationSegmentAttributes);               
             }
@@ -320,13 +321,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         /// <param name="workbook"> Workbook Objekt, auf dem Operationen durchgeführt werden können </param>
         /// <returns> Datatable, der die gelesenen Daten enthält </returns>
-        private DataTable GetProcessDataFromXLSX(IWorkbook workbook)
+        private DataTable GetDataFromXLSX(IWorkbook workbook, string sheetName, string range, string subject)
         {
-            ISheet sheet = workbook.GetSheet(Str_Sheet_Process);
+            ISheet sheet = workbook.GetSheet(sheetName);
             if (sheet != null)
             {
                 DataTable dt = new DataTable(sheet.SheetName);
-                CellRangeAddress cellRange = CellRangeAddress.ValueOf(Str_Range_Process);
+                CellRangeAddress cellRange = CellRangeAddress.ValueOf(range);
                 for (var i = cellRange.FirstRow; i <= cellRange.LastRow; i++)
                 {
                     var row = sheet.GetRow(i);
@@ -362,63 +363,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
             }
             else
             {
-                _myDia.ShowWarning("Excel-Quelldatei hat nicht das passende Format!\n(Prozesse)\nVoraussetzungen:\nSheet-Name: '" + Str_Sheet_Process + "'\nRange: '" + Str_Range_Process + "'");
+                _myDia.ShowWarning("Excel-Quelldatei hat nicht das passende Format!\n("+subject+")\nVoraussetzungen:\nSheet-Name: '" + sheetName + "'\nRange: '" + range + "'");
                 return null;
             }
         }
-
-        /// <summary>
-        /// Funktion um Anwendungsdaten aus Excel zu lesen und in DataTable zu speichern
-        /// </summary>
-        /// <param name="workbook"> Workbook Objekt, auf dem Operationen durchgeführt werden können </param>
-        /// <returns> Datatable, der die gelesenen Daten enthält </returns>
-        private DataTable GetApplicationDataFromXLSX(IWorkbook workbook)
-        {
-            ISheet sheet = workbook.GetSheet(Str_Sheet_App);
-            if (sheet != null)
-            {
-                DataTable dt = new DataTable(sheet.SheetName);
-                CellRangeAddress cellRange = CellRangeAddress.ValueOf(Str_Range_App);
-                for (var i = cellRange.FirstRow; i <= cellRange.LastRow; i++)
-                {
-                    var row = sheet.GetRow(i);
-                    if (i == cellRange.FirstRow)
-                    {
-                        for (var j = cellRange.FirstColumn; j <= cellRange.LastColumn; j++)
-                        {
-                            var headerCell = row.GetCell(j);
-                            dt.Columns.Add(headerCell.ToString());
-                        }
-                    }
-                    else
-                    {
-                        DataRow dataRow = dt.NewRow();
-                        var index = 0;
-                        for (var j = cellRange.FirstColumn; j <= cellRange.LastColumn; j++)
-                        {
-                            dataRow[index] = row.GetCell(j).ToString();
-                            index++;
-                        }
-                        try
-                        {
-                            dt.Rows.Add(dataRow);
-                        }
-                        catch (Exception ex)
-                        {
-                            _myDia.ShowError("Fehler beim Import", ex);
-                            return null;
-                        }
-                    }
-                }
-                return dt;
-            }
-            else
-            {
-                _myDia.ShowWarning("Excel-Quelldatei hat nicht das passende Format!\n(Applikationen)\nVoraussetzungen:\nSheet-Name: '" + Str_Sheet_App + "'\nRange: '" + Str_Range_App + "'");
-                return null;
-            }
-        }
-
         /// <summary>
         /// Funktion um DataTable zu erzeugen, welcher die Relationen zwischen Prozessen und Anwendungen anzeigt
         /// </summary>
@@ -462,110 +410,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
             else
             {
                 _myDia.ShowWarning("Excel-Quelldatei hat nicht das passende Format!\n(Matrix)\nVoraussetzungen:\nSheet-Name: '" + Str_Sheet_Process + "'\nRange: '" + Str_Range_Process_App_Matrix + "'");
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Funktion um Informationssegmentdaten aus Excel zu lesen und in DataTable zu speichern
-        /// </summary>
-        /// <param name="workbook"> Workbook Objekt, auf dem Operationen durchgeführt werden können </param>
-        /// <returns> Datatable, der die gelesenen Daten enthält </returns>
-        private DataTable GetInformationSegmentDataFromXLSX(IWorkbook workbook)
-        {
-            ISheet sheet = workbook.GetSheet(Str_Sheet_InformationSegment);
-            if (sheet != null)
-            {
-                DataTable dt = new DataTable(sheet.SheetName);
-                CellRangeAddress cellRange = CellRangeAddress.ValueOf(Str_Range_InformationSegment);
-                for (var i = cellRange.FirstRow; i <= cellRange.LastRow; i++)
-                {
-                    var row = sheet.GetRow(i);
-                    if (i == cellRange.FirstRow)
-                    {
-                        for (var j = cellRange.FirstColumn; j <= cellRange.LastColumn; j++)
-                        {
-                            var headerCell = row.GetCell(j).ToString();
-                            dt.Columns.Add(headerCell);
-                        }
-                    }
-                    else
-                    {
-                        DataRow dataRow = dt.NewRow();
-                        int index = 0;
-                        for (var j = cellRange.FirstColumn; j <= cellRange.LastColumn; j++)
-                        {
-                            dataRow[index] = row.GetCell(j).ToString();
-                            index++;
-                        }
-                        try
-                        {
-                            dt.Rows.Add(dataRow);
-                        }
-                        catch (Exception ex)
-                        {
-                            _myDia.ShowError("Fehler beim Import", ex);
-                            return null;
-                        }
-                    }
-                }
-                return dt;
-            }
-            else
-            {
-                _myDia.ShowWarning("Excel-Quelldatei hat nicht das passende Format!\n(Informationssegmente)\nVoraussetzungen:\nSheet-Name: '" + Str_Sheet_InformationSegment + "'\nRange: '" + Str_Range_InformationSegment + "'");
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Funktion um Informationssegmentattributdaten aus Excel zu lesen und in DataTable zu speichern
-        /// </summary>
-        /// <param name="workbook"> Workbook Objekt, auf dem Operationen durchgeführt werden können </param>
-        /// <returns> Datatable, der die gelesenen Daten enthält </returns>
-        private DataTable GetInformationSegmentAttributDataFromXLSX(IWorkbook workbook)
-        {
-            ISheet sheet = workbook.GetSheet(Str_Sheet_Attribute);
-            if (sheet != null)
-            {
-                DataTable dt = new DataTable(sheet.SheetName);
-                CellRangeAddress cellRange = CellRangeAddress.ValueOf(Str_Range_Attribute);
-                for (var i = cellRange.FirstRow; i <= cellRange.LastRow; i++)
-                {
-                    var row = sheet.GetRow(i);
-                    if (i == cellRange.FirstRow)
-                    {
-                        for (var j = cellRange.FirstColumn; j <= cellRange.LastColumn; j++)
-                        {
-                            var headerCell = row.GetCell(j).ToString();
-                            dt.Columns.Add(headerCell);
-                        }
-                    }
-                    else
-                    {
-                        DataRow dataRow = dt.NewRow();
-                        int index = 0;
-                        for (var j = cellRange.FirstColumn; j <= cellRange.LastColumn; j++)
-                        {
-                            dataRow[index] = row.GetCell(j).ToString();
-                            index++;
-                        }
-                        try
-                        {
-                            dt.Rows.Add(dataRow);
-                        }
-                        catch (Exception ex)
-                        {
-                            _myDia.ShowError("Fehler", ex);
-                            return null;
-                        }
-                    }
-                }
-                return dt;
-            }
-            else
-            {
-                _myDia.ShowWarning("Excel-Quelldatei hat nicht das passende Format!\n(Informationssegment-Attribute)\nVoraussetzungen:\nSheet-Name: '" + Str_Sheet_Attribute + "'\nRange: '" + Str_Range_Attribute + "'");
                 return null;
             }
         }

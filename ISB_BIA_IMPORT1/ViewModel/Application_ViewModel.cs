@@ -11,6 +11,7 @@ using System.Windows.Documents;
 using System.Windows.Xps.Packaging;
 using ISB_BIA_IMPORT1.Helpers;
 using ISB_BIA_IMPORT1.Services.Interfaces;
+using System.Diagnostics;
 
 namespace ISB_BIA_IMPORT1.ViewModel
 {
@@ -50,6 +51,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private Visibility _vis_SaveButton;
         private MyRelayCommand _cmd_ExportApplicationHistory;
         private MyRelayCommand<string> _cmd_Info;
+        private MyRelayCommand<string> _cmd_OpenDocExtern;
         private MyRelayCommand _cmd_ResetValues;
         #endregion
 
@@ -295,7 +297,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
             }
         }
         #endregion
-
         #region Dropdown Listen
         /// <summary>
         /// Liste der Rechenzentren
@@ -342,39 +343,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
 
         }
         #endregion
-
-        #region Sonstige Properties
-        /// <summary>
-        /// Bestimmt Modus, in dem sich der Anwender befindet
-        /// und das als nächstes aktivierte Viewmodel, sowie den Header
-        /// </summary>
-        public ProcAppMode Mode
-        {
-            get => _mode;
-            set
-            {
-                Set(() => Mode, ref _mode, value);
-                CurrentTab = 0;
-                if (value == ProcAppMode.Change)
-                {
-                    Header = "Anwendung bearbeiten";
-                }
-                else if (value == ProcAppMode.New)
-                {
-                    Header = "Neue Anwendung anlegen";
-                }
-            }
-        }
-        /// <summary>
-        /// Überschrift des Fensters
-        /// </summary>
-        public string Header { get; set; }
-        /// <summary>
-        /// Bestimmt, ob die neuen Schutzziele angezeigt werden oder nicht
-        /// </summary>
-        public bool Vis_NewSecurityGoals { get; set; }
-        #endregion
-
         #region Tabcontrol-Navigations-Properties (für lokale Navigation zwischen den Tabs in der Anwendungsansicht)
         /// <summary>
         /// Aktiver Tab
@@ -420,7 +388,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
 
         }
         #endregion
-
         #region Navigations Commands, welche Änderungen des Viewmodels ausführen (bei Abbruch der Aktion oder erfolgreichem Beenden)
         /// <summary>
         /// Zurück Navigieren (Vorgang abbbrechen)
@@ -437,7 +404,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 }
             });
         }
-
         /// <summary>
         /// Speichern und zurückkeheren. 
         /// Wenn <see cref="ProcAppMode"/> == Edit, dann Nachricht an ApplicationViewVM zur Aktualisierung der Anwendungsliste
@@ -456,7 +422,34 @@ namespace ISB_BIA_IMPORT1.ViewModel
             }, () => { return CurrentTab == 3; });
         }
         #endregion
-
+        #region Commands
+        /// <summary>
+        /// Command zum Zurückkehren zum vorherigen Viewmodel
+        /// </summary>
+        public MyRelayCommand<string> Cmd_OpenDocExtern
+        {
+            get => _cmd_OpenDocExtern
+                ?? (_cmd_OpenDocExtern = new MyRelayCommand<string>((name) =>
+                {
+                    try
+                    {
+                        string _str_Filename = _myShared.Dir_InitialDirectory + @"\" + name + "_Info.pdf";
+                        if (File.Exists(_str_Filename))
+                        {
+                            Process.Start(_str_Filename);
+                        }
+                        else
+                        {
+                            _myDia.ShowInfo("Keine Beschreibung verfügbar");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _myDia.ShowError("Keine Beschreibung verfügbar.", ex);
+                    }
+                }));
+            
+        }
         /// <summary>
         /// Zeigt Definitionen für Schutzziele an
         /// </summary>
@@ -467,7 +460,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     {
                         try
                         {
-                            string file = _myShared.Dir_InitialDirectory + @"\" + name + "_Info.xps";
+                            string file = _myShared.Dir_InitialDirectory + @"\" + name + "_Info.pdf";
                             if (File.Exists(file))
                             {
                                 XpsDocument xpsDocument = new XpsDocument(file, FileAccess.Read);
@@ -534,10 +527,43 @@ namespace ISB_BIA_IMPORT1.ViewModel
                        }
                    }));
         }
+        #endregion
+        #region Sonstige Properties
+        /// <summary>
+        /// Bestimmt Modus, in dem sich der Anwender befindet
+        /// und das als nächstes aktivierte Viewmodel, sowie den Header
+        /// </summary>
+        public ProcAppMode Mode
+        {
+            get => _mode;
+            set
+            {
+                Set(() => Mode, ref _mode, value);
+                CurrentTab = 0;
+                if (value == ProcAppMode.Change)
+                {
+                    Header = "Anwendung bearbeiten";
+                }
+                else if (value == ProcAppMode.New)
+                {
+                    Header = "Neue Anwendung anlegen";
+                }
+            }
+        }
+        /// <summary>
+        /// Überschrift des Fensters
+        /// </summary>
+        public string Header { get; set; }
+        /// <summary>
+        /// Bestimmt, ob die neuen Schutzziele angezeigt werden oder nicht
+        /// </summary>
+        public bool Vis_NewSecurityGoals { get; set; }
         /// <summary>
         /// Einstellungen (aus DB abgerufen)
         /// </summary>
         public ISB_BIA_Settings Setting { get; set; }
+        #endregion
+
 
         #region Services
         private readonly INavigationService _myNavi;
@@ -570,7 +596,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
             _myExp = myExp;
             _myShared = myShared;
             #endregion
-
             if (IsInDesignMode)
             {
                 ApplicationCurrent = _myApp.Get_Model_FromDB(1);
@@ -585,7 +610,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             else
             {
                 #region Messenger Registrierungen für 2 Modi (Anwendung bearbeiten, neue Anwendung anlegen)
-                //NotificationMessage<int> a = new NotificationMessage<int>(4,"");
+                //Bearbeitungsmodus
                 MessengerInstance.Register<NotificationMessage<int>>(this, ProcAppMode.Change, message => {
                     if (!(message.Sender is INavigationService)) return;
                     Mode = ProcAppMode.Change;
@@ -608,6 +633,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                         App_IT_Betriebsart = ApplicationCurrent.IT_Betriebsart;
                     }
                 });
+                //Neuanlage
                 MessengerInstance.Register<NotificationMessage<int>>(this, ProcAppMode.New, message => {
                     if (!(message.Sender is INavigationService)) return;
                     Mode = ProcAppMode.New;
@@ -627,7 +653,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 Vis_NewSecurityGoals = (Setting.Neue_Schutzziele_aktiviert == "Ja");
                 #endregion
             }
-
         }
 
         /// <summary>

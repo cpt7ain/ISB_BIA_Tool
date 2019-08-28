@@ -8,6 +8,7 @@ using ISB_BIA_IMPORT1.LINQ2SQL;
 using Microsoft.Win32;
 using NPOI.HSSF.UserModel;
 using ISB_BIA_IMPORT1.Services.Interfaces;
+using ISB_BIA_IMPORT1.Model;
 
 namespace ISB_BIA_IMPORT1.Services
 {
@@ -19,7 +20,6 @@ namespace ISB_BIA_IMPORT1.Services
         private readonly IDataService_Segment _myIS;
         private readonly IDataService_Application _myApp;
         private readonly IDataService_Process _myProc;
-
 
         ISB_BIA_Settings Setting { get; set; }
         ObservableCollection<ISB_BIA_Informationssegmente> ISList { get; set; }
@@ -41,26 +41,24 @@ namespace ISB_BIA_IMPORT1.Services
         public bool Export_Applications_All()
         {
             //Alle Applikationen abrufen
-            ObservableCollection<ISB_BIA_Applikationen> queryApplications;
-            queryApplications = _myApp.Get_List_Applications_All();
+            ObservableCollection<Application_Model> queryApplications;
+            queryApplications = _myApp.Get_List_ApplicationModels_All();
             if (queryApplications != null)
                 return Export_Applications(queryApplications);
             else
                 return false;
         }
-
         public bool Export_Applications_Active()
         {
             //Alle Applikationen abrufen
-            ObservableCollection<ISB_BIA_Applikationen> queryApplications;
-            queryApplications = _myApp.Get_List_Applications_Active();
+            ObservableCollection<Application_Model> queryApplications;
+            queryApplications = _myApp.Get_List_ApplicationModels_Active();    
             if (queryApplications != null)
                 return Export_Applications(queryApplications, "SBA_");
-            else
-                return false;
+            else              
+                return false;           
         }
-
-        public bool Export_Applications(ObservableCollection<ISB_BIA_Applikationen> apps, string title="", int id=0)
+        public bool Export_Applications(ObservableCollection<Application_Model> apps, string title="", int id=0)
         {
             //SaveFileDialog öffnen mit default Ordner "Dokumente"
             string a = (id == 0) ? "": id.ToString();
@@ -83,7 +81,7 @@ namespace ISB_BIA_IMPORT1.Services
                     
                     //Spaltenheader
                     var row = sheet.CreateRow(0);
-                    List<string> HeaderList = new List<string>() { "Applikation Id", "IT Anwendung System", "IT Betriebsart", "Server", "Virtuelle Maschine", "Typ", "Wichtiges Anwendungssystem", Setting.SZ_1_Name, Setting.SZ_2_Name, Setting.SZ_3_Name, Setting.SZ_4_Name, Setting.SZ_5_Name , Setting.SZ_6_Name, "Datum", "Benutzer", "Aktiv" };
+                    List<string> HeaderList = new List<string>() { "Applikation Id", "IT Anwendung System", "IT Betriebsart", "Rechenzentrum", "Server", "Virtuelle Maschine", "Typ", "Wichtiges Anwendungssystem", Setting.SZ_1_Name, Setting.SZ_2_Name, Setting.SZ_3_Name, Setting.SZ_4_Name, Setting.SZ_5_Name , Setting.SZ_6_Name, "Datum", "Bearbeitet von", "Aktiv" };
                     for (int i = 0; i < HeaderList.Count; i++)
                     {
                         var cell = row.CreateCell(i);
@@ -110,19 +108,19 @@ namespace ISB_BIA_IMPORT1.Services
                         cell = row.CreateCell(6);
                         cell.SetCellValue(apps[i].Typ);
                         cell = row.CreateCell(7);
-                        cell.SetCellValue((apps[i].Wichtiges_Anwendungssystem == "x") ? "Ja" : "Nein");
+                        cell.SetCellValue((apps[i].Wichtiges_Anwendungssystem) ? "Ja" : "Nein");
                         cell = row.CreateCell(8);
-                        cell.SetCellValue(apps[i].SZ_1);
+                        cell.SetCellValue((int)apps[i].SZ_1);
                         cell = row.CreateCell(9);
-                        cell.SetCellValue(apps[i].SZ_2);
+                        cell.SetCellValue((int)apps[i].SZ_2);
                         cell = row.CreateCell(10);
-                        cell.SetCellValue(apps[i].SZ_3);
+                        cell.SetCellValue((int)apps[i].SZ_3);
                         cell = row.CreateCell(11);
-                        cell.SetCellValue(apps[i].SZ_4);
+                        cell.SetCellValue((int)apps[i].SZ_4);
                         cell = row.CreateCell(12);
-                        cell.SetCellValue(apps[i].SZ_5);
+                        cell.SetCellValue((int)apps[i].SZ_5);
                         cell = row.CreateCell(13);
-                        cell.SetCellValue(apps[i].SZ_6);
+                        cell.SetCellValue((int)apps[i].SZ_6);
                         cell = row.CreateCell(14);
                         cell.SetCellValue(apps[i].Datum.ToString());
                         cell = row.CreateCell(15);
@@ -182,7 +180,6 @@ namespace ISB_BIA_IMPORT1.Services
                 return false;
             }
         }
-
         public bool Export_Processes_Active()
         {
             ObservableCollection<ISB_BIA_Prozesse> ps;
@@ -192,7 +189,6 @@ namespace ISB_BIA_IMPORT1.Services
             else
                 return false;
         }
-
         public bool Export_Processes(ObservableCollection<ISB_BIA_Prozesse> procs, int id=0)
         {
             SaveFileDialog sfd = new SaveFileDialog()
@@ -217,7 +213,7 @@ namespace ISB_BIA_IMPORT1.Services
                     #region Process
                     //Spaltenheader
                     var row = sheet.CreateRow(0);
-                    List<string> HeaderList = new List<string>() { "Prozess Id", "Prozess", "Sub-Prozess", "OE", "Prozessverantwortlicher", "Kritischer Prozess", "Kritikalität", "Reifegrad", "Regulatorisch", "Reputatorisch", "Finanziell", Setting.SZ_1_Name, Setting.SZ_2_Name, Setting.SZ_3_Name, Setting.SZ_4_Name, Setting.SZ_5_Name, Setting.SZ_6_Name, "Datum", "Benutzer", "Aktiv" };
+                    List<string> HeaderList = new List<string>() { "Prozess Id", "Prozess", "Sub-Prozess", "OE", "Prozesseigentümer", "Prozessverantwortlicher", "Kritischer Prozess", "Kritikalität", "Reifegrad", "Regulatorisch", "Reputatorisch", "Finanziell", Setting.SZ_1_Name, Setting.SZ_2_Name, Setting.SZ_3_Name, Setting.SZ_4_Name, Setting.SZ_5_Name, Setting.SZ_6_Name,"Servicezeiten","RPO","RTO","RTO Notfall","Relevantes IS 1","Relevantes IS 2","Relevantes IS 3","Relevantes IS 4","Relevantes IS 5", "Datum", "Bearbeitet von", "Aktiv" };
                     for (int i = 0; i < HeaderList.Count; i++)
                     {
                         var cell = row.CreateCell(i);
@@ -238,71 +234,130 @@ namespace ISB_BIA_IMPORT1.Services
                         cell = row.CreateCell(3);
                         cell.SetCellValue(procs[i].OE_Filter);
                         cell = row.CreateCell(4);
-                        cell.SetCellValue(procs[i].Prozessverantwortlicher);
+                        cell.SetCellValue(procs[i].Prozesseigentümer);
                         cell = row.CreateCell(5);
-                        cell.SetCellValue((procs[i].Kritischer_Prozess == "x") ? "Ja" : "Nein");
+                        cell.SetCellValue(procs[i].Prozessverantwortlicher);
                         cell = row.CreateCell(6);
-                        cell.SetCellValue(procs[i].Kritikalität_des_Prozesses);
+                        cell.SetCellValue((procs[i].Kritischer_Prozess == "x") ? "Ja" : "Nein");
                         cell = row.CreateCell(7);
-                        cell.SetCellValue(procs[i].Reifegrad_des_Prozesses);
+                        cell.SetCellValue(procs[i].Kritikalität_des_Prozesses);
                         cell = row.CreateCell(8);
-                        cell.SetCellValue(procs[i].Regulatorisch);
+                        cell.SetCellValue(procs[i].Reifegrad_des_Prozesses);
                         cell = row.CreateCell(9);
-                        cell.SetCellValue(procs[i].Reputatorisch);
+                        cell.SetCellValue(procs[i].Regulatorisch);
                         cell = row.CreateCell(10);
-                        cell.SetCellValue(procs[i].Finanziell);
+                        cell.SetCellValue(procs[i].Reputatorisch);
                         cell = row.CreateCell(11);
-                        cell.SetCellValue(procs[i].SZ_1);
+                        cell.SetCellValue(procs[i].Finanziell);
                         cell = row.CreateCell(12);
-                        cell.SetCellValue(procs[i].SZ_2);
+                        cell.SetCellValue(procs[i].SZ_1);
                         cell = row.CreateCell(13);
-                        cell.SetCellValue(procs[i].SZ_3);
+                        cell.SetCellValue(procs[i].SZ_2);
                         cell = row.CreateCell(14);
-                        cell.SetCellValue(procs[i].SZ_4);
+                        cell.SetCellValue(procs[i].SZ_3);
                         cell = row.CreateCell(15);
-                        cell.SetCellValue(procs[i].SZ_5);
+                        cell.SetCellValue(procs[i].SZ_4);
                         cell = row.CreateCell(16);
-                        cell.SetCellValue(procs[i].SZ_6);
+                        cell.SetCellValue(procs[i].SZ_5);
                         cell = row.CreateCell(17);
-                        cell.SetCellValue(procs[i].Vorgelagerte_Prozesse);
+                        cell.SetCellValue(procs[i].SZ_6);
                         cell = row.CreateCell(18);
-                        cell.SetCellValue(procs[i].Nachgelagerte_Prozesse);
-                        cell = row.CreateCell(19);
                         cell.SetCellValue(procs[i].Servicezeit_Helpdesk);
-                        cell = row.CreateCell(20);
+                        cell = row.CreateCell(19);
                         cell.SetCellValue(procs[i].RPO_Datenverlustzeit_Recovery_Point_Objective + " Stunden");
-                        cell = row.CreateCell(21);
+                        cell = row.CreateCell(20);
                         cell.SetCellValue(procs[i].RTO_Wiederanlaufzeit_Recovery_Time_Objective + " Tage");
-                        cell = row.CreateCell(22);
+                        cell = row.CreateCell(21);
                         cell.SetCellValue(procs[i].RTO_Wiederanlaufzeit_Recovery_Time_Objective_Notfall + " Tage");
-                        cell = row.CreateCell(23);
+                        cell = row.CreateCell(22);
                         cell.SetCellValue((procs[i].Relevantes_IS_1 == "") ? "" : "(" + procs[i].Relevantes_IS_1 + ") " + ISList.Where(x => x.Name == procs[i].Relevantes_IS_1).Select(y => y.Segment).FirstOrDefault().ToString());
-                        cell = row.CreateCell(24);
+                        cell = row.CreateCell(23);
                         cell.SetCellValue((procs[i].Relevantes_IS_2 == "") ? "" : "(" + procs[i].Relevantes_IS_2 + ") " + ISList.Where(x => x.Name == procs[i].Relevantes_IS_2).Select(y => y.Segment).FirstOrDefault().ToString());
-                        cell = row.CreateCell(25);
+                        cell = row.CreateCell(24);
                         cell.SetCellValue((procs[i].Relevantes_IS_3 == "") ? "" : "(" + procs[i].Relevantes_IS_3 + ") " + ISList.Where(x => x.Name == procs[i].Relevantes_IS_3).Select(y => y.Segment).FirstOrDefault().ToString());
-                        cell = row.CreateCell(26);
+                        cell = row.CreateCell(25);
                         cell.SetCellValue((procs[i].Relevantes_IS_4 == "") ? "" : "(" + procs[i].Relevantes_IS_4 + ") " + ISList.Where(x => x.Name == procs[i].Relevantes_IS_4).Select(y => y.Segment).FirstOrDefault().ToString());
-                        cell = row.CreateCell(27);
+                        cell = row.CreateCell(26);
                         cell.SetCellValue((procs[i].Relevantes_IS_5 == "") ? "" : "(" + procs[i].Relevantes_IS_5 + ") " + ISList.Where(x => x.Name == procs[i].Relevantes_IS_5).Select(y => y.Segment).FirstOrDefault().ToString());
-                        cell = row.CreateCell(28);
+                        cell = row.CreateCell(27);
                         cell.SetCellValue(procs[i].Datum.ToString());
-                        cell = row.CreateCell(29);
+                        cell = row.CreateCell(28);
                         cell.SetCellValue(procs[i].Benutzer);
-                        cell = row.CreateCell(30);
+                        cell = row.CreateCell(29);
                         cell.SetCellValue((procs[i].Aktiv == 1) ? "Ja" : "Nein");
                     }
                     #endregion
 
                     if (id!=0)
                     {
-                        ObservableCollection<ISB_BIA_Delta_Analyse> historyList = _myProc.Get_History_ProcAppRelations(id);
+                        #region ProcToProcVP
+                        ObservableCollection<ISB_BIA_Delta_Analyse> preHistoryList = _myProc.Get_History_PreProcRelations(id);
+                        sheet = workbook.CreateSheet("Vorgelagerte Prozesse Historie");
+                        row = sheet.CreateRow(0);
+                        //Spaltenheader
+                        HeaderList = new List<string>() { "Vorgelagerter Prozess Id", "Vorgelagerter Prozess", "Vorgelagerter Sub-Prozess", "Relation (Verknüpfung)", "Aktuell", "Datum" };
+                        for (int i = 0; i < HeaderList.Count; i++)
+                        {
+                            var cell = row.CreateCell(i);
+                            cell.SetCellValue(HeaderList[i].ToString());
+                        }
 
+                        for (int i = 0; i < preHistoryList.Count; i++)
+                        {
+                            var rowIndex = i + 1;
+                            row = sheet.CreateRow(rowIndex);
+                            var cell = row.CreateCell(0);
+                            cell = row.CreateCell(0);
+                            cell.SetCellValue(preHistoryList[i].Prozess_Id);
+                            cell = row.CreateCell(1);
+                            cell.SetCellValue(preHistoryList[i].Prozess);
+                            cell = row.CreateCell(2);
+                            cell.SetCellValue(preHistoryList[i].Sub_Prozess);
+                            cell = row.CreateCell(3);
+                            cell.SetCellValue((preHistoryList[i].SZ_1 == 1) ? "Ja" : "Nein");
+                            cell = row.CreateCell(4);
+                            cell.SetCellValue((preHistoryList[i].SZ_2 == 1) ? "Ja" : "Nein");
+                            cell = row.CreateCell(5);
+                            cell.SetCellValue(preHistoryList[i].Datum.ToString());
+                        }
+                        #endregion
+                        #region ProcToProcNP
+                        ObservableCollection<ISB_BIA_Delta_Analyse> postHistoryList = _myProc.Get_History_PostProcRelations(id);
+                        sheet = workbook.CreateSheet("Nachgelagerte Prozesse Historie");
+                        row = sheet.CreateRow(0);
+                        //Spaltenheader
+                        HeaderList = new List<string>() { "Nachgelagerter Prozess Id", "Nachgelagerter Prozess", "Nachgelagerter Sub-Prozess", "Relation (Verknüpfung)", "Aktuell", "Datum" };
+                        for (int i = 0; i < HeaderList.Count; i++)
+                        {
+                            var cell = row.CreateCell(i);
+                            cell.SetCellValue(HeaderList[i].ToString());
+                        }
+
+                        for (int i = 0; i < postHistoryList.Count; i++)
+                        {
+                            var rowIndex = i + 1;
+                            row = sheet.CreateRow(rowIndex);
+                            var cell = row.CreateCell(0);
+                            cell = row.CreateCell(0);
+                            cell.SetCellValue(postHistoryList[i].Prozess_Id);
+                            cell = row.CreateCell(1);
+                            cell.SetCellValue(postHistoryList[i].Prozess);
+                            cell = row.CreateCell(2);
+                            cell.SetCellValue(postHistoryList[i].Sub_Prozess);
+                            cell = row.CreateCell(3);
+                            cell.SetCellValue((postHistoryList[i].SZ_1 == 1) ? "Ja" : "Nein");
+                            cell = row.CreateCell(4);
+                            cell.SetCellValue((postHistoryList[i].SZ_2 == 1) ? "Ja" : "Nein");
+                            cell = row.CreateCell(5);
+                            cell.SetCellValue(postHistoryList[i].Datum.ToString());
+                        }
+                        #endregion
+                        #region AppToProc
+                        ObservableCollection<ISB_BIA_Delta_Analyse> historyList = _myProc.Get_History_ProcAppRelations(id);
                         sheet = workbook.CreateSheet("Prozess-Applikation Historie");
                         row = sheet.CreateRow(0);
-
                         //Spaltenheader
-                        HeaderList = new List<string>() { "Prozess Id", "Prozess", "Sub-Prozess", "Applikation Id", "Applikation", "Relation (Verknüpfung)", "Aktuell", "Datum" };
+                        HeaderList = new List<string>() {"Applikation Id", "Applikation", "Relation (Verknüpfung)", "Aktuell", "Datum" };
                         for (int i = 0; i < HeaderList.Count; i++)
                         {
                             var cell = row.CreateCell(i);
@@ -315,22 +370,17 @@ namespace ISB_BIA_IMPORT1.Services
                             row = sheet.CreateRow(rowIndex);
                             var cell = row.CreateCell(0);
                             cell = row.CreateCell(0);
-                            cell.SetCellValue(historyList[i].Prozess_Id);
-                            cell = row.CreateCell(1);
-                            cell.SetCellValue(historyList[i].Prozess);
-                            cell = row.CreateCell(2);
-                            cell.SetCellValue(historyList[i].Sub_Prozess);
-                            cell = row.CreateCell(3);
                             cell.SetCellValue(historyList[i].Applikation_Id);
-                            cell = row.CreateCell(4);
+                            cell = row.CreateCell(1);
                             cell.SetCellValue(historyList[i].Applikation);
-                            cell = row.CreateCell(5);
+                            cell = row.CreateCell(2);
                             cell.SetCellValue((historyList[i].SZ_1 == 1) ? "Ja" : "Nein");
-                            cell = row.CreateCell(6);
+                            cell = row.CreateCell(3);
                             cell.SetCellValue((historyList[i].SZ_2 == 1) ? "Ja" : "Nein");
-                            cell = row.CreateCell(7);
+                            cell = row.CreateCell(4);
                             cell.SetCellValue(historyList[i].Datum.ToString());
                         }
+                        #endregion
                     }
 
                     return SaveFile(workbook, sfd);
@@ -346,7 +396,6 @@ namespace ISB_BIA_IMPORT1.Services
                 return false;
             }
         }
-
         public bool Export_IS_Attr_History()
         {
             Tuple<List<ISB_BIA_Informationssegmente>, List<ISB_BIA_Informationssegmente>, List<ISB_BIA_Informationssegmente_Attribute>, List<ISB_BIA_Informationssegmente_Attribute>> tuple =_myIS.Get_History_SegmentsAndAttributes();
@@ -373,7 +422,7 @@ namespace ISB_BIA_IMPORT1.Services
                         #region Segment
                         //Spaltenheader
                         var row = sheet.CreateRow(0);
-                        List<string> HeaderList = new List<string>() { "Segment Id", "Bezeichnung", "Segment", "Beschreibung", "Mögliche Inhalte", "Attribut 1", "Attribut 2", "Attribut 3", "Attribut 4", "Attribut 5", "Attribut 6", "Attribut 7", "Attribut 8", "Attribut 9", "Attribut 10", "Datum", "Aktuell", "Benutzer" };
+                        List<string> HeaderList = new List<string>() { "Segment Id", "Bezeichnung", "Segment", "Beschreibung", "Mögliche Inhalte", "Attribut 1", "Attribut 2", "Attribut 3", "Attribut 4", "Attribut 5", "Attribut 6", "Attribut 7", "Attribut 8", "Attribut 9", "Attribut 10", "Datum", "Aktuell", "Bearbeitet von" };
                         for (int i = 0; i < HeaderList.Count; i++)
                         {
                             var cell = row.CreateCell(i);
@@ -430,7 +479,7 @@ namespace ISB_BIA_IMPORT1.Services
                         sheet = workbook.CreateSheet("Attributübersicht");
                         //Spaltenheader
                         row = sheet.CreateRow(0);
-                        HeaderList = new List<string>() { "Attribut Id", "Attributname", "Info", Setting.SZ_1_Name, Setting.SZ_2_Name, Setting.SZ_3_Name, Setting.SZ_4_Name, Setting.SZ_5_Name, Setting.SZ_6_Name, "Datum", "Aktuell", "Benutzer" };
+                        HeaderList = new List<string>() { "Attribut Id", "Attributname", "Info", Setting.SZ_1_Name, Setting.SZ_2_Name, Setting.SZ_3_Name, Setting.SZ_4_Name, Setting.SZ_5_Name, Setting.SZ_6_Name, "Datum", "Aktuell", "Bearbeitet von" };
                         for (int i = 0; i < HeaderList.Count; i++)
                         {
                             var cell = row.CreateCell(i);
@@ -482,7 +531,6 @@ namespace ISB_BIA_IMPORT1.Services
             }
             return false;
         }
-
         public bool Export_DeltaAnalysis(ObservableCollection<ISB_BIA_Delta_Analyse> DeltaList)
         {
             SaveFileDialog sfd = new SaveFileDialog()
@@ -559,7 +607,6 @@ namespace ISB_BIA_IMPORT1.Services
                 return false;
             }
         }
-
         public bool Export_Log(ObservableCollection<ISB_BIA_Log> Log)
         {
             SaveFileDialog sfd = new SaveFileDialog()
@@ -621,7 +668,6 @@ namespace ISB_BIA_IMPORT1.Services
             }
             return false;
         }
-
         public bool Export_Settings(List<ISB_BIA_Settings> Log)
         {
             SaveFileDialog sfd = new SaveFileDialog()
@@ -699,31 +745,38 @@ namespace ISB_BIA_IMPORT1.Services
             }
             return false;
         }
-
         public bool SaveFile(HSSFWorkbook workbook, SaveFileDialog sfd)
         {
-            // MemoryStream variable um in das Sheet zu schreiben
-            var stream = new MemoryStream();
-            workbook.Write(stream);
-            string FilePath = sfd.FileName;
-            //wenn Datei existiert löschen (Frage im FileDialog)
-            if (File.Exists(FilePath))
+            try
             {
-                File.Delete(FilePath);
+                // MemoryStream variable um in das Sheet zu schreiben
+                var stream = new MemoryStream();
+                workbook.Write(stream);
+                string FilePath = sfd.FileName;
+                //wenn Datei existiert löschen (Frage im FileDialog)
+                if (File.Exists(FilePath))
+                {
+                    File.Delete(FilePath);
+                }
+                FileStream file = new FileStream(FilePath, FileMode.CreateNew, FileAccess.Write);
+                stream.WriteTo(file);
+                file.Close();
+                stream.Close();
+                if (_myDia.ShowQuestion("Export erfolgreich\nMöchten Sie die Datei nun öffen?", "Export öffnen?"))
+                {
+                    if (File.Exists(sfd.FileName))
+                        Process.Start(sfd.FileName);
+                    else
+                        _myDia.ShowError("Datei existiert nicht mehr");
+                }
+                //Erfolg
+                return true;
             }
-            FileStream file = new FileStream(FilePath, FileMode.CreateNew, FileAccess.Write);
-            stream.WriteTo(file);
-            file.Close();
-            stream.Close();
-            if (_myDia.ShowQuestion("Export erfolgreich\nMöchten Sie die Datei nun öffen?", "Export öffnen?"))
+            catch(Exception ex)
             {
-                if (File.Exists(sfd.FileName))
-                    Process.Start(sfd.FileName);
-                else
-                    _myDia.ShowError("Datei existiert nicht mehr");
+                _myDia.ShowError("Fehler beim Exportieren",ex);
+                return false;
             }
-            //Erfolg
-            return true;
         }
     }
 }

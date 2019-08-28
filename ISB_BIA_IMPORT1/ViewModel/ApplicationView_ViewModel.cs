@@ -5,6 +5,7 @@ using ISB_BIA_IMPORT1.LINQ2SQL;
 using System.Collections.ObjectModel;
 using ISB_BIA_IMPORT1.Helpers;
 using ISB_BIA_IMPORT1.Services.Interfaces;
+using ISB_BIA_IMPORT1.Model;
 
 namespace ISB_BIA_IMPORT1.ViewModel
 {
@@ -17,11 +18,10 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private MyRelayCommand _cmd_NavToApp;
         private MyRelayCommand _cmd_DeleteApp;
         private MyRelayCommand _cmd_ExportList;
-        private ObservableCollection<ISB_BIA_Applikationen> _list_Application;
+        private ObservableCollection<Application_Model> _list_Application;
         private object _selectedItem;
         private ProcAppListMode _applicationViewMode;
         #endregion
-
         #region Operation/Navigations-Commands die Viewmodel ändern und ggf. Daten daran versenden
         /// <summary>
         /// Command welches je nach Modus <see cref="ApplicationViewMode"/> definiert wird
@@ -36,7 +36,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     ?? (_cmd_DeleteApp = new MyRelayCommand(() =>
                     {
                         if (SelectedItem == null) return;
-                        ISB_BIA_Applikationen applicationToDelete = (ISB_BIA_Applikationen)SelectedItem;
+                        Application_Model applicationToDelete = (Application_Model)SelectedItem;
                         string isLockedBy = _myLock.Get_ObjectIsLocked(Table_Lock_Flags.Process, applicationToDelete.Applikation_Id);
                         if (isLockedBy == "")
                         {
@@ -105,16 +105,15 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     }));
         }
         #endregion
-
+        #region App-Listeneigenschaften
         /// <summary>
         /// Liste aller anzuzeigenden Applikationen
         /// </summary>
-        public ObservableCollection<ISB_BIA_Applikationen> List_Application
+        public ObservableCollection<Application_Model> List_Application
         {
             get => _list_Application;
             set => Set(() => List_Application, ref _list_Application, value);
         }
-
         /// <summary>
         /// Die in der Liste ausgewählte Applikation
         /// </summary>
@@ -123,7 +122,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _selectedItem;
             set => Set(() => SelectedItem, ref _selectedItem, value);
         }
-
+        #endregion
+        #region Sonstige Eigenschaften
         /// <summary>
         /// Modus, der bestimmt ob die ausgewählte Anwendung bei Doppelklick bearbeitet oder gelöscht werden soll
         /// und Überschrift / Anweisung bestimmt
@@ -156,7 +156,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// Anweisung
         /// </summary>
         public string Str_Instruction { get; set; }
-
+        #endregion
         #region Services
         private readonly INavigationService _myNavi;
         private readonly IDialogService _myDia;
@@ -184,7 +184,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
 
             if (IsInDesignMode)
             {
-                List_Application = _myApp.Get_List_Applications_All();
+                List_Application = _myApp.Get_List_ApplicationModels_All();
                 Str_Header = "TestHeader";
                 Str_Instruction = "TestInstruction";
             }
@@ -195,6 +195,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 {
                     if(!(a.Sender is INavigationService)) return;
                     ApplicationViewMode = a.Content;
+                    Refresh();
                 });
                 //Message Registrierung für Refreshaufforderung nach bearbeiten einer Applikation
                 MessengerInstance.Register<NotificationMessage<string>>(this, MessageToken.RefreshData, s =>
@@ -202,9 +203,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     if (!(s.Sender is INavigationService)) return;
                     Refresh();
                 });
-                Refresh();
             }
-
         }
 
         /// <summary>
@@ -212,15 +211,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         public void Refresh()
         {
-            List_Application = _myApp.Get_List_Applications_All();
+            List_Application = _myApp.Get_List_ApplicationModels_All();
             if (List_Application == null)
             {
                 Cleanup();
                 _myNavi.NavigateBack();
             }
         }
-
-
 
         /// <summary>
         /// Bereinigt das Viewmodel

@@ -72,7 +72,7 @@ namespace ISB_BIA_IMPORT1.Services
         {
             return SettingsDummyList.First();
         }
-        public bool Insert_Settings(ISB_BIA_Settings newSettings, ISB_BIA_Settings oldSettings)
+        public bool Insert_Settings(Settings_Model newSettings, Settings_Model oldSettings)
         {
             return true;
         }

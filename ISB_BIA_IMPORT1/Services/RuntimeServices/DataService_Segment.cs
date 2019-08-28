@@ -64,26 +64,34 @@ namespace ISB_BIA_IMPORT1.Services
         }
         public ISB_BIA_Informationssegmente Map_Model_ToDB(Segment_Model i)
         {
-            return new ISB_BIA_Informationssegmente()
+            try
             {
-                Informationssegment_Id = i.Informationssegment_Id,
-                Name = i.Name,
-                Segment = i.Segment,
-                Beschreibung = i.Beschreibung,
-                Mögliche_Segmentinhalte = i.Mögliche_Segmentinhalte,
-                Attribut_1 = (i.Attribut1) ? "P" : "O",
-                Attribut_2 = (i.Attribut2) ? "P" : "O",
-                Attribut_3 = (i.Attribut3) ? "P" : "O",
-                Attribut_4 = (i.Attribut4) ? "P" : "O",
-                Attribut_5 = (i.Attribut5) ? "P" : "O",
-                Attribut_6 = (i.Attribut6) ? "P" : "O",
-                Attribut_7 = (i.Attribut7) ? "P" : "O",
-                Attribut_8 = (i.Attribut8) ? "P" : "O",
-                Attribut_9 = (i.Attribut9) ? "P" : "O",
-                Attribut_10 = (i.Attribut10) ? "P" : "O",
-                Datum = i.Datum,
-                Benutzer = i.Benutzer
-            };
+                return new ISB_BIA_Informationssegmente()
+                {
+                    Informationssegment_Id = i.Informationssegment_Id,
+                    Name = i.Name,
+                    Segment = i.Segment,
+                    Beschreibung = i.Beschreibung,
+                    Mögliche_Segmentinhalte = i.Mögliche_Segmentinhalte,
+                    Attribut_1 = (i.Attribut1) ? "P" : "O",
+                    Attribut_2 = (i.Attribut2) ? "P" : "O",
+                    Attribut_3 = (i.Attribut3) ? "P" : "O",
+                    Attribut_4 = (i.Attribut4) ? "P" : "O",
+                    Attribut_5 = (i.Attribut5) ? "P" : "O",
+                    Attribut_6 = (i.Attribut6) ? "P" : "O",
+                    Attribut_7 = (i.Attribut7) ? "P" : "O",
+                    Attribut_8 = (i.Attribut8) ? "P" : "O",
+                    Attribut_9 = (i.Attribut9) ? "P" : "O",
+                    Attribut_10 = (i.Attribut10) ? "P" : "O",
+                    Datum = i.Datum,
+                    Benutzer = i.Benutzer
+                };
+            }
+            catch (Exception ex)
+            {
+                _myDia.ShowError("Fehler beim Mappen des Segments", ex);
+                return null;
+            }
         }
         public ObservableCollection<ISB_BIA_Informationssegmente> Get_List_Segments_All()
         {
@@ -180,7 +188,7 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
-                    if (db.ISB_BIA_Informationssegmente.GroupBy(c=>c.Name).Select(v=>v.OrderByDescending(n=>n.Datum).FirstOrDefault()).Count(x => x.Segment == newIS.Segment) > 0)
+                    if (db.ISB_BIA_Informationssegmente.GroupBy(c=>c.Name).Select(v=>v.OrderByDescending(n=>n.Datum).FirstOrDefault()).Count(x => x.Segment == newIS.Segment) > 0 && newIS.Name != oldIS.Name)
                     {
                         _myDia.ShowInfo("Der Informationssegment-Name ist bereits vergeben.");
                         return false;
@@ -188,8 +196,10 @@ namespace ISB_BIA_IMPORT1.Services
                     //Schreiben in Datenbank
                     newIS.Datum = DateTime.Now;
                     newIS.Benutzer = _myShared.User.Username;
-                    //Mappen und in DB einfügen
-                    db.ISB_BIA_Informationssegmente.InsertOnSubmit(Map_Model_ToDB(newIS));
+                    //Mappen und Einfügen
+                    ISB_BIA_Informationssegmente res = Map_Model_ToDB(newIS);
+                    if (res == null) return false;
+                    db.ISB_BIA_Informationssegmente.InsertOnSubmit(res);
                     //Logeintrag erzeugen
                     ISB_BIA_Log logEntry = new ISB_BIA_Log
                     {
@@ -199,7 +209,7 @@ namespace ISB_BIA_IMPORT1.Services
                         Id_1 = newIS.Informationssegment_Id,
                         Id_2 = 0,
                         Datum = newIS.Datum,
-                        Benutzer = newIS.Benutzer
+                        Benutzer = _myShared.User.WholeName,
                     };
                     db.ISB_BIA_Log.InsertOnSubmit(logEntry);
                     db.SubmitChanges();
@@ -222,7 +232,7 @@ namespace ISB_BIA_IMPORT1.Services
                             Id_1 = newIS.Informationssegment_Id,
                             Id_2 = 0,
                             Datum = newIS.Datum,
-                            Benutzer = newIS.Benutzer
+                            Benutzer = _myShared.User.WholeName,
                         };
                         db.ISB_BIA_Log.InsertOnSubmit(logEntry);
                         db.SubmitChanges();

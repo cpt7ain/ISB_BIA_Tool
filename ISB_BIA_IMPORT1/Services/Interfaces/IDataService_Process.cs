@@ -32,7 +32,7 @@ namespace ISB_BIA_IMPORT1.Services.Interfaces
         /// </summary>
         /// <param name="listOE"> Liste von OE's welche für einen User "zutreffen" </param>
         /// <returns> Liste aller (aktiven) Prozesse, welchee je nach Parameter relevant sind </returns>
-        ObservableCollection<ISB_BIA_Prozesse> Get_List_Processes_ByOE(ObservableCollection<string> listOE);
+        ObservableCollection<ISB_BIA_Prozesse> Get_List_Processes_ByOE_All(ObservableCollection<string> listOE);
         /// <summary>
         /// Liste aller Prozesse (Für Delta-Analyse, inaktive werden noch herausgefilter1; und für CISO/ADMIN ansicht2)
         /// </summary>
@@ -64,28 +64,18 @@ namespace ISB_BIA_IMPORT1.Services.Interfaces
         /// Liste aller momentanen Prozess Owner (für dropdown in Prozessbearbeitung1)
         /// </summary>
         /// <returns> String Liste der existierenden Prozesseigentümer </returns>
-        ObservableCollection<string> Get_StringList_ProcessOwner();
+        ObservableCollection<string> Get_StringList_ProcessResponsible();
         /// <summary>
         /// Liste aller OE's welche für eine bestimmte OE(/User) relevant sind (für dropdown in Prozessbearbeitung1 und als Grundlage für bestimmung der relevanen Prozesse (=>OE anhängig) für Prozessübersicht2 <see cref="Get_List_Processes_ByOE"/>)
         /// </summary>
         /// <param name="userOE"> OE (e.g. 4.4) </param>
         /// <returns> Liste aller relevanten (=>untergeordneten) OE's (e.g. {4.4,4.401,4,402,4.403} ) </returns>
-        ObservableCollection<string> Get_StringList_OEsForUser(string userOE);
+        ObservableCollection<string> Get_StringList_OEsForUser(List<string> userOE);
         /// <summary>
         /// Liste aller OE's (für Admin/CISO dropdown1)
         /// </summary>
         /// <returns> String Liste aller OE's </returns>
         ObservableCollection<string> Get_StringList_OEs_All();
-        /// <summary>
-        /// Liste aller vorgelagerten Prozesse für Dropdown1
-        /// </summary>
-        /// <returns> String Liste aller vorgelagerten Prozesse</returns>
-        ObservableCollection<string> Get_StringList_PreProcesses();
-        /// <summary>
-        /// Liste aller nachgelagerten Prozesse für Dropdown1
-        /// </summary>
-        /// <returns> String Liste aller nachgelagerten Prozesse </returns>
-        ObservableCollection<string> Get_StringList_PostProcesses();
         /// <summary>
         /// Liste aller Versionen eines Prozesses
         /// </summary>
@@ -97,16 +87,22 @@ namespace ISB_BIA_IMPORT1.Services.Interfaces
         /// </summary>
         /// <param name="p"> Einzufügender Prozess </param>
         /// <param name="mode"> Neuanlage oder Bearbeitung </param>
-        /// <param name="add"> Liste der Relationen welche auf 1 gesetzt eingefügt werden sollen </param>
-        /// <param name="remove"> Liste der Relationen welche auf 0 gesetzt eingefügt werden sollen </param>
+        /// <param name="add_Applications"> Liste der Relationen welche auf 1 gesetzt eingefügt werden sollen </param>
+        /// <param name="remove_Applications"> Liste der Relationen welche auf 0 gesetzt eingefügt werden sollen </param>
         /// <returns></returns>
-        bool Insert_ProcessAndRelations(Process_Model p, ProcAppMode mode, ObservableCollection<ISB_BIA_Applikationen> add, ObservableCollection<ISB_BIA_Applikationen> remove);
+        bool Insert_ProcessAndRelations(Process_Model p, ProcAppMode mode, ObservableCollection<ISB_BIA_Applikationen> add_Applications, ObservableCollection<ISB_BIA_Applikationen> remove_Applications, ObservableCollection<ISB_BIA_Prozesse> add_vP, ObservableCollection<ISB_BIA_Prozesse> remove_vP, ObservableCollection<ISB_BIA_Prozesse> add_nP, ObservableCollection<ISB_BIA_Prozesse> remove_nP);
         /// <summary>
-        /// Erstellen des Prozesseintrags und Weiterleitung an <see cref="TryDeleteProcess"/>
+        /// Erstellen des Prozesseintrags
         /// </summary>
         /// <param name="p"> zu Löschender Prozess </param>
         /// <returns> geschriebener Prozesseintrag </returns>
         ISB_BIA_Prozesse Delete_Process(ISB_BIA_Prozesse p);
+        /// <summary>
+        /// Erstellen des Prozesseintrags
+        /// </summary>
+        /// <param name="p"> zu Reaktivierender Prozess </param>
+        /// <returns> geschriebener Prozesseintrag </returns>
+        ISB_BIA_Prozesse Reactivate_Process(ISB_BIA_Prozesse p);
         /// <summary>
         /// Methode zum Speichern/"Aktualisieren" mehrerer Prozesse ohne Änderungen (Außer Benutzer und Datum)
         /// </summary>
@@ -131,6 +127,18 @@ namespace ISB_BIA_IMPORT1.Services.Interfaces
         /// <param name="id"> Id des Prozesses </param>
         /// <returns> Prozess-Applikations-Historie </returns>
         ObservableCollection<ISB_BIA_Delta_Analyse> Get_History_ProcAppRelations(int id);
+        /// <summary>
+        /// Erstellt eine Prozess-Applikations-Historie (in Form der Delta-Analyse da die Felder passen)
+        /// </summary>
+        /// <param name="id"> Id des Prozesses </param>
+        /// <returns> Prozess-Applikations-Historie </returns>
+        ObservableCollection<ISB_BIA_Delta_Analyse> Get_History_PreProcRelations(int id);
+        /// <summary>
+        /// Erstellt eine Prozess-Applikations-Historie (in Form der Delta-Analyse da die Felder passen)
+        /// </summary>
+        /// <param name="id"> Id des Prozesses </param>
+        /// <returns> Prozess-Applikations-Historie </returns>
+        ObservableCollection<ISB_BIA_Delta_Analyse> Get_History_PostProcRelations(int id);
         #endregion   
     }
 }

@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Data;
 using ISB_BIA_IMPORT1.Services.Interfaces;
+using ISB_BIA_IMPORT1.Model;
 
 namespace ISB_BIA_IMPORT1.Services
 {
@@ -84,7 +85,7 @@ namespace ISB_BIA_IMPORT1.Services
                 {
                     //Erstelle Liste der Prozesse und Anwendungen mit dem zu dem gewählten Zeitpunkt aktuellsten Stand
                     ObservableCollection<ISB_BIA_Prozesse> processes = _myDataProcess.Get_List_Processes_All(date);
-                    ObservableCollection<ISB_BIA_Applikationen> applications = _myDataApp.Get_List_Applications_All(date);
+                    ObservableCollection<Application_Model> applications = _myDataApp.Get_List_ApplicationModels_All(date);
                     if (toDB)
                     {
                         db.ISB_BIA_Delta_Analyse.DeleteAllOnSubmit(db.ISB_BIA_Delta_Analyse.ToList());
@@ -94,13 +95,13 @@ namespace ISB_BIA_IMPORT1.Services
                     foreach (ISB_BIA_Prozesse_Applikationen pa in proc_App)
                     {
                         ISB_BIA_Prozesse p = processes.Where(x => x.Prozess_Id == pa.Prozess_Id).FirstOrDefault();
-                        ISB_BIA_Applikationen a = applications.Where(x => x.Applikation_Id == pa.Applikation_Id).FirstOrDefault();
+                        Application_Model a = applications.Where(x => x.Applikation_Id == pa.Applikation_Id).FirstOrDefault();
                         //"Gelöschte" Prozesse / Anwendungen irrelevant
                         if (a.Aktiv == 0 || p.Aktiv == 0)
                         {
                             continue;
                         }
-
+                        
                         ISB_BIA_Delta_Analyse d = new ISB_BIA_Delta_Analyse
                         {
                             Prozess_Id = p.Prozess_Id,
@@ -110,13 +111,13 @@ namespace ISB_BIA_IMPORT1.Services
                             Applikation_Id = a.Applikation_Id,
                             Applikation = a.IT_Anwendung_System,
                             Datum_Applikation = a.Datum,
-                            SZ_1 = a.SZ_1 - p.SZ_1,
-                            SZ_2 = a.SZ_2 - p.SZ_2,
-                            SZ_3 = a.SZ_3 - p.SZ_3,
-                            SZ_4 = a.SZ_4 - p.SZ_4,
-                            SZ_5 = a.SZ_5 - p.SZ_5,
-                            SZ_6 = a.SZ_6 - p.SZ_6,
-                            Datum = date.Subtract(TimeSpan.FromDays(1))
+                            SZ_1 = (int)a.SZ_1 - p.SZ_1,
+                            SZ_2 = (int)a.SZ_2 - p.SZ_2,
+                            SZ_3 = (int)a.SZ_3 - p.SZ_3,
+                            SZ_4 = (int)a.SZ_4 - p.SZ_4,
+                            SZ_5 = (int)a.SZ_5 - p.SZ_5,
+                            SZ_6 = (int)a.SZ_6 - p.SZ_6,
+                            Datum = date.Subtract(TimeSpan.FromDays(1)),
                         };
                         DeltaList.Add(d);
                         if (toDB) db.ISB_BIA_Delta_Analyse.InsertOnSubmit(d);                        
@@ -132,7 +133,7 @@ namespace ISB_BIA_IMPORT1.Services
                             Id_1 = 0,
                             Id_2 = 0,
                             Datum = DateTime.Now,
-                            Benutzer =  _myShared.User.Username
+                            Benutzer = _myShared.User.WholeName
                         };
                         db.ISB_BIA_Log.InsertOnSubmit(logEntry);
                         db.SubmitChanges();
@@ -156,7 +157,7 @@ namespace ISB_BIA_IMPORT1.Services
                             Id_1 = 0,
                             Id_2 = 0,
                             Datum = DateTime.Now,
-                            Benutzer =  _myShared.User.Username
+                            Benutzer = _myShared.User.WholeName
                         };
                         db.ISB_BIA_Log.InsertOnSubmit(logEntry);
                         db.SubmitChanges();

@@ -58,26 +58,34 @@ namespace ISB_BIA_IMPORT1.Services
         }
         public ISB_BIA_Informationssegmente_Attribute Map_Model_ToDB(Attributes_Model ia)
         {
-            Int32.TryParse(ia.SZ_1, out int sz1);
-            Int32.TryParse(ia.SZ_2, out int sz2);
-            Int32.TryParse(ia.SZ_3, out int sz3);
-            Int32.TryParse(ia.SZ_4, out int sz4);
-            Int32.TryParse(ia.SZ_5, out int sz5);
-            Int32.TryParse(ia.SZ_6, out int sz6);
-
-            ISB_BIA_Informationssegmente_Attribute map = new ISB_BIA_Informationssegmente_Attribute()
+            try
             {
-                Attribut_Id = ia.Attribut_Id,
-                Name = ia.Name,
-                Info = ia.Info,
-                SZ_1 = sz1,
-                SZ_2 = sz2,
-                SZ_3 = sz3,
-                SZ_4 = sz4,
-                SZ_5 = sz5,
-                SZ_6 = sz6,
-            };
-            return map;
+                Int32.TryParse(ia.SZ_1, out int sz1);
+                Int32.TryParse(ia.SZ_2, out int sz2);
+                Int32.TryParse(ia.SZ_3, out int sz3);
+                Int32.TryParse(ia.SZ_4, out int sz4);
+                Int32.TryParse(ia.SZ_5, out int sz5);
+                Int32.TryParse(ia.SZ_6, out int sz6);
+
+                ISB_BIA_Informationssegmente_Attribute map = new ISB_BIA_Informationssegmente_Attribute()
+                {
+                    Attribut_Id = ia.Attribut_Id,
+                    Name = ia.Name,
+                    Info = ia.Info,
+                    SZ_1 = sz1,
+                    SZ_2 = sz2,
+                    SZ_3 = sz3,
+                    SZ_4 = sz4,
+                    SZ_5 = sz5,
+                    SZ_6 = sz6,
+                };
+                return map;
+            }
+            catch (Exception ex)
+            {
+                _myDia.ShowError("Fehler beim Mappen eines Attributs", ex);
+                return null;
+            }
         }
         public ObservableCollection<ISB_BIA_Informationssegmente_Attribute> Get_List_Attributes()
         {
@@ -133,11 +141,13 @@ namespace ISB_BIA_IMPORT1.Services
                             continue;
                         }
 
-                        // mindestens eine Änderung
+                        // mindestens eine Änderung unter allen Attributen
                         change = true;
+                        //Mappen und Einfügen
                         ISB_BIA_Informationssegmente_Attribute isMapped = Map_Model_ToDB(isx);
+                        if (isMapped == null) return false;
                         isMapped.Datum = DateTime.Now;
-                        isMapped.Benutzer = _myShared.User.Username;
+                        isMapped.Benutzer = _myShared.User.WholeName;
                         db.ISB_BIA_Informationssegmente_Attribute.InsertOnSubmit(isMapped);
 
                         //Log Eintrag für erfolgreiches schreiben in Datenbank
@@ -149,7 +159,7 @@ namespace ISB_BIA_IMPORT1.Services
                             Id_1 = isx.Attribut_Id,
                             Id_2 = 0,
                             Datum = DateTime.Now,
-                            Benutzer = _myShared.User.Username
+                            Benutzer = _myShared.User.WholeName
                         };
                         db.ISB_BIA_Log.InsertOnSubmit(logEntry);
                     }
@@ -177,7 +187,7 @@ namespace ISB_BIA_IMPORT1.Services
                             Details = ex1.Message,
                             Id_1 = 0,
                             Id_2 = 0,
-                            Benutzer = _myShared.User.Username
+                            Benutzer = _myShared.User.WholeName
                         };
                         db.ISB_BIA_Log.InsertOnSubmit(logEntry);
                         db.SubmitChanges();

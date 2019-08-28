@@ -10,9 +10,11 @@ using ISB_BIA_IMPORT1.Helpers;
 using ISB_BIA_IMPORT1.Services.Interfaces;
 using System.Windows;
 using System.ComponentModel;
+using System.Linq;
 
 namespace ISB_BIA_IMPORT1.ViewModel
 {
+    #region enums
     /// <summary>
     /// Modi für die Steuerung der einzelnen Objekt-Ansichten (Neuanlage, Bearbeitung) von Prozessen und Anwendungen
     /// </summary>
@@ -61,23 +63,23 @@ namespace ISB_BIA_IMPORT1.ViewModel
     public enum SZ_Values
     {
         /// <summary>
-        /// Schutzziel nicht relevant
+        /// Schutzziel nicht relevant (0)
         /// </summary>
         None,
         /// <summary>
-        /// niedrige Schutzzieleinstufung
+        /// niedrige Schutzzieleinstufung (1)
         /// </summary>
         Low,
         /// <summary>
-        /// mittlere Schutzzieleinstufung
+        /// mittlere Schutzzieleinstufung (2)
         /// </summary>
         Medium,
         /// <summary>
-        /// hohe Schutzzieleinstufung
+        /// hohe Schutzzieleinstufung (3)
         /// </summary>
         High,
         /// <summary>
-        /// sehr hohe Schutzzieleinstufung
+        /// sehr hohe Schutzzieleinstufung (4)
         /// </summary>
         Veryhigh
     }
@@ -91,6 +93,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         RefreshData,
         ChangeTextSize,
     }
+    #endregion
     /// <summary>
     /// Haupt-VM, dessen Datacontext an das Fenster der Anwendung <see cref="MainWindow"/> gebunden ist. 
     /// Hier werden die momentan "angzuzeigenden" VM's eingesetzt <see cref="ViewModelCurrent"/> und Starteinstellungen / Überprüfungen vorgenommen
@@ -103,6 +106,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private string _str_WindowTitle;
         #endregion
 
+        #region sonstige Eigenschaften
         /// <summary>
         /// Aktuelles Viewmodel, welches an die Usercontrol im <see cref="MainWindow"/> gebunden ist
         /// </summary>
@@ -111,7 +115,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _viewModelCurrent;
             set => Set(()=> ViewModelCurrent, ref _viewModelCurrent, value);
         }
-
         /// <summary>
         /// Command um für Testzwecke Nutzergruppe manuell zu wählen
         /// </summary>
@@ -123,7 +126,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                         _myNavi.NavigateTo<Menu_ViewModel>();
                     });
         }
-
         /// <summary>
         /// Property für die Standardschriftgröße im <see cref="MainWindow"/>, von der alle Views erben
         /// </summary>
@@ -132,7 +134,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _globalFontSize;
             set => Set(() => GlobalFontSize, ref _globalFontSize, value);           
         }
-
         /// <summary>
         /// Titel des Fensters
         /// </summary>
@@ -141,7 +142,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _str_WindowTitle;
             set => Set(() => Str_WindowTitle, ref _str_WindowTitle, value);
         }
+        #endregion
 
+        #region User für verschiedene Zwecke
         /// <summary>
         /// Benutzer, welcher den Login-Vorgang für Entwicklungszwecke umgeht 
         /// </summary>
@@ -151,12 +154,12 @@ namespace ISB_BIA_IMPORT1.ViewModel
             {
                 Username = Environment.UserName + " in Construction Mode",
                 UserGroup = UserGroups.CISO,
-                OE = "0",
-                Givenname = "Tim",
-                Surname = "Wolf"
+                OE = _myShared.Conf_Admin_OE,
+                ListOE = _myShared.Conf_Admin_OE_List,
+                Givenname = "Vn",
+                Surname = "Nn",
             };
-        }
-        
+        }    
         /// <summary>
         /// Benutzer für die lokale Entwicklung der Anwendung
         /// </summary>
@@ -164,14 +167,14 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             get => new Login_Model()
             {
-                Username = "TestUser",
+                Username = "LFTestUser",
                 UserGroup = UserGroups.CISO,
-                OE = "1.1",
+                OE = _myShared.Conf_Admin_OE,
+                ListOE = _myShared.Conf_Admin_OE_List,
                 Givenname = "Max",
-                Surname = "Mustermann"
+                Surname = "Mustermann",
             };
         }
-
         /// <summary>
         /// Initialer Benutzer vor Abruf der AD-Daten
         /// </summary>
@@ -180,11 +183,12 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => new Login_Model()
             {
                 Username = Environment.UserName,
-                OE = "",
+                ListOE = new List<string>(),
                 Givenname = "",
-                Surname = ""
+                Surname = "",
             };
         }
+        #endregion
 
         #region Services
         private readonly IDialogService _myDia;
@@ -203,7 +207,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         public Main_ViewModel(IDialogService myDia, INavigationService myNavi, ISharedResourceService myShared, ILockService myLock)
         {
             Mouse.OverrideCursor = null;
-
+            
             #region Services
             _myDia = myDia;
             _myNavi = myNavi;
@@ -228,13 +232,14 @@ namespace ISB_BIA_IMPORT1.ViewModel
             GlobalFontSize = 14;
             //Fenstertitel
             Str_WindowTitle = (_myShared.Conf_CurrentEnvironment == Current_Environment.Test) ? "ISB BIA Tool - Testumgebung" : "ISB BIA Tool";
-            
-            // Wenn Konstruktionsmodus
+
+            // Wenn Konstruktionsmodus direkt ohne weitere Maßnahmen zum Menü wechseln
             if (_myShared.Conf_ConstructionMode)
             {
                 _myShared.User = ConstructionUser;
                 _myNavi.NavigateTo<Menu_ViewModel>();
             }
+            //
             else 
             {
                 // Wenn lokaler Test
@@ -249,33 +254,42 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     // User für ISB Test/Prod Umgebung, wird des Weiteren durch Daten aus AD gefüllt
                     _myShared.User = InitialUser;
                 }
+                bool error = false;
                 try
                 {
                     //Prüfen der Datenbankverbindung
                     if (!_myLock.CheckDBConnection())
                     {
-                        //Exit wenn kein Admin
-                        if (!_myShared.Conf_Admin) Application.Current.Shutdown();
+                        //Exit wenn kein Admin-Modus und DB-Verbindung fehlgeschlagen
+                        if (!_myShared.Conf_Admin)
+                        {
+                            error = true;
+                            Application.Current.Shutdown();
+                        }
                     }
 
                     //Prüfen der Active-Directory -> EXIT wenn Fehler (Wenn erfolgreich: Usergroup ist gesetzt; entweder nach Standard oder nach Einstellung)
-                    if (_myShared.Conf_CurrentEnvironment != Current_Environment.Local_Test)
+                    if (_myShared.Conf_CurrentEnvironment != Current_Environment.Local_Test && !error)
                     {
-                        if ((!GetUserFromAD() || !GetGroups()) && !_myShared.Conf_Admin) Application.Current.Shutdown();
+                        if ((!GetUserFromAD() || !GetGroups()) && !_myShared.Conf_Admin)
+                        {
+                            error = true;
+                            Application.Current.Shutdown();
+                        }
                     }
 
                     //Möglicherweise gesperrte Objekte entsperren
-                    _myLock.Unlock_AllObjectsForUserOnMachine();
+                    if(!error)_myLock.Unlock_AllObjectsForUserOnMachine();
 
-                    //Direkt weiterleiten wenn nicht im Admin Modus
-                    if (!_myShared.Conf_Admin)
+                    //Direkt weiterleiten wenn nicht im Admin-Modus
+                    if (!_myShared.Conf_Admin && !error)
                     {
                         _myNavi.NavigateTo<Menu_ViewModel>();
                     }
                 }
                 catch (Exception ex)
                 {
-                    _myDia.ShowError("Es ist ein Fehler aufgetreten.\nDas Programm wird geschlossen.", ex);
+                    if(!error) _myDia.ShowError("Es ist ein Fehler aufgetreten.\nDas Programm wird geschlossen.", ex);
                     if (!_myShared.Conf_Admin) Application.Current.Shutdown();
                 }
             }
@@ -302,6 +316,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                             if (department.Count > 0)
                             {
                                 _myShared.User.OE = department[0].ToString();
+                                _myShared.User.ListOE = _myShared.User.OE.Split(new[] { ", " }, StringSplitOptions.None).ToList();
                             }
                         }
                         if (result.Properties.Contains("givenname"))
@@ -339,6 +354,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
             try
             {
                 List<string> result = new List<string>();
+                string msg="";
+                string msg2 = "";
                 WindowsIdentity wi = new WindowsIdentity(_myShared.User.Username);
                 if (wi.Groups != null)
                     foreach (IdentityReference group in wi.Groups)
@@ -346,14 +363,18 @@ namespace ISB_BIA_IMPORT1.ViewModel
                         // Übsersetzen der SID in den Gruppennnamen
                         try
                         {
-                            result.Add(@group.Translate(typeof(NTAccount)).ToString());
+                            string res = @group.Translate(typeof(NTAccount)).ToString();
+                            result.Add(res);
+                            msg += "|" + res + "|\n";
+                            if (res.StartsWith("P.ABT."))msg2 += "|" + res + "|\n";
                         }
                         catch
                         {
                             //Fehler abfangen falls SID nicht mehr verfügbar
                         }
                     }
-
+                if (_myShared.Conf_Admin) _myDia.ShowInfo(msg);
+                if (_myShared.Conf_Admin) _myDia.ShowInfo(msg2);
                 //Gruppenabfrage von Gruppen mit vielen Rechten nach Gruppen mit wenigen (CISO->..->Normaler user) damit immer die Rolle mit den meisten Rechten angenommen wird falls mehrere zutreffen
                 //Service fragt je nach PROD/TEST Einstellungen richtige Gruppe ab
                 if (result.Contains(_myShared.Conf_AD_Group_CISO)) _myShared.User.UserGroup = UserGroups.CISO;
@@ -363,15 +384,14 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 else
                 {
                     string env = (_myShared.Conf_CurrentEnvironment == Current_Environment.Prod) ? "[Prod]" : "[Test]";
-                    _myDia.ShowWarning("Sie haben keine Berechtigungen für dieses Programm"+env+".\nUser:  " + _myShared.User.Username);
+                    _myDia.ShowWarning("Sie haben keine Berechtigungen für dieses Programm"+env+".\nUser:  " + _myShared.User.WholeName);
                     return false;
                 }
                 return true;
-
             }
             catch (Exception ex)
             {
-                _myDia.ShowError("AD-Gruppe konnte nicht gefunden werden für User\n"+ _myShared.User.Username, ex);
+                _myDia.ShowError("AD-Gruppe konnte nicht gefunden werden für User\n"+ _myShared.User.WholeName, ex);
                 return false;
             }
         }
@@ -393,8 +413,13 @@ namespace ISB_BIA_IMPORT1.ViewModel
                      MessageBoxImage.Warning);
                  if (result == MessageBoxResult.Yes)
                  {
-                     _myLock.Unlock_AllObjectsForUserOnMachine();
-                     Application.Current.Shutdown();
+                     if(_myLock.Unlock_AllObjectsForUserOnMachine())
+                        Application.Current.Shutdown();
+                     else
+                     {
+                         _myDia.ShowError("Anwendung konnte nicht sauber beendet werden. Bitter versuchen Sie es erneut.");
+                         e.Cancel = true;
+                     }
                  }
                  else
                  {
@@ -402,6 +427,5 @@ namespace ISB_BIA_IMPORT1.ViewModel
                  }
              });
         }
-
     }
 }

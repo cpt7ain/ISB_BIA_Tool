@@ -72,7 +72,7 @@
                         <DataGridTextColumn Width="250" Header="Kategorie" Binding="{Binding IT_Betriebsart}"/>
                         <DataGridTextColumn Width="50" Header="Aktiv" Binding="{Binding Aktiv ,Converter={StaticResource NumToAlphBinaryConverter}}"/>
                         <DataGridTextColumn Width="170" Header="Bearbeitungsdatum" Binding="{Binding Datum , StringFormat=\{0:dd.MM.yy HH:mm\}}"/>
-                        <DataGridTextColumn Width="100" Header="Bearbeiter" Binding="{Binding Benutzer}"/>
+                        <DataGridTextColumn Width="100" Header="Bearbeitet von" Binding="{Binding Benutzer}"/>
                     </DataGrid.Columns>
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">

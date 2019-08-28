@@ -36,7 +36,7 @@
                     <GridViewColumn Header="Id_1" Width="50" DisplayMemberBinding="{Binding Id_1}" />
                     <GridViewColumn Header="Id_2" Width="50" DisplayMemberBinding="{Binding Id_2}" />
                     <GridViewColumn Header="Datum" Width="150" DisplayMemberBinding="{Binding Datum, StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}}" />
-                    <GridViewColumn Header="Benutzer" Width="150" DisplayMemberBinding="{Binding Benutzer}" />
+                    <GridViewColumn Header="Durchgeführt von" Width="150" DisplayMemberBinding="{Binding Benutzer}" />
                 </GridView>
             </ListView.View>
         </ListView>

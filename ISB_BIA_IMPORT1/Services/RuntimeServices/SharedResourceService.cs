@@ -5,6 +5,8 @@ using System.IO;
 using ISB_BIA_IMPORT1.Services.Interfaces;
 using System;
 using System.Windows;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ISB_BIA_IMPORT1.Services
 {
@@ -14,6 +16,7 @@ namespace ISB_BIA_IMPORT1.Services
 
         public SharedResourceService(IDialogService myDia)
         {
+            //Abrufen von Konfiguration für Lokalen Test
             if(ConfigurationManager.AppSettings["Current_Environment"] == "local")
             {
                 Conf_CurrentEnvironment = Current_Environment.Local_Test;
@@ -26,7 +29,8 @@ namespace ISB_BIA_IMPORT1.Services
                     myDia.ShowError("Ungültige Konfiguration. Bitte ändern Sie 'Current_Environment' oder definieren Sie 'LOCAL_TEST_DataConnectionString'.");
                 }
             }
-            else if(ConfigurationManager.AppSettings["Current_Environment"] == "test")
+            //Abrufen von Konfiguration für Testsystem
+            else if (ConfigurationManager.AppSettings["Current_Environment"] == "test")
             {
                 Conf_CurrentEnvironment = Current_Environment.Test;
                 try
@@ -40,9 +44,10 @@ namespace ISB_BIA_IMPORT1.Services
                 catch
                 {
                     myDia.ShowError("Konfigurationsdatei ungültig.");
-                    Environment.Exit(0);
+                    Application.Current.Shutdown();
                 }
             }
+            //Abrufen von Konfiguration für Produktivsystem
             else if (ConfigurationManager.AppSettings["Current_Environment"] == "prod")
             {
                 Conf_CurrentEnvironment = Current_Environment.Prod;
@@ -70,6 +75,10 @@ namespace ISB_BIA_IMPORT1.Services
             {
                 Conf_ConstructionMode = (ConfigurationManager.AppSettings["MODE_Construction"] == "true") ? true : false;
                 Conf_Admin = (ConfigurationManager.AppSettings["MODE_Admin"] == "true") ? true : false;
+                Conf_Admin_OE = (Conf_Admin) ? ConfigurationManager.AppSettings["MODE_Admin_OE"] : "";
+                Conf_Admin_OE_List = new List<string>();
+                foreach (string a in Conf_Admin_OE.Split(new[] { ", " }, StringSplitOptions.None).ToList())
+                    Conf_Admin_OE_List.Add(a);
                 Conf_TargetMail = ConfigurationManager.AppSettings["Target_Mail"];
             }
             catch
@@ -89,7 +98,6 @@ namespace ISB_BIA_IMPORT1.Services
                 Dir_Source = "";
             }
 
-
             Tbl_Prozesse = "ISB_BIA_Prozesse";
             Tbl_Proz_App = "ISB_BIA_Prozesse_Applikationen";
             Tbl_Delta = "ISB_BIA_Delta_Analyse";
@@ -100,6 +108,7 @@ namespace ISB_BIA_IMPORT1.Services
             Tbl_OEs = "ISB_BIA_OEs";
             Tbl_Settings = "ISB_BIA_Settings";
             Tbl_Lock = "ISB_BIA_Lock";
+            Tbl_Proz_vPnP = "ISB_BIA_Prozesse_Prozesse";
         }
 
         public Login_Model User
@@ -110,6 +119,8 @@ namespace ISB_BIA_IMPORT1.Services
         public bool Conf_ConstructionMode { get; set; }
         public Current_Environment Conf_CurrentEnvironment { get; set; }
         public bool Conf_Admin { get; set; }
+        public List<string> Conf_Admin_OE_List { get; set; }
+        public string Conf_Admin_OE { get; set; }
         public string Conf_TargetMail { get; set; }
 
         #region Standard Dateipfad für einzulesende Quelldatei
@@ -130,6 +141,7 @@ namespace ISB_BIA_IMPORT1.Services
         public string Tbl_OEs { get; set; }
         public string Tbl_Settings { get; set; }
         public string Tbl_Lock { get; set; }
+        public string Tbl_Proz_vPnP { get; set; }
         #endregion
     }
 }

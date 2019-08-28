@@ -25,6 +25,12 @@ namespace ISB_BIA_IMPORT1.Services.Interfaces
         /// <returns> Anwendung in Datenbankformat </returns>
         ISB_BIA_Applikationen Map_Model_ToDB(Application_Model p);
         /// <summary>
+        /// Mappen der Anwendung vom Db- in das Model-Format
+        /// </summary>
+        /// <param name="p"> Anwendungs DB Objekt </param>
+        /// <returns> Anwendung in Modelformat </returns>
+        Application_Model Map_DB_ToModel(ISB_BIA_Applikationen a);
+        /// <summary>
         /// Liste der Rechenzentren für Dropdown1
         /// </summary>
         /// <returns> Liste der Rechenzentren </returns>
@@ -53,7 +59,12 @@ namespace ISB_BIA_IMPORT1.Services.Interfaces
         /// Liste aller Applikationen (für Delta1, Anwendungsübersicht2, SBA Übersicht3)
         /// </summary>
         /// <returns> Liste aller Applikationen </returns>
-        ObservableCollection<ISB_BIA_Applikationen> Get_List_Applications_All(DateTime? date = null);
+        ObservableCollection<Application_Model> Get_List_ApplicationModels_All(DateTime? date = null, bool additional = false);
+        /// <summary>
+        /// Liste aller aktiven Anwendungen (Aktiv==1) (für Prozess-Anwendungszuordnung1, SBA Übersicht2)
+        /// </summary>
+        /// <returns> Liste aller aktiven Anwendungen </returns>
+        ObservableCollection<Application_Model> Get_List_ApplicationModels_Active(bool addtitional = false);
         /// <summary>
         /// Liste aller aktiven Anwendungen (Aktiv==1) (für Prozess-Anwendungszuordnung1, SBA Übersicht2)
         /// </summary>
@@ -64,7 +75,7 @@ namespace ISB_BIA_IMPORT1.Services.Interfaces
         /// </summary>
         /// <param name="application_id"> ID der Anwendung </param>
         /// <returns> Liste der Bearbeitungshistorie der Anwendung </returns>
-        ObservableCollection<ISB_BIA_Applikationen> Get_History_Application(int application_id);
+        ObservableCollection<Application_Model> Get_History_Application(int application_id);
         /// <summary>
         /// Einfügen eines neuen Eintrags einer Applikation in die Datenbank
         /// </summary>
@@ -77,12 +88,12 @@ namespace ISB_BIA_IMPORT1.Services.Interfaces
         /// </summary>
         /// <param name="a"> Zu Löschende Anwendung der Liste </param>
         /// <returns> "neue" Gelöschte Anwendung </returns>
-        ISB_BIA_Applikationen Delete_Application(ISB_BIA_Applikationen a);
+        ISB_BIA_Applikationen Delete_Application(Application_Model a);
         /// <summary>
         /// Methode zum Speichern/"Aktualisieren" mehrerer Anwendungen ohne Änderungen (Außer Benutzer und Datum)
         /// </summary>
         /// <param name="aList"> Liste der zu speichernden Anwendungen </param>
-        bool Insert_Applications_All(ObservableCollection<ISB_BIA_Applikationen> aList);
+        bool Insert_Applications_All(ObservableCollection<Application_Model> aList);
         /// <summary>
         /// Erstellt eine Prozess-Applikations-Historie (in Form der Delta-Analyse da die Felder passen)
         /// </summary>

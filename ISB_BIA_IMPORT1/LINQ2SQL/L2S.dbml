@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?><Database Name="Data" Class="L2SDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="AppSettings" ConnectionString="Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Captain\Documents\Data.mdf;Integrated Security=True;Connect Timeout=30" SettingsObjectName="ISB_BIA_IMPORT1.Properties.Settings" SettingsPropertyName="DataConnectionString" Provider="System.Data.SqlClient" />
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="LocalData" Class="L2SDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\bin\Debug\Data\LocalData.mdf;Integrated Security=True;Connect Timeout=30" SettingsObjectName="ISB_BIA_IMPORT1.Properties.Settings" SettingsPropertyName="LocalDataConnectionString" Provider="System.Data.SqlClient" />
   <Table Name="dbo.ISB_BIA_Applikationen" Member="ISB_BIA_Applikationen">
     <Type Name="ISB_BIA_Applikationen">
       <Column Name="Applikation_Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
@@ -19,6 +19,7 @@
       <Column Name="Aktiv" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="Datum" Type="System.DateTime" DbType="DateTime NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="Benutzer" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Erstanlage" Type="System.String" DbType="NVarChar(10) NOT NULL" CanBeNull="false" />
       <Association Name="ISB_BIA_Applikationen_ISB_BIA_Delta_Analyse" Member="ISB_BIA_Delta_Analyse" ThisKey="Applikation_Id,Datum" OtherKey="Applikation_Id,Datum_Applikation" Type="ISB_BIA_Delta_Analyse" />
       <Association Name="ISB_BIA_Applikationen_ISB_BIA_Prozesse_Applikationen" Member="ISB_BIA_Prozesse_Applikationen" ThisKey="Applikation_Id,Datum" OtherKey="Applikation_Id,Datum_Applikation" Type="ISB_BIA_Prozesse_Applikationen" />
     </Type>
@@ -122,21 +123,13 @@
       <Column Name="Benutzer" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
     </Type>
   </Table>
-  <Table Name="dbo.ISB_BIA_OEs" Member="ISB_BIA_OEs">
-    <Type Name="ISB_BIA_OEs">
-      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="OE_Name" Type="System.String" DbType="VarChar(200) NOT NULL" CanBeNull="false" />
-      <Column Name="OE_Nummer" Type="System.String" DbType="VarChar(200) NOT NULL" CanBeNull="false" />
-      <Column Name="Datum" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
-      <Column Name="Benutzer" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
-    </Type>
-  </Table>
   <Table Name="dbo.ISB_BIA_Prozesse" Member="ISB_BIA_Prozesse">
     <Type Name="ISB_BIA_Prozesse">
       <Column Name="Prozess_Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="OE_Filter" Type="System.String" DbType="NVarChar(200) NOT NULL" CanBeNull="false" />
       <Column Name="Prozess" Type="System.String" DbType="NVarChar(350) NOT NULL" CanBeNull="false" />
       <Column Name="Sub_Prozess" Type="System.String" DbType="NVarChar(350) NOT NULL" CanBeNull="false" />
+      <Column Name="Prozesseigentümer" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="Prozessverantwortlicher" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="Kritischer_Prozess" Type="System.String" DbType="NVarChar(10) NOT NULL" CanBeNull="false" />
       <Column Name="Kritikalität_des_Prozesses" Type="System.String" DbType="NVarChar(20) NOT NULL" CanBeNull="false" />
@@ -150,8 +143,6 @@
       <Column Name="SZ_4" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="SZ_5" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="SZ_6" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="Vorgelagerte_Prozesse" Type="System.String" DbType="NVarChar(350) NOT NULL" CanBeNull="false" />
-      <Column Name="Nachgelagerte_Prozesse" Type="System.String" DbType="NVarChar(350) NOT NULL" CanBeNull="false" />
       <Column Name="Servicezeit_Helpdesk" Type="System.String" DbType="NVarChar(350) NOT NULL" CanBeNull="false" />
       <Column Name="RPO_Datenverlustzeit_Recovery_Point_Objective" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="RTO_Wiederanlaufzeit_Recovery_Time_Objective" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
@@ -166,6 +157,8 @@
       <Column Name="Benutzer" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
       <Association Name="ISB_BIA_Prozesse_ISB_BIA_Delta_Analyse" Member="ISB_BIA_Delta_Analyse" ThisKey="Prozess_Id,Datum" OtherKey="Prozess_Id,Datum_Prozess" Type="ISB_BIA_Delta_Analyse" />
       <Association Name="ISB_BIA_Prozesse_ISB_BIA_Prozesse_Applikationen" Member="ISB_BIA_Prozesse_Applikationen" ThisKey="Prozess_Id,Datum" OtherKey="Prozess_Id,Datum_Prozess" Type="ISB_BIA_Prozesse_Applikationen" />
+      <Association Name="ISB_BIA_Prozesse_ISB_BIA_Prozesse_Prozesse" Member="ISB_BIA_Prozesse_Prozesse" ThisKey="Prozess_Id,Datum" OtherKey="Prozess_Id,Datum_Prozess" Type="ISB_BIA_Prozesse_Prozesse" />
+      <Association Name="ISB_BIA_Prozesse_ISB_BIA_Prozesse_Prozesse1" Member="ISB_BIA_Prozesse_Prozesse1" ThisKey="Prozess_Id,Datum" OtherKey="Ref_Prozess_Id,Datum_Ref_Prozess" Type="ISB_BIA_Prozesse_Prozesse" />
     </Type>
   </Table>
   <Table Name="dbo.ISB_BIA_Prozesse_Applikationen" Member="ISB_BIA_Prozesse_Applikationen">
@@ -179,6 +172,30 @@
       <Column Name="Benutzer" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
       <Association Name="ISB_BIA_Prozesse_ISB_BIA_Prozesse_Applikationen" Member="ISB_BIA_Prozesse" ThisKey="Prozess_Id,Datum_Prozess" OtherKey="Prozess_Id,Datum" Type="ISB_BIA_Prozesse" IsForeignKey="true" />
       <Association Name="ISB_BIA_Applikationen_ISB_BIA_Prozesse_Applikationen" Member="ISB_BIA_Applikationen" ThisKey="Applikation_Id,Datum_Applikation" OtherKey="Applikation_Id,Datum" Type="ISB_BIA_Applikationen" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ISB_BIA_Prozesse_Prozesse" Member="ISB_BIA_Prozesse_Prozesse">
+    <Type Name="ISB_BIA_Prozesse_Prozesse">
+      <Column Name="Prozess_Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Datum_Prozess" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Ref_Prozess_Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Datum_Ref_Prozess" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Typ" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Relation" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Datum" Type="System.DateTime" DbType="DateTime NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Benutzer" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="ISB_BIA_Prozesse_ISB_BIA_Prozesse_Prozesse" Member="ISB_BIA_Prozesse" ThisKey="Prozess_Id,Datum_Prozess" OtherKey="Prozess_Id,Datum" Type="ISB_BIA_Prozesse" IsForeignKey="true" />
+      <Association Name="ISB_BIA_Prozesse_ISB_BIA_Prozesse_Prozesse1" Member="ISB_BIA_Prozesse1" ThisKey="Ref_Prozess_Id,Datum_Ref_Prozess" OtherKey="Prozess_Id,Datum" Type="ISB_BIA_Prozesse" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ISB_BIA_OEs" Member="ISB_BIA_OEs">
+    <Type Name="ISB_BIA_OEs">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="OE_Name" Type="System.String" DbType="VarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="OE_Nummer" Type="System.String" DbType="VarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="Prozesseigentümer" Type="System.String" DbType="VarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="Datum" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Benutzer" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
     </Type>
   </Table>
 </Database>

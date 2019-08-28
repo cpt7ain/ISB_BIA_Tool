@@ -22,7 +22,7 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
 	using System;
 	
 	
-	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="Data")]
+	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="LocalData")]
 	public partial class L2SDataContext : System.Data.Linq.DataContext
 	{
 		
@@ -51,19 +51,22 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
     partial void InsertISB_BIA_Log(ISB_BIA_Log instance);
     partial void UpdateISB_BIA_Log(ISB_BIA_Log instance);
     partial void DeleteISB_BIA_Log(ISB_BIA_Log instance);
-    partial void InsertISB_BIA_OEs(ISB_BIA_OEs instance);
-    partial void UpdateISB_BIA_OEs(ISB_BIA_OEs instance);
-    partial void DeleteISB_BIA_OEs(ISB_BIA_OEs instance);
     partial void InsertISB_BIA_Prozesse(ISB_BIA_Prozesse instance);
     partial void UpdateISB_BIA_Prozesse(ISB_BIA_Prozesse instance);
     partial void DeleteISB_BIA_Prozesse(ISB_BIA_Prozesse instance);
     partial void InsertISB_BIA_Prozesse_Applikationen(ISB_BIA_Prozesse_Applikationen instance);
     partial void UpdateISB_BIA_Prozesse_Applikationen(ISB_BIA_Prozesse_Applikationen instance);
     partial void DeleteISB_BIA_Prozesse_Applikationen(ISB_BIA_Prozesse_Applikationen instance);
+    partial void InsertISB_BIA_Prozesse_Prozesse(ISB_BIA_Prozesse_Prozesse instance);
+    partial void UpdateISB_BIA_Prozesse_Prozesse(ISB_BIA_Prozesse_Prozesse instance);
+    partial void DeleteISB_BIA_Prozesse_Prozesse(ISB_BIA_Prozesse_Prozesse instance);
+    partial void InsertISB_BIA_OEs(ISB_BIA_OEs instance);
+    partial void UpdateISB_BIA_OEs(ISB_BIA_OEs instance);
+    partial void DeleteISB_BIA_OEs(ISB_BIA_OEs instance);
     #endregion
 		
 		public L2SDataContext() : 
-				base(global::ISB_BIA_IMPORT1.Properties.Settings.Default.DataConnectionString, mappingSource)
+				base(global::ISB_BIA_IMPORT1.Properties.Settings.Default.LocalDataConnectionString, mappingSource)
 		{
 			OnCreated();
 		}
@@ -148,14 +151,6 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
 			}
 		}
 		
-		public System.Data.Linq.Table<ISB_BIA_OEs> ISB_BIA_OEs
-		{
-			get
-			{
-				return this.GetTable<ISB_BIA_OEs>();
-			}
-		}
-		
 		public System.Data.Linq.Table<ISB_BIA_Prozesse> ISB_BIA_Prozesse
 		{
 			get
@@ -169,6 +164,22 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
 			get
 			{
 				return this.GetTable<ISB_BIA_Prozesse_Applikationen>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ISB_BIA_Prozesse_Prozesse> ISB_BIA_Prozesse_Prozesse
+		{
+			get
+			{
+				return this.GetTable<ISB_BIA_Prozesse_Prozesse>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ISB_BIA_OEs> ISB_BIA_OEs
+		{
+			get
+			{
+				return this.GetTable<ISB_BIA_OEs>();
 			}
 		}
 	}
@@ -213,6 +224,8 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
 		
 		private string _Benutzer;
 		
+		private string _Erstanlage;
+		
 		private EntitySet<ISB_BIA_Delta_Analyse> _ISB_BIA_Delta_Analyse;
 		
 		private EntitySet<ISB_BIA_Prozesse_Applikationen> _ISB_BIA_Prozesse_Applikationen;
@@ -255,6 +268,8 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
     partial void OnDatumChanged();
     partial void OnBenutzerChanging(string value);
     partial void OnBenutzerChanged();
+    partial void OnErstanlageChanging(string value);
+    partial void OnErstanlageChanged();
     #endregion
 		
 		public ISB_BIA_Applikationen()
@@ -600,6 +615,26 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
 					this._Benutzer = value;
 					this.SendPropertyChanged("Benutzer");
 					this.OnBenutzerChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Erstanlage", DbType="NVarChar(10) NOT NULL", CanBeNull=false)]
+		public string Erstanlage
+		{
+			get
+			{
+				return this._Erstanlage;
+			}
+			set
+			{
+				if ((this._Erstanlage != value))
+				{
+					this.OnErstanlageChanging(value);
+					this.SendPropertyChanging();
+					this._Erstanlage = value;
+					this.SendPropertyChanged("Erstanlage");
+					this.OnErstanlageChanged();
 				}
 			}
 		}
@@ -2749,164 +2784,6 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ISB_BIA_OEs")]
-	public partial class ISB_BIA_OEs : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _Id;
-		
-		private string _OE_Name;
-		
-		private string _OE_Nummer;
-		
-		private System.DateTime _Datum;
-		
-		private string _Benutzer;
-		
-    #region Definitionen der Erweiterungsmethoden
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnIdChanging(int value);
-    partial void OnIdChanged();
-    partial void OnOE_NameChanging(string value);
-    partial void OnOE_NameChanged();
-    partial void OnOE_NummerChanging(string value);
-    partial void OnOE_NummerChanged();
-    partial void OnDatumChanging(System.DateTime value);
-    partial void OnDatumChanged();
-    partial void OnBenutzerChanging(string value);
-    partial void OnBenutzerChanged();
-    #endregion
-		
-		public ISB_BIA_OEs()
-		{
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int Id
-		{
-			get
-			{
-				return this._Id;
-			}
-			set
-			{
-				if ((this._Id != value))
-				{
-					this.OnIdChanging(value);
-					this.SendPropertyChanging();
-					this._Id = value;
-					this.SendPropertyChanged("Id");
-					this.OnIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OE_Name", DbType="VarChar(200) NOT NULL", CanBeNull=false)]
-		public string OE_Name
-		{
-			get
-			{
-				return this._OE_Name;
-			}
-			set
-			{
-				if ((this._OE_Name != value))
-				{
-					this.OnOE_NameChanging(value);
-					this.SendPropertyChanging();
-					this._OE_Name = value;
-					this.SendPropertyChanged("OE_Name");
-					this.OnOE_NameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OE_Nummer", DbType="VarChar(200) NOT NULL", CanBeNull=false)]
-		public string OE_Nummer
-		{
-			get
-			{
-				return this._OE_Nummer;
-			}
-			set
-			{
-				if ((this._OE_Nummer != value))
-				{
-					this.OnOE_NummerChanging(value);
-					this.SendPropertyChanging();
-					this._OE_Nummer = value;
-					this.SendPropertyChanged("OE_Nummer");
-					this.OnOE_NummerChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Datum", DbType="DateTime NOT NULL")]
-		public System.DateTime Datum
-		{
-			get
-			{
-				return this._Datum;
-			}
-			set
-			{
-				if ((this._Datum != value))
-				{
-					this.OnDatumChanging(value);
-					this.SendPropertyChanging();
-					this._Datum = value;
-					this.SendPropertyChanged("Datum");
-					this.OnDatumChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Benutzer", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
-		public string Benutzer
-		{
-			get
-			{
-				return this._Benutzer;
-			}
-			set
-			{
-				if ((this._Benutzer != value))
-				{
-					this.OnBenutzerChanging(value);
-					this.SendPropertyChanging();
-					this._Benutzer = value;
-					this.SendPropertyChanged("Benutzer");
-					this.OnBenutzerChanged();
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ISB_BIA_Prozesse")]
 	public partial class ISB_BIA_Prozesse : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -2920,6 +2797,8 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
 		private string _Prozess;
 		
 		private string _Sub_Prozess;
+		
+		private string _Prozesseigentümer;
 		
 		private string _Prozessverantwortlicher;
 		
@@ -2946,10 +2825,6 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
 		private int _SZ_5;
 		
 		private int _SZ_6;
-		
-		private string _Vorgelagerte_Prozesse;
-		
-		private string _Nachgelagerte_Prozesse;
 		
 		private string _Servicezeit_Helpdesk;
 		
@@ -2979,6 +2854,10 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
 		
 		private EntitySet<ISB_BIA_Prozesse_Applikationen> _ISB_BIA_Prozesse_Applikationen;
 		
+		private EntitySet<ISB_BIA_Prozesse_Prozesse> _ISB_BIA_Prozesse_Prozesse;
+		
+		private EntitySet<ISB_BIA_Prozesse_Prozesse> _ISB_BIA_Prozesse_Prozesse1;
+		
     #region Definitionen der Erweiterungsmethoden
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -2991,6 +2870,8 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
     partial void OnProzessChanged();
     partial void OnSub_ProzessChanging(string value);
     partial void OnSub_ProzessChanged();
+    partial void OnProzesseigentümerChanging(string value);
+    partial void OnProzesseigentümerChanged();
     partial void OnProzessverantwortlicherChanging(string value);
     partial void OnProzessverantwortlicherChanged();
     partial void OnKritischer_ProzessChanging(string value);
@@ -3017,10 +2898,6 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
     partial void OnSZ_5Changed();
     partial void OnSZ_6Changing(int value);
     partial void OnSZ_6Changed();
-    partial void OnVorgelagerte_ProzesseChanging(string value);
-    partial void OnVorgelagerte_ProzesseChanged();
-    partial void OnNachgelagerte_ProzesseChanging(string value);
-    partial void OnNachgelagerte_ProzesseChanged();
     partial void OnServicezeit_HelpdeskChanging(string value);
     partial void OnServicezeit_HelpdeskChanged();
     partial void OnRPO_Datenverlustzeit_Recovery_Point_ObjectiveChanging(int value);
@@ -3051,6 +2928,8 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
 		{
 			this._ISB_BIA_Delta_Analyse = new EntitySet<ISB_BIA_Delta_Analyse>(new Action<ISB_BIA_Delta_Analyse>(this.attach_ISB_BIA_Delta_Analyse), new Action<ISB_BIA_Delta_Analyse>(this.detach_ISB_BIA_Delta_Analyse));
 			this._ISB_BIA_Prozesse_Applikationen = new EntitySet<ISB_BIA_Prozesse_Applikationen>(new Action<ISB_BIA_Prozesse_Applikationen>(this.attach_ISB_BIA_Prozesse_Applikationen), new Action<ISB_BIA_Prozesse_Applikationen>(this.detach_ISB_BIA_Prozesse_Applikationen));
+			this._ISB_BIA_Prozesse_Prozesse = new EntitySet<ISB_BIA_Prozesse_Prozesse>(new Action<ISB_BIA_Prozesse_Prozesse>(this.attach_ISB_BIA_Prozesse_Prozesse), new Action<ISB_BIA_Prozesse_Prozesse>(this.detach_ISB_BIA_Prozesse_Prozesse));
+			this._ISB_BIA_Prozesse_Prozesse1 = new EntitySet<ISB_BIA_Prozesse_Prozesse>(new Action<ISB_BIA_Prozesse_Prozesse>(this.attach_ISB_BIA_Prozesse_Prozesse1), new Action<ISB_BIA_Prozesse_Prozesse>(this.detach_ISB_BIA_Prozesse_Prozesse1));
 			OnCreated();
 		}
 		
@@ -3130,6 +3009,26 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
 					this._Sub_Prozess = value;
 					this.SendPropertyChanged("Sub_Prozess");
 					this.OnSub_ProzessChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Prozesseigentümer", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string Prozesseigentümer
+		{
+			get
+			{
+				return this._Prozesseigentümer;
+			}
+			set
+			{
+				if ((this._Prozesseigentümer != value))
+				{
+					this.OnProzesseigentümerChanging(value);
+					this.SendPropertyChanging();
+					this._Prozesseigentümer = value;
+					this.SendPropertyChanged("Prozesseigentümer");
+					this.OnProzesseigentümerChanged();
 				}
 			}
 		}
@@ -3390,46 +3289,6 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
 					this._SZ_6 = value;
 					this.SendPropertyChanged("SZ_6");
 					this.OnSZ_6Changed();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Vorgelagerte_Prozesse", DbType="NVarChar(350) NOT NULL", CanBeNull=false)]
-		public string Vorgelagerte_Prozesse
-		{
-			get
-			{
-				return this._Vorgelagerte_Prozesse;
-			}
-			set
-			{
-				if ((this._Vorgelagerte_Prozesse != value))
-				{
-					this.OnVorgelagerte_ProzesseChanging(value);
-					this.SendPropertyChanging();
-					this._Vorgelagerte_Prozesse = value;
-					this.SendPropertyChanged("Vorgelagerte_Prozesse");
-					this.OnVorgelagerte_ProzesseChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Nachgelagerte_Prozesse", DbType="NVarChar(350) NOT NULL", CanBeNull=false)]
-		public string Nachgelagerte_Prozesse
-		{
-			get
-			{
-				return this._Nachgelagerte_Prozesse;
-			}
-			set
-			{
-				if ((this._Nachgelagerte_Prozesse != value))
-				{
-					this.OnNachgelagerte_ProzesseChanging(value);
-					this.SendPropertyChanging();
-					this._Nachgelagerte_Prozesse = value;
-					this.SendPropertyChanged("Nachgelagerte_Prozesse");
-					this.OnNachgelagerte_ProzesseChanged();
 				}
 			}
 		}
@@ -3700,6 +3559,32 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ISB_BIA_Prozesse_ISB_BIA_Prozesse_Prozesse", Storage="_ISB_BIA_Prozesse_Prozesse", ThisKey="Prozess_Id,Datum", OtherKey="Prozess_Id,Datum_Prozess")]
+		public EntitySet<ISB_BIA_Prozesse_Prozesse> ISB_BIA_Prozesse_Prozesse
+		{
+			get
+			{
+				return this._ISB_BIA_Prozesse_Prozesse;
+			}
+			set
+			{
+				this._ISB_BIA_Prozesse_Prozesse.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ISB_BIA_Prozesse_ISB_BIA_Prozesse_Prozesse1", Storage="_ISB_BIA_Prozesse_Prozesse1", ThisKey="Prozess_Id,Datum", OtherKey="Ref_Prozess_Id,Datum_Ref_Prozess")]
+		public EntitySet<ISB_BIA_Prozesse_Prozesse> ISB_BIA_Prozesse_Prozesse1
+		{
+			get
+			{
+				return this._ISB_BIA_Prozesse_Prozesse1;
+			}
+			set
+			{
+				this._ISB_BIA_Prozesse_Prozesse1.Assign(value);
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -3742,6 +3627,30 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
 		{
 			this.SendPropertyChanging();
 			entity.ISB_BIA_Prozesse = null;
+		}
+		
+		private void attach_ISB_BIA_Prozesse_Prozesse(ISB_BIA_Prozesse_Prozesse entity)
+		{
+			this.SendPropertyChanging();
+			entity.ISB_BIA_Prozesse = this;
+		}
+		
+		private void detach_ISB_BIA_Prozesse_Prozesse(ISB_BIA_Prozesse_Prozesse entity)
+		{
+			this.SendPropertyChanging();
+			entity.ISB_BIA_Prozesse = null;
+		}
+		
+		private void attach_ISB_BIA_Prozesse_Prozesse1(ISB_BIA_Prozesse_Prozesse entity)
+		{
+			this.SendPropertyChanging();
+			entity.ISB_BIA_Prozesse1 = this;
+		}
+		
+		private void detach_ISB_BIA_Prozesse_Prozesse1(ISB_BIA_Prozesse_Prozesse entity)
+		{
+			this.SendPropertyChanging();
+			entity.ISB_BIA_Prozesse1 = null;
 		}
 	}
 	
@@ -4020,6 +3929,512 @@ namespace ISB_BIA_IMPORT1.LINQ2SQL
 						this._Datum_Applikation = default(System.DateTime);
 					}
 					this.SendPropertyChanged("ISB_BIA_Applikationen");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ISB_BIA_Prozesse_Prozesse")]
+	public partial class ISB_BIA_Prozesse_Prozesse : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _Prozess_Id;
+		
+		private System.DateTime _Datum_Prozess;
+		
+		private int _Ref_Prozess_Id;
+		
+		private System.DateTime _Datum_Ref_Prozess;
+		
+		private int _Typ;
+		
+		private int _Relation;
+		
+		private System.DateTime _Datum;
+		
+		private string _Benutzer;
+		
+		private EntityRef<ISB_BIA_Prozesse> _ISB_BIA_Prozesse;
+		
+		private EntityRef<ISB_BIA_Prozesse> _ISB_BIA_Prozesse1;
+		
+    #region Definitionen der Erweiterungsmethoden
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnProzess_IdChanging(int value);
+    partial void OnProzess_IdChanged();
+    partial void OnDatum_ProzessChanging(System.DateTime value);
+    partial void OnDatum_ProzessChanged();
+    partial void OnRef_Prozess_IdChanging(int value);
+    partial void OnRef_Prozess_IdChanged();
+    partial void OnDatum_Ref_ProzessChanging(System.DateTime value);
+    partial void OnDatum_Ref_ProzessChanged();
+    partial void OnTypChanging(int value);
+    partial void OnTypChanged();
+    partial void OnRelationChanging(int value);
+    partial void OnRelationChanged();
+    partial void OnDatumChanging(System.DateTime value);
+    partial void OnDatumChanged();
+    partial void OnBenutzerChanging(string value);
+    partial void OnBenutzerChanged();
+    #endregion
+		
+		public ISB_BIA_Prozesse_Prozesse()
+		{
+			this._ISB_BIA_Prozesse = default(EntityRef<ISB_BIA_Prozesse>);
+			this._ISB_BIA_Prozesse1 = default(EntityRef<ISB_BIA_Prozesse>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Prozess_Id", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int Prozess_Id
+		{
+			get
+			{
+				return this._Prozess_Id;
+			}
+			set
+			{
+				if ((this._Prozess_Id != value))
+				{
+					if (this._ISB_BIA_Prozesse.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnProzess_IdChanging(value);
+					this.SendPropertyChanging();
+					this._Prozess_Id = value;
+					this.SendPropertyChanged("Prozess_Id");
+					this.OnProzess_IdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Datum_Prozess", DbType="DateTime NOT NULL")]
+		public System.DateTime Datum_Prozess
+		{
+			get
+			{
+				return this._Datum_Prozess;
+			}
+			set
+			{
+				if ((this._Datum_Prozess != value))
+				{
+					if (this._ISB_BIA_Prozesse.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnDatum_ProzessChanging(value);
+					this.SendPropertyChanging();
+					this._Datum_Prozess = value;
+					this.SendPropertyChanged("Datum_Prozess");
+					this.OnDatum_ProzessChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Ref_Prozess_Id", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int Ref_Prozess_Id
+		{
+			get
+			{
+				return this._Ref_Prozess_Id;
+			}
+			set
+			{
+				if ((this._Ref_Prozess_Id != value))
+				{
+					if (this._ISB_BIA_Prozesse1.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnRef_Prozess_IdChanging(value);
+					this.SendPropertyChanging();
+					this._Ref_Prozess_Id = value;
+					this.SendPropertyChanged("Ref_Prozess_Id");
+					this.OnRef_Prozess_IdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Datum_Ref_Prozess", DbType="DateTime NOT NULL")]
+		public System.DateTime Datum_Ref_Prozess
+		{
+			get
+			{
+				return this._Datum_Ref_Prozess;
+			}
+			set
+			{
+				if ((this._Datum_Ref_Prozess != value))
+				{
+					if (this._ISB_BIA_Prozesse1.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnDatum_Ref_ProzessChanging(value);
+					this.SendPropertyChanging();
+					this._Datum_Ref_Prozess = value;
+					this.SendPropertyChanged("Datum_Ref_Prozess");
+					this.OnDatum_Ref_ProzessChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Typ", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int Typ
+		{
+			get
+			{
+				return this._Typ;
+			}
+			set
+			{
+				if ((this._Typ != value))
+				{
+					this.OnTypChanging(value);
+					this.SendPropertyChanging();
+					this._Typ = value;
+					this.SendPropertyChanged("Typ");
+					this.OnTypChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Relation", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int Relation
+		{
+			get
+			{
+				return this._Relation;
+			}
+			set
+			{
+				if ((this._Relation != value))
+				{
+					this.OnRelationChanging(value);
+					this.SendPropertyChanging();
+					this._Relation = value;
+					this.SendPropertyChanged("Relation");
+					this.OnRelationChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Datum", DbType="DateTime NOT NULL", IsPrimaryKey=true)]
+		public System.DateTime Datum
+		{
+			get
+			{
+				return this._Datum;
+			}
+			set
+			{
+				if ((this._Datum != value))
+				{
+					this.OnDatumChanging(value);
+					this.SendPropertyChanging();
+					this._Datum = value;
+					this.SendPropertyChanged("Datum");
+					this.OnDatumChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Benutzer", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string Benutzer
+		{
+			get
+			{
+				return this._Benutzer;
+			}
+			set
+			{
+				if ((this._Benutzer != value))
+				{
+					this.OnBenutzerChanging(value);
+					this.SendPropertyChanging();
+					this._Benutzer = value;
+					this.SendPropertyChanged("Benutzer");
+					this.OnBenutzerChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ISB_BIA_Prozesse_ISB_BIA_Prozesse_Prozesse", Storage="_ISB_BIA_Prozesse", ThisKey="Prozess_Id,Datum_Prozess", OtherKey="Prozess_Id,Datum", IsForeignKey=true)]
+		public ISB_BIA_Prozesse ISB_BIA_Prozesse
+		{
+			get
+			{
+				return this._ISB_BIA_Prozesse.Entity;
+			}
+			set
+			{
+				ISB_BIA_Prozesse previousValue = this._ISB_BIA_Prozesse.Entity;
+				if (((previousValue != value) 
+							|| (this._ISB_BIA_Prozesse.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ISB_BIA_Prozesse.Entity = null;
+						previousValue.ISB_BIA_Prozesse_Prozesse.Remove(this);
+					}
+					this._ISB_BIA_Prozesse.Entity = value;
+					if ((value != null))
+					{
+						value.ISB_BIA_Prozesse_Prozesse.Add(this);
+						this._Prozess_Id = value.Prozess_Id;
+						this._Datum_Prozess = value.Datum;
+					}
+					else
+					{
+						this._Prozess_Id = default(int);
+						this._Datum_Prozess = default(System.DateTime);
+					}
+					this.SendPropertyChanged("ISB_BIA_Prozesse");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ISB_BIA_Prozesse_ISB_BIA_Prozesse_Prozesse1", Storage="_ISB_BIA_Prozesse1", ThisKey="Ref_Prozess_Id,Datum_Ref_Prozess", OtherKey="Prozess_Id,Datum", IsForeignKey=true)]
+		public ISB_BIA_Prozesse ISB_BIA_Prozesse1
+		{
+			get
+			{
+				return this._ISB_BIA_Prozesse1.Entity;
+			}
+			set
+			{
+				ISB_BIA_Prozesse previousValue = this._ISB_BIA_Prozesse1.Entity;
+				if (((previousValue != value) 
+							|| (this._ISB_BIA_Prozesse1.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ISB_BIA_Prozesse1.Entity = null;
+						previousValue.ISB_BIA_Prozesse_Prozesse1.Remove(this);
+					}
+					this._ISB_BIA_Prozesse1.Entity = value;
+					if ((value != null))
+					{
+						value.ISB_BIA_Prozesse_Prozesse1.Add(this);
+						this._Ref_Prozess_Id = value.Prozess_Id;
+						this._Datum_Ref_Prozess = value.Datum;
+					}
+					else
+					{
+						this._Ref_Prozess_Id = default(int);
+						this._Datum_Ref_Prozess = default(System.DateTime);
+					}
+					this.SendPropertyChanged("ISB_BIA_Prozesse1");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ISB_BIA_OEs")]
+	public partial class ISB_BIA_OEs : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _Id;
+		
+		private string _OE_Name;
+		
+		private string _OE_Nummer;
+		
+		private string _Prozesseigentümer;
+		
+		private System.DateTime _Datum;
+		
+		private string _Benutzer;
+		
+    #region Definitionen der Erweiterungsmethoden
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(int value);
+    partial void OnIdChanged();
+    partial void OnOE_NameChanging(string value);
+    partial void OnOE_NameChanged();
+    partial void OnOE_NummerChanging(string value);
+    partial void OnOE_NummerChanged();
+    partial void OnProzesseigentümerChanging(string value);
+    partial void OnProzesseigentümerChanged();
+    partial void OnDatumChanging(System.DateTime value);
+    partial void OnDatumChanged();
+    partial void OnBenutzerChanging(string value);
+    partial void OnBenutzerChanged();
+    #endregion
+		
+		public ISB_BIA_OEs()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OE_Name", DbType="VarChar(200) NOT NULL", CanBeNull=false)]
+		public string OE_Name
+		{
+			get
+			{
+				return this._OE_Name;
+			}
+			set
+			{
+				if ((this._OE_Name != value))
+				{
+					this.OnOE_NameChanging(value);
+					this.SendPropertyChanging();
+					this._OE_Name = value;
+					this.SendPropertyChanged("OE_Name");
+					this.OnOE_NameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OE_Nummer", DbType="VarChar(200) NOT NULL", CanBeNull=false)]
+		public string OE_Nummer
+		{
+			get
+			{
+				return this._OE_Nummer;
+			}
+			set
+			{
+				if ((this._OE_Nummer != value))
+				{
+					this.OnOE_NummerChanging(value);
+					this.SendPropertyChanging();
+					this._OE_Nummer = value;
+					this.SendPropertyChanged("OE_Nummer");
+					this.OnOE_NummerChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Prozesseigentümer", DbType="VarChar(200) NOT NULL", CanBeNull=false)]
+		public string Prozesseigentümer
+		{
+			get
+			{
+				return this._Prozesseigentümer;
+			}
+			set
+			{
+				if ((this._Prozesseigentümer != value))
+				{
+					this.OnProzesseigentümerChanging(value);
+					this.SendPropertyChanging();
+					this._Prozesseigentümer = value;
+					this.SendPropertyChanged("Prozesseigentümer");
+					this.OnProzesseigentümerChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Datum", DbType="DateTime NOT NULL")]
+		public System.DateTime Datum
+		{
+			get
+			{
+				return this._Datum;
+			}
+			set
+			{
+				if ((this._Datum != value))
+				{
+					this.OnDatumChanging(value);
+					this.SendPropertyChanging();
+					this._Datum = value;
+					this.SendPropertyChanged("Datum");
+					this.OnDatumChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Benutzer", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string Benutzer
+		{
+			get
+			{
+				return this._Benutzer;
+			}
+			set
+			{
+				if ((this._Benutzer != value))
+				{
+					this.OnBenutzerChanging(value);
+					this.SendPropertyChanging();
+					this._Benutzer = value;
+					this.SendPropertyChanged("Benutzer");
+					this.OnBenutzerChanged();
 				}
 			}
 		}

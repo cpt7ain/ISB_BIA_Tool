@@ -52,7 +52,7 @@ namespace ISB_BIA_IMPORT1.View
                 searchOn = true;
                 if (ProcessDataGrid.ItemsSource != null)
                 {
-                    IEnumerable<ISB_BIA_Prozesse> all = ProcessDataGrid.ItemsSource.Cast<ISB_BIA_Prozesse>();
+                    IEnumerable<ISB_BIA_Prozesse> all = ProcessDataGrid.Items.Cast<ISB_BIA_Prozesse>();
                     searchResultList = all.Where(x => x.Prozess.IndexOf(SearchBox.Text, StringComparison.CurrentCultureIgnoreCase) >= 0 || x.Sub_Prozess.IndexOf(SearchBox.Text, StringComparison.CurrentCultureIgnoreCase) >= 0 || x.OE_Filter.IndexOf(SearchBox.Text, StringComparison.CurrentCultureIgnoreCase) >= 0 || x.Benutzer.IndexOf(SearchBox.Text, StringComparison.CurrentCultureIgnoreCase) >= 0 || x.Datum.ToString().IndexOf(SearchBox.Text, StringComparison.CurrentCultureIgnoreCase) >= 0);
 
                     ISB_BIA_Prozesse n = searchResultList.FirstOrDefault();

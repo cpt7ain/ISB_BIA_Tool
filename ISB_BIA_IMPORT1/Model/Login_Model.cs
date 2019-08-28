@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using System.Collections.Generic;
 
 namespace ISB_BIA_IMPORT1.Model
 {
@@ -34,6 +35,7 @@ namespace ISB_BIA_IMPORT1.Model
         private string _givenname;
         private string _surname;
         private string _oE;
+        private List<string> _listOE;
 
         /// <summary>
         /// Nutzername (LF-Nummer des Users)
@@ -68,12 +70,27 @@ namespace ISB_BIA_IMPORT1.Model
             set => Set(() => Surname, ref _surname, value);
         }
         /// <summary>
-        /// OE-Nummer des Users aus AD
+        /// OE-Nummer(n) des Users aus AD
         /// </summary>
         public string OE
         {
             get => _oE;
             set => Set(() => OE, ref _oE, value);
+        }
+        /// <summary>
+        /// Liste der OE-Nummer des Users aus AD
+        /// </summary>
+        public List<string> ListOE
+        {
+            get => _listOE;
+            set => Set(() => ListOE, ref _listOE, value);
+        }
+        /// <summary>
+        /// Kompletter Name des Users aus AD
+        /// </summary>
+        public string WholeName
+        {
+            get => _surname + ", "+ _givenname + " ("+_username+")";
         }
     }
 }

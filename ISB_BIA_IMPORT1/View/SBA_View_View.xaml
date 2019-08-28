@@ -13,6 +13,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <c:DateToBrushConverter x:Key="DateToBrushConverter" />
+            <c:DateFirstToBrushConverter x:Key="DateFirstToBrushConverter" />
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -30,7 +31,7 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="450"/>
-                    <ColumnDefinition Width="250*"/>
+                    <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="400"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
@@ -72,24 +73,34 @@
                         <KeyBinding Key="Enter" Command="{Binding Cmd_NavToApp}"/>
                     </DataGrid.InputBindings>
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Anwendung" Width="600" MaxWidth="1000" Binding="{Binding IT_Anwendung_System}"/>
+                        <DataGridTextColumn Header="Anwendung" Width="400" MaxWidth="1000" Binding="{Binding IT_Anwendung_System}"/>
                         <DataGridTextColumn Header="Kategorie" Width="250" Binding="{Binding IT_Betriebsart}"/>
                         <DataGridTextColumn Header="Bearbeitungsdatum" Width="170" Binding="{Binding Datum, StringFormat=\{0:dd.MM.yy HH:mm:ss\}}"/>
-                        <DataGridTextColumn Header="Bearbeiter" Width="100" Binding="{Binding Benutzer}"/>
+                        <DataGridTextColumn Header="Bearbeitet von" Width="100" Binding="{Binding Benutzer}"/>
+                        <DataGridTextColumn Header="Erstanlange" Width="100" Binding="{Binding Erstanlage}"/>
+                        <DataGridTextColumn Header="Verknüpfte Prozesse" Width="150" Binding="{Binding Verknüpfte_Prozesse}"/>
                     </DataGrid.Columns>
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">
-                            <Setter Property="Background" Value="{Binding Datum, Converter={StaticResource DateToBrushConverter}}"/>
+                            <Setter Property="Background">
+                                <Setter.Value>
+                                    <MultiBinding Converter="{StaticResource DateFirstToBrushConverter}">
+                                        <Binding Path="Datum" />
+                                        <Binding Path="Erstanlage" />
+                                    </MultiBinding>
+                                </Setter.Value>
+                            </Setter> 
                         </Style>
                     </DataGrid.RowStyle>
                 </DataGrid>
-                <Button CommandParameter="{Binding ElementName=ApplicationDataGrid, Path=SelectedItems}" Margin="20,0,0,0" Command="{Binding Cmd_SaveSelectedItems}" Visibility="{Binding Vis_ButtonMultiSave}" Grid.Row="2" Content="Ausgewählte Anwendungen speichern" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <Button Grid.Row="2" CommandParameter="{Binding ElementName=ApplicationDataGrid, Path=SelectedItems}" Margin="20,0,0,0" Command="{Binding Cmd_SaveSelectedApplications}"  Content="Ausgewählte Anwendungen speichern" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <Button Grid.Row="2" Grid.Column="2"  Margin="20,0,20,0" Command="{Binding Cmd_CalculateProcCount}" Content="Anzahl verknüpfter Prozesse berechnen" HorizontalAlignment="right" VerticalAlignment="Center"/>
                 <Rectangle Fill="White" Width="50" HorizontalAlignment="Left" Margin="20,10,0,10" Grid.Row="3" Stroke="Black" Grid.Column="0"/>
                 <TextBlock Text="{Binding Count_NonEdit, StringFormat='Noch nicht bearbeitete Anwendungen: {0}'}" Grid.Row="3" Margin="80,0,0,0" Grid.Column="0" VerticalAlignment="Center"/>
                 <Rectangle Fill="LightGreen" Width="50" HorizontalAlignment="Left" Margin="20,10,0,10" Grid.Row="4" Stroke="Black" Grid.Column="0"/>
                 <TextBlock Text="{Binding Count_Edit, StringFormat='Bearbeitete Anwendungen: {0}'}" Grid.Row="4" Margin="80,0,0,0" Grid.Column="0" VerticalAlignment="Center"/>
                 <TextBlock Text="{Binding List_Applications.Count, StringFormat='Gesamt: {0}'}" Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" Margin="80,0,0,0"/>
-                <Border Background="LightSteelBlue" Grid.Column="2" Grid.Row="2" Margin="20,20,20,20" Grid.RowSpan="5">
+                <Border Background="LightSteelBlue" Grid.Column="2" Grid.Row="3" Margin="20,10,20,10" Grid.RowSpan="4">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition/>

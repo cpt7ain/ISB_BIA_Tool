@@ -12,8 +12,10 @@
              DataContext="{Binding Source={StaticResource Locator}, Path=ProcessView}">
     <UserControl.Resources>
         <ResourceDictionary>
-            <c:DateToBrushConverter x:Key="DateToBrushConverter" />
-            <c:NumToAlphBinaryConverter x:Key="NumToAlphBinaryConverter" />
+            <c:DateToBrushConverter x:Key="DateToBrushConverter"/>
+            <c:NumToAlphBinaryConverter x:Key="NumToAlphBinaryConverter"/>
+            <c:CritToSignConverter x:Key="CritToSignConverter"/>
+            <c:BinaryToBrushConverter x:Key="BinaryToBrushConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -32,10 +34,11 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="70"/>
                     <RowDefinition Height="200*"/>
-                    <RowDefinition Height="40"/>
-                    <RowDefinition Height="40"/>
-                    <RowDefinition Height="40"/>
-                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="35"/>
+                    <RowDefinition Height="35"/>
+                    <RowDefinition Height="35"/>
+                    <RowDefinition Height="35"/>
+                    <RowDefinition Height="35"/>
                 </Grid.RowDefinitions>
                 <Grid Grid.ColumnSpan="3">
                     <Grid.ColumnDefinitions>
@@ -69,25 +72,55 @@
                         <KeyBinding Key="Enter" Command="{Binding Cmd_RowDoubleClick}"/>
                     </DataGrid.InputBindings>
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Prozessname" Width="350" Binding="{Binding Prozess}"/>
-                        <DataGridTextColumn Header="Sub-Prozessname" Width="300" Binding="{Binding Sub_Prozess}"/>
-                        <DataGridTextColumn Header="Zuständige OE" Width="150" Binding="{Binding OE_Filter}"/>
+                        <DataGridTextColumn Header="" Width="20" FontWeight="Bold" Foreground="Red" Binding="{Binding Kritischer_Prozess, Converter={StaticResource CritToSignConverter}}"/>
+                        <DataGridTextColumn Header="Prozessname" Width="250" Binding="{Binding Prozess}"/>
+                        <DataGridTextColumn Header="Sub-Prozessname" Width="250" Binding="{Binding Sub_Prozess}"/>
+                        <DataGridTextColumn Header="Zuständige OE" Width="100" Binding="{Binding OE_Filter}"/>
+                        <DataGridTextColumn Header="Eigentümer" Width="100" Binding="{Binding Prozesseigentümer}"/>
+                        <DataGridTextColumn Header="Verantwortlicher" Width="150" Binding="{Binding Prozessverantwortlicher}"/>
                         <DataGridTextColumn Header="Aktiv" Width="50" Binding="{Binding Aktiv ,Converter={StaticResource NumToAlphBinaryConverter}}"/>
                         <DataGridTextColumn Header="Bearbeitungsdatum" Width="170" Binding="{Binding Datum, StringFormat=\{0:dd.MM.yy HH:mm:ss\}}"/>
-                        <DataGridTextColumn Header="Bearbeiter" Width="100" Binding="{Binding Benutzer}"/>
+                        <DataGridTextColumn Header="Bearbeitet von" Width="100" Binding="{Binding Benutzer}"/>
                     </DataGrid.Columns>
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">
-                            <Setter Property="Background" Value="{Binding Datum, Converter={StaticResource DateToBrushConverter}}"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=g1, Path=Visibility}" Value="Visible">
+                                    <Setter Property="Background" Value="{Binding Datum, Converter={StaticResource DateToBrushConverter}}"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ElementName=g1, Path=Visibility}" Value="Collapsed">
+                                    <Setter Property="Background" Value="{Binding Aktiv, Converter={StaticResource BinaryToBrushConverter}}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
                         </Style>
                     </DataGrid.RowStyle>
                 </DataGrid>
-                <Button CommandParameter="{Binding ElementName=ProcessDataGrid, Path=SelectedItems}" Margin="20,0,0,0" Command="{Binding Cmd_SaveSelectedItems}" Visibility="{Binding Vis_ButtonMultiSave}" Grid.Row="2" Content="Ausgewählte Prozesse speichern" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <Rectangle Fill="White" Width="50" HorizontalAlignment="Left" Margin="20,10,0,10" Grid.Row="3" Stroke="Black" Grid.Column="0"/>
-                <TextBlock Text="{Binding Count_NonEdit, StringFormat='Noch nicht bearbeitete Prozesse: {0}'}" Grid.Row="3" Margin="80,0,0,0" Grid.Column="0" VerticalAlignment="Center"/>
-                <Rectangle Fill="LightGreen" Width="50" HorizontalAlignment="Left" Margin="20,10,0,10" Grid.Row="4" Stroke="Black" Grid.Column="0"/>
-                <TextBlock Text="{Binding Count_Edit, StringFormat='Bearbeitete Prozesse: {0}'}" Grid.Row="4" Margin="80,0,0,0" Grid.Column="0" VerticalAlignment="Center"/>
-                <TextBlock Text="{Binding List_Processes.Count, StringFormat='Gesamt: {0}'}" Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" Margin="80,0,0,0"/>
+                <Grid Grid.Row="2" Grid.RowSpan="3" Background="White">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="10*"/>
+                        <RowDefinition Height="10*"/>
+                        <RowDefinition Height="10*"/>
+                    </Grid.RowDefinitions>
+                    <Rectangle Fill="White" Width="50" HorizontalAlignment="Left" Margin="20,10,0,10" Grid.Row="1" Stroke="Black" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Count_Edit, StringFormat='Aktive Prozesse: {0}'}" Grid.Row="1" Margin="80,0,0,0" Grid.Column="0" VerticalAlignment="Center"/>
+                    <Rectangle Fill="LightSalmon" Width="50" HorizontalAlignment="Left" Margin="20,10,0,10" Grid.Row="2" Stroke="Black" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Count_NonEdit, StringFormat='Gelöschte Prozesse: {0}'}" Grid.Row="2" Margin="80,0,0,0" Grid.Column="0" VerticalAlignment="Center"/>
+                </Grid>
+                <Grid x:Name="g1" Grid.Row="2" Grid.RowSpan="3" Visibility="{Binding Vis_ButtonMultiSave}" Background="White">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="10*"/>
+                        <RowDefinition Height="10*"/>
+                        <RowDefinition Height="10*"/>
+                    </Grid.RowDefinitions>
+                    <Button CommandParameter="{Binding ElementName=ProcessDataGrid, Path=SelectedItems}" Margin="20,0,0,0" Command="{Binding Cmd_SaveSelectedItems}"  Content="Ausgewählte Prozesse speichern" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <Rectangle Fill="White" Width="50" HorizontalAlignment="Left" Margin="20,10,0,10" Grid.Row="1" Stroke="Black" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Count_NonEdit, StringFormat='Noch nicht bearbeitete Prozesse: {0}'}" Grid.Row="1" Margin="80,0,0,0" Grid.Column="0" VerticalAlignment="Center"/>
+                    <Rectangle Fill="LightGreen" Width="50" HorizontalAlignment="Left" Margin="20,10,0,10" Grid.Row="2" Stroke="Black" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Count_Edit, StringFormat='Bearbeitete Prozesse: {0}'}" Grid.Row="2" Margin="80,0,0,0" Grid.Column="0" VerticalAlignment="Center"/>
+                </Grid>
+                <TextBlock Text="{Binding List_Processes.Count, StringFormat='Gesamt: {0}'}" Grid.Row="5" VerticalAlignment="Center" Margin="80,0,0,0"/>
+                <TextBlock Text="!" FontWeight="Bold" Foreground="Red" Grid.Row="6" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="45,0,0,0"/>
+                <TextBlock Text="{Binding Count_Crit, StringFormat='Kritische (aktive) Prozesse: {0}'}" Grid.Row="6" VerticalAlignment="Center" Margin="80,0,0,0"/>
             </Grid>
         </Border>
     </Grid>

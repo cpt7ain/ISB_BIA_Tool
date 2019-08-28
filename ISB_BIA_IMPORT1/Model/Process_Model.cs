@@ -17,6 +17,9 @@ namespace ISB_BIA_IMPORT1.Model
     {
         #region Backing-Fields
 
+        private ObservableCollection<ISB_BIA_Prozesse> _vPList = new ObservableCollection<ISB_BIA_Prozesse>();
+        private ObservableCollection<ISB_BIA_Prozesse> _nPList = new ObservableCollection<ISB_BIA_Prozesse>();
+
         private ObservableCollection<ISB_BIA_Applikationen> _applicationList = new ObservableCollection<ISB_BIA_Applikationen>();
         private int _prozess_Id;
         private string _oE_Filter = "";
@@ -38,9 +41,8 @@ namespace ISB_BIA_IMPORT1.Model
         private int _rPO_Datenverlustzeit_Recovery_Point_Objective = 24;
         private int _rTO_Wiederanlaufzeit_Recovery_Time_Objective = 0;
         private int _rTO_Wiederanlaufzeit_Recovery_Time_Objective_Notfall = 0;
+        private string _prozesseigentümer = "";
         private string _prozessverantwortlicher = "";
-        private string _vorgelagerte_Prozesse = "";
-        private string _nachgelagerte_Prozesse = "";
         private string _relevantes_IS_1 = "";
         private string _relevantes_IS_2 = "";
         private string _relevantes_IS_3 = "";
@@ -60,10 +62,26 @@ namespace ISB_BIA_IMPORT1.Model
         {
             Process_Model copy=(Process_Model)MemberwiseClone();
             copy.ApplicationList = new ObservableCollection<ISB_BIA_Applikationen>(ApplicationList);
+            copy.VPList = new ObservableCollection<ISB_BIA_Prozesse>(VPList);
+            copy.NPList = new ObservableCollection<ISB_BIA_Prozesse>(NPList);
             return copy;
         }
 
         #region Prozess Eigenschaften
+
+        public ObservableCollection<ISB_BIA_Prozesse> VPList
+        {
+            get => _vPList;
+            set => Set(() => VPList, ref _vPList, value);
+
+        }
+
+        public ObservableCollection<ISB_BIA_Prozesse> NPList
+        {
+            get => _nPList;
+            set => Set(() => NPList, ref _nPList, value);
+
+        }
 
         /// <summary>
         /// Liste der Anwendungen, welche dem Prozess momentan zugeordnet sind
@@ -385,6 +403,20 @@ namespace ISB_BIA_IMPORT1.Model
         /// <summary>
         /// Prozessverantwortlicher/Eigentümer des Prozesses
         /// </summary>
+        public string Prozesseigentümer
+        {
+            get => _prozesseigentümer;
+            set
+            {
+                Set(() => Prozesseigentümer, ref _prozesseigentümer, value);
+                if (!String.IsNullOrWhiteSpace(_prozesseigentümer))
+                    RemoveError(nameof(Prozesseigentümer));
+            }
+        }
+
+        /// <summary>
+        /// Prozessverantwortlicher/Eigentümer des Prozesses
+        /// </summary>
         public string Prozessverantwortlicher
         {
             get => _prozessverantwortlicher;
@@ -394,26 +426,6 @@ namespace ISB_BIA_IMPORT1.Model
                 if (!String.IsNullOrWhiteSpace(_prozessverantwortlicher))
                     RemoveError(nameof(Prozessverantwortlicher));
             }
-        }
-
-        /// <summary>
-        /// Vorgelagerter Prozess/OE
-        /// </summary>
-        public string Vorgelagerte_Prozesse
-        {
-            get => _vorgelagerte_Prozesse;
-            set => Set(() => Vorgelagerte_Prozesse, ref _vorgelagerte_Prozesse, value);
-
-        }
-
-        /// <summary>
-        /// Nachgelagerter Prozess/OE
-        /// </summary>
-        public string Nachgelagerte_Prozesse
-        {
-            get => _nachgelagerte_Prozesse;
-            set => Set(() => Nachgelagerte_Prozesse, ref _nachgelagerte_Prozesse, value);
-
         }
 
         /// <summary>
@@ -532,7 +544,6 @@ namespace ISB_BIA_IMPORT1.Model
             {
                 return true;
             }
-
             return false;
         }
 
@@ -547,6 +558,8 @@ namespace ISB_BIA_IMPORT1.Model
                 AddError(nameof(Prozess), "Pflichtfeld");
             if (String.IsNullOrWhiteSpace(_oE_Filter))
                 AddError(nameof(OE_Filter), "Pflichtfeld");
+            if (String.IsNullOrWhiteSpace(_prozesseigentümer))
+                AddError(nameof(Prozesseigentümer), "Pflichtfeld");
             if (String.IsNullOrWhiteSpace(_prozessverantwortlicher))
                 AddError(nameof(Prozessverantwortlicher), "Pflichtfeld");
             if (String.IsNullOrWhiteSpace(_kritikalität_des_Prozesses))

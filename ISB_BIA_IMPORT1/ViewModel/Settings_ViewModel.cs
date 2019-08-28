@@ -54,7 +54,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             get => new MyRelayCommand(() =>
             {
-                if (_mySett.Insert_Settings(_mySett.Map_Model_ToDB(SettingsNew), _mySett.Map_Model_ToDB(SettingsOld)))
+                if (_mySett.Insert_Settings(SettingsNew, SettingsOld))
                 {
                     Cleanup();
                     _myNavi.NavigateBack();

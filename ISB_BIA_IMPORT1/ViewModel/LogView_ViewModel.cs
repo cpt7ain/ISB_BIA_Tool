@@ -21,6 +21,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private MyRelayCommand _cmd_ExportLog;
         #endregion
 
+        #region sonstige Eigenschaften
         /// <summary>
         /// Liste der Logeinträge
         /// </summary>
@@ -29,7 +30,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _logList;
             set => Set(()=>LogList, ref _logList,value);
         }
-
         /// <summary>
         /// CollectionView für Suche in der Log-Liste
         /// </summary>
@@ -38,7 +38,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _filterView;
             set => Set(() => FilterView, ref _filterView, value);
         }
-
         /// <summary>
         /// Text, nach dem im <see cref="FilterView"/> gefiltert wird
         /// </summary>
@@ -51,7 +50,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 FilterView.Refresh();
             }
         }
+        #endregion
 
+        #region Commands
         /// <summary>
         /// Command zum Zurückkehren zum vorherigen VM
         /// </summary>
@@ -63,7 +64,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 _myNavi.NavigateBack();
             });
         }
-
         /// <summary>
         /// Command zum Exportieren der Log-Liste nach Excel
         /// </summary>
@@ -75,6 +75,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       _myExport.Export_Log(LogList);
                   }));
         }
+        #endregion
 
         #region Services
         private readonly INavigationService _myNavi;
@@ -93,9 +94,9 @@ namespace ISB_BIA_IMPORT1.ViewModel
             #region Services
             _myNavi = myNavi;
             _myExport = myExp;
-            _myLog = myLog;
-            
+            _myLog = myLog;            
             #endregion
+
             //Log abrufen
             LogList = _myLog.Get_List_Log();
             //Definieren der Quelle für den CollectionView (=> Log Liste)

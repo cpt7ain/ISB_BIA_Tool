@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ISB_BIA_IMPORT1.LINQ2SQL;
+using ISB_BIA_IMPORT1.Model;
 using ISB_BIA_IMPORT1.Services.Interfaces;
 
 namespace ISB_BIA_IMPORT1.Services
@@ -22,7 +23,7 @@ namespace ISB_BIA_IMPORT1.Services
             return true;
         }
 
-        public bool Export_Applications(ObservableCollection<ISB_BIA_Applikationen> appList, string title, int id=0)
+        public bool Export_Applications(ObservableCollection<Application_Model> appList, string title, int id=0)
         {
             return true;
         }

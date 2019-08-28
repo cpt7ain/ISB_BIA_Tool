@@ -51,6 +51,18 @@ namespace ISB_BIA_IMPORT1.ViewModel
             set => Set(() => List_Delta, ref _list_Delta, value);
         }
 
+        #region Commands
+        /// <summary>
+        /// Exportieren der Delta-Analysis-Liste (nur delta) nach Excel
+        /// </summary>
+        public MyRelayCommand Cmd_ExportDeltaList
+        {
+            get => _cmd_ExportDeltaList
+                  ?? (_cmd_ExportDeltaList = new MyRelayCommand(() =>
+                  {
+                      _myExport.Export_DeltaAnalysis(List_Delta);
+                  }));
+        }
         /// <summary>
         /// Command zum Zurückkehren zum vorherigen VM
         /// </summary>
@@ -62,29 +74,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     _myNavi.NavigateBack();
                 });         
         }
-
-        /// <summary>
-        /// Modus zum Wechsel zwischen ListView+Filter Ansicht und DataGrid+Export Ansicht
-        /// </summary>
-        public bool Mode
-        {
-            get => _mode;
-            set
-            {
-                Set(() =>  Mode, ref _mode, value);
-                if (!value) Str_Instruction = "Ansicht ändern (=> nur Delta-Einträge anzeigen)";
-                else Str_Instruction = "Ansicht ändern (=> alle Einträge anzeigen)";           
-            }
-        }
-
-        /// <summary>
-        /// Beschriftung der Checkbox, welche den Ansichtsmodus bestimmt
-        /// </summary>
-        public string Str_Instruction
-        {
-            get => _str_Instruction;
-            set => Set(() => Str_Instruction, ref _str_Instruction, value);
-        }
+        #endregion
 
         #region Einstellungen zur Darstellung der Spalten der neuen Schutzziele
         /// <summary>
@@ -95,24 +85,34 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// Sichtbarkeit der neuen Schutzziele im ListView
         /// </summary>
         public int Width_NewSecurityGoals { get; set; }
+        #endregion
+
+        #region sonstige Eigenschaften
+        /// <summary>
+        /// Modus zum Wechsel zwischen ListView+Filter Ansicht und DataGrid+Export Ansicht
+        /// </summary>
+        public bool Mode
+        {
+            get => _mode;
+            set
+            {
+                Set(() => Mode, ref _mode, value);
+                if (!value) Str_Instruction = "Ansicht ändern (=> nur Delta-Einträge anzeigen)";
+                else Str_Instruction = "Ansicht ändern (=> alle Einträge anzeigen)";
+            }
+        }
+        /// <summary>
+        /// Beschriftung der Checkbox, welche den Ansichtsmodus bestimmt
+        /// </summary>
+        public string Str_Instruction
+        {
+            get => _str_Instruction;
+            set => Set(() => Str_Instruction, ref _str_Instruction, value);
+        }
         /// <summary>
         /// Aktuelle Anwendungseinstellungen
         /// </summary>
         public ISB_BIA_Settings Setting { get; set; }
-        #endregion
-
-        /// <summary>
-        /// Exportieren der Delta-Analysis-Liste (nur delta) nach Excel
-        /// </summary>
-        public MyRelayCommand Cmd_ExportDeltaList
-        {
-            get => _cmd_ExportDeltaList
-                  ?? (_cmd_ExportDeltaList = new MyRelayCommand(() =>
-                  {
-                      _myExport.Export_DeltaAnalysis(List_Delta);
-                  }));          
-        }
-
         /// <summary>
         /// Ansicht für das Sortieren und Filtern der Delta-Liste
         /// </summary>
@@ -121,7 +121,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _filterView;
             set => Set(() => FilterView, ref _filterView, value);
         }
-
         /// <summary>
         /// Text, nach dem die Delta-Liste gefiltert werden soll
         /// </summary>
@@ -134,6 +133,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 FilterView.Refresh();
             }
         }
+        #endregion
 
         #region Services
         private readonly INavigationService _myNavi;

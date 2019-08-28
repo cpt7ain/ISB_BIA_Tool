@@ -52,7 +52,7 @@ namespace ISB_BIA_IMPORT1.View
                 searchOn = true;
                 if (ApplicationDataGrid.ItemsSource != null)
                 {
-                    IEnumerable<ISB_BIA_Applikationen> all = ApplicationDataGrid.ItemsSource.Cast<ISB_BIA_Applikationen>();
+                    IEnumerable<ISB_BIA_Applikationen> all = ApplicationDataGrid.Items.Cast<ISB_BIA_Applikationen>();
                     searchResultList = all.Where(x => x.IT_Anwendung_System.IndexOf(SearchBox.Text, StringComparison.CurrentCultureIgnoreCase) >= 0 || x.IT_Betriebsart.IndexOf(SearchBox.Text, StringComparison.CurrentCultureIgnoreCase) >= 0 || x.Benutzer.IndexOf(SearchBox.Text, StringComparison.CurrentCultureIgnoreCase) >= 0 || x.Datum.ToString().IndexOf(SearchBox.Text, StringComparison.CurrentCultureIgnoreCase) >= 0);
 
                     ISB_BIA_Applikationen n = searchResultList.FirstOrDefault();

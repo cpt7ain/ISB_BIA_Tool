@@ -62,11 +62,12 @@ namespace ISB_BIA_IMPORT1.Helpers
             {
                 // Create run time view services and models
                 #region Services, per Dependency Injection injiziert
+
                 SimpleIoc.Default.Register<IDialogService, DialogService>();
                 SimpleIoc.Default.Register<ISharedResourceService, SharedResourceService>();
                 SimpleIoc.Default.Register<INavigationService, NavigationService>();
-              
                 SimpleIoc.Default.Register<ILockService, LockService>();
+
                 SimpleIoc.Default.Register<IDataService_Setting, DataService_Setting>();
                 SimpleIoc.Default.Register<IDataModelService, DataModelService>();
                 SimpleIoc.Default.Register<IDataService_Log, DataService_Log>();
@@ -82,7 +83,7 @@ namespace ISB_BIA_IMPORT1.Helpers
                 #endregion
             }
 
-            //Registrieren aller der Viewmodels
+            //Registrieren der Viewmodels
             SimpleIoc.Default.Register<Main_ViewModel>();
             SimpleIoc.Default.Register<Menu_ViewModel>();
             SimpleIoc.Default.Register<ProcessView_ViewModel>();

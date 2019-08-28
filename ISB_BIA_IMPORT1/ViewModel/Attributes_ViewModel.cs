@@ -30,7 +30,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             set => Set(() => List_CurrentAttributes, ref _list_CurrentAttributes, value);
         }
 
-        #region Properties für Einstellungen bezüglich Bearbeitung durch Admin/CISO oder betrachten durch Normalen User
+        #region Sonstige Eigenschaften
         /// <summary>
         /// Property für Einstellungen bezüglich Bearbeitung durch CISO oder betrachten durch andere User
         /// </summary>
@@ -60,8 +60,20 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// Anweisung-String
         /// </summary>
         public string Str_Instruction { get; set; }
+        /// <summary>
+        /// Sichtbarkeit der neuen Schutzziele
+        /// </summary>
+        public Visibility Vis_NewSecurityGoals
+        {
+            get => _vis_NewSecurityGoals;
+            set => Set(() => Vis_NewSecurityGoals, ref _vis_NewSecurityGoals, value);
+        }
+        /// <summary>
+        /// Aktuelle Einstellungen
+        /// </summary>
+        public ISB_BIA_Settings Setting { get; set; }
         #endregion
-
+        #region Commands
         /// <summary>
         /// Command zum Zurückkehren zum vorherigen VM
         /// </summary>
@@ -82,21 +94,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
             }
         });
         }
-
-        /// <summary>
-        /// Sichtbarkeit der neuen Schutzziele
-        /// </summary>
-        public Visibility Vis_NewSecurityGoals
-        {
-            get => _vis_NewSecurityGoals;
-            set => Set(()=>Vis_NewSecurityGoals, ref _vis_NewSecurityGoals, value);
-        }
-
-        /// <summary>
-        /// Aktuelle Einstellungen
-        /// </summary>
-        public ISB_BIA_Settings Setting { get; set; }
-
         /// <summary>
         /// Speichern der Attributliste, entsperren der Liste und zuruückkehren zum vorherigen VM
         /// </summary>
@@ -112,7 +109,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 }
             });
         }
-
+        #endregion
         #region Services
         private readonly INavigationService _myNavi;
         private readonly IDialogService _myDia;
@@ -169,40 +166,36 @@ namespace ISB_BIA_IMPORT1.ViewModel
             //Die ersten 8 Attribute abrufen
             for (int i=1; i <= 8; i++)
             {
-                Attributes_Model item = _myAtt.Get_Model_FromDB(i);
-                if (item == null)
-                {
-                    _myDia.ShowError("Fehler beim Laden der Daten.");
-                    Cleanup();
-                    _myNavi.NavigateBack();
-                }
-                result.Add(item);
+                result.Add(GetAttribute(i));
             }
             //Attribut 9
             if (Setting.Attribut9_aktiviert=="Ja")
             {
-                Attributes_Model item = _myAtt.Get_Model_FromDB(9);
-                if (item == null)
-                {
-                    _myDia.ShowError("Fehler beim Laden der Daten.");
-                    Cleanup();
-                    _myNavi.NavigateBack();
-                }
-                result.Add(item);
+                result.Add(GetAttribute(9));
             }
             //Attribut 10
             if (Setting.Attribut10_aktiviert == "Ja")
             {
-                Attributes_Model item = _myAtt.Get_Model_FromDB(10);
-                if (item == null)
-                {
-                    _myDia.ShowError("Fehler beim Laden der Daten.");
-                    Cleanup();
-                    _myNavi.NavigateBack();
-                }
-                result.Add(item);
+                result.Add(GetAttribute(10));
             }
             return result;
+        }
+
+        /// <summary>
+        /// Gibt das Attribut zurück und bricht ab falls fehlerhaft
+        /// </summary>
+        /// <param name="i"> Attribut Index </param>
+        /// <returns></returns>
+        public Attributes_Model GetAttribute(int i)
+        {
+            Attributes_Model item = _myAtt.Get_Model_FromDB(i);
+            if (item == null)
+            {
+                _myDia.ShowError("Fehler beim Laden der Daten.");
+                Cleanup();
+                _myNavi.NavigateBack();
+            }
+            return item;
         }
 
         /// <summary>

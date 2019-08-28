@@ -24,10 +24,10 @@
     </i:Interaction.Triggers>
     <Grid>
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Button Content="CISO" CommandParameter="2" Command="{Binding AdminSelectGroupCommand}"/>
-            <Button Content="Admin" CommandParameter="1" Command="{Binding AdminSelectGroupCommand}"/>
-            <Button Content="SBA/IT User" CommandParameter="3" Command="{Binding AdminSelectGroupCommand}"/>
-            <Button Content="Normaler User" CommandParameter="0" Command="{Binding AdminSelectGroupCommand}"/>
+            <Button Content="CISO" CommandParameter="2" Command="{Binding AdminSelectGroupCommand}" Focusable="False"/>
+            <Button Content="Admin" CommandParameter="1" Command="{Binding AdminSelectGroupCommand}" Focusable="False"/>
+            <Button Content="SBA/IT User" CommandParameter="3" Command="{Binding AdminSelectGroupCommand}" Focusable="False"/>
+            <Button Content="Normaler User" CommandParameter="0" Command="{Binding AdminSelectGroupCommand}" Focusable="False"/>
         </StackPanel>
         <UserControl Content="{Binding ViewModelCurrent}"/>
     </Grid>

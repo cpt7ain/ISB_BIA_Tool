@@ -27,9 +27,11 @@ namespace ISB_BIA_IMPORT1.Model
         private SZ_Values _sZ_4 = 0;
         private SZ_Values _sZ_5 = 0;
         private SZ_Values _sZ_6 = 0;
+        private int _verknüpfte_Prozesse;
         private string _benutzer="";
         private DateTime _datum;
         private int _aktiv=1;
+        private string _erstanlage;
         #endregion
 
         /// <summary>
@@ -183,6 +185,14 @@ namespace ISB_BIA_IMPORT1.Model
 
         }
         /// <summary>
+        /// Anzahl verknüpfter Prozesse
+        /// </summary>
+        public int Verknüpfte_Prozesse
+        {
+            get => _verknüpfte_Prozesse;
+            set => Set(() => Verknüpfte_Prozesse, ref _verknüpfte_Prozesse, value);
+        }
+        /// <summary>
         /// Bearbeitender Nutzer des Datensatzes
         /// </summary>
         public string Benutzer
@@ -207,6 +217,15 @@ namespace ISB_BIA_IMPORT1.Model
         {
             get => _aktiv;
             set => Set(() => Aktiv, ref _aktiv, value);
+
+        }
+        /// <summary>
+        /// gibt an, ob Applikation neu angelegt wurde (für SBA)
+        /// </summary>
+        public string Erstanlage
+        {
+            get => _erstanlage;
+            set => Set(() => Erstanlage, ref _erstanlage, value);
 
         }
         #endregion

@@ -117,6 +117,8 @@
     <Compile Include="Converter\CellColorConverter.cs" />
     <Compile Include="Converter\ComparisonConverter.cs" />
     <Compile Include="Converter\ComparisonToVisConverter.cs" />
+    <Compile Include="Converter\CritToBrushConverter.cs" />
+    <Compile Include="Converter\DateFirstToBrushConverter.cs" />
     <Compile Include="Converter\DateToBrushConverter.cs" />
     <Compile Include="Converter\DeltaColorConverter.cs" />
     <Compile Include="Converter\InfoVisConverter.cs" />
@@ -126,9 +128,6 @@
     <Compile Include="Converter\NegateBooleanToVisibilityConverter.cs" />
     <Compile Include="Converter\NumToAlphBinaryConverter.cs" />
     <Compile Include="Converter\TextInputToVisibilityConverter.cs" />
-    <Compile Include="Helpers\MsgWindow.xaml.cs">
-      <DependentUpon>MsgWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="LINQ2SQL\L2S.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -169,7 +168,6 @@
     <Compile Include="Services\RuntimeServices\DataService_Log.cs" />
     <Compile Include="Services\RuntimeServices\DataModelService.cs" />
     <Compile Include="Services\RuntimeServices\DataService_Delta.cs" />
-    <Compile Include="Services\RuntimeServices\DialogWinService.cs" />
     <Compile Include="Services\RuntimeServices\LockService.cs" />
     <Compile Include="Services\RuntimeServices\DataService_Setting.cs" />
     <Compile Include="Services\RuntimeServices\DataService_Attribute.cs" />
@@ -192,6 +190,7 @@
     <Compile Include="ViewModel\DeltaAnalysis_ViewModel.cs" />
     <Compile Include="ViewModel\DocumentView_ViewModel.cs" />
     <Compile Include="ViewModel\Attributes_ViewModel.cs" />
+    <Compile Include="ViewModel\SBA_View_ViewModel.cs" />
     <Compile Include="ViewModel\SegmentsView_ViewModel.cs" />
     <Compile Include="ViewModel\Segment_ViewModel.cs" />
     <Compile Include="ViewModel\LogView_ViewModel.cs" />
@@ -201,7 +200,6 @@
     <Compile Include="ViewModel\OE_ViewModel.cs" />
     <Compile Include="ViewModel\ProcessView_ViewModel.cs" />
     <Compile Include="ViewModel\Process_ViewModel.cs" />
-    <Compile Include="ViewModel\SBA_View_ViewModel.cs" />
     <Compile Include="ViewModel\Settings_ViewModel.cs" />
     <Compile Include="Helpers\ViewModelLocator.cs" />
     <Compile Include="View\ApplicationView_View.xaml.cs">
@@ -221,6 +219,9 @@
     </Compile>
     <Compile Include="View\Attributes_View.xaml.cs">
       <DependentUpon>Attributes_View.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\SBA_View_View.xaml.cs">
+      <DependentUpon>SBA_View_View.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\SegmentsView_View.xaml.cs">
       <DependentUpon>SegmentsView_View.xaml</DependentUpon>
@@ -243,15 +244,16 @@
     <Compile Include="View\Process_View.xaml.cs">
       <DependentUpon>Process_View.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\SBA_View_View.xaml.cs">
-      <DependentUpon>SBA_View_View.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\Settings_View.xaml.cs">
       <DependentUpon>Settings_View.xaml</DependentUpon>
     </Compile>
-    <Page Include="Helpers\MsgWindow.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="View\ApplicationView_View.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Application_View.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -265,14 +267,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="View\ApplicationView_View.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="View\Application_View.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="View\DataModel_View.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -286,6 +280,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\Attributes_View.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\SBA_View_View.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -317,10 +315,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\SBA_View_View.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="View\Settings_View.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -346,27 +340,6 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="app.config" />
-    <None Include="CLD\CLLogin.cd" />
-    <None Include="CLD\ClassDiagramISB.cd" />
-    <None Include="CLD\ClassDiagramM.cd" />
-    <None Include="CLD\CLDSAll.cd" />
-    <None Include="CLD\CLMS.cd" />
-    <None Include="CLD\CLSS.cd" />
-    <None Include="CLD\CLDS.cd" />
-    <None Include="CLD\CLES.cd" />
-    <None Include="CLD\CLNS.cd" />
-    <None Include="CLD\CLDSApp.cd" />
-    <None Include="CLD\CLDSIS.cd" />
-    <None Include="CLD\CLDSSett.cd" />
-    <None Include="CLD\CLDSLock.cd" />
-    <None Include="CLD\CLDSLog.cd" />
-    <None Include="CLD\CLDSOE.cd" />
-    <None Include="CLD\CLDSDelta.cd" />
-    <None Include="CLD\CLDSDM.cd" />
-    <None Include="CLD\CLDSProc.cd" />
-    <None Include="CLD\ClassDiagramV.cd" />
-    <None Include="CLD\ClassDiagramVM.cd" />
-    <None Include="CLD\L2SDC.cd" />
     <None Include="LINQ2SQL\L2S.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>
       <LastGenOutput>L2S.designer.cs</LastGenOutput>

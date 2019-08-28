@@ -26,6 +26,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             set => Set(() => Fds_DocumentSource, ref _fds_DocumentSource, value);
         }
 
+        #region Commands
         /// <summary>
         /// Command zum Zurückkehren zum vorherigen Viewmodel
         /// </summary>
@@ -37,7 +38,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                       _myNavi.NavigateBack();
                   });
         }
-
         /// <summary>
         /// Command zum Zurückkehren zum vorherigen Viewmodel
         /// </summary>
@@ -57,6 +57,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 }
             });
         }
+        #endregion
 
         #region Services
         private readonly INavigationService _myNavi;

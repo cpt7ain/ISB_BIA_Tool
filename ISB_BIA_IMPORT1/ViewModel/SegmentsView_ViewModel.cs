@@ -50,7 +50,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                             if (user == "")
                             {
                                 if (_myLock.Lock_Object(Table_Lock_Flags.Segment, iSToChange.Informationssegment_Id))
-                                    _myNavi.NavigateTo<Segment_ViewModel>(iSToChange.Informationssegment_Id, Mode);
+                                    _myNavi.NavigateTo<Segment_ViewModel>(iSToChange.Informationssegment_Id, ISISAttributeMode.Edit);
                             }
                             else
                             {
@@ -59,7 +59,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                         }
                         else
                         {
-                            _myNavi.NavigateTo<Segment_ViewModel>(iSToChange.Informationssegment_Id, Mode);
+                            _myNavi.NavigateTo<Segment_ViewModel>(iSToChange.Informationssegment_Id, ISISAttributeMode.View);
                         }
                     }));
         }

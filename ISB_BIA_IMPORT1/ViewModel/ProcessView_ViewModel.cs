@@ -28,9 +28,11 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private ObservableCollection<ISB_BIA_Prozesse> _list_Processes;
         private int _count_NonEdit;
         private int _count_Edit;
+        private int _count_Crit;
         private object _selectedItem;
         private ProcAppListMode _mode;
         private ISB_BIA_Settings _setting;
+        public MyRelayCommand<object> _cmd_SaveIdentifiedPrePostProcesses;
         #endregion
 
         /// <summary>
@@ -79,7 +81,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                         string isLockedBy = _myLock.Get_ObjectIsLocked(Table_Lock_Flags.Process, processToDelete.Prozess_Id);
                         if (isLockedBy == "")
                         {
-                            if (processToDelete.Aktiv != 0)
+                            if (processToDelete.Aktiv == 1)
                             {
                                 ISB_BIA_Prozesse newProcessToDelete = _myProc.Delete_Process(processToDelete);
                                 if (newProcessToDelete != null)
@@ -89,7 +91,22 @@ namespace ISB_BIA_IMPORT1.ViewModel
                             }
                             else
                             {
-                                _myDia.ShowWarning("Dieser Prozess wurde bereits gelöscht.");
+                                if (!_myProc.Get_StringList_OEs_All().Contains(processToDelete.OE_Filter))
+                                {
+                                    if(_myDia.ShowQuestion("Dieser gelöschte Prozess ist einer OE zugeordnet, welche nicht mehr existiert.\nSie werden nun zu der Prozessbearbeitung weitergeleitet, in der Sie die OE zuweisen und den Prozess anschließend abspeichern können.\nFortfahren?", "OE-Neuzuweisung"))
+                                    {
+                                        Mode = ProcAppListMode.Change;
+                                        Cmd_NavToProcess.Execute(null);
+                                    }
+                                }
+                                else
+                                {
+                                    ISB_BIA_Prozesse newProcessToReactivate = _myProc.Reactivate_Process(processToDelete);
+                                    if (newProcessToReactivate != null)
+                                    {
+                                        Refresh();
+                                    }
+                                }
                             }
                         }
                         else
@@ -166,6 +183,103 @@ namespace ISB_BIA_IMPORT1.ViewModel
             }
         }
         /// <summary>
+        /// Command für die Verknüpfung von (pre/post) Prozessen welche in richtiger Reihenfolge in Liste vorliegen (für Fall 1.1 Wagner verwendet, aktuell deaktiviert)/>
+        /// </summary>
+        public MyRelayCommand<object> Cmd_SaveIdentifiedPrePostProcesses
+        {
+            get
+            {
+                if (!IsInDesignMode)
+                {
+                    return _cmd_SaveIdentifiedPrePostProcesses
+                       ?? (_cmd_SaveIdentifiedPrePostProcesses = new MyRelayCommand<object>((list) =>
+                       {
+                           if(!_myDia.ShowQuestion("Möchten Sie die gewählten Prozesse wirklich verknüpfen?","Bestätigen"))return;
+                           System.Collections.IList items = (System.Collections.IList)list;
+                           if (items.Count > 0)
+                           {
+                               var collection = items.Cast<ISB_BIA_Prozesse>();
+                               List_SelectedProcesses = new ObservableCollection<ISB_BIA_Prozesse>(collection);
+                               List<ISB_BIA_Prozesse> lockedList = new List<ISB_BIA_Prozesse>();
+                               string pl = "";
+                               foreach (ISB_BIA_Prozesse p in List_SelectedProcesses)
+                               {
+                                   string user = _myLock.Get_ObjectIsLocked(Table_Lock_Flags.Process, p.Prozess_Id);
+                                   if (user != "")
+                                   {
+                                       lockedList.Add(p);
+                                       pl = pl + p.Prozess + " (geöffnet von: " + user + ")\n";
+                                   }
+                               }
+                               if (lockedList.Count == 0)
+                               {
+                                   int count = 0;
+                                   using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
+                                   {
+                                       for(int i =0; i< List_SelectedProcesses.Count-1; i++)
+                                       {
+                                           if(List_SelectedProcesses[i].Prozess == List_SelectedProcesses[i + 1].Prozess)
+                                           {
+                                               ISB_BIA_Prozesse_Prozesse proc_vP = new ISB_BIA_Prozesse_Prozesse
+                                               {
+                                                   Prozess_Id = List_SelectedProcesses[i + 1].Prozess_Id,
+                                                   Datum_Prozess = List_SelectedProcesses[i + 1].Datum,
+                                                   Ref_Prozess_Id = List_SelectedProcesses[i].Prozess_Id,
+                                                   Datum_Ref_Prozess = List_SelectedProcesses[i].Datum,
+                                                   Typ = 1,
+                                                   Relation = 1,
+                                                   Datum = DateTime.Now,
+                                                   Benutzer = ""
+                                               };
+                                               //Schreiben in Datenbank
+                                               if(db.ISB_BIA_Prozesse_Prozesse.Where(x => x.Prozess_Id == List_SelectedProcesses[i + 1].Prozess_Id && x.Ref_Prozess_Id == List_SelectedProcesses[i].Prozess_Id && x.Typ == 1).Count() == 0)
+                                               {
+                                                   db.ISB_BIA_Prozesse_Prozesse.InsertOnSubmit(proc_vP);
+                                                   count++;
+                                               }
+                                               ISB_BIA_Prozesse_Prozesse proc_nP = new ISB_BIA_Prozesse_Prozesse
+                                               {
+                                                   Prozess_Id = List_SelectedProcesses[i].Prozess_Id,
+                                                   Datum_Prozess = List_SelectedProcesses[i].Datum,
+                                                   Ref_Prozess_Id = List_SelectedProcesses[i + 1].Prozess_Id,
+                                                   Datum_Ref_Prozess = List_SelectedProcesses[i + 1].Datum,
+                                                   Typ = 2,
+                                                   Relation = 1,
+                                                   Datum = DateTime.Now,
+                                                   Benutzer = ""
+                                               };
+                                               //Schreiben in Datenbank
+                                               if (db.ISB_BIA_Prozesse_Prozesse.Where(x => x.Prozess_Id == List_SelectedProcesses[i].Prozess_Id && x.Ref_Prozess_Id == List_SelectedProcesses[i+1].Prozess_Id && x.Typ == 2).Count() == 0)
+                                               {
+                                                   db.ISB_BIA_Prozesse_Prozesse.InsertOnSubmit(proc_nP);
+                                                   count++;
+                                               }
+                                           }
+                                       }
+                                       db.SubmitChanges();
+                                   }
+                                   _myDia.ShowMessage("Einträge erstellt: " + count);
+                               }
+                               else
+                               {
+                                   string msg = "In der Auswahl befinden sich Prozesse, die momentan durch andere User geöffnet sind und deshalb nicht gespeichert werden können.\nBitte warten Sie, bis die Bearbeitung beendet ist oder deselektieren Sie betroffene Prozesse.\n\n";
+                                   _myDia.ShowWarning(msg + pl);
+                               }
+                           }
+                           else
+                           {
+                               _myDia.ShowMessage("Bitte wählen Sie Prozesse aus der Übersicht aus, die Sie ohne Änderungen aktualisieren möchten.");
+                           }
+
+                       }));
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+        /// <summary>
         /// Exportieren der Liste der angezeigten Prozesse nach Excel
         /// </summary>
         public MyRelayCommand Cmd_ExportList
@@ -173,7 +287,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
             get => _cmd_ExportList
                     ?? (_cmd_ExportList = new MyRelayCommand(() =>
                     {
-                        _myExport.Export_Processes(List_Processes);
+                        _myExport.Export_Processes(_myProc.Get_List_Processes_Active());
                     }, () => Mode == ProcAppListMode.Change));
         }
         /// <summary>
@@ -199,6 +313,14 @@ namespace ISB_BIA_IMPORT1.ViewModel
         {
             get => _count_Edit;
             set => Set(() => Count_Edit, ref _count_Edit, value);
+        }
+        /// <summary>
+        /// Anzahl kritischer Prozesse
+        /// </summary>
+        public int Count_Crit
+        {
+            get => _count_Crit;
+            set => Set(() => Count_Crit, ref _count_Crit, value);
         }
         /// <summary>
         /// Ausgewähltes Objekt
@@ -233,7 +355,6 @@ namespace ISB_BIA_IMPORT1.ViewModel
                     Str_Instruction = "Doppelklick auf einen Prozess, den Sie löschen möchten";
                     Str_Header = "Prozesse löschen";
                     Cmd_RowDoubleClick = Cmd_DeleteProc;
-
                 }
                 Set(() => Mode, ref _mode, value);
             }
@@ -275,6 +396,8 @@ namespace ISB_BIA_IMPORT1.ViewModel
         private readonly IDataService_Setting _mySett;
         #endregion
 
+        //public IValueConverter Conv { get; set; }
+
         /// <summary>
         /// Konstruktor
         /// </summary>
@@ -302,7 +425,7 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 List_Processes = _myProc.Get_List_Processes_All();
                 Count_Edit = List_Processes.Where(x => x.Datum.Year == DateTime.Now.Year).ToList().Count;
                 Count_NonEdit = List_Processes.Where(x => x.Datum.Year != DateTime.Now.Year).ToList().Count;
-                
+                Count_Crit = List_Processes.Where(x => x.Kritischer_Prozess=="x" && x.Aktiv == 1).ToList().Count;
                 Str_Header = "TestHeader";
                 Str_Instruction = "TestInstruction";
             }
@@ -312,15 +435,16 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 {
                     if (!(message.Sender is INavigationService)) return;
                     Mode = message.Content;
+                    //Laden der Daten
+                    Refresh();
                 });
                 MessengerInstance.Register<NotificationMessage<string>>(this, MessageToken.RefreshData, message =>
                 {
                     if (!(message.Sender is INavigationService)) return;
+                    Setting = _mySett.Get_List_Settings();
                     Refresh();
                 });
                 Setting = _mySett.Get_List_Settings();
-                //Laden der Daten
-                Refresh();
             }
         }
 
@@ -329,14 +453,20 @@ namespace ISB_BIA_IMPORT1.ViewModel
         /// </summary>
         public void Refresh()
         {
-            ObservableCollection<string> relevantOEsList = _myProc.Get_StringList_OEsForUser(_myShared.User.OE);
+            ObservableCollection<string> relevantOEsList = _myProc.Get_StringList_OEsForUser(_myShared.User.ListOE);
             if(_myShared.User.UserGroup == UserGroups.Admin || _myShared.User.UserGroup == UserGroups.CISO)
             {
-                List_Processes = _myProc.Get_List_Processes_All();
+                if (Mode == ProcAppListMode.Change)
+                    List_Processes = new ObservableCollection<ISB_BIA_Prozesse>(_myProc.Get_List_Processes_All().Where(v => v.Aktiv == 1).ToList());
+                else
+                    List_Processes = _myProc.Get_List_Processes_All();
             }
             else
             {
-                List_Processes = _myProc.Get_List_Processes_ByOE(relevantOEsList);
+                if(Mode == ProcAppListMode.Change)
+                    List_Processes = new ObservableCollection<ISB_BIA_Prozesse>(_myProc.Get_List_Processes_ByOE_All(relevantOEsList).Where(v => v.Aktiv == 1).ToList());
+                else
+                    List_Processes = _myProc.Get_List_Processes_ByOE_All(relevantOEsList);
             }
             if (List_Processes == null || relevantOEsList == null)
             {
@@ -344,8 +474,17 @@ namespace ISB_BIA_IMPORT1.ViewModel
                 _myNavi.NavigateBack();
                 _myDia.ShowError("Es ist ein Fehler beim Laden der Daten aufgetreten");
             }
-            Count_Edit = List_Processes.Where(x => x.Datum.Year == DateTime.Now.Year).ToList().Count;
-            Count_NonEdit = List_Processes.Where(x => x.Datum.Year != DateTime.Now.Year).ToList().Count;
+            if(Mode == ProcAppListMode.Change)
+            {
+                Count_Edit = List_Processes.Where(x => x.Datum.Year == DateTime.Now.Year).ToList().Count;
+                Count_NonEdit = List_Processes.Where(x => x.Datum.Year != DateTime.Now.Year).ToList().Count;
+            }
+            else
+            {
+                Count_Edit = List_Processes.Where(x => x.Aktiv == 1).ToList().Count;
+                Count_NonEdit = List_Processes.Where(x => x.Aktiv == 0).ToList().Count;
+            }
+            Count_Crit = List_Processes.Where(x => x.Kritischer_Prozess == "x" && x.Aktiv == 1).ToList().Count;
             List_SelectedProcesses = new ObservableCollection<ISB_BIA_Prozesse>();
         }
 

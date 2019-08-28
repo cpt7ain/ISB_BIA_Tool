@@ -5,6 +5,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Data;
 using ISB_BIA_IMPORT1.Services.Interfaces;
+using System.Text.RegularExpressions;
+using ISB_BIA_IMPORT1.Model;
 
 namespace ISB_BIA_IMPORT1.Services
 {
@@ -22,6 +24,54 @@ namespace ISB_BIA_IMPORT1.Services
         }
 
         #region OE
+        public string Get_OwnerOfOENumber(string stab)
+        {
+            try
+            {
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
+                {
+                    return db.ISB_BIA_OEs.Where(c => c.OE_Nummer == stab).FirstOrDefault().Prozesseigentümer;
+                }
+            }
+            catch (Exception ex)
+            {
+                _myDia.ShowError("Prozesseigentümer konnten nicht abgerufen werden.", ex);
+                return null;
+            }
+        }
+        public string Get_OwnerOfOEName(string name, Process_Model p)
+        {
+            try
+            {
+                using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
+                {
+                    if (db.ISB_BIA_OEs.Where(c => c.OE_Name == name && c.OE_Nummer != "").Count() == 0)
+                    {
+                        if (db.ISB_BIA_Prozesse.Where(d => d.Prozess_Id == p.Prozess_Id).OrderByDescending(x => x.Datum).FirstOrDefault().Aktiv == 1)
+                        {
+                            _myDia.ShowWarning("Die diesem Prozess aktuell zugeordnete OE ist keiner OE-Nummer zugeordnet.\nDaher wird dieser Prozess (außer dem Admin oder CISO) momentan keinem Benutzer angezeigt und es kann auch kein Prozesseigentümer bestimmt werden.\nBitte passen Sie die OE-Einstellungen an.");
+                            return null;
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                    //Wenn "Vorstandsabteilung" (1, 2, 3, etc)
+                    if (db.ISB_BIA_OEs.Where(c => c.OE_Name == name && c.OE_Nummer.Length == 1).Count() == 1)
+                        return db.ISB_BIA_OEs.Where(c => c.OE_Name == name && c.OE_Nummer.Length == 1).FirstOrDefault().Prozesseigentümer;
+                    //Wenn "Stabsabteilung" (1.X, 2.X, 3.X, etc) 
+                    string stab = db.ISB_BIA_OEs.Where(c => c.OE_Name == name && c.OE_Nummer.Length >= 3).FirstOrDefault().OE_Nummer;
+                    stab = stab.Substring(0, 3);
+                    return db.ISB_BIA_OEs.Where(c => c.OE_Nummer == stab && c.Prozesseigentümer != "" && c.Prozesseigentümer != null).FirstOrDefault().Prozesseigentümer;
+                }
+            }
+            catch (Exception ex)
+            {
+                _myDia.ShowError("Prozesseigentümer konnten nicht abgerufen werden.", ex);
+                return null;
+            }
+        }
         public ObservableCollection<ISB_BIA_OEs> Get_List_OENames()
         {
             try
@@ -90,7 +140,8 @@ namespace ISB_BIA_IMPORT1.Services
                     {
                         OE_Name = name,
                         OE_Nummer = "",
-                        Benutzer = _myShared.User.Username,
+                        Prozesseigentümer = "",
+                        Benutzer = _myShared.User.WholeName,
                         Datum = DateTime.Now
                     };
                     db.ISB_BIA_OEs.InsertOnSubmit(new_Link);
@@ -103,7 +154,7 @@ namespace ISB_BIA_IMPORT1.Services
                         Id_1 = 0,
                         Id_2 = 0,
                         Datum = DateTime.Now,
-                        Benutzer = _myShared.User.Username
+                        Benutzer = _myShared.User.WholeName
                     };
                     db.ISB_BIA_Log.InsertOnSubmit(logEntry);
 
@@ -167,13 +218,13 @@ namespace ISB_BIA_IMPORT1.Services
                         ISB_BIA_Prozesse process_new = new ISB_BIA_Prozesse()
                         {
                             OE_Filter = name,
-                            Datum = DateTime.Now,
-                            Benutzer = _myShared.User.Username,
-
+                            Datum = process_old.Datum.AddSeconds(1),
+                            Benutzer = _myShared.User.WholeName,
                             Prozess_Id = process_old.Prozess_Id,
                             Aktiv = process_old.Aktiv,
                             Prozess = process_old.Prozess,
                             Sub_Prozess = process_old.Sub_Prozess,
+                            Prozesseigentümer = process_old.Prozesseigentümer,
                             Prozessverantwortlicher = process_old.Prozessverantwortlicher,
                             Kritischer_Prozess = process_old.Kritischer_Prozess,
                             Kritikalität_des_Prozesses = process_old.Kritikalität_des_Prozesses,
@@ -187,8 +238,6 @@ namespace ISB_BIA_IMPORT1.Services
                             SZ_4 = process_old.SZ_4,
                             SZ_5 = process_old.SZ_5,
                             SZ_6 = process_old.SZ_6,
-                            Vorgelagerte_Prozesse = process_old.Vorgelagerte_Prozesse,
-                            Nachgelagerte_Prozesse = process_old.Nachgelagerte_Prozesse,
                             Servicezeit_Helpdesk = process_old.Servicezeit_Helpdesk,
                             RPO_Datenverlustzeit_Recovery_Point_Objective =
                                 process_old.RPO_Datenverlustzeit_Recovery_Point_Objective,
@@ -214,7 +263,7 @@ namespace ISB_BIA_IMPORT1.Services
                         Id_1 = 0,
                         Id_2 = 0,
                         Datum = DateTime.Now,
-                        Benutzer = _myShared.User.Username
+                        Benutzer = _myShared.User.WholeName
                     };
                     db.ISB_BIA_Log.InsertOnSubmit(logEntry);
                     db.SubmitChanges();
@@ -230,17 +279,20 @@ namespace ISB_BIA_IMPORT1.Services
         }
         public bool Delete_OEName(string oeName)
         {
-            bool res = _myDia.ShowQuestion("Möchten Sie diesen OE-Filter wirklich löschen?\nAlle Zuordnungen werden ebenfalls gelöscht.", "OE-Filter löschen");
-            if (res) return false;
+            bool res = _myDia.ShowQuestion("Möchten Sie diesen OE-Filter wirklich löschen?\nAlle Zuordnungen werden ebenfalls gelöscht.\nACHTUNG: Beim Löschen einer OE verlieren Prozesse mit dem status inaktiv/'gelöscht' ihre Zuordnung. Diese Prozesse können somit nur durch einen Admin reaktiviert und neu zugeordnet werden.", "OE-Filter löschen");
+            if (!res) return false;
             try
             {
                 using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
-                    //OE Gruppe kann nur gelöscht werden, wenn kein Prozess mehr dieser Gruppe zugeordnet ist
-                    List<ISB_BIA_Prozesse> list1 = db.ISB_BIA_Prozesse.Where(x => x.OE_Filter == oeName).ToList();
+                    //OE Gruppe kann nur gelöscht werden, wenn kein >>aktueller Prozessdatensatz<< mehr dieser Gruppe zugeordnet ist
+                    //gelöschte Prozesse werden nicht kontrolliert, weshalb diese ihre OE Zugehörigkeit im gelöschten Zustand eventuell verlieren können. 
+                    //Bei Reaktivierung des Prozesses wird dann in diesem Fall jedoch eine neue Zuweisung zu einer OE verlangt.
+                    List<ISB_BIA_Prozesse> list1 = db.ISB_BIA_Prozesse.GroupBy(p => p.Prozess_Id)
+                        .Select(g => g.OrderByDescending(p => p.Datum).FirstOrDefault()).Where(x => x.OE_Filter == oeName && x.Aktiv == 1).ToList();
                     if (list1.Count > 0)
                     {
-                        _myDia.ShowWarning("Diesem OE-Namen sind noch Prozesse zugeordnet.\nOrdnen Sie diese Prozesse zunächst einer anderen OE zu.");
+                        _myDia.ShowWarning("Diesem OE-Namen sind noch Prozesse zugeordnet.\nOrdnen Sie diese Prozesse zunächst einer anderen OE zu.\n(Dabei kann es sich auch um inaktive/'gelöschte' Prozesse handeln.)");
                         return false;
                     }
 
@@ -274,7 +326,7 @@ namespace ISB_BIA_IMPORT1.Services
                             Id_1 = 0,
                             Id_2 = 0,
                             Datum = DateTime.Now,
-                            Benutzer = _myShared.User.Username
+                            Benutzer = _myShared.User.WholeName
                         };
                         db.ISB_BIA_Log.InsertOnSubmit(logEntry);
                         db.SubmitChanges();
@@ -297,7 +349,7 @@ namespace ISB_BIA_IMPORT1.Services
         public bool Delete_OERelation(string oeName, string oeNumber)
         {
             bool res = _myDia.ShowQuestion("Möchten Sie diesen diese OE-Zuordnung wirklich löschen?", "OE-Zuordnung löschen");
-            if (res) return false;
+            if (!res) return false;
             try
             {
                 using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
@@ -312,7 +364,7 @@ namespace ISB_BIA_IMPORT1.Services
                         Id_1 = 0,
                         Id_2 = 0,
                         Datum = DateTime.Now,
-                        Benutzer = _myShared.User.Username
+                        Benutzer = _myShared.User.WholeName
                     };
                     db.ISB_BIA_Log.InsertOnSubmit(logEntry);
                     db.SubmitChanges();
@@ -345,7 +397,7 @@ namespace ISB_BIA_IMPORT1.Services
                         Id_1 = 0,
                         Id_2 = 0,
                         Datum = DateTime.Now,
-                        Benutzer = _myShared.User.Username
+                        Benutzer = _myShared.User.WholeName
                     };
                     db.ISB_BIA_Log.InsertOnSubmit(logEntry);
                     db.SubmitChanges();
@@ -376,12 +428,14 @@ namespace ISB_BIA_IMPORT1.Services
                         _myDia.ShowWarning("Diese Zuordnung existiert bereits.");
                         return null;
                     }
+                    string owner = db.ISB_BIA_OEs.Where(x => x.OE_Nummer == number.OE_Nummer).FirstOrDefault().Prozesseigentümer;
                     //Neue Zuordnung erstellen
                     ISB_BIA_OEs new_Link = new ISB_BIA_OEs
                     {
                         OE_Name = name.OE_Name,
                         OE_Nummer = number.OE_Nummer,
-                        Benutzer = _myShared.User.Username,
+                        Prozesseigentümer = owner,
+                        Benutzer = _myShared.User.WholeName,
                         Datum = DateTime.Now
                     };
                     db.ISB_BIA_OEs.InsertOnSubmit(new_Link);
@@ -394,7 +448,7 @@ namespace ISB_BIA_IMPORT1.Services
                         Id_1 = 0,
                         Id_2 = 0,
                         Datum = DateTime.Now,
-                        Benutzer = _myShared.User.Username
+                        Benutzer = _myShared.User.WholeName
                     };
                     db.ISB_BIA_Log.InsertOnSubmit(logEntry);
                     db.SubmitChanges();
@@ -408,11 +462,35 @@ namespace ISB_BIA_IMPORT1.Services
                 return null;
             }
         }
-        public ISB_BIA_OEs Insert_OENumber_New(string number, ISB_BIA_OEs name)
+        public ISB_BIA_OEs Insert_OENumber_New(string number, string owner, ISB_BIA_OEs name)
         {
             if (name == null || String.IsNullOrWhiteSpace(number))
             {
-                _myDia.ShowWarning("Bitte geben Sie einen gültigen Namen ein und wählen Sie eine OE aus.");
+                _myDia.ShowWarning("Bitte geben Sie eine gültige OE-Kennung und ggf. einen Prozesseigentümer ein und wählen Sie eine OE aus.");
+                return null;
+            }
+            if (number.Length == 2)
+            {
+                _myDia.ShowWarning("Die OE-Kennung ist ungültig.");
+                return null;
+            }
+            if ((number.Length == 3 || number.Length == 1) && String.IsNullOrWhiteSpace(owner))
+            {
+                _myDia.ShowWarning("Sie sind in Begriff eine Stabsabteilung/Vorstand zu definieren.\nDaher muss ein Prozesseiegntümer eingetragen werden.");
+                return null;
+            }
+            if (number.Length > 3 && !String.IsNullOrWhiteSpace(owner))
+            {
+                _myDia.ShowWarning("Sie haben für diese Kennung einen Prozesseigentümer definiert. Dieser wird jedoch von der/dem nächst höheren Stabsabteilung/Bereich geerbt und daher hier ignoriert.");
+                owner = "";
+            }
+            if (number.Length > 3 && String.IsNullOrWhiteSpace(owner))
+            {
+                owner = "";
+            }
+            if(!Regex.IsMatch(number, @"[1-9]\.[1-9]+") && !Regex.IsMatch(number, @"[1-9]"))
+            {
+                _myDia.ShowWarning("Die OE-Kennung ist ungültig.");
                 return null;
             }
             try
@@ -420,9 +498,9 @@ namespace ISB_BIA_IMPORT1.Services
                 using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     //Prüfen ob Zuordnung bereits existiert
-                    if (db.ISB_BIA_OEs.Where(x => x.OE_Name == name.OE_Name && x.OE_Nummer == number).ToList().Count > 0)
+                    if (db.ISB_BIA_OEs.Where(x => x.OE_Nummer == number).ToList().Count > 0)
                     {
-                        _myDia.ShowWarning("Diese Zuordnung existiert bereits.");
+                        _myDia.ShowWarning("Diese Kennung wurde bereits angelegt. Diese können Sie in der mittleren Spalte zuweisen.");
                         return null;
                     }
                     //Neue Zuordnung erstellen
@@ -430,7 +508,8 @@ namespace ISB_BIA_IMPORT1.Services
                     {
                         OE_Name = name.OE_Name,
                         OE_Nummer = number,
-                        Benutzer = _myShared.User.Username,
+                        Prozesseigentümer = owner,
+                        Benutzer = _myShared.User.WholeName,
                         Datum = DateTime.Now
                     };
                     db.ISB_BIA_OEs.InsertOnSubmit(new_Number);
@@ -439,78 +518,107 @@ namespace ISB_BIA_IMPORT1.Services
                     {
                         Aktion = "ADMIN/CISO: Erstellen einer OE-Nummer",
                         Tabelle = _myShared.Tbl_OEs,
-                        Details = "Nummer = " + new_Number.OE_Nummer,
+                        Details = "Nummer = " + new_Number.OE_Nummer +", Prozesseigentümer = "+new_Number.Prozesseigentümer,
                         Id_1 = 0,
                         Id_2 = 0,
                         Datum = DateTime.Now,
-                        Benutzer = _myShared.User.Username
+                        Benutzer = _myShared.User.WholeName
                     };
                     db.ISB_BIA_Log.InsertOnSubmit(logEntry);
                     db.SubmitChanges();
-                    _myDia.ShowInfo("OE-Nummer wurde erstellt.");
+                    _myDia.ShowInfo("Eintrag wurde erstellt.");
                     return new_Number;
                 }
             }
             catch (Exception ex)
             {
-                _myDia.ShowError("OE-Nummer konnte nicht erstellt werden.", ex);
+                _myDia.ShowError("Eintrag konnte nicht erstellt werden.", ex);
                 return null;
             }
         }
-        public bool Insert_OENumber_Edit(string number, string oldNumber)
+        public bool Insert_OENumber_Edit(string number, string owner, string oldNumber, string oldOwner)
         {
-            if (String.IsNullOrWhiteSpace(number) || number == oldNumber)
+            if(number == oldNumber && owner == oldOwner)
             {
-                _myDia.ShowWarning("Bitte geben Sie einen gültigen Namen ein.");
+                _myDia.ShowWarning("Keine Änderungen entdeckt.");
                 return false;
+            }
+            if (String.IsNullOrWhiteSpace(number))
+            {
+                _myDia.ShowWarning("Bitte geben Sie eine gültige OE-Kennung und ggf. einen Prozesseigentümer ein.");
+                return false;
+            }
+            if (number.Length == 2)
+            {
+                _myDia.ShowWarning("Die OE-Kennung ist ungültig.");
+                return false;
+            }
+            if (number.Length == 3 && String.IsNullOrWhiteSpace(owner))
+            {
+                _myDia.ShowWarning("Sie sind in Begriff eine Stabsabteilung zu definieren.\nDaher muss ein Prozesseiegntümer eingetragen werden.");
+                return false;
+            }
+            if (number.Length > 3 && !String.IsNullOrWhiteSpace(owner))
+            {
+                _myDia.ShowWarning("Sie haben für diese Kennung einen Prozesseigentümer definiert. Dieser wird jedoch von der/dem nächst höheren Stabsabteilung/Bereich geerbt und daher hier ignoriert.");
+                owner = "";
+            }
+            if (number.Length > 3 && String.IsNullOrWhiteSpace(owner))
+            {
+                owner = "";
             }
             try
             {
                 using (L2SDataContext db = new L2SDataContext(_myShared.Conf_ConnectionString))
                 {
                     //Prüfen ob Nummer bereits vorhanden
-                    if (db.ISB_BIA_OEs.Where(x => x.OE_Nummer == number).ToList().Count > 0)
-                    {
-                        _myDia.ShowWarning("OE-Nummer existiert bereits.\nÄndern Sie ggf. zunächst die vorhandene Nummer.");
-                        return false;
-                    }
+                    //if (db.ISB_BIA_OEs.Where(x => x.OE_Nummer == number).ToList().Count > 0)
+                    //{
+                    //    _myDia.ShowWarning("OE-Nummer existiert bereits.\nÄndern Sie ggf. zunächst die vorhandene Nummer.");
+                    //    return false;
+                    //}
                     //Ändern der Nummern aller Zuordnungen, deren Nummer momentan der angegebenen entspricht
-                    List<ISB_BIA_OEs> numbers = db.ISB_BIA_OEs.Where(x => x.OE_Nummer == oldNumber).ToList();
-                    foreach (ISB_BIA_OEs x in numbers)
-                    {
-                        ISB_BIA_OEs newNumber = new ISB_BIA_OEs()
-                        {
-                            OE_Name = x.OE_Name,
-                            OE_Nummer = number,
-                            Benutzer = _myShared.User.Username,
-                            Datum = DateTime.Now,
-                        };
-                        //Zuordnung mit neuer nummer einfügen
-                        db.ISB_BIA_OEs.InsertOnSubmit(newNumber);
-                    }
-                    //Alte Zuordnungen löschen
-                    db.ISB_BIA_OEs.DeleteAllOnSubmit(numbers);
+                    //List<ISB_BIA_OEs> numbers = db.ISB_BIA_OEs.Where(x => x.OE_Nummer == oldNumber).ToList();
+                    //foreach (ISB_BIA_OEs x in numbers)
+                    //{
+                    //    ISB_BIA_OEs newNumber = new ISB_BIA_OEs()
+                    //    {
+                    //        OE_Name = x.OE_Name,
+                    //        OE_Nummer = number,
+                    //        Prozesseigentümer = owner,
+                    //        Benutzer = _myShared.User.WholeName,
+                    //        Datum = DateTime.Now,
+                    //    };
+                    //    //Zuordnung mit neuer nummer einfügen
+                    //    db.ISB_BIA_OEs.InsertOnSubmit(newNumber);
+                    //}
+                    ////Alte Zuordnungen löschen
+                    //db.ISB_BIA_OEs.DeleteAllOnSubmit(numbers);
+
+                    //Alle OE-Einträge ändern (hier keine Historisierung)
+                    db.ISB_BIA_OEs.Where(n => n.OE_Nummer == oldNumber && n.Prozesseigentümer == oldOwner).ToList().ForEach(x => { x.OE_Nummer = number; x.Prozesseigentümer = owner; });
 
                     //Erstellen eines LogEntries und schreiben in Datenbank
                     ISB_BIA_Log logEntry = new ISB_BIA_Log
                     {
                         Aktion = "ADMIN/CISO: Ändern einer OE-Nummer",
                         Tabelle = _myShared.Tbl_OEs,
-                        Details = "Von '" + number + "' zu '" + oldNumber + "'",
+                        Details =   "Alt: " + oldNumber + " -> Neu: " + number + "\n" +
+                                    "Alt: " + oldOwner  + " -> Neu: " + owner,
                         Id_1 = 0,
                         Id_2 = 0,
                         Datum = DateTime.Now,
-                        Benutzer = _myShared.User.Username
+                        Benutzer = _myShared.User.WholeName
                     };
                     db.ISB_BIA_Log.InsertOnSubmit(logEntry);
                     db.SubmitChanges();
-                    _myDia.ShowInfo("OE-Nummer wurde geändert.");
+                    _myDia.ShowInfo("Eintrag wurde geändert.");
                     return true;
                 }
             }
             catch (Exception ex)
             {
-                _myDia.ShowError("OE-Nummer konnte nicht geändert werden.", ex);
+                _myDia.ShowError("Eintrag konnte nicht geändert werden.", ex);
                 return false;
             }
         }

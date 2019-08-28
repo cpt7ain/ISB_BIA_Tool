@@ -22,6 +22,23 @@ namespace ISB_BIA_IMPORT1.Services
         #region Datenmodell erstellen
         public bool Create(DataTable dt_Processes, DataTable dt_Applications, DataTable dt_Relation, DataTable dt_InformationSegments, DataTable dt_InformationSegmentAttributes)
         {
+            //------
+            string _SqlDropProc_vPnP = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'" + _myShared.Tbl_Proz_vPnP + "') DROP Table " + _myShared.Tbl_Proz_vPnP;
+            string _SqlCreaProc_vPnP =
+                "    CREATE TABLE [dbo].[" + _myShared.Tbl_Proz_vPnP + "] (" +
+                "    [Prozess_Id] INT NOT NULL," +
+                "    [Datum_Prozess] DATETIME NOT NULL," +
+                "    [Ref_Prozess_Id] INT NOT NULL," +
+                "    [Datum_Ref_Prozess] DATETIME NOT NULL," +
+                "    [Typ] INT NOT NULL," + //1=vP 2=nP
+                "    [Relation] INT NOT NULL," + //aktiv/inaktiv
+                "    [Datum] DATETIME NOT NULL," +
+                "    [Benutzer] NVARCHAR(50) NOT NULL," +
+                "    PRIMARY KEY(Prozess_Id, Ref_Prozess_Id, Typ, Relation, Datum)," +
+                "    Foreign Key(Prozess_Id, Datum_Prozess) references [" + _myShared.Tbl_Prozesse + "](Prozess_Id,Datum)," +
+                "    Foreign Key(Ref_Prozess_Id, Datum_Ref_Prozess) references [" + _myShared.Tbl_Prozesse + "](Prozess_Id,Datum)," +
+                "); ";
+            //------
 
             #region SQL Strings für Erstellen der Tabellen mit Headern analog zu Excel (!Trotzdem nicht ändern, da im Code per Linq2SQL Klassenmember aufegrufen werden)
             #region Tabellen Löschungs SQL Anweisungen
@@ -39,11 +56,11 @@ namespace ISB_BIA_IMPORT1.Services
             string _SqlCreaProcApp =
                 "    CREATE TABLE [dbo].[" + _myShared.Tbl_Proz_App + "] (" +
                 "    [Prozess_Id] INT NOT NULL," +
-                "    [Datum_Prozess] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:59.500',121))," +
+                "    [Datum_Prozess] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:00.000',121))," +
                 "    [Applikation_Id] INT NOT NULL," +
-                "    [Datum_Applikation] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:59.500',121))," +
+                "    [Datum_Applikation] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:00.000',121))," +
                 "    [Relation] INT NOT NULL," +
-                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:59.500',121))," +
+                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:00.000',121))," +
                 "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
                 "    PRIMARY KEY(Prozess_Id, Applikation_Id, Datum)," +
                 "    Foreign Key(Prozess_Id, Datum_Prozess) references [" + _myShared.Tbl_Prozesse + "](Prozess_Id,Datum)," +
@@ -70,8 +87,9 @@ namespace ISB_BIA_IMPORT1.Services
                 "    [" + dt_Applications.Columns[12] + "] INT NOT NULL," +
                 "    [" + dt_Applications.Columns[13] + "] INT NOT NULL," +
                 "    [Aktiv] INT NOT NULL DEFAULT(1)," +
-                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:59.500',121))," +
+                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:00.000',121))," +
                 "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
+                "    [Erstanlage] NVARCHAR(10) NOT NULL DEFAULT('Ja')," +
                 "    PRIMARY KEY(" + dt_Applications.Columns[0] + ",Datum)" +
                 ");";
 
@@ -82,31 +100,30 @@ namespace ISB_BIA_IMPORT1.Services
                 "    [" + dt_Processes.Columns[2] + "] NVARCHAR(350) NOT NULL," +
                 "    [" + dt_Processes.Columns[3] + "] NVARCHAR(350) NOT NULL," +
                 "    [" + dt_Processes.Columns[4] + "] NVARCHAR(50) NOT NULL," +
-                "    [" + dt_Processes.Columns[5] + "] NVARCHAR(10) NOT NULL," +
-                "    [" + dt_Processes.Columns[6] + "] NVARCHAR(20) NOT NULL," +
+                "    [" + dt_Processes.Columns[5] + "] NVARCHAR(50) NOT NULL," +
+                "    [" + dt_Processes.Columns[6] + "] NVARCHAR(10) NOT NULL," +
                 "    [" + dt_Processes.Columns[7] + "] NVARCHAR(20) NOT NULL," +
-                "    [" + dt_Processes.Columns[8] + "] NVARCHAR(10) NOT NULL," +
+                "    [" + dt_Processes.Columns[8] + "] NVARCHAR(20) NOT NULL," +
                 "    [" + dt_Processes.Columns[9] + "] NVARCHAR(10) NOT NULL," +
                 "    [" + dt_Processes.Columns[10] + "] NVARCHAR(10) NOT NULL," +
-                "    [" + dt_Processes.Columns[11] + "] INT NOT NULL," +
+                "    [" + dt_Processes.Columns[11] + "] NVARCHAR(10) NOT NULL," +
                 "    [" + dt_Processes.Columns[12] + "] INT NOT NULL," +
                 "    [" + dt_Processes.Columns[13] + "] INT NOT NULL," +
                 "    [" + dt_Processes.Columns[14] + "] INT NOT NULL," +
                 "    [" + dt_Processes.Columns[15] + "] INT NOT NULL," +
                 "    [" + dt_Processes.Columns[16] + "] INT NOT NULL," +
-                "    [" + dt_Processes.Columns[17] + "] NVARCHAR(350) NOT NULL," +
+                "    [" + dt_Processes.Columns[17] + "] INT NOT NULL," +
                 "    [" + dt_Processes.Columns[18] + "] NVARCHAR(350) NOT NULL," +
-                "    [" + dt_Processes.Columns[19] + "] NVARCHAR(350) NOT NULL," +
+                "    [" + dt_Processes.Columns[19] + "] INT NOT NULL," +
                 "    [" + dt_Processes.Columns[20] + "] INT NOT NULL," +
                 "    [" + dt_Processes.Columns[21] + "] INT NOT NULL," +
-                "    [" + dt_Processes.Columns[22] + "] INT NOT NULL," +
+                "    [" + dt_Processes.Columns[22] + "] VARCHAR(10) NOT NULL," +
                 "    [" + dt_Processes.Columns[23] + "] VARCHAR(10) NOT NULL," +
                 "    [" + dt_Processes.Columns[24] + "] VARCHAR(10) NOT NULL," +
                 "    [" + dt_Processes.Columns[25] + "] VARCHAR(10) NOT NULL," +
                 "    [" + dt_Processes.Columns[26] + "] VARCHAR(10) NOT NULL," +
-                "    [" + dt_Processes.Columns[27] + "] VARCHAR(10) NOT NULL," +
                 "    [Aktiv] INT NOT NULL DEFAULT(1)," +
-                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:59.500',121))," +
+                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:00.000',121))," +
                 "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
                 "    PRIMARY KEY(" + dt_Processes.Columns[0] + ",Datum)," +
             ");";
@@ -128,7 +145,7 @@ namespace ISB_BIA_IMPORT1.Services
                 "    [" + dt_InformationSegments.Columns[12] + "] VARCHAR(10) NOT NULL," +
                 "    [" + dt_InformationSegments.Columns[13] + "] VARCHAR(10) NOT NULL," +
                 "    [" + dt_InformationSegments.Columns[14] + "] VARCHAR(10) NOT NULL," +
-                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:59.500',121))," +
+                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:00.000',121))," +
                 "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
                 "    PRIMARY KEY(" + dt_InformationSegments.Columns[0] + ", Datum)" +
                 ");";
@@ -144,7 +161,7 @@ namespace ISB_BIA_IMPORT1.Services
                 "    [" + dt_InformationSegmentAttributes.Columns[6] + "] INT NOT NULL," +
                 "    [" + dt_InformationSegmentAttributes.Columns[7] + "] INT NOT NULL," +
                 "    [" + dt_InformationSegmentAttributes.Columns[8] + "] INT NOT NULL," +
-                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:59.500',121))," +
+                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:00.000',121))," +
                 "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
                 "    PRIMARY KEY(" + dt_InformationSegmentAttributes.Columns[0] + ", Datum)" +
                 ");";
@@ -164,7 +181,7 @@ namespace ISB_BIA_IMPORT1.Services
                 "    [SZ_4] INT NOT NULL," +
                 "    [SZ_5] INT NOT NULL," +
                 "    [SZ_6] INT NOT NULL," +
-                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:59.500',121))," +
+                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:00.000',121))," +
                 "    PRIMARY KEY(Prozess_Id, Applikation_Id)," +
                 "    Foreign Key(Prozess_Id,Datum_Prozess) references [" + _myShared.Tbl_Prozesse + "](Prozess_Id,Datum)," +
                 "    Foreign Key(Applikation_Id,Datum_Applikation) references [" + _myShared.Tbl_Applikationen + "](Applikation_Id,Datum)" +
@@ -178,7 +195,7 @@ namespace ISB_BIA_IMPORT1.Services
                 "    [Details] VARCHAR(1000) NOT NULL," +
                 "    [Id_1] INT NOT NULL," +
                 "    [Id_2] INT NOT NULL," +
-                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:59.500',121))," +
+                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:00.000',121))," +
                 "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
                 ");";
 
@@ -187,10 +204,88 @@ namespace ISB_BIA_IMPORT1.Services
                 "    [Id]                  INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
                 "    [OE_Name] VARCHAR(200) NOT NULL," +
                 "    [OE_Nummer] VARCHAR(200) NOT NULL," +
-                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:59.500',121))," +
+                "    [Prozesseigentümer] VARCHAR(200) NOT NULL," +
+                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:00.000',121))," +
                 "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
                 "    Unique (OE_Name, OE_Nummer)" +
-                ");";
+                ");" +
+                "INSERT INTO " + _myShared.Tbl_OEs + " (OE_NAME, OE_Nummer, Prozesseigentümer) " +
+                "VALUES ('Vorstandsassistenz', '1', 'Ulrich Link')," +
+                "('Mittelstands-, Kommunalfinanzierung', '1.1', 'Roland Wagner')," +
+                "('Mittelstands-, Kommunalfinanzierung', '1.11', '')," +
+                "('Mittelstands-, Kommunalfinanzierung', '1.12', '')," +
+                "('Mittelstands-, Kommunalfinanzierung', '1.13', '')," +
+                "('Mittelstands-, Kommunalfinanzierung', '1.14', '')," +
+                "('Mittelstands-, Kommunalfinanzierung', '1.15', '')," +
+                "('Mittelstands-, Kommunalfinanzierung', '1.16', '')," +
+                //"('Grundsatzfragen Wirtschaftsförderung', '1.11', '')," +
+                //"('Kreditfinanzierung', '1.12', '')," +
+                //"('Programmkredite, Produktentwicklung', '1.13', '')," +
+                //"('Kommunalfinanzierung', '1.14', '')," +
+                //"('Technologieförderung', '1.15', '')," +
+                //"('Kleine Zuschussprogramme', '1.16', '')," +
+                "('Bürgschaften, Investitionszuschüsse', '1.2', 'Sibylle Schwalie')," +
+                "('Bürgschaften, Investitionszuschüsse', '1.201', '')," +
+                "('Bürgschaften, Investitionszuschüsse', '1.202', '')," +
+                //"('Investitionszuschüsse', '1.201', '')," +
+                //"('Bürgschaften', '1.202', '')," +
+                "('Personal, Verwaltung', '1.4', 'Horst Grafen')," +
+                "('Personal', '1.401', '')," +
+                "('Verwaltung', '1.402', '')," +
+                "('Kundenbetreuung, Beratung', '1.5', 'Folker Gratz')," +
+                "('Venture Capital, Beteiligungen', '1.6', 'Mike Walber')," +
+                "('Handel', '1.7', 'Dr.Ulrich Link')," +
+                "('Wohnraumförderung', '2.1', 'Corden Brendel')," +
+                "('Wohnraumförderung', '2.101', '')," +
+                "('Wohnraumförderung', '2.102', '')," +
+                "('Wohnraumförderung', '2.103', '')," +
+                "('Wohnraumförderung', '2.104', '')," +
+                //"('Koordination Wohnraumförderung', '2.101', '')," +
+                //"('Mietwohnungsbau', '2.102', '')," +
+                //"('Modernisierung, Spezialprogramme', '2.103', '')," +
+                //"('Eigentumswohnungsbau', '2.104', '')," +
+                "('Zuschuss-, Fördermittelverwaltung', '2.2', 'Thomas Wittig')," +
+                "('Zuschuss-, Fördermittelverwaltung', '2.201', '')," +
+                "('Zuschuss-, Fördermittelverwaltung', '2.202', '')," +
+                "('Zuschuss-, Fördermittelverwaltung', '2.203', '')," +
+                "('Zuschuss-, Fördermittelverwaltung', '2.204', '')," +
+                "('Zuschuss-, Fördermittelverwaltung', '2.205', '')," +
+                //"('Grundsatzfragen Zuschuss-, Fördermittelverwaltung', '2.201', '')," +
+                //"('Fördermittelverwaltung', '2.202', '')," +
+                //"('Koordination Zuschussverwaltung', '2.203', '')," +
+                //"('Mittelabruf, Auszahlungen', '2.204', '')," +
+                //"('Verwendungsnachweisprüfung', '2.205', '')," +
+                "('Zweitvotum, Sanierung, Abwicklung', '2.3', 'Gerda-Trudi Oprée')," +
+                "('Zweitvotum, Sanierung, Abwicklung', '2.301', '')," +
+                "('Zweitvotum, Sanierung, Abwicklung', '2.302', '')," +
+                //"('Sanierung, Abwicklung Wohnraumförderung', '2.301', '')," +
+                //"('Sanierung, Abwicklung Wirtschaftsförderung', '2.302', '')," +
+                "('Finanzen', '3.1', 'Ralf Gölz')," +
+                "('Rechnungswesen', '3.12', '')," +
+                "('Rechnungswesen', '3.121', '')," +
+                "('Rechnungswesen', '3.122', '')," +
+                //"('Darlehensbuchhaltung', '3.121', '')," +
+                //"('Finanzbuchhaltung, Bilanzierung', '3.122', '')," +
+                "('Treasury, Handelsabwicklung', '3.13', '')," +
+                "('Controlling, Risikocontrolling', '3.14', '')," +
+                "('Zentrale Daten, Meldewesen', '3.15', '')," +
+                "('Zentrale Daten, Meldewesen', '3.152', '')," +
+                //"('Meldewesen', '3.152', '')," +
+                "('Presse', '3.2', 'Claudia Belz')," +
+                "('Unternehmenskommunikation, Investorenservice, Außenhandelsförderung', '3.3', 'Antje Duwe')," +
+                "('Zentrale Stelle, Compliance', '3.4', 'Karsten Drawe')," +
+                "('Interne Revision, Bescheinigungsbehörde', '4.1', 'Gerhard Pulverich')," +
+                "('Interne Revision, Bescheinigungsbehörde', '4.102', '')," +
+                //"('Bescheinigungsbehörde', '4.102', '')," +
+                "('Vorstandssekretariat, Allgemeine Organisation', '4.2', 'Monika Evelo')," +
+                "('Zentrale Stelle, Compliance', '4.3', 'Karsten Drawe')," +
+                "('IT', '4.4', 'Markus Engel')," +
+                "('IT', '4.401', '')," +
+                "('IT', '4.402', '')," +
+                "('IT', '4.403', '');";
+                //"('IT-Systeme', '4.401', '')," +
+                //"('IT-Steuerung', '4.402', '')," +
+                //"('IT-Betrieb', '4.403', '');";
 
             string _SqlCreaSettings =
                 "CREATE TABLE[dbo].[" + _myShared.Tbl_Settings + "] (" +
@@ -208,7 +303,7 @@ namespace ISB_BIA_IMPORT1.Services
                 "    [Attribut9_aktiviert] VARCHAR(10) NOT NULL," +
                 "    [Attribut10_aktiviert] VARCHAR(10) NOT NULL," +
                 "    [Multi_Speichern] VARCHAR(10) NOT NULL," +
-                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:59.500',121))," +
+                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:00.000',121))," +
                 "    [Benutzer] NVARCHAR(50) NOT NULL," +
                 ");";
 
@@ -217,7 +312,7 @@ namespace ISB_BIA_IMPORT1.Services
                 "    [Id]                  INT IDENTITY(1, 1) NOT NULL PRIMARY KEY," +
                 "    [Tabellen_Kennzeichen] INT NOT NULL," +
                 "    [Objekt_Id] INT NOT NULL," +
-                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:59.500',121))," +
+                "    [Datum] DATETIME NOT NULL DEFAULT(CONVERT(VARCHAR(23), '2018-12-31 23:59:00.000',121))," +
                 "    [BenutzerNnVn] NVARCHAR(50) NOT NULL DEFAULT('')," +
                 "    [Benutzer] NVARCHAR(50) NOT NULL DEFAULT('')," +
                 "    [ComputerName] NVARCHAR(50) NOT NULL DEFAULT('')"+
@@ -225,6 +320,9 @@ namespace ISB_BIA_IMPORT1.Services
 
             #endregion
             List<string> sqlCommandList = new List<string>();
+            //
+            sqlCommandList.Add(_SqlDropProc_vPnP);
+
             sqlCommandList.Add(_SqlDropLog);
             sqlCommandList.Add(_SqlCreaLog);
             sqlCommandList.Add(_SqlDropOEs);
@@ -249,6 +347,9 @@ namespace ISB_BIA_IMPORT1.Services
             sqlCommandList.Add(_SqlCreaProcApp);
             sqlCommandList.Add(_SqlCreaDelta);
 
+            //
+            sqlCommandList.Add(_SqlCreaProc_vPnP);
+
 
             try
             {
@@ -261,7 +362,7 @@ namespace ISB_BIA_IMPORT1.Services
                     }
                     db.SubmitChanges();
                 }
-
+                
                 //Schreiben der DataTables in die Datenbank (Initialer Stand der Daten)
                 using (SqlConnection con = new SqlConnection(_myShared.Conf_ConnectionString))
                 {
@@ -289,6 +390,7 @@ namespace ISB_BIA_IMPORT1.Services
                         {
                             OE_Name = p.OE_Filter,
                             OE_Nummer = "",
+                            Prozesseigentümer = "",
                             Datum = DateTime.Now,
                             Benutzer = ""
                         };

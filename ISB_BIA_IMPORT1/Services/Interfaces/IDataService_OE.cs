@@ -1,4 +1,5 @@
 ﻿using ISB_BIA_IMPORT1.LINQ2SQL;
+using ISB_BIA_IMPORT1.Model;
 using System.Collections.ObjectModel;
 
 namespace ISB_BIA_IMPORT1.Services.Interfaces
@@ -6,6 +7,18 @@ namespace ISB_BIA_IMPORT1.Services.Interfaces
     public interface IDataService_OE
     {
         #region OE
+        /// <summary>
+        /// Ermittelt den aktuellen Stabsabteilungsleiter anhand der OE-Nummer (eines Users) (für die automatische Eigentümer-Zuweisung)
+        /// </summary>
+        /// <returns> Prozesseigentümer (Stabsabteilungs/Bereichsleiter) </returns>
+        string Get_OwnerOfOENumber(string stab);
+        /// <summary>
+        /// Ermittelt den aktuellen Stabsabteilungsleiter anhand der OE des OE-Namen (eines Prozesses)
+        /// </summary>
+        /// <param name="stab"> OE-Name </param>
+        /// <param name="p"> Prozess (wird übergeben für unterschiedloches verhalten bei Reaktivierung eines Prozesses) </param>
+        /// <returns></returns>
+        string Get_OwnerOfOEName(string stab, Process_Model p);
         /// <summary>
         /// Liste der OE-Gruppierungen (Für OE-Einstellungen Namen Dropdowns und Übersicht1)
         /// </summary>
@@ -64,16 +77,19 @@ namespace ISB_BIA_IMPORT1.Services.Interfaces
         /// OE-Nummer erstellen (zugehörige Gruppe muss mit angegeben werden)
         /// </summary>
         /// <param name="number"> Anzulegende Nummer </param>
+        /// <param name="owner"> Anzulegender Prozesseigentümer </param>
         /// <param name="name"> Zugehörige Gruppe </param>
         /// <returns></returns>
-        ISB_BIA_OEs Insert_OENumber_New(string number, ISB_BIA_OEs name);
+        ISB_BIA_OEs Insert_OENumber_New(string number, string owner, ISB_BIA_OEs name);
         /// <summary>
         /// OE-Nummer ändern
         /// </summary>
         /// <param name="number"> neue Nummer </param>
+        /// <param name="owner"> neuer Prozesseigentümer </param>
         /// <param name="oldNumber"> alte Nummer </param>
+        /// <param name="oldOwner"> alter Prozesseigentümer </param>
         /// <returns></returns>
-        bool Insert_OENumber_Edit(string number, string oldNumber);
+        bool Insert_OENumber_Edit(string number, string owner, string oldNumber, string oldOwner);
         #endregion
     }
 }

@@ -42,7 +42,7 @@ namespace ISB_BIA_IMPORT1.Services.Interfaces
         /// <param name="newSettings"> zu speichernde Einstellungen </param>
         /// <param name="oldSettings"> Alte Einstellungen zum Prüfen auf Änderungen </param>
         /// <returns></returns>
-        bool Insert_Settings(ISB_BIA_Settings newSettings, ISB_BIA_Settings oldSettings);
+        bool Insert_Settings(Settings_Model newSettings, Settings_Model oldSettings);
         #endregion
    
     }
